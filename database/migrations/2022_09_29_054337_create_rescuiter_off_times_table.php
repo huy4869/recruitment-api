@@ -13,10 +13,14 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('m_interviews', function (Blueprint $table) {
+        Schema::create('rescuiter_off_times', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 255);
+            $table->unsignedBigInteger('user_id');
+            $table->json('off_times');
             $table->timestamps();
+            $table->softDeletes();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -27,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('m_interviews');
+        Schema::dropIfExists('rescuiter_off_times');
     }
 };
