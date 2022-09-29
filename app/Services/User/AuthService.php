@@ -44,10 +44,9 @@ class AuthService extends Service
     public function register(array $data)
     {
         $newUser = User::query()->create([
-            'name' => $data['name'],
             'email' => Str::lower($data['email']),
             'password' => Hash::make($data['password']),
-            'status' => User::STATUS_ACTIVE,
+            'role_id' => User::ROLE_USER,
         ]);
         if (!$newUser) {
             throw new InputException(trans('auth.register_fail'));

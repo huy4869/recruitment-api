@@ -26,9 +26,30 @@ class RegisterRequest extends FormRequest
     public function rules()
     {
         return [
-            'name' => ['required', 'string', 'max:' . config('validate.name_max_length')],
             'email' => ['required', 'string', 'email', 'max:' . config('validate.email_max_length'), new UserUnique()],
-            'password' => ['required', 'confirmed', new Password()],
+            'password' => ['required', new Password(), 'min:' . config('validate.password_min_length'), 'max:' . config('validate.password_max_length')],
+            'password_confirmation' => ['required', 'same:password'],
+
         ];
     }
+
+    /**
+     * Get the validation messages
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'email.required' => trans('validation.COM_001'),
+            'email.string' => trans('validation.COM_004'),
+            'email.email' => trans('validation.COM_002'),
+            'email.max' => trans('validation.COM_003'),
+            'password.required' => trans('validation.COM_001'),
+            'password.min' => trans('validation.COM_005'),
+            'password.max' => trans('validation.COM_005'),
+            'password_confirmation.required' => trans('validation.COM_001'),
+            'password_confirmation.same' => trans('validation.COM_007'),
+        ];
+    }
+
 }

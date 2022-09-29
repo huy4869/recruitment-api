@@ -188,6 +188,7 @@ return [
     'attributes' => [
         'current_password' => '現在のパスワード',
         'password' => 'パスワード',
+        'password_confirmation' => 'パスワード（確認のため再入力)',
         'username' => 'ユーザーID',
         'status' => 'ステータス',
         'phone_number' => '電話番号',
@@ -210,5 +211,14 @@ return [
         'email' => 'メールアドレス',
         'type' => '注文オプション',
     ],
+
+    'COM_001' => ':attributeが入力されていません。',
+    'COM_002' => ':attributeが正しく入力されていません。',
+    'COM_003' => ':attributeは半角255英数字以内で入力してください。',
+    'COM_004' => ':attributeは半角英数字で入力してください。',
+    'COM_005' => ':attributeは半角英数字で4桁〜12桁まで入力してください。',
+    'COM_007' => ':attributeが一致しません。',
+
+    'ERR_002' => 'メールアドレスが既に登録されました。',
 
 ];
