@@ -4,7 +4,8 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Run the migrations.
      *
@@ -12,12 +13,9 @@ return new class extends Migration {
      */
     public function up()
     {
-        Schema::create('images', function (Blueprint $table) {
+        Schema::create('m_inreviews', function (Blueprint $table) {
             $table->id();
-            $table->nullableMorphs('imageable');
-            $table->string('url');
-            $table->string('thumb');
-            $table->string('type');
+            $table->string('name', 255);
             $table->timestamps();
         });
     }
@@ -29,6 +27,6 @@ return new class extends Migration {
      */
     public function down()
     {
-        Schema::dropIfExists('images');
+        Schema::dropIfExists('m_inreviews');
     }
 };
