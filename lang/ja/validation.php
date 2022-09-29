@@ -41,9 +41,9 @@ return [
     'digits_between' => ':attributeは:min～:max桁の数字である必要があります。',
     'dimensions' => ':attributeの画像サイズが無効です。',
     'distinct' => ':attributeに指定された値は重複しています。',
-    'email' => ':attributeは有効なメールアドレスでなければなりません。',
+    'email' => ':attributeが正しく入力されていません。',
     'ends_with' => ':attributeは、:valuesのいずれかで終了する必要があります。',
-    'exists' => '選択された:attributeは無効です。',
+    'exists' => ':attributeが見つかりませんでした。',
     'file' => ':attributeはファイルでなければなりません。',
     'filled' => ':attributeには値が必要です。',
     'gt' => [
@@ -163,7 +163,16 @@ return [
             ],
             'mimes' => 'ファイルのアップロードに失敗しました。',
             'mimetypes' => 'ファイルのアップロードに失敗しました。',
-        ]
+        ],
+        'wrong_password' => 'メールアドレスまた、パスワードが正しくありません。',
+        'half_size' => ':attributeは半角英数字で入力してください。',
+        'email' => [
+            'max' => ':attributeは半角255英数字以内で入力してください。'
+        ],
+        'password' => [
+            'max' => ':attributeは半角英数字で4桁〜12桁まで入力してください。',
+            'min' => ':attributeは半角英数字で4桁〜12桁まで入力してください。',
+        ],
     ],
 
     /*

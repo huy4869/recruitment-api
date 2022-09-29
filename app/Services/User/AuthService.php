@@ -5,6 +5,7 @@ namespace App\Services\User;
 use App\Exceptions\InputException;
 use App\Models\User;
 use App\Services\Service;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
@@ -19,12 +20,13 @@ class AuthService extends Service
      */
     public function login(array $data)
     {
-        $user = User::query()->where('email', '=', $data['username'])->first();
+        $user = User::query()->where('email', '=', $data['email'])->roleUser()->first();
 
         if (!$user || !Hash::check($data['password'], $user->password)) {
-            throw new InputException(trans('auth.failed'));
+            throw new InputException(trans('validation.custom.wrong_password'));
         }
-        $token = $user->createToken('authUserToken')->plainTextToken;
+        $token = $user->createToken('authUserToken', ['*'], Carbon::now()
+            ->addDays(config('validate.token_expire')))->plainTextToken;
 
         return [
             'access_token' => $token,

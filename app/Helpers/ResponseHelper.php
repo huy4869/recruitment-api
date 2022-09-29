@@ -20,15 +20,13 @@ class ResponseHelper
      * @param $code
      * @param $message
      * @param null $data
-     * @param null $errors
      * @return JsonResponse
      */
-    public static function sendResponse($code, $message, $data = null, $errors = null)
+    public static function sendResponse($code, $message, $data = null)
     {
         return response()->json([
             'status_code' => $code,
-            'message' => $message,
-            'errors' => $errors,
+            'messages' => $message,
             'data' => $data,
         ]);
     }

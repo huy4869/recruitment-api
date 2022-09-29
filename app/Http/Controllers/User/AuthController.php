@@ -60,7 +60,7 @@ class AuthController extends BaseController
     {
         $ip = $request->ip();
         $inputs = $request->only(['email', 'password']);
-        $key = Str::lower($inputs['email'] . '|admin_login|' . $ip);
+        $key = Str::lower($inputs['email'] . '|user_login|' . $ip);
         if ($this->tooManyAttempts($key, self::MAX_ATTEMPTS_LOGIN)) {
             return $this->sendLockoutResponse($key);
         }

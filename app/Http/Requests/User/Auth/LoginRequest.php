@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\User\Auth;
 
+use App\Rules\Email;
 use App\Rules\Password;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -25,8 +26,29 @@ class LoginRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => ['required', 'string', 'email', 'max:' . config('validate.email_max_length')],
-            'password' => ['required', new Password()],
+            'email' => [
+                'required',
+                'string',
+                'email',
+                new Email(),
+                'max:' . config('validate.email_max_length'),
+                'exists:users'
+            ],
+            'password' => [
+                'required',
+                new Password(),
+                'min:' . config('validate.password_min_length'),
+                'max:' . config('validate.password_max_length')
+            ],
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'email.max' => trans('validation.custom.email.max'),
+            'password.min' => trans('validation.custom.password.min'),
+            'password.max' => trans('validation.custom.password.max'),
         ];
     }
 }
