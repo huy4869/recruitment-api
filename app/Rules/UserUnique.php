@@ -39,7 +39,7 @@ class UserUnique implements Rule
      */
     public function passes($attribute, $value)
     {
-        $q = DB::table(User::query()->getQuery()->from)->where($attribute, $value);
+        $q = DB::table(User::query()->getQuery()->from)->where($attribute, $value)->where('role_id', User::ROLE_USER);
         if ($this->userId) {
             $q->where('id', '<>', $this->userId);
         }
@@ -59,6 +59,6 @@ class UserUnique implements Rule
      */
     public function message()
     {
-        return $this->messageKey ? trans($this->messageKey) : trans('validation.unique');
+        return $this->messageKey ? trans($this->messageKey) : trans('validation.ERR_002');
     }
 }

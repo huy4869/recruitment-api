@@ -40,9 +40,9 @@ class AuthController extends BaseController
     public function register(RegisterRequest $request)
     {
         $inputs = $request->only([
-            'name',
             'email',
-            'password'
+            'password',
+            'password_confirmation',
         ]);
         $data = AuthService::getInstance()->register($inputs);
 
