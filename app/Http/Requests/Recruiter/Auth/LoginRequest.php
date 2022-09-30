@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Admin\Auth;
+namespace App\Http\Requests\Recruiter\Auth;
 
 use App\Rules\Email;
 use App\Rules\Password;

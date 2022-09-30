@@ -22,10 +22,17 @@ class AuthService extends Service
     {
         $user = User::query()->where('email', '=', $data['email'])->roleUser()->first();
 
-        if (!$user || !Hash::check($data['password'], $user->password)) {
+        if (!$user) {
+            throw new InputException(trans('validation.exists', [
+                'attribute' => trans('validation.attributes.email')
+            ]));
+        }
+
+        if (!Hash::check($data['password'], $user->password)) {
             throw new InputException(trans('validation.custom.wrong_password'));
         }
-        $token = $user->createToken('authUserToken', ['*'], Carbon::now()
+
+        $token = $user->createToken('authUserToken', [], Carbon::now()
             ->addDays(config('validate.token_expire')))->plainTextToken;
 
         return [

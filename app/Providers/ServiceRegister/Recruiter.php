@@ -9,12 +9,12 @@ use Illuminate\Contracts\Foundation\Application;
 class Recruiter
 {
     /**
-     * @param Container|Application $app
+     * @param Application|Container $app
      * @return void
      */
     public static function register($app)
     {
-        $app->scoped(AuthService::class, function ($app){
+        $app->scoped(AuthService::class, function ($app) {
             return new AuthService();
         });
     }

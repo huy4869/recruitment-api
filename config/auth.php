@@ -47,6 +47,12 @@ return [
             'hash' => false,
         ],
 
+        'recruiter' => [
+            'driver' => 'sanctum',
+            'provider' => 'recruiters',
+            'hash' => false,
+        ],
+
         'user' => [
             'driver' => 'sanctum',
             'provider' => 'users',
@@ -79,7 +85,12 @@ return [
 
         'admins' => [
             'driver' => 'eloquent',
-            'model' => App\Models\Admin::class,
+            'model' => App\Models\User::class,
+        ],
+
+        'recruiters' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\User::class,
         ],
     ],
 
@@ -105,7 +116,7 @@ return [
             'expire' => 60,
             'throttle' => 60,
         ],
-        
+
         'users' => [
             'provider' => 'users',
             'table' => 'password_resets',
