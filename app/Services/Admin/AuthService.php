@@ -3,8 +3,9 @@
 namespace App\Services\Admin;
 
 use App\Exceptions\InputException;
-use App\Models\Admin;
+use App\Models\User;
 use App\Services\Service;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Hash;
 
 class AuthService extends Service
@@ -14,15 +15,24 @@ class AuthService extends Service
      *
      * @param array $data
      * @return array|null
+     * @throws InputException
      */
     public function login(array $data)
     {
-        $admin = Admin::query()->where('email', $data['email'])->first();
+        $admin = User::query()->where('email', $data['email'])->roleAdmin()->first();
 
-        if (!$admin || !Hash::check($data['password'], $admin->password)) {
-            return null;
+        if (!$admin) {
+            throw new InputException(trans('validation.exists', [
+                'attribute' => trans('validation.attributes.email')
+            ]));
         }
-        $token = $admin->createToken('authAdminToken')->plainTextToken;
+
+        if (!Hash::check($data['password'], $admin->password)) {
+            throw new InputException(trans('validation.custom.wrong_password'));
+        }
+
+        $token = $admin->createToken('authAdminToken', ['*'], Carbon::now()
+            ->addDays(config('validate.token_expire')))->plainTextToken;
 
         return [
             'access_token' => $token,

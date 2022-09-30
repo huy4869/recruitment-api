@@ -61,11 +61,13 @@ class AuthController extends BaseController
         $ip = $request->ip();
         $inputs = $request->only(['email', 'password']);
         $key = Str::lower($inputs['email'] . '|user_login|' . $ip);
+
         if ($this->tooManyAttempts($key, self::MAX_ATTEMPTS_LOGIN)) {
             return $this->sendLockoutResponse($key);
         }
 
         $loginData = AuthService::getInstance()->login($inputs);
+
         if ($loginData) {
             $this->clearLoginAttempts($key);
 
@@ -73,6 +75,7 @@ class AuthController extends BaseController
         }
 
         $this->incrementAttempts($key, self::DECAY_SECONDS);
+
         if ($this->retriesLeft($key, self::MAX_ATTEMPTS_LOGIN) == 0) {
             throw new InputException(trans('auth.throttle', ['seconds' => self::DECAY_SECONDS]));
         }
@@ -87,7 +90,7 @@ class AuthController extends BaseController
      */
     protected function sendFailedLoginResponse()
     {
-        return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_UNAUTHORIZED, trans('auth.failed'), null);
+        return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_UNAUTHORIZED, trans('auth.failed'));
     }
 
     /**
