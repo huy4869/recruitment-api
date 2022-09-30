@@ -21,6 +21,7 @@ class RouteServiceProvider extends ServiceProvider
     protected $namespace = 'App\Http\Controllers';
     protected $adminNamespace = 'App\Http\Controllers\Admin';
     protected $userNamespace = 'App\Http\Controllers\User';
+    protected $recruiterNamespace = 'App\Http\Controllers\Recruiter';
 
     /**
      * Define your route model bindings, pattern filters, and other route configuration.
@@ -43,6 +44,12 @@ class RouteServiceProvider extends ServiceProvider
                 ->name('user.')
                 ->namespace($this->userNamespace)
                 ->group(base_path('routes/user.php'));
+
+            Route::prefix('recruiter')
+                ->middleware('api')
+                ->name('recruiter.')
+                ->namespace($this->recruiterNamespace)
+                ->group(base_path('routes/recruiter.php'));
 
             Route::middleware('web')
                 ->namespace($this->namespace)
