@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests\Admin\Auth;
 
-use App\Rules\UserUnique;
+use App\Rules\User\UserUnique;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateProfileRequest extends FormRequest

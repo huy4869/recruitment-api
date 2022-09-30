@@ -6,7 +6,7 @@ use App\Exceptions\InputException;
 use App\Http\Controllers\Traits\HasRateLimiter;
 use App\Http\Requests\Recruiter\Auth\RegisterRequest;
 use App\Helpers\ResponseHelper;
-use App\Http\Requests\User\Auth\LoginRequest;
+use App\Http\Requests\Recruiter\Auth\LoginRequest;
 use App\Services\Recruiter\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;

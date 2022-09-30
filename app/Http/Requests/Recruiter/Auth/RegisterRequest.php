@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Recruiter\Auth;
 
 use App\Rules\Password;
-use App\Rules\RecruiterUnique;
+use App\Rules\Recruiter\RecruiterUnique;
 use Illuminate\Foundation\Http\FormRequest;
 
 class RegisterRequest extends FormRequest
@@ -39,15 +39,15 @@ class RegisterRequest extends FormRequest
     public function messages()
     {
         return [
-            'email.required' => trans('validation.COM_001'),
-            'email.string' => trans('validation.COM_004'),
-            'email.email' => trans('validation.COM_002'),
-            'email.max' => trans('validation.COM_003'),
-            'password.required' => trans('validation.COM_001'),
-            'password.min' => trans('validation.COM_005'),
-            'password.max' => trans('validation.COM_005'),
-            'password_confirmation.required' => trans('validation.COM_001'),
-            'password_confirmation.same' => trans('validation.COM_007'),
+            'email.required' => trans('validation.COM.001'),
+            'email.string' => trans('validation.COM.004'),
+            'email.email' => trans('validation.COM.002'),
+            'email.max' => trans('validation.COM.003'),
+            'password.required' => trans('validation.COM.001'),
+            'password.min' => trans('validation.COM.005'),
+            'password.max' => trans('validation.COM.005'),
+            'password_confirmation.required' => trans('validation.COM.001'),
+            'password_confirmation.same' => trans('validation.COM.007'),
         ];
     }
 }
