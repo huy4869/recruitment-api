@@ -13,10 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('m_interviews', function (Blueprint $table) {
+        Schema::create('user_licenses_qualifications', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id');
             $table->string('name', 255);
+            $table->date('new_issuance_date');
             $table->timestamps();
+            $table->softDeletes();
+
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 
@@ -27,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('m_interviews');
+        Schema::dropIfExists('user_licenses_qualifications');
     }
 };

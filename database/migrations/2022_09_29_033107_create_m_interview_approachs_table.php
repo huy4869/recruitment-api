@@ -13,10 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('m_interviews', function (Blueprint $table) {
+        Schema::create('m_interview_approaches', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 255);
+            $table->string('name', 100);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -27,6 +28,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('m_interviews');
+        Schema::dropIfExists('m_interview_approaches');
     }
 };

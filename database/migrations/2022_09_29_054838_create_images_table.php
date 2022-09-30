@@ -13,10 +13,15 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('m_interviews', function (Blueprint $table) {
+        Schema::create('images', function (Blueprint $table) {
             $table->id();
-            $table->string('name', 255);
+            $table->string('imageable_type', 255);
+            $table->unsignedBigInteger('imageable_id');
+            $table->string('url', 255);
+            $table->string('thumb', 255);
+            $table->string('type', 50);
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
@@ -27,6 +32,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('m_interviews');
+        Schema::dropIfExists('images');
     }
 };
