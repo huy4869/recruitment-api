@@ -7,5 +7,6 @@ return [
 
     'path' => [
         'reset_password' => 'reset-password',
-    ]
+    ],
+    'time_reset_pass' => 30,
 ];
