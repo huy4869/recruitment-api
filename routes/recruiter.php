@@ -18,3 +18,7 @@ Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {
     Route::post('/logout', 'AuthController@logout')->name('logout');
     Route::post('/register', 'AuthController@register')->name('register');
 });
+
+Route::group(['as' => 'forgot-password.', 'prefix' => 'forgot-password'], function () {
+    Route::post('/', 'PasswordResetController@sendMail')->name('sendMail');
+});
