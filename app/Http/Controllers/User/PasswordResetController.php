@@ -3,11 +3,11 @@
 namespace App\Http\Controllers\User;
 
 use App\Exceptions\InputException;
-use App\Http\Requests\User\ForgotPassword\SendMailRequest;
 use App\Services\User\PasswordResetService;
 use Illuminate\Http\JsonResponse;
-use App\Http\Requests\User\Auth\CheckTokenResetPasswordRequest;
-use App\Http\Requests\User\Auth\ResetPasswordRequest;
+use App\Http\Requests\Common\ForgotPassword\CheckTokenResetPasswordRequest;
+use App\Http\Requests\Common\ForgotPassword\ResetPasswordRequest;
+use App\Http\Requests\Common\ForgotPassword\SendMailRequest;
 
 class PasswordResetController extends BaseController
 {

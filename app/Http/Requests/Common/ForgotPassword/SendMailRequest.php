@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Requests\Recruiter\ForgotPassword;
+namespace App\Http\Requests\Common\ForgotPassword;
 
 use App\Rules\Email;
 use Illuminate\Foundation\Http\FormRequest;
