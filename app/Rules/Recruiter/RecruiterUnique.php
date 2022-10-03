@@ -1,23 +1,23 @@
 <?php
 
-namespace App\Rules;
+namespace App\Rules\Recruiter;
 
 use App\Models\User;
 use Illuminate\Contracts\Validation\Rule;
 use Illuminate\Support\Facades\DB;
 
-class UserUnique implements Rule
+class RecruiterUnique implements Rule
 {
     /**
      * Determine if the validation rule passes.
      *
-     * @param string $attribute
-     * @param mixed $value
+     * @param  string  $attribute
+     * @param  mixed  $value
      * @return bool
      */
     public function passes($attribute, $value)
     {
-        $q = DB::table(User::query()->getQuery()->from)->where($attribute, $value)->where('role_id', User::ROLE_USER);
+        $q = DB::table(User::query()->getQuery()->from)->where($attribute, $value)->whereIn('role_id', [User::ROLE_USER, User::ROLE_RECRUITER]);
 
         return !$q->count();
     }
@@ -29,6 +29,6 @@ class UserUnique implements Rule
      */
     public function message()
     {
-        return trans('validation.ERR_002');
+        return trans('validation.ERR.002');
     }
 }

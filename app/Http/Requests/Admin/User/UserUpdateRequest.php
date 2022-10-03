@@ -3,7 +3,7 @@
 namespace App\Http\Requests\Admin\User;
 
 use App\Models\User;
-use App\Rules\UserUnique;
+use App\Rules\User\UserUnique;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UserUpdateRequest extends FormRequest

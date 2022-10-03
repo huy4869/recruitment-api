@@ -8,6 +8,7 @@ use App\Http\Controllers\Traits\HasRateLimiter;
 use App\Http\Requests\Admin\Auth\ChangePasswordRequest;
 use App\Http\Requests\Admin\Auth\LoginRequest;
 use App\Http\Requests\Admin\Auth\UpdateProfileRequest;
+use App\Http\Requests\Admin\RegisterRequest;
 use App\Http\Resources\Admin\Auth\MeResource;
 use App\Services\Admin\AuthService;
 use Illuminate\Http\JsonResponse;
@@ -131,5 +132,27 @@ class AuthController extends BaseController
         $currentUser->currentAccessToken()->delete();
 
         return $this->sendSuccessResponse(null, trans('auth.logout_success'));
+    }
+
+    /**
+     * create User|Admin|Rec
+     *
+     * @param RegisterRequest $request
+     * @return JsonResponse
+     * @throws InputException
+     */
+    public function register(RegisterRequest $request)
+    {
+        $input = $request->only([
+            'role_id',
+            'alias_name',
+            'email',
+            'password',
+            'password_confirmation',
+        ]);
+
+        $data = AuthService::getInstance()->withUser($this->guard()->user())->register($input);
+
+        return $this->sendSuccessResponse($data, trans('auth.register_success'));
     }
 }

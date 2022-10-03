@@ -84,4 +84,29 @@ class AuthService extends Service
 
         return true;
     }
+
+    /**
+     * create User|Admin|Rec
+     *
+     * @param array $data
+     * @return mixed
+     * @throws InputException
+     */
+    public function register(array $data)
+    {
+        if ($data['role_id'] == User::ROLE_ADMIN) {
+            throw new InputException(trans('validation.has_not_permission'));
+        }
+
+        if ($this->user->role_id === User::ROLE_SUB_ADMIN && $data['role_id'] == User::ROLE_SUB_ADMIN) {
+            throw new InputException(trans('validation.has_not_permission'));
+        }
+
+        return User::create([
+            'alias_name' => $data['alias_name'],
+            'role_id' => $data['role_id'],
+            'email' => $data['email'],
+            'password' => Hash::make($data['password']),
+        ]);
+    }
 }

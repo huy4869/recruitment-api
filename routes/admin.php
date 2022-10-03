@@ -23,6 +23,7 @@ Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {
     Route::get('/me', 'AuthController@currentLoginUser')->name('currentLoginUser');
     Route::post('/me', 'AuthController@updateProfile')->name('updateProfile');
     Route::post('/change-password', 'AuthController@changePassword')->name('changePassword');
+    Route::post('/register', 'AuthController@register')->name('register');
 });
 
 Route::group(['as' => 'users.', 'prefix' => 'users'], function () {
