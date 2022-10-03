@@ -4,6 +4,7 @@ namespace App\Providers\ServiceRegister;
 
 use App\Services\Admin\AuthService;
 use App\Services\Admin\MasterDataService;
+use App\Services\Admin\PasswordResetService;
 use App\Services\Admin\User\UserService;
 use App\Services\Admin\User\UserTableService;
 use Illuminate\Container\Container;
@@ -33,6 +34,10 @@ class Admin
 
         $app->scoped(UserService::class, function ($app) {
             return new UserService();
+        });
+
+        $app->scoped(PasswordResetService::class, function ($app) {
+            return new PasswordResetService();
         });
     }
 }

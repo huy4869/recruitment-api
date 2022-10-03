@@ -31,3 +31,7 @@ Route::group(['as' => 'users.', 'prefix' => 'users'], function () {
     Route::get('/{user}', 'UserController@detail')->name('detail');
     Route::post('/{user}', 'UserController@update')->name('update');
 });
+
+Route::group(['as' => 'forgot-password.', 'prefix' => 'forgot-password'], function () {
+    Route::post('/', 'PasswordResetController@sendMail')->name('sendMail');
+});
