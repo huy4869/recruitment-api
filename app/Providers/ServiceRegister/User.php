@@ -4,6 +4,7 @@ namespace App\Providers\ServiceRegister;
 
 use App\Services\User\AuthService;
 use App\Services\User\MasterDataService;
+use App\Services\User\PasswordResetService;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Foundation\Application;
 
@@ -23,6 +24,10 @@ class User
 
         $app->scoped(MasterDataService::class, function ($app) {
             return new MasterDataService();
+        });
+
+        $app->scoped(PasswordResetService::class, function ($app) {
+            return new PasswordResetService();
         });
     }
 }

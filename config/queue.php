@@ -95,4 +95,6 @@ return [
     ],
 
     'delay_time' => env('QUEUE_DELAY_TIME', 10),
+
+    'email_queue' => env('EMAIL_QUEUE', 'matching-stg-email'),
 ];
