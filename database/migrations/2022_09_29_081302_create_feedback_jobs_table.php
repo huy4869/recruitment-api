@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('feedback_jobs', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('feedback_type_ids');
+            $table->json('feedback_type_ids');
             $table->tinyInteger('type');
             $table->string('email', 255)->nullable();
             $table->string('name', 255)->nullable();
@@ -26,7 +26,6 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('feedback_type_ids')->references('id')->on('m_feedback_types')->onDelete('cascade');
         });
     }
 

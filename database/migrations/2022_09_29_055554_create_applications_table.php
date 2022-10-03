@@ -29,7 +29,7 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('job_posting_id')->references('id')->on('job_postings')->onDelete('cascade');
             $table->foreign('store_id')->references('id')->on('stores')->onDelete('cascade');
-            $table->foreign('interview_status_id')->references('id')->on('m_interviews')->onDelete('cascade');
+            $table->foreign('interview_status_id')->references('id')->on('m_interviews_status')->onDelete('cascade');
         });
     }
 
