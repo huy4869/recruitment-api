@@ -34,4 +34,6 @@ Route::group(['as' => 'users.', 'prefix' => 'users'], function () {
 
 Route::group(['as' => 'forgot-password.', 'prefix' => 'forgot-password'], function () {
     Route::post('/', 'PasswordResetController@sendMail')->name('sendMail');
+    Route::post('/check-token', 'PasswordResetController@checkToken')->name('check-token');
+    Route::post('/reset-password', 'PasswordResetController@resetPassword')->name('reset.password');
 });
