@@ -21,7 +21,7 @@ class PasswordResetController extends BaseController
     {
         $data = PasswordResetService::getInstance()->sendMail($request->get('email'));
 
-        return $this->sendSuccessResponse($data);
+        return $this->sendSuccessResponse($data, trans('response.send_mail_success'));
     }
 
     /**
