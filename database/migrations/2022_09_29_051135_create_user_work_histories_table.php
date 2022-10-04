@@ -17,18 +17,20 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('job_type_id');
-            $table->string('store_name', 255);
-            $table->string('company_name', 255);
-            $table->dateTime('period_start');
-            $table->dateTime('period_end');
-            $table->JSON('position_office_ids');
-            $table->string('business_content');
-            $table->text('experience_accumulation');
+            $table->unsignedBigInteger('work_type_id');
+            $table->string('store_name', 255)->nullable();
+            $table->string('company_name', 255)->nullable();
+            $table->dateTime('period_start')->nullable();
+            $table->dateTime('period_end')->nullable();
+            $table->text('position_offices')->nullable();
+            $table->string('business_content')->nullable();
+            $table->text('experience_accumulation')->nullable();
             $table->timestamps();
             $table->softDeletes();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('job_type_id')->references('id')->on('m_job_types')->onDelete('cascade');
+            $table->foreign('work_type_id')->references('id')->on('m_work_types')->onDelete('cascade');
         });
     }
 
