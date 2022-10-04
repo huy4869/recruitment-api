@@ -2,6 +2,7 @@
 
 namespace App\Providers\ServiceRegister;
 
+use App\Services\User\ApplicationService;
 use App\Services\User\AuthService;
 use App\Services\User\MasterDataService;
 use App\Services\User\PasswordResetService;
@@ -28,6 +29,10 @@ class User
 
         $app->scoped(PasswordResetService::class, function ($app) {
             return new PasswordResetService();
+        });
+
+        $app->scoped(ApplicationService::class, function ($app) {
+            return new ApplicationService();
         });
     }
 }
