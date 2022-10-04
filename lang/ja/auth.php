@@ -20,5 +20,5 @@ return [
     'login_failed' => 'ログインに失敗しました。',
     'register_success' => '登録に成功しました。',
     'register_fail' => '登録に失敗しました。',
-
+    'update_success' => '編集が成功しました。'
 ];

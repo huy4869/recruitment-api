@@ -90,20 +90,13 @@ class AuthService extends Service
      *
      * @param array $data
      * @return bool
-     * @throws InputException
      */
     public function changePassword(array $data)
     {
         $user = $this->user;
 
-        if (!Hash::check($data['current_password'], $user->password)) {
-            throw new InputException(trans('auth.password'));
-        }
-
-        $user->update([
+        return $user->update([
             'password' => Hash::make($data['password'])
         ]);
-
-        return true;
     }
 }

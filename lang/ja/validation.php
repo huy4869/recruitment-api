@@ -32,7 +32,6 @@ return [
     ],
     'boolean' => ':attributeには真偽値を指定してください。',
     'confirmed' => ':attributeが確認用の値と一致しません。',
-    'current_password' => 'パスワードが正しくありません。',
     'date' => ':attributeは有効な日付ではありません。',
     'date_equals' => ':attributeは:dateと同じ日付でなければなりません。',
     'date_format' => ':attributeは:format形式と一致しません。',
@@ -224,9 +223,10 @@ return [
 
     'ERR' => [
         '002' => 'メールアドレスが既に登録されました。',
+        '009' => 'パスワードが正しくありません。',
+        '010' => 'パスワードへん変更が失敗しました。',
     ],
 
     'has_not_permission' => 'スーパー管理者レベルである必要があります',
     'role_exist' => 'ロールが存在しません',
-
 ];
