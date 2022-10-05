@@ -22,4 +22,5 @@ return [
     'INF_004' => [
         'cancel_applied' => '応募のキャンセル成功しました。',
     ],
+    'update_base_info_success' => '基本情報を正常に編集します。',
 ];

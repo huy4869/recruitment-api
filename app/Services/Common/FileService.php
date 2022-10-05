@@ -9,6 +9,7 @@ use App\Services\Service;
 use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Str;
 use Intervention\Image\Facades\Image;
 
 class FileService extends Service
@@ -62,6 +63,47 @@ class FileService extends Service
         $thumbnailUrl = $this->storage()->url($image->thumb);
 
         return ['url' => $imageUrl, 'thumb' => $thumbnailUrl, 'type' => $image->type];
+    }
+
+    /**
+     * Update imageable
+     *
+     * @param $object
+     * @param array $images
+     * @param array $types
+     * @return bool|void
+     */
+    public function updateImageable($object, array $images, array $types = [Images::AVATAR_BANNER, Images::AVATAR_DETAIL])
+    {
+        $dataImages = [];
+        foreach ($images as $image) {
+            $dataImages[] = Str::after($image, 'storage/upload/');
+        }
+        $existImages = Images::query()->whereIn('url', $dataImages);
+
+        if (!$existImages) {
+            return;
+        }
+
+        $existImagesIds = $existImages->get()->pluck('id')->toArray();
+        $objectDeleteImage = $object->images()->whereIn('type', $types)->whereNotIn('id', $existImagesIds);
+        $linkImage = 'public/upload/';
+        $storageDeletes = [];
+
+        foreach ($objectDeleteImage->get() as $img) {
+            $url = $linkImage . $img->url;
+            $thumb = $linkImage . $img->thumb;
+            array_push($storageDeletes, $url, $thumb);
+        }
+        Storage::delete($storageDeletes);
+
+        $objectDeleteImage->delete();
+        $existImages->update([
+            'imageable_id' => $object->id,
+            'imageable_type' => get_class($object),
+        ]);
+
+        return true;
     }
 
     /**
