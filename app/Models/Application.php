@@ -11,6 +11,12 @@ class Application extends Model
 {
     use HasFactory, SoftDeletes;
 
+    public const STATUS_WAITING_INTERVIEW = 1;
+    public const STATUS_WAITING_RESULT = 2;
+    public const STATUS_REJECTED = 3;
+    public const STATUS_ACCEPTED = 4;
+    public const STATUS_CANCELED = 5;
+
     /**
      * @var string
      */

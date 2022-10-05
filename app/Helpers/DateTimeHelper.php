@@ -4,7 +4,7 @@ namespace App\Helpers;
 
 use Carbon\Carbon;
 
-class DateHelper
+class DateTimeHelper
 {
     /**
      * Format date
@@ -107,5 +107,23 @@ class DateHelper
         }
 
         return $hour . trans('user.fe_hour_format');
+    }
+
+    /**
+     * @param $dateTime
+     * @return string|null
+     */
+    public static function formatDateDayOfWeekTimeJa($dateTime)
+    {
+        if (!$dateTime) {
+            return null;
+        }
+
+        $dateTime = Carbon::parse($dateTime);
+        $date = $dateTime->format(config('date.fe_date_ja_format'));
+        $dayOfWeek = config('date.day_of_week_ja.' . $dateTime->dayOfWeek);
+        $time = $dateTime->format('H:i');
+
+        return sprintf('%s (%s) %s', $date, $dayOfWeek, $time);
     }
 }
