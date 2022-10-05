@@ -4,9 +4,8 @@ namespace App\Http\Controllers\User;
 
 use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
-use App\Services\User\JobService;
+use App\Services\User\Job\JobService;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 
 class JobController extends Controller
 {
@@ -33,5 +32,17 @@ class JobController extends Controller
         }
 
         throw new InputException(trans('validation.ERR.011'));
+    }
+
+    /**
+     * get Favorite Job
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function getFavoriteJob()
+    {
+        $data = $this->jobService->withUser($this->guard()->user())->getFavoriteJobs();
+
+        return $this->sendSuccessResponse($data);
     }
 }

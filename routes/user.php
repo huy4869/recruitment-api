@@ -56,8 +56,9 @@ Route::group(['as' => 'contact.', 'prefix' => 'contact'], function () {
     Route::get('/admin-tel', 'ContactController@getAdminPhone')->name('getAdminPhone');
 });
 
-Route::group(['as' => 'job.', 'prefix' => 'job', 'middleware' => 'user'], function (){
+Route::group(['as' => 'job.', 'prefix' => 'job', 'middleware' => 'user'], function () {
     Route::delete('/delete-favorite/{id}', 'JobController@deleteFavoriteJob')->name('deleteFavoriteJob');
+    Route::get('/favorite-job', 'JobController@getFavoriteJob')->name('favoriteJob');
 });
 
 Route::group(['as' => 'work-history.', 'prefix' => 'work-history', 'middleware' => 'user'], function () {

@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Exceptions\InputException;
+use App\Helpers\ResponseHelper;
 use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
@@ -14,8 +15,7 @@ class AdminMiddleware
      *
      * @param \Illuminate\Http\Request $request
      * @param \Closure(\Illuminate\Http\Request): (\Illuminate\Http\Response|\Illuminate\Http\RedirectResponse) $next
-     * @return \Illuminate\Http\Response|\Illuminate\Http\RedirectResponse
-     * @throws InputException
+     * @return \Illuminate\Http\JsonResponse
      */
     public function handle(Request $request, Closure $next)
     {
@@ -25,6 +25,6 @@ class AdminMiddleware
             return $next($request);
         }
 
-        throw new InputException(trans('response.not_found'));
+        return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_UNAUTHORIZED, trans('response.unauthenticated'));
     }
 }

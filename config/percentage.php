@@ -4,7 +4,7 @@ return [
     'default' => 0,
     'information' => 50,
     'favorite' => 3,
-    'skill' => 4,
+    'self_pr' => 4,
     'experience' => 3,
     'motivation' => 5,
     'user_learning_history' => 15,
