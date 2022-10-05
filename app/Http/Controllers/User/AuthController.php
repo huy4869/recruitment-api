@@ -129,15 +129,17 @@ class AuthController extends BaseController
      *
      * @param ChangePasswordRequest $request
      * @return JsonResponse
-     * @throws InputException
      */
     public function changePassword(ChangePasswordRequest $request)
     {
         $currentUser = $this->guard()->user();
-        $inputs = $request->only(['current_password', 'password']);
-        $data = AuthService::getInstance()->withUser($currentUser)->changePassword($inputs);
+        $data = AuthService::getInstance()->withUser($currentUser)->changePassword($request->only('password'));
 
-        return $this->sendSuccessResponse($data, trans('auth.logout_success'));
+        if ($data) {
+            return $this->sendSuccessResponse([], trans('auth.update_success'));
+        }
+
+        throw new InputException(trans('validation.ERR.010'));
     }
 
     /**

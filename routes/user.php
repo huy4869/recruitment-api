@@ -23,7 +23,7 @@ Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {
     Route::post('/logout', 'AuthController@logout')->name('logout');
     Route::get('/me', 'AuthController@currentLoginUser')->name('currentLoginUser');
     Route::post('/me', 'AuthController@updateProfile')->name('updateProfile');
-    Route::post('/change-password', 'AuthController@changePassword')->name('changePassword');
+    Route::post('/change-password', 'AuthController@changePassword')->name('changePassword')->middleware('user');
 });
 
 Route::group(['as' => 'forgot-password.', 'prefix' => 'forgot-password'], function () {

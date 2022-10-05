@@ -3,6 +3,7 @@
 namespace App\Http\Requests\User\Auth;
 
 use App\Rules\Password;
+use App\Rules\User\CurrentPassword;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ChangePasswordRequest extends FormRequest
@@ -25,8 +26,38 @@ class ChangePasswordRequest extends FormRequest
     public function rules()
     {
         return [
-            'current_password' => 'required',
-            'password' => ['required', 'confirmed', new Password()],
+            'current_password' => ['required', new Password(), new CurrentPassword()],
+            'password' => ['required', new Password(), 'min:' . config('validate.password_min_length'), 'max:' . config('validate.password_max_length')],
+            'password_confirmation' => ['required', 'same:password'],
+        ];
+    }
+
+    /**
+     * Get the validation messages
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'current_password.required' => trans('validation.COM.001'),
+            'password.required' => trans('validation.COM.001'),
+            'password.min' => trans('validation.COM.005'),
+            'password.max' => trans('validation.COM.005'),
+            'password_confirmation.required' => trans('validation.COM.001'),
+            'password_confirmation.same' => trans('validation.COM.007'),
+        ];
+    }
+
+    /**
+     * attributes
+     *
+     * @return string[]
+     */
+    public function attributes()
+    {
+        return [
+            'password' => '新しいパスワード',
+            'password_confirmation' => '新しいパスワード確認',
         ];
     }
 }
