@@ -41,3 +41,11 @@ Route::group(['as' => 'applications.', 'prefix' => 'applications', 'middleware' 
     Route::get('/applied', 'ApplicationController@listApplied')->name('listApplied');
     Route::post('/cancel', 'ApplicationController@cancelApplied')->name('cancelApplied');
 });
+
+Route::group(['as' => 'profile.', 'prefix' => 'profile', 'middleware' => 'user'], function () {
+    Route::get('/', 'UserController@detail')->name('detail');
+    Route::post('/update', 'UserController@update')->name('update');
+    Route::group(['as' => 'basic-info.', 'prefix' => 'basic-info'], function () {
+    });
+});
+

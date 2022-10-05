@@ -23,7 +23,7 @@ class MProvince extends Model
     /**
      * @return BelongsTo
      */
-    public function province()
+    public function provinceDistrict()
     {
         return $this->belongsTo(MProvinceDistrict::class, 'district_id');
     }

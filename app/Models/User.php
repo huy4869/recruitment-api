@@ -6,6 +6,7 @@ use App\Models\Scopes\User as ScopesUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -23,6 +24,14 @@ class User extends Authenticatable
     public const ROLE_RECRUITER = 2;
     public const ROLE_SUB_ADMIN = 3;
     public const ROLE_ADMIN = 4;
+
+    // Gender
+    public const GENDER_FEMALE = 1;
+    // male
+    public const GENDER_MALE = 2;
+    // female
+    public const GENDER_THIRD = 3;
+    // different
 
     /**
      * The attributes that are mass assignable.
@@ -71,6 +80,16 @@ class User extends Authenticatable
         'password',
         'remember_token',
     ];
+
+    protected $appends = ['full_name', 'full_name_furi'];
+
+    function getFullNameAttribute() {
+        return $this->first_name . $this->last_name;
+    }
+
+    function getFullNameFuriAttribute() {
+        return $this->furi_first_name . $this->furi_last_name;
+    }
 
     /**
      * @return BelongsTo
@@ -134,5 +153,13 @@ class User extends Authenticatable
     public function applications()
     {
         return $this->hasMany(Application::class);
+    }
+
+    /**
+     * @return MorphMany
+     */
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
     }
 }
