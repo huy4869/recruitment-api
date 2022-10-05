@@ -32,6 +32,10 @@ Route::group(['as' => 'forgot-password.', 'prefix' => 'forgot-password'], functi
     Route::post('/reset-password', 'PasswordResetController@resetPassword')->name('reset.password');
 });
 
+Route::group(['as' => 'profile.', 'prefix' => 'profile'], function () {
+   Route::get('/', 'ProfileController@getCompletionPercent')->name('getCompletionPercent')->middleware('user');
+});
+
 Route::group(['as' => 'applications.', 'prefix' => 'applications'], function () {
     Route::get('/waiting-interview', 'ApplicationController@listWaitingInterview')->name('listWaitingInterview');
 });

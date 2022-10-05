@@ -6,6 +6,7 @@ use App\Services\User\ApplicationService;
 use App\Services\User\AuthService;
 use App\Services\User\MasterDataService;
 use App\Services\User\PasswordResetService;
+use App\Services\User\ProfileService;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Foundation\Application;
 
@@ -29,6 +30,10 @@ class User
 
         $app->scoped(PasswordResetService::class, function ($app) {
             return new PasswordResetService();
+        });
+
+        $app->scoped(ProfileService::class, function ($app) {
+            return new ProfileService();
         });
 
         $app->scoped(ApplicationService::class, function ($app) {

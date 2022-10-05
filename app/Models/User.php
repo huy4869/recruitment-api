@@ -113,6 +113,30 @@ class User extends Authenticatable
     /**
      * @return HasMany
      */
+    public function userLearningHistories()
+    {
+        return $this->hasMany(UserLearningHistory::class);
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function userLicensesQualifications()
+    {
+        return $this->hasMany(UserLicensesQualification::class);
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function userWordHistories()
+    {
+        return $this->hasMany(UserWorkHistory::class);
+    }
+
+    /**
+     * @return HasMany
+     */
     public function applications()
     {
         return $this->hasMany(Application::class);
