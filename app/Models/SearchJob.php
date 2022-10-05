@@ -7,22 +7,24 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ApplicationUserLicensesQualification extends Model
+class SearchJob extends Model
 {
     use HasFactory, SoftDeletes;
 
     /**
      * @var string
      */
-    protected $table = 'application_user_licenses_qualifications';
+    protected $table = 'search_jobs';
 
     /**
      * @var string[]
      */
     protected $fillable = [
         'user_id',
-        'name',
-        'new_issuance_date',
+        'model_class',
+        'attribute',
+        'content_type',
+        'content',
     ];
 
     /**
@@ -30,14 +32,6 @@ class ApplicationUserLicensesQualification extends Model
      */
     public function user()
     {
-        return $this->belongsTo(User::class, 'user_id');
-    }
-
-    /**
-     * @return BelongsTo
-     */
-    public function jobPosting()
-    {
-        return $this->belongsTo(JobPosting::class, 'job_posting_id');
+        return $this->belongsTo(User::class);
     }
 }

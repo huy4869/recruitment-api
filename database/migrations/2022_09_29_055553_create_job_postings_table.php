@@ -18,11 +18,12 @@ return new class extends Migration
             $table->unsignedBigInteger('store_id');
             $table->unsignedBigInteger('job_type_id');
             $table->json('work_type_ids');
+            $table->unsignedBigInteger('job_status_id');
             $table->string('postal_code', 255)->nullable();
             $table->unsignedBigInteger('province_id');
             $table->string('city', 255)->nullable();
             $table->string('address', 255)->nullable();
-            $table->json('stations');
+            $table->json('stations')->nullable();
             $table->string('name', 255)->nullable();
             $table->text('pick_up_point')->nullable();
             $table->text('description')->nullable();
@@ -33,10 +34,11 @@ return new class extends Migration
             $table->string('salary_description', 255)->nullable();
             $table->string('start_work_time', 20)->nullable();
             $table->string('end_work_time', 20)->nullable();
-            $table->text('shifs')->nullable();
-            $table->json('gender_ids');
+            $table->text('shifts')->nullable();
+            $table->json('gender_ids')->nullable();
             $table->text('welfare _treatment_description')->nullable();
-            $table->json('feature_ids');
+            $table->json('feature_ids')->nullable();
+            $table->unsignedBigInteger('views');
             $table->unsignedTinyInteger('age_min');
             $table->unsignedTinyInteger('age_max');
             $table->unsignedBigInteger('created_by');
@@ -45,6 +47,7 @@ return new class extends Migration
 
             $table->foreign('store_id')->references('id')->on('stores')->onDelete('cascade');
             $table->foreign('job_type_id')->references('id')->on('m_job_types')->onDelete('cascade');
+            $table->foreign('job_status_id')->references('id')->on('m_job_statuses')->onDelete('cascade');
             $table->foreign('province_id')->references('id')->on('m_provinces')->onDelete('cascade');
             $table->foreign('salary_type_id')->references('id')->on('m_salary_types')->onDelete('cascade');
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');

@@ -23,7 +23,7 @@ return new class extends Migration
             $table->dateTime('period_start')->nullable();
             $table->dateTime('period_end')->nullable();
             $table->text('position_offices')->nullable();
-            $table->string('business_content')->nullable();
+            $table->string('business_content', 255)->nullable();
             $table->text('experience_accumulation')->nullable();
             $table->timestamps();
             $table->softDeletes();

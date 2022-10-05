@@ -19,11 +19,11 @@ return new class extends Migration
             $table->unsignedBigInteger('job_posting_id');
             $table->unsignedBigInteger('store_id');
             $table->unsignedBigInteger('interview_status_id');
-            $table->json('interview_approaches');
-            $table->text('note');
-            $table->dateTime('date');
-            $table->string('hours', 20);
-            $table->dateTime('update_times');
+            $table->json('interview_approaches')->nullable();
+            $table->text('note')->nullable();
+            $table->dateTime('date')->nullable();
+            $table->string('hours', 20)->nullable();
+            $table->dateTime('update_times')->nullable();
             $table->timestamps();
             $table->softDeletes();
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

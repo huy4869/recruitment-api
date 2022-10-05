@@ -23,6 +23,7 @@ class JobPosting extends Model
         'store_id',
         'job_type_id',
         'work_type_ids',
+        'job_status_id',
         'postal_code',
         'province_id',
         'city',
@@ -38,12 +39,13 @@ class JobPosting extends Model
         'salary_description',
         'start_work_time',
         'end_work_time',
-        'shifs',
+        'shifts',
         'gender_ids',
         'welfare_treatment_description',
         'feature_ids',
         'age_min',
         'age_max',
+        'views',
         'created_by'
     ];
 

@@ -16,14 +16,12 @@ return new class extends Migration
         Schema::create('application_user_licenses_qualifications', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('job_posting_id');
             $table->string('name', 255);
             $table->dateTime('new_issuance_date');
             $table->timestamps();
             $table->softDeletes();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('job_posting_id')->references('id')->on('job_postings')->onDelete('cascade');
         });
     }
 

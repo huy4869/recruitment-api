@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('company_name', 255)->nullable();
             $table->dateTime('period_start');
             $table->dateTime('period_end');
-            $table->unsignedBigInteger('position_office_id');
+            $table->text('position_offices')->nullable();
             $table->string('business_content', 255)->nullable();
             $table->text('experience_accumulation')->nullable();
             $table->timestamps();
@@ -31,7 +31,6 @@ return new class extends Migration
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('job_posting_id')->references('id')->on('job_postings')->onDelete('cascade');
             $table->foreign('job_type_id')->references('id')->on('m_job_types')->onDelete('cascade');
-            $table->foreign('position_office_id')->references('id')->on('m_work_positions')->onDelete('cascade');
         });
     }
 
