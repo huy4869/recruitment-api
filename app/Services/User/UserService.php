@@ -8,6 +8,8 @@ use App\Services\Common\FileService;
 use App\Services\Service;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use App\Models\Image;
+use App\Models\User;
 
 class UserService extends Service
 {
@@ -80,6 +82,20 @@ class UserService extends Service
             'city' => $data['city'],
             'address' => $data['address'],
         ];
+    }
 
+    /**
+     * get basic info user
+     *
+     * @return User|null
+     */
+    public function getBasicInfo()
+    {
+        $user = $this->user;
+        $images = $user->images()->whereIn('type', [Image::AVATAR_DETAIL, Image::AVATAR_BANNER])->get();
+        $user['images'] = $images->where('type', Image::AVATAR_DETAIL);
+        $user['avatar'] = $images->firstWhere('type', Image::AVATAR_BANNER)->url ?? null;
+
+        return $user;
     }
 }

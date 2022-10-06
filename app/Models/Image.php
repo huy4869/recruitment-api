@@ -4,12 +4,18 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Image extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $table = 'images';
+
+    public const AVATAR_BANNER = "avatar_banner";
+    public const AVATAR_DETAIL = "avatar_detail";
+    public const JOB_BANNER = "job_banner";
+    public const JOB_DETAIL = "job_detail";
 
     /**
      * The attributes that are mass assignable.
