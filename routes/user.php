@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/master-data', 'MasterDataController@show')->name('masterData');
-Route::post('/upload-image', 'UploadImageController@upload')->name('uploadImage');
+Route::post('/upload-image', 'UploadImageController@upload')->name('uploadImage')->middleware('user');
 Route::get('/zipcode', 'ZipcodeController@index')->name('getZipcode');
 
 Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {
@@ -52,4 +52,8 @@ Route::group(['as' => 'profile.', 'prefix' => 'profile', 'middleware' => 'user']
 Route::group(['as' => 'contact.', 'prefix' => 'contact'], function () {
     Route::post('/create', 'ContactController@store')->name('store');
     Route::get('/admin-tel', 'ContactController@getAdminPhone')->name('getAdminPhone');
+});
+
+Route::group(['as' => 'work-history.', 'prefix' => 'work-history', 'middleware' => 'user'], function () {
+    Route::get('/', 'WorkHistoryController@list')->name('list');
 });
