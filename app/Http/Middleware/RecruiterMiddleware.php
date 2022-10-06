@@ -19,7 +19,7 @@ class RecruiterMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        $userRoleId = auth()->user()->role_id;
+        $userRoleId = auth()->user()->role_id ?? null;
 
         if ($userRoleId == User::ROLE_RECRUITER) {
             return $next($request);

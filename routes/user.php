@@ -33,9 +33,11 @@ Route::group(['as' => 'forgot-password.', 'prefix' => 'forgot-password'], functi
 });
 
 Route::group(['as' => 'profile.', 'prefix' => 'profile'], function () {
-   Route::get('/', 'ProfileController@getCompletionPercent')->name('getCompletionPercent')->middleware('user');
+    Route::get('/', 'ProfileController@getCompletionPercent')->name('getCompletionPercent')->middleware('user');
 });
 
-Route::group(['as' => 'applications.', 'prefix' => 'applications'], function () {
+Route::group(['as' => 'applications.', 'prefix' => 'applications', 'middleware' => 'user'], function () {
     Route::get('/waiting-interview', 'ApplicationController@listWaitingInterview')->name('listWaitingInterview');
+    Route::get('/applied', 'ApplicationController@listApplied')->name('listApplied');
+    Route::post('/cancel', 'ApplicationController@cancelApplied')->name('cancelApplied');
 });
