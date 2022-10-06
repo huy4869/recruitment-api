@@ -19,7 +19,7 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        $userRoleId = auth()->user()->role_id;
+        $userRoleId = auth()->user()->role_id ?? null;
 
         if ($userRoleId == User::ROLE_SUB_ADMIN || $userRoleId == User::ROLE_ADMIN) {
             return $next($request);

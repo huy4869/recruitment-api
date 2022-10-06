@@ -3,6 +3,7 @@
 namespace App\Http\Resources\User\Application;
 
 use App\Helpers\DateTimeHelper;
+use App\Helpers\FileHelper;
 use App\Models\MInterviewApproach;
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -22,9 +23,10 @@ class ListInterviewResource extends JsonResource
 
         return [
             'id' => $this->id,
+            'job_banner' => FileHelper::getFullUrl($this->jobPosting->bannerImage->url),
             'job_name' => $this->jobPosting->name,
             'store_name' => $this->store->name,
-            'date' => DateTimeHelper::formatDateDayOfWeekTimeJa($this->date),
+            'interview_date' => DateTimeHelper::formatDateDayOfWeekTimeJa($this->date),
             'interview_approach' => [
                 'id' => $approach->id,
                 'method' => $interviewMethod[$approach->id - 1],
