@@ -31,6 +31,8 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'role_id',
+        'store_id',
+        'company_name',
         'alias_name',
         'email',
         'password',
@@ -52,20 +54,12 @@ class User extends Authenticatable
         'province_id',
         'city',
         'address',
-        'favorite',
-        'skill',
-        'experience',
-        'knowledge',
-        'selft_pr',
-        'desire_job_type_ids',
-        'desire_from_working',
-        'desire_to_working',
-        'desire_job_work_id',
-        'desire_from_salary',
-        'desire_to_salary',
-        'experience_id',
-        'home_page_rescuiter',
+        'favorite_skill',
+        'experience_knowledge',
+        'self_pr',
+        'home_page_recruiter',
         'motivation',
+        'recent_jobs',
     ];
 
     /**

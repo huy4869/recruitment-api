@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class UserWorkHistory extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     /**
      * @var string
@@ -21,6 +22,7 @@ class UserWorkHistory extends Model
     protected $fillable = [
         'user_id',
         'job_type_id',
+        'work_type_id',
         'store_name',
         'company_name',
         'period_start',

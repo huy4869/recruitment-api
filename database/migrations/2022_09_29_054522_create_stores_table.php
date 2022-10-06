@@ -26,11 +26,12 @@ return new class extends Migration
             $table->string('website', 255)->nullable();
             $table->string('tel', 15)->nullable();
             $table->string('employee_quantity', 50)->nullable();
-            $table->dateTime('founded_year');
+            $table->dateTime('founded_year')->nullable();
             $table->text('business_segment')->nullable();
+            $table->text('store_features')->nullable();
             $table->unsignedBigInteger('created_by');
-
             $table->timestamps();
+            $table->softDeletes();
             $table->foreign('province_id')->references('id')->on('m_provinces')->onDelete('cascade');
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
         });

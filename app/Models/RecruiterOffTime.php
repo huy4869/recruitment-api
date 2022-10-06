@@ -7,14 +7,14 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class RescuiterOffTime extends Model
+class RecruiterOffTime extends Model
 {
     use HasFactory, SoftDeletes;
 
     /**
      * @var string
      */
-    protected $table = 'rescuiter_off_times';
+    protected $table = 'recruiter_off_times';
 
     /**
      * @var string[]

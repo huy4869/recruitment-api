@@ -13,7 +13,7 @@ class MProvince extends Model
     /**
      * @var string
      */
-    protected $table = 'm_learning_status';
+    protected $table = 'm_provinces';
 
     /**
      * @var string[]

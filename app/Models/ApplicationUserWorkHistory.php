@@ -27,7 +27,7 @@ class ApplicationUserWorkHistory extends Model
         'company_name',
         'period_start',
         'period_end',
-        'position_office_ids',
+        'position_offices',
         'business_content',
         'experience_accumulation',
     ];

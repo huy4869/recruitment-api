@@ -13,18 +13,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('user_learning_histories', function (Blueprint $table) {
+        Schema::create('search_jobs', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('learning_status_id');
-            $table->string('school_name', 255)->nullable();
-            $table->dateTime('enrollment_period_start')->nullable();
-            $table->dateTime('enrollment_period_end')->nullable();
+            $table->string('model_class', 255)->nullable();
+            $table->string('attribute', 255)->nullable();
+            $table->unsignedTinyInteger('content_type')->nullable();
+            $table->text('content')->nullable();
             $table->timestamps();
             $table->softDeletes();
-
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('learning_status_id')->references('id')->on('m_learning_status')->onDelete('cascade');
         });
     }
 
@@ -35,6 +33,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('user_learning_histories');
+        Schema::dropIfExists('search_jobs');
     }
 };
