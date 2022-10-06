@@ -10,8 +10,9 @@ return [
     'max_image_detail' => 3,
     'password_max_length' => 12,
     'string_max_length' => 255,
-    'phone_min_length' => 9,
-    'phone_max_length' => 15,
+    'phone_min_length' => 10,
+    'phone_max_length' => 13,
     'quantity_max_length' => 99,
     'token_expire' => (int)env('TOKEN_EXPIRE', 90),
+    'text_max_length' => 1000,
 ];

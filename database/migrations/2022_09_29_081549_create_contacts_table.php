@@ -15,8 +15,7 @@ return new class extends Migration
     {
         Schema::create('contacts', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('store_id');
+            $table->unsignedBigInteger('user_id')->nullable();
             $table->string('email', 255);
             $table->string('name', 255);
             $table->string('tel', 15);
@@ -25,7 +24,6 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('store_id')->references('id')->on('stores')->onDelete('cascade');
         });
     }
 
