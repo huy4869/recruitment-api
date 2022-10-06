@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "recruiter" middleware group. Enjoy building your user api!
 |
 */
+Route::post('/upload-image', 'UploadImageController@upload')->name('uploadImage')->middleware('recruiter');
 
 Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {
     Route::post('/login', 'AuthController@login')->name('login');
