@@ -4,6 +4,7 @@ namespace App\Providers\ServiceRegister;
 
 use App\Services\User\ApplicationService;
 use App\Services\User\AuthService;
+use App\Services\User\JobService;
 use App\Services\User\MasterDataService;
 use App\Services\User\PasswordResetService;
 use App\Services\User\ProfileService;
@@ -39,6 +40,10 @@ class User
 
         $app->scoped(ApplicationService::class, function ($app) {
             return new ApplicationService();
+        });
+
+        $app->scoped(JobService::class, function ($app) {
+            return new JobService();
         });
 
         $app->scoped(WorkHistoryService::class, function ($app) {
