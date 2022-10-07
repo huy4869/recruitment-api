@@ -57,3 +57,7 @@ Route::group(['as' => 'contact.', 'prefix' => 'contact'], function () {
 Route::group(['as' => 'work-history.', 'prefix' => 'work-history', 'middleware' => 'user'], function () {
     Route::get('/', 'WorkHistoryController@list')->name('list');
 });
+
+Route::group(['as' => 'feedback.', 'prefix' => 'feedback', 'middleware' => 'user'], function () {
+    Route::post('/{jobPosting}', 'FeedbackController@store')->name('store');
+});
