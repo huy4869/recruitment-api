@@ -24,6 +24,7 @@ return [
         'cancel_applied' => '応募のキャンセル成功しました。',
     ],
     'update_base_info_success' => '基本情報を正常に編集します。',
+    'readed_update_error' => '読み取り更新に失敗しました',
     'INF' => [
       '003' => 'お気に入り求人リストから削除成功しました。',
     ],
