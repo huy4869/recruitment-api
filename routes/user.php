@@ -49,3 +49,7 @@ Route::group(['as' => 'profile.', 'prefix' => 'profile', 'middleware' => 'user']
     });
 });
 
+Route::group(['as' => 'contact.', 'prefix' => 'contact'], function () {
+    Route::post('/create', 'ContactController@store')->name('store');
+    Route::get('/admin-tel', 'ContactController@getAdminPhone')->name('getAdminPhone');
+});
