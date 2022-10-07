@@ -47,4 +47,12 @@ class UserWorkHistory extends Model
     {
         return $this->belongsTo(MJobType::class, 'job_type_id');
     }
+
+    /**
+     * @return BelongsTo
+     */
+    public function workType()
+    {
+        return $this->belongsTo(MWorkType::class, 'work_type_id');
+    }
 }

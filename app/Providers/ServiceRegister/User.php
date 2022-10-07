@@ -7,6 +7,7 @@ use App\Services\User\AuthService;
 use App\Services\User\MasterDataService;
 use App\Services\User\PasswordResetService;
 use App\Services\User\ProfileService;
+use App\Services\User\WorkHistoryService;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Foundation\Application;
 
@@ -38,6 +39,10 @@ class User
 
         $app->scoped(ApplicationService::class, function ($app) {
             return new ApplicationService();
+        });
+
+        $app->scoped(WorkHistoryService::class, function ($app) {
+            return new WorkHistoryService();
         });
     }
 }
