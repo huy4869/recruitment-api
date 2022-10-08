@@ -16,6 +16,7 @@ return [
     'cant_update' => ':objectの更新に失敗しました。',
     'label' => [
         'user' => 'ユーザー',
+        'user_work_history' => '実務経験',
     ],
     'reset_password' => 'パスワードのリセットが成功しました。 新しいパスワードで再度ログインできます。',
     'send_mail_success' => 'メールを送信しました。',
@@ -26,4 +27,7 @@ return [
     'INF' => [
       '003' => 'お気に入り求人リストから削除成功しました。',
     ],
+    'user_work_history' => [
+        'count_error' => '職務経歴が10個以上は追加できません。'
+    ]
 ];
