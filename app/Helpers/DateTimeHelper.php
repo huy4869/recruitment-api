@@ -97,6 +97,21 @@ class DateTimeHelper
     }
 
     /**
+     * Format date japan fe
+     *
+     * @param $dateTime
+     * @return string|null
+     */
+    public static function formatDateHalfJaFe($dateTime)
+    {
+        if (!$dateTime) {
+            return null;
+        }
+
+        return Carbon::parse($dateTime)->format(config('date.fe_date_work_history_format'));
+    }
+
+    /**
      * Format date time half japan
      *
      * @param $dateTime

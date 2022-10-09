@@ -61,9 +61,9 @@ Route::group(['as' => 'job.', 'prefix' => 'job', 'middleware' => 'user'], functi
 Route::group(['as' => 'work-history.', 'prefix' => 'work-history', 'middleware' => 'user'], function () {
     Route::get('/', 'WorkHistoryController@list')->name('list');
     Route::post('/', 'WorkHistoryController@store')->name('store');
-    Route::get('/{work-history}', 'WorkHistoryController@detail')->name('detail');
-    Route::post('/{work-history}', 'WorkHistoryController@update')->name('update');
-    Route::post('/{work-history}/delete', 'WorkHistoryController@delete')->name('delete');
+    Route::get('/{workHistory}', 'WorkHistoryController@detail')->name('detail');
+    Route::post('/{workHistory}', 'WorkHistoryController@update')->name('update');
+    Route::post('/{workHistory}/delete', 'WorkHistoryController@delete')->name('delete');
 });
 
 Route::group(['as' => 'feedback.', 'prefix' => 'feedback', 'middleware' => 'user'], function () {

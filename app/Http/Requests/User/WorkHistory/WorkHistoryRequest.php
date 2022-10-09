@@ -30,10 +30,13 @@ class WorkHistoryRequest extends FormRequest
 
         return [
             'job_types' => ['required', 'array'],
+            'job_types.*.id' => ['nullable', 'integer', 'exists:m_job_types,id'],
             'job_types.*.name' => ['required', 'string', 'max:' . $stringMaxLength, 'distinct'],
             'work_types' => ['required', 'array'],
+            'work_types.*.id' => ['nullable', 'integer', 'exists:m_work_types,id'],
             'work_types.*.name' => ['required', 'string', 'max:' . $stringMaxLength, 'distinct'],
             'position_offices' => ['required', 'array'],
+            'position_offices.*.id' => ['nullable', 'integer', 'exists:m_position_offices,id'],
             'position_offices.*.name' => ['required', 'string', 'max:' . $stringMaxLength, 'distinct'],
             'store_name' => ['required', 'string', 'max:' . $stringMaxLength],
             'company_name' => ['nullable', 'string', 'max:' . $stringMaxLength],
