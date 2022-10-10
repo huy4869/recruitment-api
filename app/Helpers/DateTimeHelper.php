@@ -141,4 +141,19 @@ class DateTimeHelper
 
         return sprintf('%s (%s) %s', $date, $dayOfWeek, $time);
     }
+
+    /**
+     * Format dateTime Be
+     *
+     * @param $dateTime
+     * @return string|null
+     */
+    public static function formatDateWorkHistoryBe($dateTime)
+    {
+        if (!$dateTime) {
+            return null;
+        }
+
+        return Carbon::createFromFormat(config('date.fe_date_work_history_format'), $dateTime)->toDateString();
+    }
 }

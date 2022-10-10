@@ -145,6 +145,12 @@ return [
         'birthday' => [
             'before' => '今日以前の日付を入力してください。'
         ],
+        'period_start' => [
+            'before' => '終了年月は開始年月より未来年月を選択してください'
+        ],
+        'period_end' => [
+            'after' => '開始日より後の終了日を選択してください'
+        ],
         'zip_code' => [
             'digits_between' => '郵便番号は半角数字:max桁を入力してください。'
         ],
@@ -221,6 +227,15 @@ return [
         'content' => 'お問い合わせ内容',
         'feedback_type_ids' => 'お問い合わせ内容選択',
         'feedback_content' => 'お問い合わせ内容詳細',
+        'job_types' => '職種',
+        'work_types' => '雇用形態',
+        'store_name' => '店舗名',
+        'company_name' => '勤務先企業名',
+        'period_start' => '生年月日',
+        'period_end' => '生年月日',
+        'position_offices' => '業務内容',
+        'business_content' => '業務内容',
+        'experience_accumulation' => '主な取り組み、具体的な施策、 得られた経験',
     ],
 
     'COM' => [
