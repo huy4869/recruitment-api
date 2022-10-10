@@ -106,4 +106,17 @@ class UserService extends Service
     {
         return $this->user;
     }
+
+    /**
+     * Update Data
+     *
+     * @param $data
+     * @return bool
+     */
+    public function updateInformationPr($data)
+    {
+        $user = $this->user;
+
+        return $user->update($data);
+    }
 }
