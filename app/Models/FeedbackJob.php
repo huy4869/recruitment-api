@@ -11,6 +11,8 @@ class FeedbackJob extends Model
 {
     use HasFactory, SoftDeletes;
 
+    public const FEEDBACK_TYPE_DESIRE_SALARY = 1;
+
     /**
      * @var string
      */
@@ -22,11 +24,22 @@ class FeedbackJob extends Model
     protected $fillable = [
         'user_id',
         'feedback_type_ids',
+        'job_posting_id',
         'type',
+        'desired_salary',
         'email',
         'name',
         'tel',
         'content',
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'feedback_type_ids' => 'array',
     ];
 
     /**
