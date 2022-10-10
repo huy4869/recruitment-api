@@ -3,14 +3,12 @@
 namespace App\Http\Controllers\User;
 
 use App\Exceptions\InputException;
-use App\Helpers\DateTimeHelper;
-use App\Http\Controllers\Controller;
 use App\Http\Resources\User\ChatDetailResource;
 use App\Http\Resources\User\ChatResource;
+use App\Http\Requests\User\ChatCreateRequest;
 use App\Services\User\ChatService;
-use Carbon\Carbon;
 
-class ChatController extends Controller
+class ChatController extends BaseController
 {
     protected $chatService;
 
@@ -49,5 +47,44 @@ class ChatController extends Controller
         }
 
         throw new InputException(trans('response.readed_update_error'));
+    }
+
+    /**
+     * create chat
+     *
+     * @param ChatCreateRequest $request
+     * @param $store_id
+     * @return \Illuminate\Http\JsonResponse
+     * @throws InputException
+     */
+    public function store(ChatCreateRequest $request)
+    {
+        if ($request->store_id) {
+            $input = $request->only([
+                'store_id',
+                'content'
+            ]);
+            $data = $this->chatService->withUser($this->guard()->user())->store($input);
+
+            if ($data) {
+                return $this->sendSuccessResponse($data, trans('response.INF.006'));
+            }
+
+            throw new InputException(trans('validation.ERR.006'));
+        }
+
+        throw new InputException(trans('validation.store_id_required'));
+    }
+
+    /**
+     * total unread
+     *
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function unreadCount()
+    {
+        $data = $this->chatService->withUser($this->guard()->user())->unreadCount();
+
+        return $this->sendSuccessResponse($data);
     }
 }
