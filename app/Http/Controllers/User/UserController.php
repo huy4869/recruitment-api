@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Exceptions\InputException;
 use App\Http\Requests\User\UserUpdateRequest;
 use App\Http\Resources\User\InfoResource;
+use App\Http\Resources\User\InformationPrResource;
 use App\Services\User\UserService;
 use Illuminate\Http\JsonResponse;
 
@@ -58,5 +59,18 @@ class UserController extends BaseController
         $user = UserService::getInstance()->withUser($user)->getBasicInfo();
 
         return $this->sendSuccessResponse(new InfoResource($user));
+    }
+
+    /**
+     * get Information Pr
+     *
+     * @return JsonResponse
+     */
+    public function detailPr()
+    {
+        $user = $this->guard()->user();
+        $user = UserService::getInstance()->withUser($user)->getPrInformation();
+
+        return $this->sendSuccessResponse(new InformationPrResource($user));
     }
 }

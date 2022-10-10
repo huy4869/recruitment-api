@@ -98,4 +98,12 @@ class UserService extends Service
 
         return $user;
     }
+
+    /**
+     * @return User|null
+     */
+    public function getPrInformation()
+    {
+        return $this->user;
+    }
 }
