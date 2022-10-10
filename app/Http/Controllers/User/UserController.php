@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Exceptions\InputException;
+use App\Http\Requests\User\UpdateInformationPrRequest;
 use App\Http\Requests\User\UserUpdateRequest;
 use App\Http\Resources\User\InfoResource;
 use App\Http\Resources\User\InformationPrResource;
@@ -11,6 +12,13 @@ use Illuminate\Http\JsonResponse;
 
 class UserController extends BaseController
 {
+    private $userService;
+
+    public function __construct(UserService $userService)
+    {
+        $this->userService = $userService;
+    }
+
     /**
      * Update user
      *
@@ -43,7 +51,7 @@ class UserController extends BaseController
             'avatar',
             'images',
         ]);
-        UserService::getInstance()->withUser($user)->update($inputs);
+        $this->userService->withUser($user)->update($inputs);
 
         return $this->sendSuccessResponse([], trans('response.update_base_info_success'));
     }
@@ -56,7 +64,7 @@ class UserController extends BaseController
     public function detail()
     {
         $user = $this->guard()->user();
-        $user = UserService::getInstance()->withUser($user)->getBasicInfo();
+        $user = $this->userService->withUser($user)->getBasicInfo();
 
         return $this->sendSuccessResponse(new InfoResource($user));
     }
@@ -69,8 +77,28 @@ class UserController extends BaseController
     public function detailPr()
     {
         $user = $this->guard()->user();
-        $user = UserService::getInstance()->withUser($user)->getPrInformation();
+        $user = $this->userService->withUser($user)->getPrInformation();
 
         return $this->sendSuccessResponse(new InformationPrResource($user));
+    }
+
+    /**
+     * Update pr information
+     *
+     * @param UpdateInformationPrRequest $request
+     * @return JsonResponse
+     * @throws InputException
+     */
+    public function updatePr(UpdateInformationPrRequest $request)
+    {
+        $user = $this->guard()->user();
+        $inputs = $request->only(['favorite_skill', 'experience_knowledge', 'self_pr']);
+        $data = $this->userService->withUser($user)->updateInformationPr($inputs);
+
+        if ($data) {
+            return $this->sendSuccessResponse([], trans('response.update_success'));
+        }
+
+        throw new InputException(trans('validation.ERR.011'));
     }
 }

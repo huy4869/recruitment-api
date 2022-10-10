@@ -29,5 +29,6 @@ return [
     ],
     'user_work_history' => [
         'count_error' => '職務経歴が10個以上は追加できません。'
-    ]
+    ],
+    'update_success' => '編集が成功しました。',
 ];
