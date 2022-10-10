@@ -47,6 +47,8 @@ Route::group(['as' => 'profile.', 'prefix' => 'profile', 'middleware' => 'user']
     Route::post('/update', 'UserController@update')->name('update');
     Route::group(['as' => 'basic-info.', 'prefix' => 'basic-info'], function () {
     });
+    Route::get('/pr', 'UserController@detailPr')->name('list_pr');
+    Route::post('/pr', 'UserController@updatePr')->name('update_pr');
 });
 
 Route::group(['as' => 'contact.', 'prefix' => 'contact'], function () {
