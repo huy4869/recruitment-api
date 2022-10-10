@@ -14,6 +14,8 @@ class UserWorkHistory extends Model
     public const TYPE_ACTIVE = 1;
     public const TYPE_INACTIVE = 0;
 
+    public const MAX_USER_WORK_HISTORY = 10;
+
     /**
      * @var string
      */
@@ -41,21 +43,5 @@ class UserWorkHistory extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
-    }
-
-    /**
-     * @return BelongsTo
-     */
-    public function jobType()
-    {
-        return $this->belongsTo(MJobType::class, 'job_type_id');
-    }
-
-    /**
-     * @return BelongsTo
-     */
-    public function workType()
-    {
-        return $this->belongsTo(MWorkType::class, 'work_type_id');
     }
 }
