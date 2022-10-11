@@ -240,6 +240,9 @@ return [
         'business_content' => '業務内容',
         'experience_accumulation' => '主な取り組み、具体的な施策、 得られた経験',
         'new_issuance_date' => '取得年月',
+        'enrollment_period_start' => '在学期間',
+        'enrollment_period_end' => '在学期間',
+        'learning_status_id' => '在学期間',
     ],
 
     'COM' => [
