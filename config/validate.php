@@ -16,4 +16,5 @@ return [
     'token_expire' => (int)env('TOKEN_EXPIRE', 90),
     'text_max_length' => 1000,
     'text_max_length_information_pr' => 2000,
+    'date_in_new_range' => 7,
 ];

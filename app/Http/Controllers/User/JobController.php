@@ -4,6 +4,8 @@ namespace App\Http\Controllers\User;
 
 use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\User\JobPosting\JobPostingCollection;
+use App\Http\Resources\User\JobPosting\JobPostingResource;
 use App\Services\User\Job\JobService;
 use Illuminate\Http\JsonResponse;
 
@@ -14,6 +16,46 @@ class JobController extends Controller
     public function __construct(JobService $jobService)
     {
         $this->jobService = $jobService;
+    }
+
+    /**
+     * Get list new jobs
+     *
+     * @return JsonResponse
+     */
+    public function getListNewJobPostings()
+    {
+        $user = $this->guard()->user();
+        $data = JobService::getInstance()->getListNewJobPostings();
+
+        return $this->sendSuccessResponse([
+            'total_jobs' => $data['total_jobs'],
+            'data' => JobPostingResource::collection($data['list_jobs']),
+        ]);
+    }
+
+    /**
+     * Get most view jobs
+     *
+     * @return JsonResponse
+     */
+    public function getListMostViewJobPostings()
+    {
+        $jobPostings = JobService::getInstance()->getListMostViewJobPostings();
+
+        return $this->sendSuccessResponse(JobPostingResource::collection($jobPostings));
+    }
+
+    /**
+     * Get most apply jobs
+     *
+     * @return JsonResponse
+     */
+    public function getListMostApplyJobPostings()
+    {
+        $jobPostings = JobService::getInstance()->getListMostApplyJobPostings();
+
+        return $this->sendSuccessResponse(JobPostingResource::collection($jobPostings));
     }
 
     /**

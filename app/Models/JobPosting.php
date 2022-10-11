@@ -2,19 +2,21 @@
 
 namespace App\Models;
 
+use App\Models\Scopes\JobPosting as ScopesJobPosting;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JobPosting extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, ScopesJobPosting;
 
     public const STATUS_DRAFT = 1;
+    public const STATUS_RELEASE = 2;
+    public const STATUS_END = 3;
 
     /**
      * @var string
@@ -26,7 +28,7 @@ class JobPosting extends Model
      */
     protected $fillable = [
         'store_id',
-        'job_type_id',
+        'job_type_ids',
         'work_type_ids',
         'job_status_id',
         'postal_code',
@@ -51,7 +53,18 @@ class JobPosting extends Model
         'age_min',
         'age_max',
         'views',
-        'created_by'
+        'created_by',
+        'released_at'
+    ];
+
+    /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'job_type_ids' => 'array',
+        'work_type_ids' => 'array',
     ];
 
     /**
@@ -60,14 +73,6 @@ class JobPosting extends Model
     public function store()
     {
         return $this->belongsTo(Store::class, 'store_id');
-    }
-
-    /**
-     * @return BelongsTo
-     */
-    public function jobType()
-    {
-        return $this->belongsTo(MJobType::class, 'job_type_id');
     }
 
     /**

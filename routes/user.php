@@ -57,9 +57,12 @@ Route::group(['as' => 'contact.', 'prefix' => 'contact'], function () {
     Route::get('/admin-tel', 'ContactController@getAdminPhone')->name('getAdminPhone');
 });
 
-Route::group(['as' => 'job.', 'prefix' => 'job', 'middleware' => 'user'], function () {
-    Route::delete('/delete-favorite/{id}', 'JobController@deleteFavoriteJob')->name('deleteFavoriteJob');
-    Route::get('/favorite-job', 'JobController@getFavoriteJob')->name('favoriteJob');
+Route::group(['as' => 'job.', 'prefix' => 'job'], function () {
+    Route::delete('/delete-favorite/{id}', 'JobController@deleteFavoriteJob')->name('deleteFavoriteJob')->middleware('user');
+    Route::get('/favorite-job', 'JobController@getFavoriteJob')->name('favoriteJob')->middleware('user');
+    Route::get('/news', 'JobController@getListNewJobPostings')->name('getListNewJobPostings');
+    Route::get('/most-views', 'JobController@getListMostViewJobPostings')->name('getListMostViewJobPostings');
+    Route::get('/most-applies', 'JobController@getListMostApplyJobPostings')->name('getListMostApplyJobPostings');
 });
 
 Route::group(['as' => 'work-history.', 'prefix' => 'work-history', 'middleware' => 'user'], function () {
@@ -68,10 +71,6 @@ Route::group(['as' => 'work-history.', 'prefix' => 'work-history', 'middleware' 
     Route::get('/{workHistory}', 'WorkHistoryController@detail')->name('detail');
     Route::post('/{workHistory}', 'WorkHistoryController@update')->name('update');
     Route::post('/{workHistory}/delete', 'WorkHistoryController@delete')->name('delete');
-});
-
-Route::group(['as' => 'feedback.', 'prefix' => 'feedback', 'middleware' => 'user'], function () {
-    Route::post('/{jobPosting}', 'FeedbackController@store')->name('store');
 });
 
 Route::group(['as' => 'feedback.', 'prefix' => 'feedback', 'middleware' => 'user'], function () {
