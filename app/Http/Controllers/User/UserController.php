@@ -7,6 +7,7 @@ use App\Http\Requests\User\UpdateInformationPrRequest;
 use App\Http\Requests\User\UserUpdateRequest;
 use App\Http\Resources\User\InfoResource;
 use App\Http\Resources\User\InformationPrResource;
+use App\Http\Resources\User\MotivationResource;
 use App\Services\User\UserService;
 use Illuminate\Http\JsonResponse;
 
@@ -100,5 +101,17 @@ class UserController extends BaseController
         }
 
         throw new InputException(trans('validation.ERR.011'));
+    }
+
+    /**
+     * Get motivation
+     *
+     * @return JsonResponse
+     */
+    public function detailMotivation()
+    {
+        $user = $this->guard()->user();
+
+        return $this->sendSuccessResponse(new MotivationResource($user));
     }
 }
