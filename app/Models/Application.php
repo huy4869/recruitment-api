@@ -65,7 +65,7 @@ class Application extends Model
     /**
      * @return BelongsTo
      */
-    public function interview()
+    public function interviews()
     {
         return $this->belongsTo(MInterviewStatus::class, 'interview_status_id');
     }
