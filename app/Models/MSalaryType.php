@@ -13,7 +13,7 @@ class MSalaryType extends Model
     /**
      * @var string
      */
-    protected $table = 'm_interviews';
+    protected $table = 'm_salary_types';
 
     /**
      * @var string[]

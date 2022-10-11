@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\MSalaryType;
+use App\Models\MStation;
 use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -26,7 +28,97 @@ class MasterDataService extends Service
     /**
      * @var array
      */
-    protected $availableResources = [];
+    protected $availableResources = [
+        'm_feedback_types' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMasterDataName',
+        ],
+
+        'm_genders' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMasterDataName',
+        ],
+
+        'm_interview_approaches' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMasterDataName',
+        ],
+
+        'm_interviews_status' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMasterDataName',
+        ],
+
+        'm_job_experiences' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMasterDataName',
+        ],
+
+        'm_job_feature_categories' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMasterDataName',
+        ],
+
+        'm_job_features' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMasterDataName',
+        ],
+
+        'm_job_statuses' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMasterDataName',
+        ],
+
+        'm_job_types' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMasterDataName',
+        ],
+
+        'm_learning_status' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMasterDataName',
+        ],
+
+        'm_position_offices' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMasterDataName',
+        ],
+
+        'm_province_districts' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMasterDataName',
+        ],
+
+        'm_provinces' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMasterDataName',
+        ],
+
+        'm_roles' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMasterDataName',
+        ],
+
+        'm_work_positions' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMasterDataName',
+        ],
+
+        'm_work_types' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMasterDataName',
+        ],
+
+        'm_stations' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMasterDataStations',
+        ],
+
+        'm_salary_types' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMasterDataSalaryTypes',
+        ],
+    ];
 
     /**
      * @var null
@@ -333,5 +425,69 @@ class MasterDataService extends Service
             'current_page' => $pageParams['current_page'],
             'total' => $total,
         ];
+    }
+
+    /**
+     * @return array
+     */
+    protected function getMasterDataName($resource)
+    {
+        if (empty($resource['params']['model'])) {
+            return [];
+        }
+
+        $modelName = 'App\\Models\\' . $resource['params']['model'];
+
+        $feedbackTypes =  $modelName::all();
+        $result = [];
+
+        foreach ($feedbackTypes as $feedbackType) {
+            $result[] = [
+                'id' =>  $feedbackType->id,
+                'name' => $feedbackType->name,
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getMasterDataStations()
+    {
+        $stations =  MStation::all();
+        $result = [];
+
+        foreach ($stations as $station) {
+            $result[] = [
+                'id' =>  $station->id,
+                'province_name' => $station->province_name,
+                'railway_name' => $station->railway_name,
+                'station_name' => $station->station_name,
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getMasterDataSalaryTypes()
+    {
+        $salaryTypes =  MSalaryType::all();
+        $result = [];
+
+        foreach ($salaryTypes as $salaryType) {
+            $result[] = [
+                'id' =>  $salaryType->id,
+                'name' => $salaryType->name,
+                'term' => $salaryType->term,
+                'currency' => $salaryType->currency,
+            ];
+        }
+
+        return $result;
     }
 }
