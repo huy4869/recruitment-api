@@ -37,6 +37,7 @@ Route::group(['as' => 'profile.', 'prefix' => 'profile'], function () {
 });
 
 Route::group(['as' => 'applications.', 'prefix' => 'applications', 'middleware' => 'user'], function () {
+    Route::get('/', 'ApplicationController@list')->name('list');
     Route::get('/waiting-interview', 'ApplicationController@listWaitingInterview')->name('listWaitingInterview');
     Route::get('/applied', 'ApplicationController@listApplied')->name('listApplied');
     Route::post('/cancel', 'ApplicationController@cancelApplied')->name('cancelApplied');
