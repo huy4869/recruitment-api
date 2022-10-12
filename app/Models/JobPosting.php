@@ -65,6 +65,8 @@ class JobPosting extends Model
     protected $casts = [
         'job_type_ids' => 'array',
         'work_type_ids' => 'array',
+        'gender_ids' => 'array',
+        'stations' => 'array',
     ];
 
     /**
@@ -105,6 +107,14 @@ class JobPosting extends Model
     public function bannerImage()
     {
         return $this->morphOne(Image::class, 'imageable')->where('type', 'job_banner');
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     */
+    public function detailImages()
+    {
+        return $this->morphMany(Image::class, 'imageable')->where('type', 'job_detail');
     }
 
     /**

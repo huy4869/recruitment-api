@@ -6,16 +6,168 @@ use App\Exceptions\InputException;
 use App\Helpers\CommonHelper;
 use App\Helpers\JobHelper;
 use App\Http\Resources\User\Job\JobFavoriteResource;
+use App\Models\Application;
 use App\Models\FavoriteJob;
+use App\Models\Gender;
+use App\Models\JobPosting;
 use App\Models\MJobType;
 use App\Models\MWorkType;
-use App\Models\JobPosting;
 use App\Services\Service;
+use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 class JobService extends Service
 {
+    /**
+     * @param $id
+     * @return array
+     * @throws Exception
+     */
+    public function detail($id)
+    {
+        $job = JobPosting::query()->where('id', $id)
+            ->released()
+            ->first();
+
+        $job->with([
+            'store',
+            'bannerImage',
+            'detailImages',
+            'province',
+            'province.provinceDistrict',
+            'salaryType',
+        ])
+        ->get();
+
+        $masterData = JobHelper::getJobMasterData($this->user);
+        $jobData = JobHelper::addFormatJobJsonData($job, $masterData);
+        $user = $this->user;
+
+        if (!$user) {
+            $job->update(['views' => DB::raw('`views` + 1')]);
+
+            return $jobData;
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $job->update(['views' => DB::raw('`views` + 1')]);
+
+            $userRecentJobs = self::userRecentJobsUpdate($job->id, $user->recent_jobs);
+            $user->update(['recent_jobs' => $userRecentJobs]);
+
+            DB::commit();
+            return $jobData;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
+    }
+
+    /**
+     * @param $ids
+     * @return array
+     * @throws InputException
+     */
+    public function getRecentJobs($ids)
+    {
+        if ($this->user) {
+            $jobIds = $this->user->recent_jobs ?? [];
+        } else {
+            $jobIds = array_map('intval', explode(',', $ids));
+        }
+
+        if (!is_array($jobIds)) {
+            throw new InputException(trans('response.invalid'));
+        }
+
+        $jobList = JobPosting::query()->released()
+            ->whereIn('id', $jobIds)
+            ->with([
+                'store',
+                'province',
+                'province.provinceDistrict',
+                'salaryType',
+            ])
+            ->take(config('common.job_posting.recent_amount'))
+            ->get();
+
+        $masterData = JobHelper::getJobMasterData($this->user);
+        $jobArr = [];
+
+        foreach ($jobList as $job) {
+            $jobArr[$job->id] = $job;
+        }
+
+        $jobIds = collect($jobIds);
+        $jobIds->shift();
+
+        return $jobIds->map(function ($id) use ($jobArr, $masterData) {
+            return JobHelper::addFormatJobJsonData($jobArr[$id], $masterData);
+        })->toArray();
+    }
+
+    /**
+     * @return array
+     */
+    public function getSuggestJobs($id)
+    {
+        $job = JobPosting::query()->where('id', $id)
+            ->released()
+            ->first();
+
+        $queryType = '';
+        $jobAlias = '';
+
+        foreach ($job->job_type_ids as $key => $type) {
+            $queryType = $queryType . sprintf('json_contains(job_type_ids, \'"%u"\') as job%u, ', $type, $type);
+            $jobAlias = $jobAlias . sprintf('job%u + ', $type);
+        }
+
+        $querySuggestJobs = sprintf(
+            '(SELECT id, released_at, province_id, %sIF(province_id = %u, %u, 0) as provinceRatio
+            FROM job_postings
+            WHERE id != %u
+            ) as tmp',
+            $queryType,
+            $job->province_id,
+            config('common.job_posting.province_ratio'),
+            $job->id,
+        );
+
+        $jobIds = DB::table(DB::raw($querySuggestJobs))
+        ->select('id', 'released_at', DB::raw($jobAlias . 'provinceRatio as total'))
+        ->orderByRaw('total DESC')
+        ->orderByRaw('released_at DESC')
+        ->limit(config('common.job_posting.suggest_amount'))
+        ->get()
+        ->pluck('id')
+        ->toArray();
+
+        $jobList = JobPosting::query()->released()
+            ->whereIn('id', $jobIds)
+            ->with([
+                'store',
+                'province',
+                'province.provinceDistrict',
+                'salaryType',
+            ])
+            ->get();
+
+        $masterData = JobHelper::getJobMasterData($this->user);
+        $jobArr = [];
+
+        foreach ($jobList as $job) {
+            $jobArr[$job->id] = $job;
+        }
+
+        return collect($jobIds)->map(function ($id) use ($jobArr, $masterData) {
+            return JobHelper::addFormatJobJsonData($jobArr[$id], $masterData);
+        })->toArray();
+    }
+
     /**
      * get Favorite Jobs
      *
@@ -84,7 +236,7 @@ class JobService extends Service
                 'province.provinceDistrict',
                 'salaryType',
             ])
-            ->take(config('common.job_posting_newest_amount'))
+            ->take(config('common.job_posting.newest_amount'))
             ->get();
 
         $masterData = JobHelper::getJobMasterData($this->user);
@@ -116,7 +268,7 @@ class JobService extends Service
             ])
             ->orderby('views', 'desc')
             ->orderBy('released_at', 'desc')
-            ->take(config('common.job_posting_most_view_amount'))
+            ->take(config('common.job_posting.most_view_amount'))
             ->get();
 
         $masterData = JobHelper::getJobMasterData($this->user);
@@ -145,7 +297,7 @@ class JobService extends Service
             ])
             ->orderby('applies', 'desc')
             ->orderBy('released_at', 'desc')
-            ->take(config('common.job_posting_most_applies'))
+            ->take(config('common.job_posting.most_applies'))
             ->get();
 
         $masterData = JobHelper::getJobMasterData($this->user);
@@ -200,6 +352,16 @@ class JobService extends Service
     }
 
     /**
+     * @return array
+     */
+    public static function getMasterDataJobGenders()
+    {
+        $gender = Gender::all();
+
+        return CommonHelper::getMasterDataIdName($gender);
+    }
+
+    /**
      * Check job posting is favorite job
      *
      * @param $user
@@ -214,5 +376,50 @@ class JobService extends Service
         return FavoriteJob::query()->where('user_id', $user->id)
             ->pluck('job_posting_id')
             ->toArray();
+    }
+
+    /**
+     * Get user apply job ids
+     *
+     * @param $user
+     * @return Builder[]|false
+     */
+    public static function getUserApplyJobIds($user)
+    {
+        if (!$user) {
+            return false;
+        }
+
+        return Application::query()->where('user_id', $user->id)
+            ->pluck('job_posting_id')
+            ->toArray();
+    }
+
+    /**
+     * @param $jobId
+     * @param $userRecentJobs
+     * @return array|mixed
+     */
+    public static function userRecentJobsUpdate($jobId, $userRecentJobs)
+    {
+        if (!$userRecentJobs) {
+            $userRecentJobs = [];
+        }
+
+        if ($jobId == $userRecentJobs[0]) {
+            return $userRecentJobs;
+        }
+
+        if (($key = array_search($jobId, $userRecentJobs)) !== false) {
+            unset($userRecentJobs[$key]);
+        }
+
+        if (count($userRecentJobs) >= config('common.job_posting.recent_jobs_limit')) {
+            array_pop($userRecentJobs);
+        }
+
+        return array_merge([
+            sprintf('%u', $jobId)
+        ], $userRecentJobs);
     }
 }
