@@ -243,6 +243,18 @@ return [
         'enrollment_period_start' => '在学期間',
         'enrollment_period_end' => '在学期間',
         'learning_status_id' => '在学期間',
+        'work_type_ids' => '希望雇用形態',
+        'work_type_ids.*.id' => '希望雇用形態',
+        'age' => '年齢',
+        'salary_type_id' => '希望給与',
+        'salary_min' => '希望給与',
+        'salary_max' => '希望給与',
+        'job_type_ids' => '希望職種',
+        'job_type_ids.*.id' => '希望職種',
+        'job_experience_ids' => '就業経験',
+        'job_experience_ids.*.id' => '就業経験',
+        'job_feature_ids' => '特徴',
+        'job_feature_ids.*.id' => '特徴',
     ],
 
     'COM' => [

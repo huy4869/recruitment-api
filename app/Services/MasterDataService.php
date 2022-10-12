@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Models\MSalaryType;
 use App\Models\MStation;
 use Exception;
+use Illuminate\Config\Repository;
+use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 
@@ -117,6 +119,11 @@ class MasterDataService extends Service
         'm_salary_types' => [
             'driver' => self::DRIVER_CUSTOM,
             'target' => 'getMasterDataSalaryTypes',
+        ],
+
+        'age' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMasterAge',
         ],
     ];
 
@@ -488,6 +495,23 @@ class MasterDataService extends Service
             ];
         }
 
+        return $result;
+    }
+
+    /**
+     * @return Repository|Application|mixed
+     */
+    protected function getMasterAge()
+    {
+        $dataAge = config('date.age');
+        $result = [];
+
+        foreach ($dataAge as $key => $age) {
+            $result[] = [
+                'id' => $key,
+                'name' => $age
+            ];
+        }
         return $result;
     }
 }
