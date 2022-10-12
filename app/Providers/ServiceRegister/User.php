@@ -6,6 +6,7 @@ use App\Services\User\ApplicationService;
 use App\Services\User\AuthService;
 use App\Services\User\Job\JobService;
 use App\Services\User\MasterDataService;
+use App\Services\User\ChatService;
 use App\Services\User\PasswordResetService;
 use App\Services\User\ProfileService;
 use App\Services\User\WorkHistoryService;
@@ -40,6 +41,10 @@ class User
 
         $app->scoped(ApplicationService::class, function ($app) {
             return new ApplicationService();
+        });
+
+        $app->scoped(ChatService::class, function ($app) {
+            return new ChatService();
         });
 
         $app->scoped(JobService::class, function ($app) {

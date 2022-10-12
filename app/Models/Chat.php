@@ -11,6 +11,12 @@ class Chat extends Model
 {
     use HasFactory, SoftDeletes;
 
+    public const FROM_USER = [
+        'TRUE' => 1,
+        'FALSE' => 0,
+    ];
+    public const BE_READED = 0;
+    public const UNREAD = 1;
     /**
      * @var string
      */

@@ -178,4 +178,12 @@ class User extends Authenticatable
     {
         return $this->morphMany(Image::class, 'imageable');
     }
+
+    /**
+     * @return HasMany
+     */
+    public function chats()
+    {
+        return $this->hasMany(Chat::class);
+    }
 }

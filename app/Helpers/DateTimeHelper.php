@@ -171,4 +171,20 @@ class DateTimeHelper
 
         return Carbon::createFromFormat(config('date.fe_date_work_history_format'), $dateTime)->toDateString();
     }
+
+    public static function formatTimeChat($dataTime)
+    {
+        $time = new Carbon($dataTime);
+        $now = new Carbon(Carbon::now());
+
+        if ($time->diffInMinutes($now) < config('date.less_than_hour')) {
+            $date = $time->diffInMinutes($now) . '分前';
+        } elseif ($time->diffInHours($now) >= config('date.more_than_hour')  && $time->diffInHours($now) < config('date.less_than_date')) {
+            $date = $time->diffInHours($now) . '時間前';
+        } else {
+            $date = DateTimeHelper::formatDateTimeJa($dataTime);
+        }
+
+        return $date;
+    }
 }

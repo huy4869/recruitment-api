@@ -73,3 +73,12 @@ Route::group(['as' => 'work-history.', 'prefix' => 'work-history', 'middleware' 
 Route::group(['as' => 'feedback.', 'prefix' => 'feedback', 'middleware' => 'user'], function () {
     Route::post('/{jobPosting}', 'FeedbackController@store')->name('store');
 });
+
+Route::group(['as' => 'feedback.', 'prefix' => 'feedback', 'middleware' => 'user'], function () {
+    Route::post('/{jobPosting}', 'FeedbackController@store')->name('store');
+});
+
+Route::group(['as' => 'chat.', 'prefix' => 'chat', 'middleware' => 'user'], function () {
+    Route::get('/list', 'ChatController@list')->name('list');
+    Route::get('/list-detail/{store_id}', 'ChatController@detail')->name('detail');
+});
