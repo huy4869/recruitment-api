@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('stores', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('specialize_id');
             $table->unsignedBigInteger('province_id');
             $table->string('manager_name', 255)->nullable();
@@ -34,6 +35,7 @@ return new class extends Migration
             $table->softDeletes();
             $table->foreign('province_id')->references('id')->on('m_provinces')->onDelete('cascade');
             $table->foreign('created_by')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
         });
     }
 

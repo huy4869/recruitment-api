@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class MasterDataSeeder extends Seeder
@@ -32,107 +33,117 @@ class MasterDataSeeder extends Seeder
         DB::table('m_job_features')->truncate();
         DB::table('m_stations')->truncate();
 
-        $dataRoles = [['name' => 'USER'],['name' => 'REC'],['name' => 'ADMIN']];
+        $time = Carbon::now();
+
+        $dataRoles = [
+            ['name' => 'USER', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'REC', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'ADMIN', 'created_at' => $time, 'updated_at' => $time],
+        ];
         DB::table('m_roles')->insert($dataRoles);
 
-        $dataGenders = [['name' => '男性'],['name' => '女性'],['name' => 'その他']];
+        $dataGenders = [
+            ['name' => '男性', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '女性', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'その他', 'created_at' => $time, 'updated_at' => $time],
+        ];
         DB::table('m_genders')->insert($dataGenders);
 
         $dataJobType = [
-            ['name' => 'ヘア'],
-            ['name' => 'ネイル・マツゲ'],
-            ['name' => '整体・カイロ・酸素・温浴'],
-            ['name' => 'フェイシャル・ボディ・脱毛'],
-            ['name' => '美容クリニック'],
-            ['name' => 'その他'],
+            ['name' => 'ヘア', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'ネイル・マツゲ', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '整体・カイロ・酸素・温浴', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'フェイシャル・ボディ・脱毛', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '美容クリニック', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'その他', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_job_types')->insert($dataJobType);
 
         $dataJobExperiences = [
-            ['name' => 'ブランク'],
-            ['name' => '未経験者可'],
-            ['name' => '管理美容師免許歓迎'],
-            ['name' => '幹部・店長候補歓迎'],
-            ['name' => '美容師歓迎'],
-            ['name' => '免許・資格不問'],
-            ['name' => '通信生（見習い）相談可'],
+            ['name' => 'ブランク', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '未経験者可', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '管理美容師免許歓迎', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '幹部・店長候補歓迎', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '美容師歓迎', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '免許・資格不問', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '通信生（見習い）相談可', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_job_experiences')->insert($dataJobExperiences);
 
         $dataWorkTypes = [
-            ['name' => '正社員'],
-            ['name' => '派遣社員'],
-            ['name' => '契約社員'],
-            ['name' => 'アルバイト'],
-            ['name' => 'その他'],
+            ['name' => '正社員', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '派遣社員', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '契約社員', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'アルバイト', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'その他', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_work_types')->insert($dataWorkTypes);
 
         $dataJobFeatureCategories = [
-            ['name' => '募集の特徴'],
-            ['name' => '企業の特徴'],
-            ['name' => '店舗の特徴'],
+            ['name' => '募集の特徴', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '企業の特徴', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '店舗の特徴', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_job_feature_categories')->insert($dataJobFeatureCategories);
 
         $dataProvinceDistricts = [
-            ['name' => '北海道'],
-            ['name' => '東北'],
-            ['name' => '関東'],
-            ['name' => '中部'],
-            ['name' => '近畿'],
-            ['name' => '中国'],
-            ['name' => '四国'],
-            ['name' => '九州・沖縄'],
+            ['name' => '北海道', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '東北', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '関東', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '中部', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '近畿', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '中国', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '四国', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '九州・沖縄', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_province_districts')->insert($dataProvinceDistricts);
 
         $dataLearningStatus = [
-            ['name' => '卒業'],
-            ['name' => '卒業見込み·'],
-            ['name' => '休退'],
+            ['name' => '卒業', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '卒業見込み·', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '休退', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_learning_status')->insert($dataLearningStatus);
 
         $dataInterviewStatus = [
-            ['name' => '応募中'],
-            ['name' => '面接待ち'],
-            ['name' => '結果待ち'],
-            ['name' => '採用'],
-            ['name' => '不採用'],
-            ['name' => 'キャンセル'],
+            ['name' => '応募中', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '面接待ち', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '結果待ち', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '採用', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '不採用', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'キャンセル', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_interviews_status')->insert($dataInterviewStatus);
 
         $dataInterviewApproaches = [
-            ['name' => 'オンライン面接'],
-            ['name' => '対面'],
-            ['name' => '電話面接'],
+            ['name' => 'オンライン面接', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '対面', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '電話面接', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_interview_approaches')->insert($dataInterviewApproaches);
 
         $dataFeedbackTypes = [
-            ['name' => '年収／月収に関する相談'],
-            ['name' => '福利厚生に関するお問合せ'],
-            ['name' => '教育制度を知りたい'],
-            ['name' => '残業代が出るか知りたいなど'],
-            ['name' => 'その他'],
+            ['name' => '年収／月収に関する相談', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '福利厚生に関するお問合せ', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '教育制度を知りたい', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '残業代が出るか知りたいなど', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'その他', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_feedback_types')->insert($dataFeedbackTypes);
 
         $dataSalaryTypes = [
-            ['name' => '万円/月収', 'term' => 8760, 'currency' => '￥'],
-            ['name' => '万円/年収', 'term' => 720, 'currency' => '￥'],
-            ['name' => '円/時給', 'term' => 1, 'currency' => '￥'],
-            ['name' => '円/日給', 'term' => 24, 'currency' => '￥'],
+            ['name' => '万円/月収', 'term' => 8760, 'currency' => '￥', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '万円/年収', 'term' => 720, 'currency' => '￥', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '円/時給', 'term' => 1, 'currency' => '￥', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '円/日給', 'term' => 24, 'currency' => '￥', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_salary_types')->insert($dataSalaryTypes);
 
 
         $dataJobStatus = [
-            ['name' => '下書き'],
-            ['name' => '公開'],
-            ['name' => '終了'],
+            ['name' => '下書き', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '公開', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '終了', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_job_statuses')->insert($dataJobStatus);
 
