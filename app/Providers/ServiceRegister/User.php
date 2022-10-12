@@ -5,6 +5,7 @@ namespace App\Providers\ServiceRegister;
 use App\Services\User\ApplicationService;
 use App\Services\User\AuthService;
 use App\Services\User\Job\JobService;
+use App\Services\User\LicensesQualificationService;
 use App\Services\User\MasterDataService;
 use App\Services\User\ChatService;
 use App\Services\User\PasswordResetService;
@@ -53,6 +54,10 @@ class User
 
         $app->scoped(WorkHistoryService::class, function ($app) {
             return new WorkHistoryService();
+        });
+
+        $app->scoped(LicensesQualificationService::class, function ($app) {
+            return new LicensesQualificationService();
         });
     }
 }

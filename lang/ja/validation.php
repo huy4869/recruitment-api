@@ -239,6 +239,7 @@ return [
         'position_offices.*.name' => '業務内容',
         'business_content' => '業務内容',
         'experience_accumulation' => '主な取り組み、具体的な施策、 得られた経験',
+        'new_issuance_date' => '取得年月',
     ],
 
     'COM' => [
@@ -267,7 +268,8 @@ return [
         'exist' => [
             'favorite_job' => '求人掲載のお気に入りは存在しません',
         ],
-        '015' => '自己PR編集が保存失敗しました。'
+        '015' => '自己PR編集が保存失敗しました。',
+        '030' => '学位名が登録されました。',
     ],
 
     'has_not_permission' => 'スーパー管理者レベルである必要があります',
