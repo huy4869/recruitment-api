@@ -156,6 +156,22 @@ class User extends Authenticatable
     }
 
     /**
+     * @return HasMany
+     */
+    public function favoriteJobs()
+    {
+        return $this->hasMany(FavoriteJob::class);
+    }
+
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
+     */
+    public function jobPostings()
+    {
+        return $this->belongsToMany(JobPosting::class, 'favorite_jobs');
+    }
+
+    /**
      * @return MorphMany
      */
     public function images()

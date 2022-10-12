@@ -4,7 +4,7 @@ namespace App\Providers\ServiceRegister;
 
 use App\Services\User\ApplicationService;
 use App\Services\User\AuthService;
-use App\Services\User\JobService;
+use App\Services\User\Job\JobService;
 use App\Services\User\MasterDataService;
 use App\Services\User\PasswordResetService;
 use App\Services\User\ProfileService;

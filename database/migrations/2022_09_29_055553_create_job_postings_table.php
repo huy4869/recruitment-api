@@ -36,7 +36,7 @@ return new class extends Migration
             $table->string('end_work_time', 20)->nullable();
             $table->text('shifts')->nullable();
             $table->json('gender_ids')->nullable();
-            $table->text('welfare _treatment_description')->nullable();
+            $table->text('holiday_description')->nullable();
             $table->json('feature_ids')->nullable();
             $table->unsignedBigInteger('views');
             $table->unsignedTinyInteger('age_min');

@@ -5,12 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class JobPosting extends Model
 {
     use HasFactory, SoftDeletes;
+
+    public const STATUS_DRAFT = 1;
 
     /**
      * @var string
@@ -42,7 +46,7 @@ class JobPosting extends Model
         'end_work_time',
         'shifts',
         'gender_ids',
-        'welfare_treatment_description',
+        'holiday_description',
         'feature_ids',
         'age_min',
         'age_max',
@@ -96,5 +100,21 @@ class JobPosting extends Model
     public function bannerImage()
     {
         return $this->morphOne(Image::class, 'imageable')->where('type', 'job_banner');
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function applications()
+    {
+        return $this->hasMany(Application::class);
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function favoriteJobs()
+    {
+        return $this->hasMany(FavoriteJob::class);
     }
 }

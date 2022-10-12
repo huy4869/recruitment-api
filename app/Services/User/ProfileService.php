@@ -20,9 +20,9 @@ class ProfileService extends Service
         $user = $this->user;
         $userInformation = $user->load('userLearningHistories', 'userLicensesQualifications', 'userWordHistories');
 
-        $favorite = $user->favorite ? config('percentage.favorite') : config('percentage.default');
-        $skill = $user->skill ? config('percentage.skill') : config('percentage.default');
-        $experience = $user->experience ? config('percentage.experience') : config('percentage.default');
+        $favorite = $user->favorite_skill ? config('percentage.favorite') : config('percentage.default');
+        $skill = $user->self_pr ? config('percentage.self_pr') : config('percentage.default');
+        $experience = $user->experience_knowledge ? config('percentage.experience') : config('percentage.default');
         $motivation = $user->motivation ? config('percentage.motivation') : config('percentage.default');
         $profile = [
             'first_name' => $user->first_name,
