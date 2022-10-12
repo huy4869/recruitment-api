@@ -90,3 +90,11 @@ Route::group(['as' => 'licenses-qualifications.', 'prefix' => 'licenses-qualific
     Route::post('/{licensesQualification}', 'LicensesQualificationController@update')->name('update');
     Route::post('/{licensesQualification}/delete', 'LicensesQualificationController@delete')->name('delete');
 });
+
+Route::group(['as' => 'learning-history.', 'prefix' => 'learning-history', 'middleware' => 'user'], function () {
+    Route::get('/', 'LearningHistoryController@list')->name('list');
+    Route::post('/', 'LearningHistoryController@store')->name('store');
+    Route::get('/{learningHistory}', 'LearningHistoryController@detail')->name('detail');
+    Route::post('/{learningHistory}', 'LearningHistoryController@update')->name('update');
+    Route::post('/{learningHistory}/delete', 'LearningHistoryController@delete')->name('delete');
+});

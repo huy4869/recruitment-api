@@ -6,6 +6,7 @@ use App\Services\User\ApplicationService;
 use App\Services\User\AuthService;
 use App\Services\User\Job\JobService;
 use App\Services\User\LicensesQualificationService;
+use App\Services\User\LearningHistoryService;
 use App\Services\User\MasterDataService;
 use App\Services\User\ChatService;
 use App\Services\User\PasswordResetService;
@@ -58,6 +59,10 @@ class User
 
         $app->scoped(LicensesQualificationService::class, function ($app) {
             return new LicensesQualificationService();
+        });
+
+        $app->scoped(LearningHistoryService::class, function ($app) {
+            return new LearningHistoryService();
         });
     }
 }
