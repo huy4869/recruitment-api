@@ -80,6 +80,8 @@ Route::group(['as' => 'feedback.', 'prefix' => 'feedback', 'middleware' => 'user
 Route::group(['as' => 'chat.', 'prefix' => 'chat', 'middleware' => 'user'], function () {
     Route::get('/list', 'ChatController@list')->name('list');
     Route::get('/list-detail/{store_id}', 'ChatController@detail')->name('detail');
+    Route::post('/create', 'ChatController@store')->name('store');
+    Route::get('/unread-count', 'ChatController@unreadCount')->name('unreadCount');
 });
 
 Route::group(['as' => 'desired-condition.', 'prefix' => 'desired-condition', 'middleware' => 'user'], function () {

@@ -17,6 +17,7 @@ class Chat extends Model
     ];
     public const BE_READED = 0;
     public const UNREAD = 1;
+
     /**
      * @var string
      */
