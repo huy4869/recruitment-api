@@ -23,4 +23,11 @@ return [
     'less_than_hour' => 60,
     'less_than_date' => 24,
     'more_than_hour' => 1,
+
+    'age' => [
+        1 => '20代以上',
+        2 => '30代以上',
+        3 => '40代以上',
+        4 => '50代以上',
+    ]
 ];

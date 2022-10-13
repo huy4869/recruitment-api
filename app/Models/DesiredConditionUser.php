@@ -32,6 +32,13 @@ class DesiredConditionUser extends Model
         'job_feature_ids',
     ];
 
+    protected $casts = [
+        'work_type_ids' => 'array',
+        'job_type_ids' => 'array',
+        'job_experience_ids' => 'array',
+        'job_feature_ids' => 'array',
+    ];
+
     /**
      * @return BelongsTo
      */

@@ -82,6 +82,11 @@ Route::group(['as' => 'chat.', 'prefix' => 'chat', 'middleware' => 'user'], func
     Route::get('/list-detail/{store_id}', 'ChatController@detail')->name('detail');
 });
 
+Route::group(['as' => 'desired-condition.', 'prefix' => 'desired-condition', 'middleware' => 'user'], function () {
+    Route::get('/', 'DesiredConditionController@detail')->name('detail');
+    Route::post('/', 'DesiredConditionController@storeOrUpdate')->name('store_or_update');
+});
+
 Route::group(['as' => 'licenses-qualifications.', 'prefix' => 'licenses-qualifications', 'middleware' => 'user'], function () {
     Route::get('/', 'LicensesQualificationController@list')->name('list');
     Route::post('/', 'LicensesQualificationController@store')->name('store');
