@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\MFeedbackType;
 use App\Models\MSalaryType;
 use App\Models\MStation;
 use Exception;
@@ -33,7 +34,7 @@ class MasterDataService extends Service
     protected $availableResources = [
         'm_feedback_types' => [
             'driver' => self::DRIVER_CUSTOM,
-            'target' => 'getMasterDataName',
+            'target' => 'getMasterDataFeedbackTypes',
         ],
 
         'm_genders' => [
@@ -492,6 +493,26 @@ class MasterDataService extends Service
                 'name' => $salaryType->name,
                 'term' => $salaryType->term,
                 'currency' => $salaryType->currency,
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return array
+     */
+    public function getMasterDataFeedbackTypes()
+    {
+        $feedbackTypes = MFeedbackType::all();
+        $result = [];
+
+        foreach ($feedbackTypes as $feedbackType) {
+            $result[] = [
+                'id' => $feedbackType->id,
+                'name' => $feedbackType->name,
+                'has_extend' => $feedbackType->has_extend,
+                'placeholder_extend' => $feedbackType->placeholder_extend,
             ];
         }
 

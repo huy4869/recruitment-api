@@ -34,7 +34,6 @@ class MasterDataSeeder extends Seeder
         DB::table('m_stations')->truncate();
 
         $time = Carbon::now();
-
         $dataRoles = [
             ['name' => 'USER', 'created_at' => $time, 'updated_at' => $time],
             ['name' => 'REC', 'created_at' => $time, 'updated_at' => $time],
@@ -123,11 +122,11 @@ class MasterDataSeeder extends Seeder
         DB::table('m_interview_approaches')->insert($dataInterviewApproaches);
 
         $dataFeedbackTypes = [
-            ['name' => '年収／月収に関する相談', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => '福利厚生に関するお問合せ', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => '教育制度を知りたい', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => '残業代が出るか知りたいなど', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'その他', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '年収／月収に関する相談', 'has_extend' => 1, 'placeholder_extend' => 'ご希望の年収/月収などを入力', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '福利厚生に関するお問合せ', 'has_extend' => 0, 'placeholder_extend' => null,'created_at' => $time, 'updated_at' => $time],
+            ['name' => '教育制度を知りたい', 'has_extend' => 0, 'placeholder_extend' => null,'created_at' => $time, 'updated_at' => $time],
+            ['name' => '残業代が出るか知りたいなど','has_extend' => 0, 'placeholder_extend' => null, 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'その他', 'has_extend' => 0, 'placeholder_extend' => null, 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_feedback_types')->insert($dataFeedbackTypes);
 
