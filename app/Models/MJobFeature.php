@@ -23,8 +23,8 @@ class MJobFeature extends Model
     /**
      * @return BelongsTo
      */
-    public function desireSalary()
+    public function category()
     {
-        return $this->belongsTo(MJobFeatureCategory::class, 'category');
+        return $this->belongsTo(MJobFeatureCategory::class, 'category_id');
     }
 }
