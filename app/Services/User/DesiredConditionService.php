@@ -14,6 +14,18 @@ use Illuminate\Database\Eloquent\Model;
 
 class DesiredConditionService extends Service
 {
+    /**
+     *
+     * @return \Illuminate\Database\Eloquent\Builder[]|\Illuminate\Database\Eloquent\Collection
+     */
+    public function getList($relations = [])
+    {
+        if (count($relations)) {
+            return DesiredConditionUser::query()->with($relations)->get();
+        }
+
+        return DesiredConditionUser::query()->get();
+    }
 
     /**
      * Detail user desired condition
