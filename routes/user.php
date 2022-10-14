@@ -107,3 +107,7 @@ Route::group(['as' => 'learning-history.', 'prefix' => 'learning-history', 'midd
     Route::post('/{learningHistory}', 'LearningHistoryController@update')->name('update');
     Route::post('/{learningHistory}/delete', 'LearningHistoryController@delete')->name('delete');
 });
+
+Route::group(['as' => 'notifications.', 'prefix' => 'notifications', 'middleware' => 'user'], function () {
+    Route::get('/', 'NotificationController@list')->name('list');
+});

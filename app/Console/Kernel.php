@@ -7,6 +7,8 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
 class Kernel extends ConsoleKernel
 {
+    public const NOTIFY_USER_INTERVIEW = 'notify_user:interview';
+
     /**
      * Define the application's command schedule.
      *

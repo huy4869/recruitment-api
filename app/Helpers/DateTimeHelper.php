@@ -187,4 +187,20 @@ class DateTimeHelper
 
         return $date;
     }
+
+    /**
+     * Format date time for notification
+     *
+     * @return string|null
+     */
+    public static function formatTimeNotification($dateTime)
+    {
+        $dateTime = Carbon::parse($dateTime);
+
+        if ($dateTime->isToday()) {
+            return $dateTime->format(config('date.fe_data_time_hour'));
+        }
+
+        return self::formatDateDayOfWeekTimeJa($dateTime);
+    }
 }
