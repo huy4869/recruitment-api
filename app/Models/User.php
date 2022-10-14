@@ -72,6 +72,15 @@ class User extends Authenticatable
     ];
 
     /**
+     * The attributes that should be cast.
+     *
+     * @var array
+     */
+    protected $casts = [
+        'recent_jobs' => 'array',
+    ];
+
+    /**
      * The attributes that should be hidden for serialization.
      *
      * @var array<int, string>
@@ -83,11 +92,13 @@ class User extends Authenticatable
 
     protected $appends = ['full_name', 'full_name_furi'];
 
-    function getFullNameAttribute() {
+    public function getFullNameAttribute()
+    {
         return $this->first_name . $this->last_name;
     }
 
-    function getFullNameFuriAttribute() {
+    public function getFullNameFuriAttribute()
+    {
         return $this->furi_first_name . $this->furi_last_name;
     }
 

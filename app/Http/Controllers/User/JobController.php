@@ -4,9 +4,11 @@ namespace App\Http\Controllers\User;
 
 use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
-use App\Http\Resources\User\JobPosting\JobPostingCollection;
-use App\Http\Resources\User\JobPosting\JobPostingResource;
+use App\Http\Resources\User\Job\DetailJobPostingResource;
+use App\Http\Resources\User\Job\JobPostingResource;
+use App\Models\JobPosting;
 use App\Services\User\Job\JobService;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
 class JobController extends Controller
@@ -18,6 +20,38 @@ class JobController extends Controller
         $this->jobService = $jobService;
     }
 
+    public function detail($id)
+    {
+        $user = $this->guard()->user();
+        $job = JobService::getInstance()->withUser($user)->detail($id);
+
+        return $this->sendSuccessResponse(new DetailJobPostingResource($job));
+    }
+
+    /**
+     * @param Request $request
+     * @return JsonResponse
+     * @throws InputException
+     */
+    public function recentJobs(Request $request)
+    {
+        $user = $this->guard()->user();
+        $jobs = JobService::getInstance()->withUser($user)->getRecentJobs($request->get('ids'));
+
+        return $this->sendSuccessResponse(JobPostingResource::collection($jobs));
+    }
+
+    /**
+     * @param $id
+     * @return JsonResponse
+     */
+    public function suggestJobs($id)
+    {
+        $jobs = JobService::getInstance()->getSuggestJobs($id);
+
+        return $this->sendSuccessResponse(JobPostingResource::collection($jobs));
+    }
+
     /**
      * Get list new jobs
      *
@@ -26,7 +60,7 @@ class JobController extends Controller
     public function getListNewJobPostings()
     {
         $user = $this->guard()->user();
-        $data = JobService::getInstance()->getListNewJobPostings();
+        $data = JobService::getInstance()->withUser($user)->getListNewJobPostings();
 
         return $this->sendSuccessResponse([
             'total_jobs' => $data['total_jobs'],

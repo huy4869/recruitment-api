@@ -1,8 +1,7 @@
 <?php
 
-namespace App\Http\Resources\User\JobPosting;
+namespace App\Http\Resources\User\Job;
 
-use App\Services\User\Job\JobService;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class JobPostingResource extends JsonResource
@@ -19,6 +18,7 @@ class JobPostingResource extends JsonResource
             'id' => $this['id'],
             'name' => $this['name'],
             'store_name' => $this['store_name'],
+            'banner_image' => $this['banner_image'],
             'postal_code' => $this['postal_code'],
             'address' => [
                 'province' => $this['province'],

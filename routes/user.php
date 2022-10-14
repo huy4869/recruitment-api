@@ -63,6 +63,9 @@ Route::group(['as' => 'job.', 'prefix' => 'job'], function () {
     Route::get('/news', 'JobController@getListNewJobPostings')->name('getListNewJobPostings');
     Route::get('/most-views', 'JobController@getListMostViewJobPostings')->name('getListMostViewJobPostings');
     Route::get('/most-applies', 'JobController@getListMostApplyJobPostings')->name('getListMostApplyJobPostings');
+    Route::get('/recent', 'JobController@recentJobs')->name('recentJobs');
+    Route::get('/suggest/{id}', 'JobController@suggestJobs')->name('suggestJobs');
+    Route::get('/{id}', 'JobController@detail')->name('detail');
 });
 
 Route::group(['as' => 'work-history.', 'prefix' => 'work-history', 'middleware' => 'user'], function () {
