@@ -3,6 +3,8 @@
 namespace App\Services;
 
 use App\Models\MFeedbackType;
+use App\Models\MJobFeature;
+use App\Models\MJobFeatureCategory;
 use App\Models\MSalaryType;
 use App\Models\MStation;
 use Exception;
@@ -57,14 +59,9 @@ class MasterDataService extends Service
             'target' => 'getMasterDataName',
         ],
 
-        'm_job_feature_categories' => [
-            'driver' => self::DRIVER_CUSTOM,
-            'target' => 'getMasterDataName',
-        ],
-
         'm_job_features' => [
             'driver' => self::DRIVER_CUSTOM,
-            'target' => 'getMasterDataName',
+            'target' => 'getMasterDataJobFeatures',
         ],
 
         'm_job_statuses' => [
@@ -533,6 +530,38 @@ class MasterDataService extends Service
                 'name' => $age
             ];
         }
+        return $result;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getMasterDataJobFeatures()
+    {
+        $jobFeatureCategories = MJobFeatureCategory::query()->get();
+        $jobFeatures = MJobFeature::query()->with(['category'])->get();
+        $result = [];
+        $i = 0;
+
+        foreach ($jobFeatureCategories as $category) {
+            $result[] = [
+                'category_id' => $category->id,
+                'category_name' => $category->name,
+                'feature' => [],
+            ];
+
+            foreach ($jobFeatures as $feature) {
+                if ($feature->category_id == $category->id) {
+                    $result[$i]['feature'][] = [
+                        'id' => $feature->id,
+                        'name' => $feature->name,
+                    ];
+                }
+            }
+
+            $i++;
+        }
+
         return $result;
     }
 }
