@@ -7,6 +7,7 @@ use App\Http\Controllers\Traits\HasRateLimiter;
 use App\Http\Requests\Recruiter\Auth\RegisterRequest;
 use App\Helpers\ResponseHelper;
 use App\Http\Requests\Recruiter\Auth\LoginRequest;
+use App\Http\Requests\Recruiter\ChangePasswordRequest;
 use App\Services\Recruiter\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
@@ -102,5 +103,27 @@ class AuthController extends BaseController
         $currentUser->currentAccessToken()->delete();
 
         return $this->sendSuccessResponse(null, trans('auth.logout_success'));
+    }
+
+    /**
+     * Change password
+     *
+     * @param ChangePasswordRequest $request
+     * @return JsonResponse
+     */
+    public function changePassword(ChangePasswordRequest $request)
+    {
+        $currentUser = $this->guard()->user();
+        $input = $request->only([
+            'current_password',
+            'password'
+        ]);
+        $data = AuthService::getInstance()->withUser($currentUser)->changePassword($input);
+
+        if ($data) {
+            return $this->sendSuccessResponse([], trans('auth.update_success'));
+        }
+
+        throw new InputException(trans('validation.ERR.010'));
     }
 }
