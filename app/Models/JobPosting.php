@@ -50,6 +50,7 @@ class JobPosting extends Model
         'gender_ids',
         'holiday_description',
         'feature_ids',
+        'experience_ids',
         'age_min',
         'age_max',
         'views',
@@ -75,6 +76,14 @@ class JobPosting extends Model
     public function store()
     {
         return $this->belongsTo(Store::class, 'store_id');
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function status()
+    {
+        return $this->belongsTo(MJobStatus::class, 'job_status_id');
     }
 
     /**

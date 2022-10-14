@@ -173,6 +173,21 @@ class JobService extends Service
      *
      * @return array
      */
+    public function getList($relations = [])
+    {
+        $query = JobPosting::query()->released();
+
+        if (count($relations)) {
+            $query->with($relations);
+        }
+
+        return $query->get();
+    }
+    /**
+     * get Favorite Jobs
+     *
+     * @return array
+     */
     public function getFavoriteJobs()
     {
         $data = DB::table('favorite_jobs')
@@ -229,7 +244,6 @@ class JobService extends Service
     public function getListNewJobPostings()
     {
         $jobs = JobPosting::query()->released()->new();
-        $jobCount = $jobs->count();
         $jobList = $jobs->with([
                 'store',
                 'province',
@@ -247,7 +261,7 @@ class JobService extends Service
         }
 
         return [
-            'total_jobs' => $jobCount,
+            'total_jobs' => $jobList->count(),
             'list_jobs' => $result,
         ];
     }
