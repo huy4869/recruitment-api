@@ -31,7 +31,7 @@ return [
         'array' => ':attributeには:min～:max個の要素を持つ配列を指定してください。',
     ],
     'boolean' => ':attributeには真偽値を指定してください。',
-    'confirmed' => ':attributeが確認用の値と一致しません。',
+    'confirmed' => ':attributeが一致しません。',
     'date' => ':attributeは有効な日付ではありません。',
     'date_equals' => ':attributeは:dateと同じ日付でなければなりません。',
     'date_format' => ':attributeは:format形式と一致しません。',
@@ -171,7 +171,7 @@ return [
             'mimes' => 'ファイルのアップロードに失敗しました。',
             'mimetypes' => 'JPG、JPEG、PNG、SVGの写真をアップしてください。',
         ],
-        'wrong_password' => 'メールアドレスまた、パスワードが正しくありません。',
+        'wrong_password' => 'メールアドレスまたはパスワードが正しくありません。',
         'half_size' => ':attributeは半角英数字で入力してください。',
         'email' => [
             'max' => ':attributeは半角255英数字以内で入力してください。'
