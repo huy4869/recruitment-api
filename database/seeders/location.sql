@@ -54,7 +54,7 @@ INSERT INTO `m_provinces` (`id`, `name`, `district_id`, `created_at`, `updated_a
 --
 -- Đang đổ dữ liệu cho bảng `m_job_features`
 --
-INSERT INTO `m_job_features` (`name`, `category`, `created_at`, `updated_at`) VALUES
+INSERT INTO `m_job_features` (`name`, `category_id`, `created_at`, `updated_at`) VALUES
 ('急募',	1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('10人以上募集',	1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 ('未経験者歓迎',	1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),

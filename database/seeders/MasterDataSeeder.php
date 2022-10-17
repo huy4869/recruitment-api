@@ -32,6 +32,7 @@ class MasterDataSeeder extends Seeder
         DB::table('m_provinces')->truncate();
         DB::table('m_job_features')->truncate();
         DB::table('m_stations')->truncate();
+        DB::table('m_notice_types')->truncate();
 
         $time = Carbon::now();
         $dataRoles = [
@@ -145,6 +146,15 @@ class MasterDataSeeder extends Seeder
             ['name' => '終了', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_job_statuses')->insert($dataJobStatus);
+
+        $dataNoticeTypes = [
+            ['name' => 'interview_coming', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'interview_scheduled', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'new_message', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'interview_changed', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'interview_pending', 'created_at' => $time, 'updated_at' => $time],
+        ];
+        DB::table('m_notice_types')->insert($dataNoticeTypes);
 
         $path = base_path().'/database/seeders/location.sql';
         $sql = file_get_contents($path);

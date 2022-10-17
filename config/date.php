@@ -9,6 +9,7 @@ return [
     'fe_date_half_ja_format' => 'Y年m月',
     'fe_date_time_ja_format' => 'Y年m月d日 H:i',
     'fe_date_time_half_ja_format' => 'm月d日 H:i',
+    'fe_data_time_hour' => '今日 H:i',
 
     'day_of_week_ja' => [
         0 => '日',

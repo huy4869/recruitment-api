@@ -18,4 +18,5 @@ return [
     'text_max_length_information_pr' => 2000,
     'date_in_new_range' => 7,
     'min_age' => 20,
+    'notify_user_interview_delay' => env('NOTIFY_INTERVIEW_DELAY', 1),
 ];
