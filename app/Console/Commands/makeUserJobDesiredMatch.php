@@ -46,7 +46,6 @@ class makeUserJobDesiredMatch extends Command
             'work_type_ids',
             'age',
             'salary',
-            'job_type_ids',
             'job_experience_ids',
             'job_feature_ids',
         ];
@@ -63,7 +62,6 @@ class makeUserJobDesiredMatch extends Command
             return;
         }
 
-
         $dataCreate = [];
         $now = now();
 
@@ -73,6 +71,16 @@ class makeUserJobDesiredMatch extends Command
                     'detail' => [],
                     'point' => 0
                 ];
+
+                if (!$desire->job_type_ids || !$jobPosting->job_type_ids) {
+                    continue;
+                } else {
+                    $arr_1 = is_array($desire->job_type_ids) ? $desire->job_type_ids : json_decode($desire->job_type_ids);
+                    $arr_2 = is_array($jobPosting->job_type_ids) ? $jobPosting->job_type_ids : json_decode($jobPosting->job_type_ids);
+                    if (!count(array_intersect($arr_1, $arr_2))) {
+                        continue;
+                    }
+                }
 
                 foreach ($matches as $match) {
                     switch ($match) {
@@ -84,9 +92,6 @@ class makeUserJobDesiredMatch extends Command
                             break;
                         case 'age':
                             $matchResult = $this->compareAge($matchResult, $desire->age, $jobPosting->age_min, $jobPosting->age_max);
-                            break;
-                        case 'job_type_ids':
-                            $matchResult = $this->compareJobType($matchResult, $desire->job_type_ids, $jobPosting->job_type_ids);
                             break;
                         case 'job_experience_ids':
                             $matchResult = $this->compareJobExperience($matchResult, $desire->job_experience_ids, $jobPosting->experience_ids);
@@ -159,19 +164,33 @@ class makeUserJobDesiredMatch extends Command
     }
 
     public function compareWorkType($matchResult, $workTypes_d, $workTypes_j) {
-        return $this->compareJson($matchResult, $workTypes_d, $workTypes_j, MWorkType::class, config('criteria_ratio.match_job.work_type_unit'));
-    }
-
-    public function compareJobType($matchResult, $jobTypes_d, $jobTypes_j) {
-        return $this->compareJson($matchResult, $jobTypes_d, $jobTypes_j, MJobType::class, config('criteria_ratio.match_job.job_type_unit'));
+        return $this->compareJson(
+            $matchResult,
+            $workTypes_d,
+            $workTypes_j,
+            MWorkType::class,
+            config('criteria_ratio.match_job.work_type')
+        );
     }
 
     public function compareJobExperience($matchResult, $jobExperience_d, $jobExperience_j) {
-        return $this->compareJson($matchResult, $jobExperience_d, $jobExperience_j, MJobExperience::class, config('criteria_ratio.match_job.job_experience_unit'));
+        return $this->compareJson(
+            $matchResult,
+            $jobExperience_d,
+            $jobExperience_j,
+            MJobExperience::class,
+            config('criteria_ratio.match_job.job_experience')
+        );
     }
 
     public function compareJobFeature($matchResult, $jobFeature_d, $jobFeature_j) {
-        return $this->compareJson($matchResult, $jobFeature_d, $jobFeature_j, MJobFeature::class, config('criteria_ratio.match_job.job_feature_unit'));
+        return $this->compareJson(
+            $matchResult,
+            $jobFeature_d,
+            $jobFeature_j,
+            MJobFeature::class,
+            config('criteria_ratio.match_job.job_feature')
+        );
     }
 
     public function compareJson($matchResult, $list_1, $list_2, $class, $ratio) {
@@ -187,7 +206,7 @@ class makeUserJobDesiredMatch extends Command
                         'single_attr' => '',
                         'match_value' => json_encode($intersect),
                     ];
-                    $matchResult['point'] += count($intersect) * $ratio;
+                    $matchResult['point'] += $ratio/count($arr_1) * count($intersect);
                 }
             }
         }

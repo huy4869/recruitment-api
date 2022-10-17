@@ -2,15 +2,14 @@
 
 return [
   'match_job' => [
-      'province' => 100,
-      'age' => 100,
+      'province' => 25,
+      'age' => 12.4,
       'salary' => [
-          'half' => 50,
-          'full' => 100,
+          'half' => 10,
+          'full' => 10,
       ],
-      'work_type_unit' => 1,
-      'job_type_unit' => 1,
-      'job_experience_unit' => 1,
-      'job_feature_unit' => 1,
+      'work_type' => 25,
+      'job_experience' => 15,
+      'job_feature' => 12.6,
   ]
 ];
