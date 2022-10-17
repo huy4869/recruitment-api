@@ -25,6 +25,8 @@ class DetailJobPostingResource extends JsonResource
             'banner_image' => $this['banner_image'],
             'detail_images' => DetailImageResource::collection($this['detail_images']),
             'job_types' => $this['job_types'],
+            'feature_types' => $this['feature_types'],
+            'experience_types' => $this['experience_types'],
             'description' => $this['description'],
             'work_types' =>  $this['work_types'],
             'salary' => [

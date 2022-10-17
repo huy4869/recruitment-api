@@ -14,12 +14,16 @@ class JobHelper
         $masterWorkTypes = JobService::getMasterDataJobPostingWorkTypes();
         $masterJobTypes = JobService::getMasterDataJobPostingTypes();
         $masterGenders = JobService::getMasterDataJobGenders();
+        $masterJobExperiences = JobService::getMasterDataJobExperiences();
+        $masterJobFeatures = JobService::getMasterDataJobFeatures();
         $userFavoriteJobs = JobService::getUserFavoriteJobIds($user);
         $userApplyJobs = JobService::getUserApplyJobIds($user);
 
         return [
             'masterWorkTypes' => $masterWorkTypes,
             'masterJobTypes' => $masterJobTypes,
+            'masterJobExperiences' => $masterJobExperiences,
+            'masterJobFeatures' => $masterJobFeatures,
             'masterGenders' => $masterGenders,
             'userFavoriteJobs' => $userFavoriteJobs,
             'userApplyJobs' => $userApplyJobs,
@@ -38,6 +42,8 @@ class JobHelper
         $workTypes = self::getTypeName($job->work_type_ids, $masterData['masterWorkTypes']);
         $jobTypes = self::getTypeName($job->job_type_ids, $masterData['masterJobTypes']);
         $gender = self::getTypeName($job->gender_ids, $masterData['masterGenders']);
+        $experience = self::getTypeName($job->experience_ids, $masterData['masterJobExperiences']);
+        $feature = self::getFeatureCategoryName($job->feature_ids, $masterData['masterJobFeatures']);
 
         $isFavorite = self::inArrayCheck($job->id, $masterData['userFavoriteJobs']);
         $isApply = self::inArrayCheck($job->id, $masterData['userApplyJobs']);
@@ -49,6 +55,8 @@ class JobHelper
             'province' => $job->province->name,
             'district' => $job->province->provinceDistrict->name,
             'salary_type' => $job->salaryType->name,
+            'experience_types' => $experience,
+            'feature_types' => $feature,
             'work_types' => $workTypes,
             'job_types' => $jobTypes,
             'genders' => $gender,
@@ -105,6 +113,68 @@ class JobHelper
 
         foreach ($typeIds as $id) {
             $result[] = $masterDataType[(int)$id - 1];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param $typeIds
+     * @param $features
+     * @return array
+     */
+    public static function getFeatureCategoryName($typeIds, $features)
+    {
+        $result = [];
+
+        if (!$typeIds) {
+            return $result;
+        }
+
+        foreach ($typeIds as $id) {
+            $feature = $features[$id - 1];
+
+            $result[] = [
+                'category' => [
+                    'id' => $feature['category']['id'],
+                    'name' => $feature['category']['name'],
+                    'feature' => [
+                        'id' => $feature['id'],
+                        'name' => $feature['name'],
+                    ]
+                ],
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param $typeIds
+     * @param $provinces
+     * @return array
+     */
+    public static function getProvinceDistrictName($typeIds, $provinces)
+    {
+        $result = [];
+
+        if (!$typeIds) {
+            return $result;
+        }
+
+        foreach ($typeIds as $id) {
+            $province = $provinces[$id - 1];
+
+            $result[] = [
+                'district' => [
+                    'id' => $province['province_district']['id'],
+                    'name' => $province['province_district']['name'],
+                    'province' => [
+                        'id' => $province['id'],
+                        'name' => $province['name'],
+                    ]
+                ],
+            ];
         }
 
         return $result;

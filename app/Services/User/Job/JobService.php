@@ -10,7 +10,11 @@ use App\Models\Application;
 use App\Models\FavoriteJob;
 use App\Models\Gender;
 use App\Models\JobPosting;
+use App\Models\MJobExperience;
+use App\Models\MJobFeature;
+use App\Models\MJobFeatureCategory;
 use App\Models\MJobType;
+use App\Models\MProvince;
 use App\Models\MWorkType;
 use App\Services\Service;
 use Exception;
@@ -360,6 +364,32 @@ class JobService extends Service
         $gender = Gender::all();
 
         return CommonHelper::getMasterDataIdName($gender);
+    }
+
+    /**
+     * @return array
+     */
+    public static function getMasterDataJobExperiences()
+    {
+        $experiences = MJobExperience::all();
+
+        return CommonHelper::getMasterDataIdName($experiences);
+    }
+
+    /**
+     * @return array
+     */
+    public static function getMasterDataJobFeatures()
+    {
+        return MJobFeature::query()->with(['category'])->get()->toArray();
+    }
+
+    /**
+     * @return array
+     */
+    public static function getMasterDataProvinces()
+    {
+        return MProvince::query()->with(['provinceDistrict'])->get()->toArray();
     }
 
     /**

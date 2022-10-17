@@ -111,3 +111,8 @@ Route::group(['as' => 'learning-history.', 'prefix' => 'learning-history', 'midd
 Route::group(['as' => 'notifications.', 'prefix' => 'notifications', 'middleware' => 'user'], function () {
     Route::get('/', 'NotificationController@list')->name('list');
 });
+
+Route::group(['as' => 'search-jobs.', 'prefix' => 'search-jobs', 'middleware' => 'user'], function () {
+    Route::get('/', 'SearchJobController@list')->name('list');
+    Route::get('/delete/{id}', 'SearchJobController@destroy')->name('destroy');
+});
