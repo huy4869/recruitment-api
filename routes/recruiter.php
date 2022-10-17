@@ -18,6 +18,7 @@ Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {
     Route::post('/login', 'AuthController@login')->name('login');
     Route::post('/logout', 'AuthController@logout')->name('logout');
     Route::post('/register', 'AuthController@register')->name('register');
+    Route::post('/change-password', 'AuthController@changePassword')->name('changePassword')->middleware('recruiter');
 });
 
 Route::group(['as' => 'forgot-password.', 'prefix' => 'forgot-password'], function () {

@@ -3,6 +3,7 @@
 namespace App\Services\Recruiter;
 
 use App\Exceptions\InputException;
+use App\Helpers\ResponseHelper;
 use App\Models\User;
 use App\Services\Service;
 use Carbon\Carbon;
@@ -60,5 +61,18 @@ class AuthService extends Service
         }
 
         return $newUser;
+    }
+
+    /**
+     * @param $password
+     * @return bool
+     */
+    public function changePassword($data)
+    {
+        $user = $this->user;
+
+        return $user->update([
+            'password' => Hash::make($data['password'])
+        ]);
     }
 }
