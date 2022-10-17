@@ -68,6 +68,8 @@ class JobPosting extends Model
         'work_type_ids' => 'array',
         'gender_ids' => 'array',
         'stations' => 'array',
+        'feature_ids' => 'array',
+        'experience_ids' => 'array',
     ];
 
     /**
