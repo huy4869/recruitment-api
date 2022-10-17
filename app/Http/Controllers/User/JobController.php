@@ -8,6 +8,7 @@ use App\Http\Resources\User\Job\DetailJobPostingResource;
 use App\Http\Resources\User\Job\JobPostingResource;
 use App\Models\JobPosting;
 use App\Services\User\Job\JobService;
+use App\Services\User\UserJobDesiredMatchService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 
@@ -90,6 +91,25 @@ class JobController extends Controller
         $jobPostings = JobService::getInstance()->getListMostApplyJobPostings();
 
         return $this->sendSuccessResponse(JobPostingResource::collection($jobPostings));
+    }
+
+    /**
+     * Get recommend jobs
+     *
+     * @return JsonResponse
+     */
+    public function getListRecommends()
+    {
+        $user = $this->guard()->user();
+
+        if ($user) {
+            $jobPostings = UserJobDesiredMatchService::getInstance()->withUser($user)->getListMatch();
+        } else {
+            $jobPostings = JobService::getInstance()->getListMostViewJobPostings();
+            return $this->sendSuccessResponse($jobPostings);
+        }
+
+        return $this->sendSuccessResponse($jobPostings);
     }
 
     /**

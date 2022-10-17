@@ -244,17 +244,24 @@ class JobService extends Service
             ->take(config('common.job_posting.newest_amount'))
             ->get();
 
-        $masterData = JobHelper::getJobMasterData($this->user);
-        $result = [];
-
-        foreach ($jobList as $job) {
-            $result[] = JobHelper::addFormatJobJsonData($job, $masterData);
-        }
+        $result = $this->appendMaster($this->user, $jobList);
 
         return [
             'total_jobs' => $jobList->count(),
             'list_jobs' => $result,
         ];
+    }
+
+    public static function appendMaster($user, $jobs)
+    {
+        $masterData = JobHelper::getJobMasterData($user);
+        $result = [];
+
+        foreach ($jobs as $job) {
+            $result[] = JobHelper::addFormatJobJsonData($job, $masterData);
+        }
+
+        return $result;
     }
 
     /**
@@ -276,14 +283,7 @@ class JobService extends Service
             ->take(config('common.job_posting.most_view_amount'))
             ->get();
 
-        $masterData = JobHelper::getJobMasterData($this->user);
-        $result = [];
-
-        foreach ($jobList as $job) {
-            $result[] = JobHelper::addFormatJobJsonData($job, $masterData);
-        }
-
-        return $result;
+        return $this->appendMaster($this->user, $jobList);
     }
 
     /**
@@ -305,14 +305,7 @@ class JobService extends Service
             ->take(config('common.job_posting.most_applies'))
             ->get();
 
-        $masterData = JobHelper::getJobMasterData($this->user);
-        $result = [];
-
-        foreach ($jobList as $job) {
-            $result[] = JobHelper::addFormatJobJsonData($job, $masterData);
-        }
-
-        return $result;
+        return $this->appendMaster($this->user, $jobList);
     }
 
     /**
