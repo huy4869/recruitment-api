@@ -21,6 +21,7 @@ return [
         6 => '土',
     ],
 
+    'week' => 7,
     'less_than_hour' => 60,
     'less_than_date' => 24,
     'more_than_hour' => 1,
