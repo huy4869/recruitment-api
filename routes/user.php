@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Route;
 Route::get('/master-data', 'MasterDataController@show')->name('masterData');
 Route::post('/upload-image', 'UploadImageController@upload')->name('uploadImage')->middleware('user');
 Route::get('/zipcode', 'ZipcodeController@index')->name('getZipcode');
+Route::get('/location/most-apply', 'LocationController@getAccordingToMostApply')->name('getMostApply');
 
 Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {
     Route::post('/register', 'AuthController@register')->name('register');
