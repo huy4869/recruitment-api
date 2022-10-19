@@ -36,3 +36,7 @@ Route::group(['as' => 'users.', 'prefix' => 'users', 'middleware' => 'recruiter'
 Route::group(['as' => 'profile.', 'prefix' => 'profile', 'middleware' => 'recruiter'], function () {
     Route::get('/', 'ProfileController@getInformation')->name('getInformation');
 });
+
+Route::group(['as' => 'store.', 'prefix' => 'store', 'middleware' => 'recruiter'], function () {
+    Route::get('/', 'StoreController@list')->name('list');
+});
