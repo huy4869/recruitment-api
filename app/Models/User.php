@@ -169,7 +169,7 @@ class User extends Authenticatable
      */
     public function userWordHistories()
     {
-        return $this->hasMany(UserWorkHistory::class);
+        return $this->hasMany(UserWorkHistory::class, 'user_id', 'id');
     }
 
     /**
@@ -201,9 +201,13 @@ class User extends Authenticatable
      */
     public function images()
     {
-        return $this->morphMany(Image::class, 'imageable');
+        return $this->morphMany(Image::class, 'imageable')->where('type', Image::AVATAR_DETAIL);
     }
 
+    public function image()
+    {
+        return $this->morphOne(Image::class, 'imageable')->where('type', Image::AVATAR_BANNER);
+    }
     /**
      * @return MorphOne
      */
