@@ -38,6 +38,15 @@ class UserWorkHistory extends Model
     ];
 
     /**
+     * @var string[]
+     */
+    protected $casts = [
+        'job_type_ids' => 'array',
+        'work_type_ids' => 'array',
+        'position_office_ids' => 'array',
+    ];
+
+    /**
      * @return BelongsTo
      */
     public function user()

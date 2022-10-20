@@ -190,6 +190,10 @@ class DateTimeHelper
 
     public static function formatTimeChat($dataTime)
     {
+        if (!$dataTime) {
+            return null;
+        }
+
         $time = new Carbon($dataTime);
         $now = new Carbon(Carbon::now());
 
@@ -239,5 +243,20 @@ class DateTimeHelper
         }
 
         return self::formatDateDayOfWeekTimeJa($dateTime);
+    }
+
+
+    /**
+     * format month year
+     *
+     * @param $date
+     * @return string
+     */
+    public static function formatMonthYear($date)
+    {
+        $month = substr($date, 4);
+        $year = substr($date, 0, 4);
+
+        return sprintf('%s%s%s%s', $year, trans('common.year'), $month, trans('common.month'));
     }
 }
