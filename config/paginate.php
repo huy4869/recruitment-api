@@ -11,5 +11,9 @@ return [
     ],
     'search_job' => [
         'per_page' => 5,
-    ]
+    ],
+    'user' => [
+        'new_amount' => 5,
+        'suggest_amount' => 5,
+    ],
 ];

@@ -26,3 +26,9 @@ Route::group(['as' => 'forgot-password.', 'prefix' => 'forgot-password'], functi
     Route::post('/check-token', 'PasswordResetController@checkToken')->name('check-token');
     Route::post('/reset-password', 'PasswordResetController@resetPassword')->name('reset.password');
 });
+
+Route::group(['as' => 'users.', 'prefix' => 'users', 'middleware' => 'recruiter'], function () {
+    Route::get('/', 'UserController@list')->name('list');
+    Route::get('/new', 'UserController@newUsers')->name('newUsers');
+    Route::get('/suggest', 'UserController@suggestUsers')->name('suggestUsers');
+});

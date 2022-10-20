@@ -2,6 +2,8 @@
 
 namespace App\Helpers;
 
+use App\Services\User\Job\JobService;
+
 class UserHelper
 {
     public static function getPercentage($data, $percentage)
@@ -14,5 +16,23 @@ class UserHelper
         }
 
         return $percentage;
+    }
+
+    /**
+     * @return array
+     */
+    public static function getJobMasterData()
+    {
+        $masterWorkTypes = JobService::getMasterDataJobPostingWorkTypes();
+        $masterJobTypes = JobService::getMasterDataJobPostingTypes();
+        $masterJobExperiences = JobService::getMasterDataJobExperiences();
+        $masterJobFeatures = JobService::getMasterDataJobFeatures();
+
+        return [
+            'masterWorkTypes' => $masterWorkTypes,
+            'masterJobTypes' => $masterJobTypes,
+            'masterJobExperiences' => $masterJobExperiences,
+            'masterJobFeatures' => $masterJobFeatures,
+        ];
     }
 }

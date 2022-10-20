@@ -46,8 +46,10 @@ class PasswordResetService extends Service
 
         PasswordReset::updateOrCreate([
             'email' => $user->email,
+            'role_id' => $user->role_id,
         ], [
             'email' => $user->email,
+            'role_id' => $user->role_id,
             'token' => $token,
         ]);
 

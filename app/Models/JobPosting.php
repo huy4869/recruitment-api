@@ -143,4 +143,12 @@ class JobPosting extends Model
     {
         return $this->hasMany(FavoriteJob::class);
     }
+
+    /**
+     * @return HasMany
+     */
+    public function userJobDesiredMatch()
+    {
+        return $this->hasMany(UserJobDesiredMatch::class, 'job_id', 'id');
+    }
 }

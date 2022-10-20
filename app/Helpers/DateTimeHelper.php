@@ -203,4 +203,25 @@ class DateTimeHelper
 
         return self::formatDateDayOfWeekTimeJa($dateTime);
     }
+
+    /**
+     * Parse To DiffForHumans japan
+     *
+     * @param null $dateTime
+     * @return string
+     */
+    public static function parseToDiffForHumansJa($dateTime = null, $format = 'Y-m-d H:i:s')
+    {
+        Carbon::setLocale(config('app.locale'));
+
+        if (!$dateTime) {
+            return null;
+        }
+
+        if ($dateTime > now()->subDays(config('date.week'))) {
+            return Carbon::createFromFormat($format, $dateTime)->diffForHumans();
+        }
+
+        return self::formatDateDayOfWeekTimeJa($dateTime);
+    }
 }

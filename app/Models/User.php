@@ -6,7 +6,9 @@ use App\Models\Scopes\User as ScopesUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -113,6 +115,14 @@ class User extends Authenticatable
     /**
      * @return BelongsTo
      */
+    public function store()
+    {
+        return $this->belongsTo(Store::class, 'store_id');
+    }
+
+    /**
+     * @return BelongsTo
+     */
     public function gender()
     {
         return $this->belongsTo(Gender::class, 'gender_id');
@@ -191,6 +201,14 @@ class User extends Authenticatable
     }
 
     /**
+     * @return MorphOne
+     */
+    public function avatarBanner()
+    {
+        return $this->morphOne(Image::class, 'imageable')->where('type', 'avatar_banner');
+    }
+
+    /**
      * @return HasMany
      */
     public function chats()
@@ -204,5 +222,21 @@ class User extends Authenticatable
     public function notifications()
     {
         return $this->hasMany(Notification::class);
+    }
+
+    /**
+     * @return HasOne
+     */
+    public function desiredConditionUser()
+    {
+        return $this->hasOne(DesiredConditionUser::class);
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function favoriteUser()
+    {
+        return $this->belongsTo(FavoriteUser::class, 'id', 'user_id');
     }
 }
