@@ -239,4 +239,19 @@ class User extends Authenticatable
     {
         return $this->belongsTo(FavoriteUser::class, 'id', 'user_id');
     }
+
+    /**
+     * @return HasMany
+     */
+    public function stores()
+    {
+        return $this->hasMany(Store::class, 'user_id', 'id');
+    }
+
+    public function getFullNameAddressAttribute()
+    {
+        $provinceName = $this->province->name ?? '';
+
+        return sprintf('〒 %s %s%s%s', $this->postal_code, $provinceName, $this->city, $this->address);
+    }
 }

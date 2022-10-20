@@ -10,5 +10,7 @@ return [
         'province_ratio' => 10,
         'recent_jobs_limit' => 17,
         'recommend' => 5,
-    ]
+    ],
+    'capital_stock' => 1000
+
 ];

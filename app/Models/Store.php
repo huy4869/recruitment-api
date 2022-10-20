@@ -16,6 +16,7 @@ class Store extends Model
 
     protected $fillable = [
         'specialize_id',
+        'user_id',
         'manager_name',
         'recruiter_name',
         'postal_code',
@@ -46,6 +47,14 @@ class Store extends Model
     public function province()
     {
         return $this->belongsTo(MProvince::class, 'province_id');
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function owner()
+    {
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**
