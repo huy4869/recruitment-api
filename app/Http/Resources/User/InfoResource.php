@@ -20,6 +20,13 @@ class InfoResource extends JsonResource
     public function toArray($request)
     {
         $data = $this->resource;
+        if (!$data->full_name && !$data->full_name_furi) {
+            $fullName = '';
+        } elseif ($data->full_name && $data->full_name_furi) {
+            $fullName = $data->full_name . '(' . $data->full_name_furi . ')';
+        } else {
+            $fullName = $data->full_name;
+        }
 
         return [
             'id' => $data->id,
@@ -30,13 +37,13 @@ class InfoResource extends JsonResource
             'furi_last_name' => $data->furi_last_name,
             'full_name' => $data->full_name,
             'full_name_furi' => $data->full_name_furi,
-            'full_name_user' => $data->full_name . '(' . $data->full_name_furi . ')',
+            'full_name_user' => $fullName,
             'alias_name' => $data->alias_name,
             'birthday' => $data->birthday,
             'birthday_format' => DateTimeHelper::formatDateJa($data->birthday),
             'age' => $data->age,
             'gender_id' => $data->gender_id,
-            'gender_name' => $data->gender->name,
+            'gender_name' => @$data->gender->name,
             'tel' => $data->tel,
             'line' => $data->line,
             'facebook' => $data->facebook,
@@ -44,7 +51,7 @@ class InfoResource extends JsonResource
             'twitter' => $data->twitter,
             'postal_code' => $data->postal_code,
             'province_id' => $data->province_id,
-            'province_name'  => $data->province->name,
+            'province_name' => @$data->province->name,
             'city' => $data->city,
             'address' => $data->address,
             'avatar' => FileHelper::getFullUrl($data->avatar),
