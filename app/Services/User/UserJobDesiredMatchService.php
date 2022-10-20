@@ -28,11 +28,12 @@ class UserJobDesiredMatchService extends Service
             return $item->job;
         });
 
-        $masterData = JobHelper::getJobMasterData($this->user);
+        $masterData = JobHelper::getJobMasterData();
+        $userAction = JobHelper::getUserActionJob($this->user);
         $result = [];
 
         foreach ($jobPostings as $job) {
-            $result[] = JobHelper::addFormatJobJsonData($job, $masterData);
+            $result[] = JobHelper::addFormatJobJsonData($job, $masterData, $userAction);
         }
 
         return $result;

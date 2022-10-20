@@ -9,15 +9,13 @@ class JobHelper
     /**
      * @return array
      */
-    public static function getJobMasterData($user)
+    public static function getJobMasterData()
     {
         $masterWorkTypes = JobService::getMasterDataJobPostingWorkTypes();
         $masterJobTypes = JobService::getMasterDataJobPostingTypes();
         $masterGenders = JobService::getMasterDataJobGenders();
         $masterJobExperiences = JobService::getMasterDataJobExperiences();
         $masterJobFeatures = JobService::getMasterDataJobFeatures();
-        $userFavoriteJobs = JobService::getUserFavoriteJobIds($user);
-        $userApplyJobs = JobService::getUserApplyJobIds($user);
 
         return [
             'masterWorkTypes' => $masterWorkTypes,
@@ -25,19 +23,34 @@ class JobHelper
             'masterJobExperiences' => $masterJobExperiences,
             'masterJobFeatures' => $masterJobFeatures,
             'masterGenders' => $masterGenders,
+        ];
+    }
+
+    /**
+     * @param $user
+     * @return array
+     */
+    public static function getUserActionJob($user)
+    {
+        $userFavoriteJobs = JobService::getUserFavoriteJobIds($user);
+        $userApplyJobs = JobService::getUserApplyJobIds($user);
+
+        return [
             'userFavoriteJobs' => $userFavoriteJobs,
             'userApplyJobs' => $userApplyJobs,
         ];
     }
+
 
     /**
      * Add format job json data
      *
      * @param $job
      * @param $masterData
+     * @param $userAction
      * @return array
      */
-    public static function addFormatJobJsonData($job, $masterData)
+    public static function addFormatJobJsonData($job, $masterData, $userAction)
     {
         $workTypes = self::getTypeName($job->work_type_ids, $masterData['masterWorkTypes']);
         $jobTypes = self::getTypeName($job->job_type_ids, $masterData['masterJobTypes']);
@@ -45,8 +58,8 @@ class JobHelper
         $experience = self::getTypeName($job->experience_ids, $masterData['masterJobExperiences']);
         $feature = self::getFeatureCategoryName($job->feature_ids, $masterData['masterJobFeatures']);
 
-        $isFavorite = self::inArrayCheck($job->id, $masterData['userFavoriteJobs']);
-        $isApply = self::inArrayCheck($job->id, $masterData['userApplyJobs']);
+        $isFavorite = self::inArrayCheck($job->id, $userAction['userFavoriteJobs']);
+        $isApply = self::inArrayCheck($job->id, $userAction['userApplyJobs']);
 
         return array_merge($job->toArray(), [
             'store_name' => $job->store->name,

@@ -14,6 +14,8 @@ use Illuminate\Support\Facades\Route;
 */
 Route::post('/upload-image', 'UploadImageController@upload')->name('uploadImage')->middleware('recruiter');
 
+Route::get('/master-data', 'MasterDataController@show')->name('masterData')->middleware('recruiter');
+
 Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {
     Route::post('/login', 'AuthController@login')->name('login');
     Route::post('/logout', 'AuthController@logout')->name('logout');
@@ -35,4 +37,9 @@ Route::group(['as' => 'users.', 'prefix' => 'users', 'middleware' => 'recruiter'
 
 Route::group(['as' => 'profile.', 'prefix' => 'profile', 'middleware' => 'recruiter'], function () {
     Route::get('/', 'ProfileController@getInformation')->name('getInformation');
+});
+
+Route::group(['as' => 'jobs.', 'prefix' => 'jobs', 'middleware' => 'recruiter'], function () {
+    Route::get('/', 'JobController@list')->name('list');
+    Route::post('/delete/{id}', 'JobController@destroy')->name('destroy');
 });

@@ -2,6 +2,7 @@
 
 namespace App\Services\Recruiter\User;
 
+use App\Helpers\CommonHelper;
 use App\Helpers\JobHelper;
 use App\Helpers\UserHelper;
 use App\Models\User;
