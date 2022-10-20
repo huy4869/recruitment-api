@@ -30,9 +30,25 @@ class JobService extends Service
      */
     public function detail($id)
     {
+        $user = $this->user;
         $job = JobPosting::query()->where('id', $id)
-            ->released()
+            ->where(function ($query) use ($user) {
+                $query->released()
+                    ->orWhere(function ($query) use ($user) {
+                        if ($user) {
+                            $query->where('job_status_id', JobPosting::STATUS_END)
+                                ->whereHas('applications', function ($query) use ($user) {
+                                    $query->whereNotIn('interview_status_id', [Application::STATUS_APPLYING, Application::STATUS_CANCELED])
+                                        ->where('user_id', $user->id);
+                                });
+                        }
+                    });
+            })
             ->first();
+
+        if (!$job) {
+            throw new InputException(trans('response.not_found'));
+        }
 
         $job->with([
             'store',
@@ -428,6 +444,10 @@ class JobService extends Service
     {
         if (!$userRecentJobs) {
             $userRecentJobs = [];
+        }
+
+        if (empty($userRecentJobs)) {
+            return array(sprintf('%u', $jobId));
         }
 
         if ($jobId == $userRecentJobs[0]) {
