@@ -7,7 +7,7 @@ use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class LearningHistoryResource extends JsonResource
+class ListLearningHistoryResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -29,15 +29,7 @@ class LearningHistoryResource extends JsonResource
 
         return [
             'id' => $data->id,
-            'learning_status_id' => $data->learning_status_id,
-            'learning_status_name' => $learningStatusName,
             'school_name' => $data->school_name,
-            'enrollment_period_year_start' => $enrollmentPeriodYearStart,
-            'enrollment_period_month_start' => $enrollmentPeriodMonthStart,
-            'enrollment_period_start' => $enrollmentPeriodYearStart . '/' . $enrollmentPeriodMonthStart,
-            'enrollment_period_year_end' => $enrollmentPeriodYearEnd,
-            'enrollment_period_month_end' => $enrollmentPeriodMonthEnd,
-            'enrollment_period_end' => $enrollmentPeriodYearEnd . '/' . $enrollmentPeriodMonthEnd,
             'enrollment_period_format' => $EnrollmentPeriod
         ];
     }

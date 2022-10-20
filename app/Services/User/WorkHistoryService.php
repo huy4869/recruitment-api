@@ -3,7 +3,6 @@
 namespace App\Services\User;
 
 use App\Exceptions\InputException;
-use App\Helpers\DateTimeHelper;
 use App\Models\MJobType;
 use App\Models\MPositionOffice;
 use App\Models\MWorkType;
@@ -57,10 +56,12 @@ class WorkHistoryService extends Service
      * @param $keys
      * @return string
      */
-    public function getArrayValueByKeys($values , $keys)
+    public function getArrayValueByKeys($values, $keys)
     {
         $keys = array_map('strval', $keys);
-        $arrayValue = array_map(function($x) use ($values) { return isset($values[$x]) ? $values[$x] : ''; }, $keys);
+        $arrayValue = array_map(function ($x) use ($values) {
+            return isset($values[$x]) ? $values[$x] : '';
+        }, $keys);
 
         return count($arrayValue) == 1 ? $arrayValue[0] : implode(', ', $arrayValue);
     }
@@ -74,7 +75,7 @@ class WorkHistoryService extends Service
      */
     public function store($data)
     {
-        $dataWorkHistory =  $this->makeSaveData($data);
+        $dataWorkHistory = $this->makeSaveData($data);
         $dataWorkHistories = UserWorkHistory::query()->where('user_id', $dataWorkHistory['user_id'])->count();
 
         if ($dataWorkHistories >= UserWorkHistory::MAX_USER_WORK_HISTORY) {
@@ -102,7 +103,7 @@ class WorkHistoryService extends Service
             DB::rollBack();
             Log::error($exception->getMessage(), [$exception]);
             throw new InputException($exception->getMessage());
-        }
+        }//end try
     }
 
     /**
@@ -176,7 +177,7 @@ class WorkHistoryService extends Service
             DB::rollBack();
             Log::error($exception->getMessage(), [$exception]);
             throw new InputException($exception->getMessage());
-        }
+        }//end try
     }
 
     /**
@@ -233,7 +234,7 @@ class WorkHistoryService extends Service
                 ->toArray();
 
             $dataIds = array_merge($dataIds, $dataNameIds);
-        }
+        }//end if
 
         return json_encode($dataIds);
     }
@@ -271,8 +272,8 @@ class WorkHistoryService extends Service
             'user_id' => $this->user->id,
             'store_name' => $data['store_name'],
             'company_name' => $data['company_name'],
-            'period_start' => DateTimeHelper::formatDateWorkHistoryBe($data['period_start']),
-            'period_end' => DateTimeHelper::formatDateWorkHistoryBe($data['period_end']),
+            'period_start' => str_replace('/', '', $data['period_start']),
+            'period_end' => str_replace('/', '', $data['period_end']),
             'business_content' => $data['business_content'],
             'experience_accumulation' => $data['experience_accumulation'],
         ];

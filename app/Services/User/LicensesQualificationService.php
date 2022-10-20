@@ -105,7 +105,7 @@ class LicensesQualificationService extends Service
         return [
             'user_id' => $this->user->id,
             'name' => $data['name'],
-            'new_issuance_date' => DateTimeHelper::formatDateWorkHistoryBe($data['new_issuance_date']),
+            'new_issuance_date' => str_replace('/', '', $data['new_issuance_date']),
         ];
     }
 }
