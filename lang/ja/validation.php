@@ -255,6 +255,13 @@ return [
         'job_experience_ids.*.id' => '就業経験',
         'job_feature_ids' => '特徴',
         'job_feature_ids.*.id' => '特徴',
+        'home_page_rescuiter' => 'ホームページ',
+        'alias_name' => '代表者名',
+        'employee_quantity' => '従業員数',
+        'year' => '年',
+        'month' => '月',
+        'capital_stock' => '資本金',
+        'manager_name' => '担当者',
     ],
 
     'COM' => [
@@ -265,6 +272,7 @@ return [
         '005' => ':attributeは半角英数字で4桁〜12桁まで入力してください。',
         '007' => ':attributeが一致しません。',
         '008' => ':attributeは255文字以内で入力してください。',
+        '010' => ':attributeが選択されていません。',
         '011' => ':attributeは0から始まる10桁から13桁まで入力してください。',
         '014' => ':attributeは1000文字以内で入力してください。',
         '016' => ':attributeは数字とハイフンのみで入力してください。',
@@ -294,4 +302,5 @@ return [
     'content_chat' => 'チャット内容',
     'store_not_exist' => 'その店は存在しない',
     'store_id_required' => 'お店が入力されていません。',
+    'is_positive_number' => ':attributeは正の数です'
 ];

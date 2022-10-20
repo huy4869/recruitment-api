@@ -35,4 +35,5 @@ Route::group(['as' => 'users.', 'prefix' => 'users', 'middleware' => 'recruiter'
 
 Route::group(['as' => 'profile.', 'prefix' => 'profile', 'middleware' => 'recruiter'], function () {
     Route::get('/', 'ProfileController@getInformation')->name('getInformation');
+    Route::post('/', 'ProfileController@update')->name('update');
 });

@@ -71,6 +71,10 @@ class User extends Authenticatable
         'home_page_recruiter',
         'motivation',
         'recent_jobs',
+        'employee_quantity',
+        'manager_name',
+        'founded_year',
+        'capital_stock',
     ];
 
     /**

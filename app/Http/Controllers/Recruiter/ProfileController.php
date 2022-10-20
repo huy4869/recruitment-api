@@ -2,10 +2,11 @@
 
 namespace App\Http\Controllers\Recruiter;
 
+use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Recruiter\UpdateProfileRequest;
 use App\Http\Resources\Recruiter\InformationResource;
 use App\Services\Recruiter\ProfileService;
-use Illuminate\Http\Request;
 
 class ProfileController extends Controller
 {
@@ -13,6 +14,44 @@ class ProfileController extends Controller
     public function __construct(ProfileService $profileService)
     {
         $this->profileService = $profileService;
+    }
+
+    /**
+     * update Information
+     *
+     * @param UpdateProfileRequest $request
+     * @return \Illuminate\Http\JsonResponse
+     * @throws InputException
+     */
+    public function update(UpdateProfileRequest $request)
+    {
+        $input = $request->only([
+            'company_name',
+            'home_page_rescuiter',
+            'tel',
+            'postal_code',
+            'province_id',
+            'city',
+            'address',
+            'alias_name',
+            'employee_quantity',
+            'year',
+            'month',
+            'capital_stock',
+            'manager_name',
+            'line',
+            'facebook',
+            'instagram',
+            'twitter',
+        ]);
+
+        $data = $this->profileService->withUser($this->guard()->user())->updateInformation($input);
+
+        if ($data) {
+            return $this->sendSuccessResponse($data, trans('response.update_success'));
+        }
+
+        throw new InputException(trans('response.ERR.006'));
     }
 
     /**

@@ -19,4 +19,10 @@ return [
     'date_in_new_range' => 7,
     'min_age' => 20,
     'notify_user_interview_delay' => env('NOTIFY_INTERVIEW_DELAY', 1),
+    'max_length_text' => 255,
+    'year' => 4,
+    'month' => [
+        'min_length' => 1,
+        'max_length' => 2,
+    ],
 ];
