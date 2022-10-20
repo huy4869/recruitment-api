@@ -3,6 +3,7 @@
 namespace App\Http\Requests\User\WorkHistory;
 
 use App\Models\UserWorkHistory;
+use App\Rules\CheckYearRule;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -44,17 +45,28 @@ class WorkHistoryRequest extends FormRequest
             'period_start' => [
                 'required',
                 'date_format:' . config('date.fe_date_work_history_format'),
-                'before:' . Carbon::now()->format(config('date.fe_date_format')),
+                'before_or_equal:' . Carbon::now()->format(config('date.fe_date_work_history_format')),
+                new CheckYearRule()
             ],
             'period_end' => [
                 'nullable',
                 'required_if:period_check,=,' . UserWorkHistory::TYPE_INACTIVE,
-                'after:period_start',
                 'date_format:' . config('date.fe_date_work_history_format'),
-                'before:' . Carbon::now()->format(config('date.fe_date_work_history_format')),
+                'after_or_equal:period_start',
+                'before_or_equal:' . Carbon::now()->format(config('date.fe_date_work_history_format')),
             ],
             'business_content' => ['nullable', 'string', 'max:' . $stringMaxLength],
             'experience_accumulation' => ['nullable', 'string'],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'period_end.required_if' => trans('validation.required', ['attribute' => trans('validation.attributes.period_end')]),
         ];
     }
 }

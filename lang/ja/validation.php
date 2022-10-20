@@ -86,9 +86,9 @@ return [
     'mimes' => ':attributeは:valuesタイプのファイルでなければなりません。',
     'mimetypes' => ':attributeは:valuesタイプのファイルでなければなりません。',
     'min' => [
-        'numeric' => ':attributeは:maxより小さくてはいけません。',
-        'file' => ':attributeは:maxキロバイトより小さくてはいけません。',
-        'string' => ':attributeは:max文字より小さくてはいけません。',
+        'numeric' => ':attributeは:minより小さくてはいけません。',
+        'file' => ':attributeは:minキロバイトより小さくてはいけません。',
+        'string' => ':attributeは:min文字より小さくてはいけません。',
         'array' => ':attributeには少なくとも:min個のアイテムが必要です。',
     ],
     'multiple_of' => ':attributeは:valueの倍数である必要があります。',
@@ -185,6 +185,11 @@ return [
         ],
     ],
 
+    'my_validate' => [
+        'licenses_qualification' => ':min年以上の年を入力してください。',
+        'learning_end' => '卒業年は5年未満で選択してください。',
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | カスタムバリデーション属性
@@ -262,6 +267,9 @@ return [
         'month' => '月',
         'capital_stock' => '資本金',
         'manager_name' => '担当者',
+        'name_degree' => '資格名',
+        'year' => '年',
+        'month' => '月',
     ],
 
     'COM' => [

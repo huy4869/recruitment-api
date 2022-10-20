@@ -18,12 +18,16 @@ class LicensesQualificationResource extends JsonResource
     public function toArray($request)
     {
         $data = $this->resource;
+        $year = substr($data->new_issuance_date, 0, 4);
+        $month = substr($data->new_issuance_date, 4);
 
         return [
             'id' => $data->id,
             'name' => $data->name,
-            'new_issuance_date' => DateTimeHelper::formatDateHalfJaFe($data->new_issuance_date),
-            'new_issuance_date_format' => DateTimeHelper::formatDateHalfJa($data->new_issuance_date),
+            'year' => $year,
+            'month' => $month,
+            'new_issuance_date' => $year . '/' . $month,
+            'new_issuance_date_format' => DateTimeHelper::formatNameDateHalfJa($year, $month),
         ];
     }
 }

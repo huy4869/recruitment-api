@@ -97,6 +97,22 @@ class DateTimeHelper
     }
 
     /**
+     * Format date japan
+     *
+     * @param $year
+     * @param $month
+     * @return string|null
+     */
+    public static function formatNameDateHalfJa($year, $month)
+    {
+        if (!$year || !$month) {
+            return null;
+        }
+
+        return $year . '年' . $month . '月';
+    }
+
+    /**
      * Format date japan fe
      *
      * @param $dateTime

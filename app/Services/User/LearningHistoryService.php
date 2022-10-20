@@ -3,7 +3,6 @@
 namespace App\Services\User;
 
 use App\Exceptions\InputException;
-use App\Helpers\DateTimeHelper;
 use App\Models\UserLearningHistory;
 use App\Services\Service;
 use Illuminate\Database\Eloquent\Builder;
@@ -108,8 +107,8 @@ class LearningHistoryService extends Service
             'user_id' => $this->user->id,
             'learning_status_id' => $data['learning_status_id'],
             'school_name' => $data['school_name'],
-            'enrollment_period_start' => DateTimeHelper::formatDateWorkHistoryBe($data['enrollment_period_start']),
-            'enrollment_period_end' => DateTimeHelper::formatDateWorkHistoryBe($data['enrollment_period_end']),
+            'enrollment_period_start' => str_replace('/', '', $data['enrollment_period_start']),
+            'enrollment_period_end' => str_replace('/', '', $data['enrollment_period_end']),
         ];
     }
 }

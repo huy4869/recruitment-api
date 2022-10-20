@@ -25,4 +25,5 @@ return [
         'min_length' => 1,
         'max_length' => 2,
     ],
+    'min_date' => 1970,
 ];

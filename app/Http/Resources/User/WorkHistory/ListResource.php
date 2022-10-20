@@ -19,6 +19,18 @@ class ListResource extends JsonResource
     public function toArray($request)
     {
         $data = $this->resource;
+        $periodYearStart = substr($data['period_start'], 0, 4);
+        $periodMonthStart = substr($data['period_start'], 4);
+        $periodStart = DateTimeHelper::formatNameDateHalfJa($periodYearStart, $periodMonthStart);
+        $periodYearEnd = substr($data['period_end'], 0, 4);
+        $periodMonthEnd = substr($data['period_end'], 4);
+        $periodEnd = DateTimeHelper::formatNameDateHalfJa($periodYearEnd, $periodMonthEnd);
+
+        if ($periodEnd) {
+            $periodFullFormat = $periodStart . ' ~ ' . $periodEnd;
+        } else {
+            $periodFullFormat = $periodStart;
+        }
 
         return [
             'id' => $data['id'],
@@ -27,14 +39,10 @@ class ListResource extends JsonResource
             'position_offices' => $data['position_offices'],
             'store_name' => $data['store_name'],
             'company_name' => $data['company_name'],
-            'period_start' => $data['period_start'],
-            'period_start_format' => DateTimeHelper::formatDateHalfJa($data['period_start']),
-            'period_end' => $data['period_end'],
-            'period_end_format' => DateTimeHelper::formatDateHalfJa($data['period_end']),
-            'period_full_format' => DateTimeHelper::formatDateHalfJa($data['period_start']) . ' ~ ' . DateTimeHelper::formatDateHalfJa($data['period_end']),
+            'period_full_format' => $periodFullFormat,
             'business_content' => $data['business_content'],
             'experience_accumulation' => $data['experience_accumulation'],
-            'created_at' => Carbon::parse($data['created_at'],)->toDateTimeString(),
+            'created_at' => Carbon::parse($data['created_at'])->toDateTimeString(),
         ];
     }
 }

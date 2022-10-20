@@ -2,8 +2,6 @@
 
 namespace App\Http\Resources\User\WorkHistory;
 
-use App\Helpers\DateTimeHelper;
-use Carbon\Carbon;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -18,19 +16,35 @@ class DetailResource extends JsonResource
      */
     public function toArray($request)
     {
-        $data = $this->resource;
+         $data = $this->resource;
+         $periodYearStart = substr($data['period_start'], 0, 4);
+         $periodMonthStart = substr($data['period_start'], 4);
 
-        return [
+        $dataWorkHistory = [
             'id' => $data->id,
             'job_types' => NameTypeResource::collection($data['job_types']),
             'work_types' => NameTypeResource::collection($data['work_types']),
             'position_offices' => NameTypeResource::collection($data['position_offices']),
             'store_name' => $data->store_name,
             'company_name' => $data->company_name,
-            'period_start' => DateTimeHelper::formatDateHalfJaFe($data['period_start']),
-            'period_end' => DateTimeHelper::formatDateHalfJaFe($data['period_end']),
+            'period_year_start' => $periodYearStart,
+            'period_month_start' => $periodMonthStart,
+            'period_start' => $periodYearStart . '/' . $periodMonthStart,
             'business_content' => $data->business_content,
             'experience_accumulation' => $data->experience_accumulation,
         ];
+
+        if ($data['period_end']) {
+            $periodYearEnd = substr($data['period_end'], 0, 4);
+            $periodMonthEnd = substr($data['period_end'], 4);
+
+            $dataWorkHistory = array_merge($dataWorkHistory, [
+                'period_year_end' => $periodYearEnd,
+                'period_month_end' => $periodMonthEnd,
+                'period_end' => $periodYearEnd . '/' . $periodYearEnd,
+            ]);
+        }
+
+        return $dataWorkHistory;
     }
 }

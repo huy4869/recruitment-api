@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Exceptions\InputException;
 use App\Http\Requests\User\LearningHistory\LearningHistoryRequest;
 use App\Http\Resources\User\LearningHistory\LearningHistoryResource;
+use App\Http\Resources\User\LearningHistory\ListLearningHistoryResource;
 use App\Services\User\LearningHistoryService;
 use Illuminate\Http\JsonResponse;
 
@@ -34,7 +35,7 @@ class LearningHistoryController extends BaseController
         $user = $this->guard()->user();
         $data = $this->learningHistoryService->withUser($user)->list();
 
-        return $this->sendSuccessResponse(LearningHistoryResource::collection($data));
+        return $this->sendSuccessResponse(ListLearningHistoryResource::collection($data));
     }
 
     /**
