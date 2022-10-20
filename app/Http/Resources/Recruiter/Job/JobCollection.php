@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Http\Resources\Recruiter\User;
+namespace App\Http\Resources\Recruiter\Job;
 
-use App\Services\Recruiter\User\UserService;
+use App\Services\Recruiter\Job\JobService;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 
-class UserCollection extends ResourceCollection
+class JobCollection extends ResourceCollection
 {
     /**
      * Transform the resource collection into an array.
@@ -15,14 +15,12 @@ class UserCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        $recruiter = $this['recruiter'];
-        $paginator = $this['users']->resource;
-        $recruiterFavoriteUser = $recruiter->favoriteUser->favorite_ids;
+        $paginator = $this->resource;
 
-        $users = UserService::getUserInfoForListUser($recruiterFavoriteUser, $paginator);
+        $jobs = JobService::getJobInfoForListJob($paginator);
 
         return [
-            'data' => UserResource::collection($users),
+            'data' => JobResource::collection($jobs),
             'per_page' => $paginator->perPage(),
             'total_page' => $paginator->lastPage(),
             'current_page' => $paginator->currentPage(),

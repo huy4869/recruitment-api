@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
@@ -121,7 +122,7 @@ class JobPosting extends Model
     }
 
     /**
-     * @return \Illuminate\Database\Eloquent\Relations\MorphMany
+     * @return MorphMany
      */
     public function detailImages()
     {
@@ -150,5 +151,37 @@ class JobPosting extends Model
     public function userJobDesiredMatch()
     {
         return $this->hasMany(UserJobDesiredMatch::class, 'job_id', 'id');
+    }
+
+    /**
+     * @return MorphMany
+     */
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function feedbacks()
+    {
+        return $this->hasMany(FeedbackJob::class, 'job_posting_id', 'id');
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function applicationUserWorkHistory()
+    {
+        return $this->hasMany(ApplicationUserWorkHistory::class, 'job_posting_id', 'id');
+    }
+
+    /**
+     * @return HasMany
+     */
+    public function applicationUserLearningHistory()
+    {
+        return $this->hasMany(ApplicationUserLearningHistory::class, 'job_posting_id', 'id');
     }
 }

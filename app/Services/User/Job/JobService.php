@@ -44,8 +44,9 @@ class JobService extends Service
         ])
         ->get();
 
-        $masterData = JobHelper::getJobMasterData($this->user);
-        $jobData = JobHelper::addFormatJobJsonData($job, $masterData);
+        $masterData = JobHelper::getJobMasterData();
+        $userAction = JobHelper::getUserActionJob($this->user);
+        $jobData = JobHelper::addFormatJobJsonData($job, $masterData, $userAction);
         $user = $this->user;
 
         if (!$user) {
@@ -99,6 +100,7 @@ class JobService extends Service
             ->get();
 
         $masterData = JobHelper::getJobMasterData($this->user);
+        $userAction = JobHelper::getUserActionJob($this->user);
         $jobArr = [];
 
         foreach ($jobList as $job) {
@@ -108,19 +110,24 @@ class JobService extends Service
         $jobIds = collect($jobIds);
         $jobIds->shift();
 
-        return $jobIds->map(function ($id) use ($jobArr, $masterData) {
-            return JobHelper::addFormatJobJsonData($jobArr[$id], $masterData);
+        return $jobIds->map(function ($id) use ($jobArr, $masterData, $userAction) {
+            return JobHelper::addFormatJobJsonData($jobArr[$id], $masterData, $userAction);
         })->toArray();
     }
 
     /**
      * @return array
+     * @throws InputException
      */
     public function getSuggestJobs($id)
     {
         $job = JobPosting::query()->where('id', $id)
             ->released()
             ->first();
+
+        if (!$job) {
+            throw new InputException(trans('response.not_found'));
+        }
 
         $queryType = '';
         $jobAlias = '';
@@ -160,15 +167,16 @@ class JobService extends Service
             ])
             ->get();
 
-        $masterData = JobHelper::getJobMasterData($this->user);
+        $masterData = JobHelper::getJobMasterData();
+        $userAction = JobHelper::getUserActionJob($this->user);
         $jobArr = [];
 
         foreach ($jobList as $job) {
             $jobArr[$job->id] = $job;
         }
 
-        return collect($jobIds)->map(function ($id) use ($jobArr, $masterData) {
-            return JobHelper::addFormatJobJsonData($jobArr[$id], $masterData);
+        return collect($jobIds)->map(function ($id) use ($jobArr, $masterData, $userAction) {
+            return JobHelper::addFormatJobJsonData($jobArr[$id], $masterData, $userAction);
         })->toArray();
     }
 
@@ -254,11 +262,12 @@ class JobService extends Service
 
     public static function appendMaster($user, $jobs)
     {
-        $masterData = JobHelper::getJobMasterData($user);
+        $masterData = JobHelper::getJobMasterData();
+        $userAction = JobHelper::getUserActionJob($user);
         $result = [];
 
         foreach ($jobs as $job) {
-            $result[] = JobHelper::addFormatJobJsonData($job, $masterData);
+            $result[] = JobHelper::addFormatJobJsonData($job, $masterData, $userAction);
         }
 
         return $result;
