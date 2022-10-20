@@ -15,8 +15,8 @@ class Store extends Model
     protected $table = 'stores';
 
     protected $fillable = [
-        'specialize_id',
         'user_id',
+        'specialize_ids',
         'manager_name',
         'recruiter_name',
         'postal_code',
@@ -33,6 +33,9 @@ class Store extends Model
         'created_by',
     ];
 
+    protected $casts = [
+        'specialize_ids' => 'array',
+    ];
     /**
      * @return BelongsTo
      */
@@ -63,5 +66,12 @@ class Store extends Model
     public function jobs()
     {
         return $this->hasMany(JobPosting::class, 'store_id', 'id');
+    }
+
+    public function getFullNameAddressAttribute()
+    {
+        $provinceName = $this->province->name ?? '';
+
+        return sprintf('〒 %s %s%s%s', $this->postal_code, $provinceName, $this->city, $this->address);
     }
 }

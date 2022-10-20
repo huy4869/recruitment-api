@@ -44,3 +44,7 @@ Route::group(['as' => 'jobs.', 'prefix' => 'jobs', 'middleware' => 'recruiter'],
     Route::get('/', 'JobController@list')->name('list');
     Route::post('/delete/{id}', 'JobController@destroy')->name('destroy');
 });
+
+Route::group(['as' => 'store.', 'prefix' => 'store', 'middleware' => 'recruiter'], function () {
+    Route::get('/', 'StoreController@list')->name('list');
+});
