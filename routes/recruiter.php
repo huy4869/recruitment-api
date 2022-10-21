@@ -49,8 +49,9 @@ Route::group(['as' => 'jobs.', 'prefix' => 'jobs', 'middleware' => 'recruiter'],
     Route::get('/all', 'JobController@listJobNameByOwner')->name('listJobNameByOwner');
 });
 
-Route::group(['as' => 'store.', 'prefix' => 'store', 'middleware' => 'recruiter'], function () {
+Route::group(['as' => 'stores.', 'prefix' => 'stores', 'middleware' => 'recruiter'], function () {
     Route::get('/', 'StoreController@list')->name('list');
+    Route::post('/', 'StoreController@store')->name('store');
     Route::delete('/{id}', 'StoreController@delete')->name('delete');
     Route::get('/all', 'StoreController@listStoreNameByOwner')->name('listStoreNameByOwner');
 });

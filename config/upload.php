@@ -22,6 +22,11 @@ return [
             'full_size' => [100, 100],
             'thumb_size' => [100, 100],
         ],
+        'store_banner' => [
+            'crop' => false,
+            'full_size' => [100, 100],
+            'thumb_size' => [100, 100],
+        ],
     ],
 
     'path_origin_image' => 'originals',

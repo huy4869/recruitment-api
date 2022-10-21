@@ -28,8 +28,8 @@ class UserProfileService extends Service
             'userLearningHistories',
             'userLicensesQualifications',
             'userWordHistories',
-            'image',
-            'images'
+            'avatarBanner',
+            'avatarDetails'
             ])
             ->where('id', $user_id)
             ->roleUser()
@@ -105,8 +105,8 @@ class UserProfileService extends Service
 
         return [
             'user' => [
-                'banner_image' => FileHelper::getFullUrl($user->image->url ?? null),
-                'detail_image' => DetailImageResource::collection($user->images),
+                'banner_image' => FileHelper::getFullUrl($user->avatarBanner->url ?? null),
+                'detail_image' => DetailImageResource::collection($user->avatarDetails),
                 'name' => $user->full_name,
                 'age' => $user->age,
                 'facebook' => $user->facebook,

@@ -12,10 +12,11 @@ class Image extends Model
 
     protected $table = 'images';
 
-    public const AVATAR_BANNER = "avatar_banner";
-    public const AVATAR_DETAIL = "avatar_detail";
-    public const JOB_BANNER = "job_banner";
-    public const JOB_DETAIL = "job_detail";
+    public const AVATAR_BANNER = 'avatar_banner';
+    public const AVATAR_DETAIL = 'avatar_detail';
+    public const JOB_BANNER = 'job_banner';
+    public const JOB_DETAIL = 'job_detail';
+    public const STORE_BANNER = 'store_banner';
 
     /**
      * The attributes that are mass assignable.
