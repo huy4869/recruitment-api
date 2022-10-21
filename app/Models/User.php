@@ -199,21 +199,25 @@ class User extends Authenticatable
     /**
      * @return MorphMany
      */
-    public function images()
+    public function avatarDetails()
     {
         return $this->morphMany(Image::class, 'imageable')->where('type', Image::AVATAR_DETAIL);
     }
 
-    public function image()
-    {
-        return $this->morphOne(Image::class, 'imageable')->where('type', Image::AVATAR_BANNER);
-    }
     /**
      * @return MorphOne
      */
     public function avatarBanner()
     {
-        return $this->morphOne(Image::class, 'imageable')->where('type', 'avatar_banner');
+        return $this->morphOne(Image::class, 'imageable')->where('type', Image::AVATAR_BANNER);
+    }
+
+    /**
+     * @return MorphMany
+     */
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
     }
 
     /**
