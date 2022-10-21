@@ -21,6 +21,7 @@ class Store extends Model
         'recruiter_name',
         'postal_code',
         'province_id',
+        'province_city_id',
         'city',
         'address',
         'name',
@@ -42,6 +43,14 @@ class Store extends Model
     public function createdBy()
     {
         return $this->belongsTo(User::class, 'created_by');
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function provinceCity()
+    {
+        return $this->belongsTo(MProvinceCity::class, 'province_city_id');
     }
 
     /**
