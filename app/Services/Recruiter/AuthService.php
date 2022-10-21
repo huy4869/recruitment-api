@@ -35,6 +35,10 @@ class AuthService extends Service
         $token = $recruiter->createToken('authRecruiterToken', [], Carbon::now()
             ->addDays(config('validate.token_expire')))->plainTextToken;
 
+        $recruiter->update([
+            'last_login_at' => now(),
+        ]);
+
         return [
             'access_token' => $token,
             'type_token' => 'Bearer',
