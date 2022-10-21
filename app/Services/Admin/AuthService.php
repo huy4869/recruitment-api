@@ -34,6 +34,10 @@ class AuthService extends Service
         $token = $admin->createToken('authAdminToken', ['*'], Carbon::now()
             ->addDays(config('validate.token_expire')))->plainTextToken;
 
+        $admin->update([
+            'last_login_at' => now(),
+        ]);
+
         return [
             'access_token' => $token,
             'type_token' => 'Bearer',
