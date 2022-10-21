@@ -54,8 +54,8 @@ class InfoResource extends JsonResource
             'province_name' => @$data->province->name,
             'city' => $data->city,
             'address' => $data->address,
-            'avatar' => FileHelper::getFullUrl($data->avatar),
-            'images' => ImagesResource::collection($data->images)
+            'avatar' => FileHelper::getFullUrl($data->avatarBanner->url),
+            'images' => ImagesResource::collection($data->avatarDetails)
         ];
     }
 }

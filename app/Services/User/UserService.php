@@ -6,6 +6,7 @@ use App\Exceptions\InputException;
 use App\Helpers\FileHelper;
 use App\Services\Common\FileService;
 use App\Services\Service;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Models\Image;
@@ -85,18 +86,11 @@ class UserService extends Service
     }
 
     /**
-     * get basic info user
-     *
-     * @return User|null
+     * @return Builder
      */
     public function getBasicInfo()
     {
-        $user = $this->user;
-        $images = $user->images()->whereIn('type', [Image::AVATAR_DETAIL, Image::AVATAR_BANNER])->get();
-        $user['images'] = $images->where('type', Image::AVATAR_DETAIL);
-        $user['avatar'] = $images->firstWhere('type', Image::AVATAR_BANNER)->url ?? null;
-
-        return $user;
+        return $this->user->with(['avatarDetails', 'avatarBanner'])->first();
     }
 
     /**

@@ -268,8 +268,6 @@ return [
         'capital_stock' => '資本金',
         'manager_name' => '担当者',
         'name_degree' => '資格名',
-        'year' => '年',
-        'month' => '月',
     ],
 
     'COM' => [
