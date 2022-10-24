@@ -119,14 +119,6 @@ class User extends Authenticatable
     /**
      * @return BelongsTo
      */
-    public function store()
-    {
-        return $this->belongsTo(Store::class, 'store_id');
-    }
-
-    /**
-     * @return BelongsTo
-     */
     public function gender()
     {
         return $this->belongsTo(Gender::class, 'gender_id');
