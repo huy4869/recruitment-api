@@ -13,8 +13,8 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::table('user_licenses_qualifications', function (Blueprint $table) {
-            $table->char('new_issuance_date', 6)->change();
+        Schema::table('application_user_licenses_qualifications', function (Blueprint $table) {
+            $table->unsignedBigInteger('job_posting_id')->after('user_id');
         });
     }
 
@@ -25,8 +25,8 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::table('user_licenses_qualifications', function (Blueprint $table) {
-            $table->date('new_issuance_date')->change();
+        Schema::table('application_user_licenses_qualifications', function (Blueprint $table) {
+            $table->dropColumn('job_posting_id');
         });
     }
 };
