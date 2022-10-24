@@ -5,14 +5,12 @@ namespace App\Services\User\Job;
 use App\Exceptions\InputException;
 use App\Helpers\CommonHelper;
 use App\Helpers\JobHelper;
-use App\Http\Resources\User\Job\JobFavoriteResource;
 use App\Models\Application;
 use App\Models\FavoriteJob;
 use App\Models\Gender;
 use App\Models\JobPosting;
 use App\Models\MJobExperience;
 use App\Models\MJobFeature;
-use App\Models\MJobFeatureCategory;
 use App\Models\MJobType;
 use App\Models\MProvince;
 use App\Models\MWorkType;
@@ -61,9 +59,8 @@ class JobService extends Service
         ->get();
 
         $masterData = JobHelper::getJobMasterData();
-        $userAction = JobHelper::getUserActionJob($this->user);
+        $userAction = JobHelper::getUserActionJob($user);
         $jobData = JobHelper::addFormatJobJsonData($job, $masterData, $userAction);
-        $user = $this->user;
 
         if (!$user) {
             $job->update(['views' => DB::raw('`views` + 1')]);
@@ -115,7 +112,11 @@ class JobService extends Service
             ->take(config('common.job_posting.recent_amount'))
             ->get();
 
-        $masterData = JobHelper::getJobMasterData($this->user);
+        $jobIdsAvailable = $jobList->pluck('id')->toArray();
+        $jobIds = array_diff($jobIds, array_diff($jobIds, $jobIdsAvailable));
+        $this->user->update(['recent_jobs' => array_values($jobIds)]);
+
+        $masterData = JobHelper::getJobMasterData();
         $userAction = JobHelper::getUserActionJob($this->user);
         $jobArr = [];
 
