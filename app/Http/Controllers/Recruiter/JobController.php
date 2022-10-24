@@ -6,6 +6,7 @@ use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Recruiter\Job\CreateRequest;
 use App\Http\Requests\Recruiter\Job\UpdateRequest;
+use App\Http\Resources\Recruiter\Job\DetailJobResource;
 use App\Http\Resources\Recruiter\Job\JobCollection;
 use App\Models\JobPosting;
 use App\Services\Recruiter\Job\JobTableService;
@@ -69,6 +70,19 @@ class JobController extends Controller
         $jobs = JobTableService::getInstance()->withUser($recruiter)->data($search, $orders, $filters, $perPage);
 
         return $this->sendSuccessResponse(new JobCollection($jobs));
+    }
+
+    /**
+     * @param $id
+     * @return JsonResponse
+     * @throws InputException
+     */
+    public function detail($id)
+    {
+        $recruiter = $this->guard()->user();
+        $job = JobService::getInstance()->withUser($recruiter)->getDetail($id);
+
+        return $this->sendSuccessResponse(new DetailJobResource($job));
     }
 
     /**

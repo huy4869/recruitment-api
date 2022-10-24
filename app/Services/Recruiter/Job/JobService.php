@@ -223,6 +223,31 @@ class JobService extends Service
     }
 
     /**
+     * @param $id
+     * @return array
+     * @throws InputException
+     */
+    public function getDetail($id)
+    {
+        $recruiter = $this->user;
+        $job = JobPosting::query()->where('id', $id)->with([
+            'store',
+            'bannerImage',
+            'detailImages',
+            'province',
+            'province.provinceDistrict',
+            'salaryType',
+        ])
+        ->first();
+
+        if ($job->store->user_id != $recruiter->id) {
+            throw new InputException(trans('response.not_found'));
+        }
+
+        return self::getJobInfoForDetailJob($job);
+    }
+
+    /**
      * @param $jobList
      * @return array
      */
@@ -245,5 +270,41 @@ class JobService extends Service
         }//end foreach
 
         return $jobArr;
+    }
+
+    /**
+     * @param $job
+     * @return array
+     */
+    public static function getJobInfoForDetailJob($job)
+    {
+        $jobMasterData = JobHelper::getJobMasterData();
+
+        $job->job_types = JobHelper::getTypeName(
+            $job->job_type_ids,
+            $jobMasterData['masterJobTypes']
+        );
+        $job->work_types = JobHelper::getTypeName(
+            $job->work_type_ids,
+            $jobMasterData['masterWorkTypes']
+        );
+        $job->genders = JobHelper::getTypeName(
+            $job->gender_ids,
+            $jobMasterData['masterGenders']
+        );
+        $job->expericence_types = JobHelper::getTypeName(
+            $job->work_type_ids,
+            $jobMasterData['masterJobExperiences']
+        );
+        $job->feature_types = JobHelper::getFeatureCategoryName(
+            $job->feature_ids,
+            $jobMasterData['masterJobFeatures']
+        );
+        $job->stations = JobHelper::getStations(
+            $job->station_ids,
+            $jobMasterData['masterStations']
+        );
+
+        return $job;
     }
 }
