@@ -34,8 +34,8 @@ class ListResource extends JsonResource
 
         return [
             'id' => $data['id'],
-            'job_types' => $data['job_types'],
-            'work_types' => $data['work_types'],
+            'job_type_name' => @$data['job_type']['name'],
+            'work_type_name' => @$data['work_type']['name'],
             'position_offices' => $data['position_offices'],
             'store_name' => $data['store_name'],
             'company_name' => $data['company_name'],

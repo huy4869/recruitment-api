@@ -112,8 +112,8 @@ class WorkHistoryController extends BaseController
     private function makeDataInputs($request)
     {
         return $request->only([
-            'job_types',
-            'work_types',
+            'job_type_name',
+            'work_type_name',
             'store_name',
             'company_name',
             'period_start',
