@@ -49,3 +49,7 @@ Route::group(['as' => 'jobs.', 'prefix' => 'jobs', 'middleware' => 'recruiter'],
 Route::group(['as' => 'store.', 'prefix' => 'store', 'middleware' => 'recruiter'], function () {
     Route::get('/', 'StoreController@list')->name('list');
 });
+
+Route::group(['as' => 'applications.', 'prefix' => 'applications', 'middleware' => 'recruiter'], function () {
+    Route::get('/', 'ApplicationController@list')->name('list');
+});
