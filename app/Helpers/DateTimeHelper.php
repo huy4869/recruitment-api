@@ -213,12 +213,16 @@ class DateTimeHelper
      *
      * @return string|null
      */
-    public static function formatTimeNotification($dateTime)
+    public static function formatTimeNotification($dateTime = null, $format = 'Y-m-d H:i:s')
     {
-        $dateTime = Carbon::parse($dateTime);
+        Carbon::setLocale(config('app.locale'));
+
+        if (!$dateTime) {
+            return null;
+        }
 
         if ($dateTime->isToday()) {
-            return $dateTime->format(config('date.fe_data_time_hour'));
+            return Carbon::createFromFormat($format, $dateTime)->diffForHumans();
         }
 
         return self::formatDateDayOfWeekTimeJa($dateTime);
