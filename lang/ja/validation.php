@@ -274,6 +274,8 @@ return [
         'specialize_ids' => '得意な職種',
         'store_features' => '店舗の特徴',
         'job_status_id' => 'ステータス',
+        'job_type_name' => '職種',
+        'work_type_name' => '役職',
     ],
 
     'COM' => [

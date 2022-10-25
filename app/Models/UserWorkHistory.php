@@ -26,8 +26,8 @@ class UserWorkHistory extends Model
      */
     protected $fillable = [
         'user_id',
-        'job_type_ids',
-        'work_type_ids',
+        'job_type_id',
+        'work_type_id',
         'store_name',
         'company_name',
         'period_start',
@@ -41,8 +41,6 @@ class UserWorkHistory extends Model
      * @var string[]
      */
     protected $casts = [
-        'job_type_ids' => 'array',
-        'work_type_ids' => 'array',
         'position_office_ids' => 'array',
     ];
 
@@ -52,5 +50,21 @@ class UserWorkHistory extends Model
     public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function jobType()
+    {
+        return $this->belongsTo(MJobType::class, 'job_type_id');
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function workType()
+    {
+        return $this->belongsTo(MWorkType::class, 'work_type_id');
     }
 }

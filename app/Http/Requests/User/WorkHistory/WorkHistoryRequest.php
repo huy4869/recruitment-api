@@ -30,12 +30,8 @@ class WorkHistoryRequest extends FormRequest
         $type = [UserWorkHistory::TYPE_INACTIVE, UserWorkHistory::TYPE_ACTIVE];
 
         return [
-            'job_types' => ['required', 'array'],
-            'job_types.*.id' => ['nullable', 'integer', 'exists:m_job_types,id'],
-            'job_types.*.name' => ['required', 'string', 'max:' . $stringMaxLength, 'distinct'],
-            'work_types' => ['required', 'array'],
-            'work_types.*.id' => ['nullable', 'integer', 'exists:m_work_types,id'],
-            'work_types.*.name' => ['required', 'string', 'max:' . $stringMaxLength, 'distinct'],
+            'job_type_name' => ['required', 'string', 'max:' . $stringMaxLength],
+            'work_type_name' => ['required', 'string', 'max:' . $stringMaxLength],
             'position_offices' => ['required', 'array'],
             'position_offices.*.id' => ['nullable', 'integer', 'exists:m_position_offices,id'],
             'position_offices.*.name' => ['required', 'string', 'max:' . $stringMaxLength, 'distinct'],

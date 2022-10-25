@@ -11,14 +11,15 @@ use App\Services\Service;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\HigherOrderBuilderProxy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class WorkHistoryService extends Service
 {
-    const JOB_TYPES = 'job_types';
-    const WORK_TYPES = 'work_types';
+    const JOB_TYPES = 'm_job_type';
+    const WORK_TYPES = 'm_work_type';
     const POSITION_OFFICES = 'position_offices';
 
     /**
@@ -30,22 +31,16 @@ class WorkHistoryService extends Service
     {
         $user = $this->user;
         $userWorkHistories = UserWorkHistory::query()
+            ->with(['jobType', 'workType'])
             ->where('user_id', $user->id)
             ->orderBy('period_end', 'DESC')
             ->get()
             ->toArray();
 
-        $jobTypes = MJobType::all()->pluck('name', 'id')->toArray();
-        $workTypes = MWorkType::all()->pluck('name', 'id')->toArray();
         $positionOffices = MPositionOffice::all()->pluck('name', 'id')->toArray();
 
         foreach ($userWorkHistories as $key => $userWorkHistory) {
-            $jobTypeIds = json_decode($userWorkHistory['job_type_ids']);
-            $workTypeIds = json_decode($userWorkHistory['work_type_ids']);
-            $positionOfficeIds = json_decode($userWorkHistory['position_office_ids']);
-            $userWorkHistories[$key]['job_types'] = $this->getArrayValueByKeys($jobTypes, $jobTypeIds);
-            $userWorkHistories[$key]['work_types'] = $this->getArrayValueByKeys($workTypes, $workTypeIds);
-            $userWorkHistories[$key]['position_offices'] = $this->getArrayValueByKeys($positionOffices, $positionOfficeIds);
+            $userWorkHistories[$key]['position_offices'] = $this->getArrayValueByKeys($positionOffices, $userWorkHistory['position_office_ids']);
         }
 
         return $userWorkHistories;
@@ -58,7 +53,6 @@ class WorkHistoryService extends Service
      */
     public function getArrayValueByKeys($values, $keys)
     {
-        $keys = array_map('strval', $keys);
         $arrayValue = array_map(function ($x) use ($values) {
             return isset($values[$x]) ? $values[$x] : '';
         }, $keys);
@@ -85,13 +79,13 @@ class WorkHistoryService extends Service
         try {
             DB::beginTransaction();
 
-            $jobTypeIds = $this->createObject($data['job_types'], WorkHistoryService::JOB_TYPES);
-            $workTypeIds = $this->createObject($data['work_types'], WorkHistoryService::WORK_TYPES);
+            $jobTypeId = $this->checkNameObject($data['job_type_name'], WorkHistoryService::JOB_TYPES);
+            $workTypeId = $this->checkNameObject($data['work_type_name']);
             $positionOfficesIds = $this->createObject($data['position_offices']);
 
             $dataWorkHistory = array_merge(
-                ['job_type_ids' => $jobTypeIds],
-                ['work_type_ids' => $workTypeIds],
+                ['job_type_id' => $jobTypeId],
+                ['work_type_id' => $workTypeId],
                 ['position_office_ids' => $positionOfficesIds],
                 $this->makeSaveData($data)
             );
@@ -117,6 +111,7 @@ class WorkHistoryService extends Service
     {
         $user = $this->user;
         $userWorkHistory = UserWorkHistory::query()
+            ->with(['jobType', 'workType'])
             ->where('user_id', '=', $user->id)
             ->where('id', '=', $userWorkHistoryId)
             ->first();
@@ -124,14 +119,7 @@ class WorkHistoryService extends Service
             throw new InputException(trans('response.not_found'));
         }
 
-        $jobTypeIds = json_decode($userWorkHistory->job_type_ids);
-        $workTypeIds = json_decode($userWorkHistory->work_type_ids);
-        $positionOfficeIds = json_decode($userWorkHistory->position_office_ids);
-        $jobTypes = MJobType::query()->whereIn('id', $jobTypeIds)->get()->pluck('name')->toArray();
-        $workTypes = MWorkType::query()->whereIn('id', $workTypeIds)->get()->pluck('name')->toArray();
-        $positionOffices = MPositionOffice::query()->whereIn('id', $positionOfficeIds)->get()->pluck('name')->toArray();
-        $userWorkHistory['job_types'] = $jobTypes;
-        $userWorkHistory['work_types'] = $workTypes;
+        $positionOffices = MPositionOffice::query()->whereIn('id', $userWorkHistory->position_office_ids)->get()->pluck('name')->toArray();
         $userWorkHistory['position_offices'] = $positionOffices;
 
         return $userWorkHistory;
@@ -159,13 +147,13 @@ class WorkHistoryService extends Service
         try {
             DB::beginTransaction();
 
-            $jobTypeIds = $this->createObject($data['job_types'], WorkHistoryService::JOB_TYPES);
-            $workTypeIds = $this->createObject($data['work_types'], WorkHistoryService::WORK_TYPES);
+            $jobTypeId = $this->checkNameObject($data['job_type_name'], WorkHistoryService::JOB_TYPES);
+            $workTypeId = $this->checkNameObject($data['work_type_name']);
             $positionOfficesIds = $this->createObject($data['position_offices']);
 
             $dataWorkHistory = array_merge(
-                ['job_type_ids' => $jobTypeIds],
-                ['work_type_ids' => $workTypeIds],
+                ['job_type_id' => $jobTypeId],
+                ['work_type_id' => $workTypeId],
                 ['position_office_ids' => $positionOfficesIds],
                 $this->makeSaveData($data)
             );
@@ -181,24 +169,35 @@ class WorkHistoryService extends Service
     }
 
     /**
-     *
-     * @param $dataNames
+     * @param $name
      * @param string $object
-     * @return false|string
+     * @return HigherOrderBuilderProxy|mixed
      */
-    public function createObject($dataNames, $object = WorkHistoryService::POSITION_OFFICES)
+    public function checkNameObject($name, $object = WorkHistoryService::WORK_TYPES)
     {
         switch ($object) {
-            case 'job_types':
-                $object = MJobType::query();
-                break;
-            case 'work_types':
+            case 'm_work_type':
                 $object = MWorkType::query();
                 break;
             default:
-                $object = MPositionOffice::query();
+                $object = MJobType::query();
         }
 
+        $dataObject = $object->where('name', '=', $name)->first();
+
+        if ($dataObject) {
+            return $dataObject->id;
+        }
+
+        return $object->create(['name' => $name])->id;
+    }
+
+    /**
+     * @param $dataNames
+     * @return array
+     */
+    public function createObject($dataNames)
+    {
         $dataIds = [];
         $dataNameDiffs = [];
         foreach ($dataNames as $dataName) {
@@ -211,7 +210,7 @@ class WorkHistoryService extends Service
 
         if (count($dataNameDiffs) > 0) {
             $inputsNameDiffs = [];
-            $dataObjects = $object->get()->pluck('name')->toArray();
+            $dataObjects = MPositionOffice::query()->get()->pluck('name')->toArray();
             $dataNameDuplicate = [];
 
             foreach ($dataNameDiffs as $dataNameDiff) {
@@ -225,9 +224,9 @@ class WorkHistoryService extends Service
             }
 
 
-            $object->insert($inputsNameDiffs);
+            MPositionOffice::query()->insert($inputsNameDiffs);
             $inputsNameDiffs = array_merge($inputsNameDiffs, $dataNameDuplicate);
-            $dataNameIds = $object
+            $dataNameIds = MPositionOffice::query()
                 ->whereIn('name', $inputsNameDiffs)
                 ->get()
                 ->pluck('id')
@@ -236,7 +235,7 @@ class WorkHistoryService extends Service
             $dataIds = array_merge($dataIds, $dataNameIds);
         }//end if
 
-        return json_encode($dataIds);
+        return $dataIds;
     }
 
     /**

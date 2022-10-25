@@ -22,8 +22,10 @@ class DetailResource extends JsonResource
 
         $dataWorkHistory = [
             'id' => $data->id,
-            'job_types' => NameTypeResource::collection($data['job_types']),
-            'work_types' => NameTypeResource::collection($data['work_types']),
+            'job_type_id' => $data['job_type_id'],
+            'job_type_name' => @$data['jobType']['name'],
+            'work_type_id' => $data['work_type_id'],
+            'work_type_name' => @$data['workType']['name'],
             'position_offices' => NameTypeResource::collection($data['position_offices']),
             'store_name' => $data->store_name,
             'company_name' => $data->company_name,
