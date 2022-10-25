@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\Log;
 
 class NotifyUserInterview extends Command
 {
-    CONST QUANTITY_CHUNK = 1000;
-    CONST DAY_AFTER_TOMORROW = 2;
+    const QUANTITY_CHUNK = 1000;
+    const DAY_AFTER_TOMORROW = 2;
 
     /**
      * The name and signature of the console command.
@@ -27,7 +27,7 @@ class NotifyUserInterview extends Command
      *
      * @var string
      */
-    protected $description = 'notify user for interview';
+    protected $description = 'notify user for interview (run this cmd at the end of the day)';
 
     /**
      * Execute the console command.

@@ -3,10 +3,13 @@
 namespace App\Services\Recruiter\Job;
 
 use App\Exceptions\InputException;
-use App\Helpers\CommonHelper;
+use App\Helpers\FileHelper;
 use App\Helpers\JobHelper;
+use App\Models\Image;
 use App\Models\JobPosting;
-use App\Models\User;
+use App\Models\MJobStatus;
+use App\Models\MSalaryType;
+use App\Services\Common\FileService;
 use App\Services\Service;
 use Exception;
 use Illuminate\Support\Facades\DB;
@@ -14,6 +17,96 @@ use Illuminate\Support\Facades\Log;
 
 class JobService extends Service
 {
+    const MAX_DETAIL_IMAGE = 3;
+    const MAX_STATIONS = 3;
+
+    /**
+     * @param $data
+     * @return bool
+     * @throws Exception
+     */
+    public function create($data)
+    {
+        if (count($data['job_thumbnails']) > self::MAX_DETAIL_IMAGE
+            || count($data['station_ids']) > self::MAX_STATIONS
+        ) {
+            throw new InputException(trans('response.invalid'));
+        }
+
+        $recruiter = $this->user;
+        $data['created_by'] = $recruiter->id;
+
+        if ($data['job_status_id'] == JobPosting::STATUS_RELEASE) {
+            $data['released_at'] = now();
+        }
+
+        $dataImage = $this->makeSaveDataImage($data);
+        unset($data['job_banner']);
+        unset($data['job_thumbnails']);
+
+        try {
+            DB::beginTransaction();
+
+            FileService::getInstance()->updateImageable(new JobPosting, $dataImage, [
+                Image::JOB_BANNER,
+                Image::JOB_DETAIL
+            ]);
+
+            JobPosting::create($data);
+
+            DB::commit();
+            return true;
+        } catch (Exception $exception) {
+            DB::rollBack();
+            Log::error($exception->getMessage(), [$exception]);
+            throw new Exception($exception->getMessage());
+        }//end try
+    }
+
+    /**
+     * @param $id
+     * @param $data
+     * @return bool
+     * @throws Exception
+     */
+    public function update($id, $data)
+    {
+        if (count($data['job_thumbnails']) > self::MAX_DETAIL_IMAGE
+            || count($data['station_ids']) > self::MAX_STATIONS
+        ) {
+            throw new InputException(trans('response.invalid'));
+        }
+
+        $recruiter = $this->user;
+        $job = JobPosting::query()->where('id', $id)->with(['store'])->first();
+
+        if ($job->store->user_id != $recruiter->id) {
+            throw new InputException(trans('response.not_found'));
+        }
+
+        $dataImage = $this->makeSaveDataImage($data);
+        unset($data['job_banner']);
+        unset($data['job_thumbnails']);
+
+        try {
+            DB::beginTransaction();
+
+            FileService::getInstance()->updateImageable($job, $dataImage, [
+                Image::JOB_BANNER,
+                Image::JOB_DETAIL
+            ]);
+
+            $job->update($data);
+
+            DB::commit();
+            return $job->job_status_id;
+        } catch (Exception $exception) {
+            DB::rollBack();
+            Log::error($exception->getMessage(), [$exception]);
+            throw new Exception($exception->getMessage());
+        }//end try
+    }
+
     /**
      * @param $id
      * @return bool
@@ -47,6 +140,86 @@ class JobService extends Service
             Log::error($exception->getMessage(), [$exception]);
             throw new Exception($exception->getMessage());
         }
+    }
+
+    /**
+     * Make Save data images
+     *
+     * @param $data
+     * @return array
+     */
+    private function makeSaveDataImage($data)
+    {
+        $dataUrl = [];
+
+        foreach ($data['job_thumbnails'] as $image) {
+            $dataUrl[] = FileHelper::fullPathNotDomain($image);
+        }
+
+        return array_merge([FileHelper::fullPathNotDomain($data['job_banner'])], $dataUrl);
+    }
+
+    /**
+     * @param $recruiter
+     * @return mixed
+     */
+    public static function getStoreIdsAccordingToRecruiter($recruiter)
+    {
+        return $recruiter->stores()->pluck('id')->toArray();
+    }
+
+    /**
+     * @return array
+     */
+    public static function getSalaryTypeIds()
+    {
+        return MSalaryType::query()->pluck('id')->toArray();
+    }
+
+    /**
+     * @return array
+     */
+    public static function getJobStatusIdsNotEnd()
+    {
+        return MJobStatus::query()->whereNot('id', JobPosting::STATUS_END)
+            ->pluck('id')
+            ->toArray();
+    }
+
+    /**
+     * @return array
+     */
+    public static function getJobStatusIds()
+    {
+        return MJobStatus::query()->whereNot('id', JobPosting::STATUS_END)
+            ->pluck('id')
+            ->toArray();
+    }
+
+    /**
+     * @return array
+     */
+    public function getAllJobNameByOwner()
+    {
+        $recruiter = auth()->user();
+
+        if (!$recruiter) {
+            return [];
+        }
+
+        $recruiterStores = $recruiter->stores()->with(['jobs'])->get();
+        $result = [];
+
+        foreach ($recruiterStores as $store) {
+            foreach ($store->jobs as $job) {
+                $result[] = [
+                    'id' => $job->id,
+                    'name' => $job->name,
+                ];
+            }
+        }
+
+        return $result;
     }
 
     /**

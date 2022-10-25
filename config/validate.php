@@ -26,4 +26,10 @@ return [
         'max_length' => 2,
     ],
     'min_date' => 1970,
+    'salary_max_value' => 99999999,
+    'work_time_max_length' => 20,
+    'age' => [
+        'min' => 16,
+        'max' => 128,
+    ]
 ];

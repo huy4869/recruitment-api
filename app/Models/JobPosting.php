@@ -36,7 +36,7 @@ class JobPosting extends Model
         'province_id',
         'city',
         'address',
-        'stations',
+        'station_ids',
         'name',
         'pick_up_point',
         'description',
@@ -68,7 +68,7 @@ class JobPosting extends Model
         'job_type_ids' => 'array',
         'work_type_ids' => 'array',
         'gender_ids' => 'array',
-        'stations' => 'array',
+        'station_ids' => 'array',
         'feature_ids' => 'array',
         'experience_ids' => 'array',
     ];

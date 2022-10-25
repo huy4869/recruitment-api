@@ -47,4 +47,28 @@ class StoreService extends Service
             'recruiter_name' => $store->rescuiter_name,
         ];
     }
+
+    /**
+     * @return array
+     */
+    public function getAllStoreNameByOwner()
+    {
+        $recruiter = $this->user;
+
+        if (!$recruiter) {
+            return [];
+        }
+
+        $recruiterStores = $recruiter->stores;
+        $result = [];
+
+        foreach ($recruiterStores as $store) {
+            $result[] = [
+                'id' => $store->id,
+                'name' => $store->name,
+            ];
+        }
+
+        return $result;
+    }
 }

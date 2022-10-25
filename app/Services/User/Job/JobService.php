@@ -13,6 +13,7 @@ use App\Models\MJobExperience;
 use App\Models\MJobFeature;
 use App\Models\MJobType;
 use App\Models\MProvince;
+use App\Models\MStation;
 use App\Models\MWorkType;
 use App\Services\Service;
 use Exception;
@@ -409,6 +410,14 @@ class JobService extends Service
     public static function getMasterDataProvinces()
     {
         return MProvince::query()->with(['provinceDistrict'])->get()->toArray();
+    }
+
+    /**
+     * @return array
+     */
+    public static function getMasterDataStations()
+    {
+        return MStation::query()->get()->toArray();
     }
 
     /**

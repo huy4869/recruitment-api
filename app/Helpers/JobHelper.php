@@ -16,6 +16,7 @@ class JobHelper
         $masterGenders = JobService::getMasterDataJobGenders();
         $masterJobExperiences = JobService::getMasterDataJobExperiences();
         $masterJobFeatures = JobService::getMasterDataJobFeatures();
+        $masterStations = JobService::getMasterDataStations();
 
         return [
             'masterWorkTypes' => $masterWorkTypes,
@@ -23,7 +24,40 @@ class JobHelper
             'masterJobExperiences' => $masterJobExperiences,
             'masterJobFeatures' => $masterJobFeatures,
             'masterGenders' => $masterGenders,
+            'masterStations' => $masterStations,
         ];
+    }
+
+    /**
+     * @param $masterData
+     * @return array
+     */
+    public static function getListIdsMasterData($masterData)
+    {
+        $masterWorkTypeIds = self::pluckIdMasterData($masterData['masterWorkTypes']);
+        $masterJobTypeIds = self::pluckIdMasterData($masterData['masterJobTypes']);
+        $masterGenderIds = self::pluckIdMasterData($masterData['masterGenders']);
+        $masterJobExperienceIds = self::pluckIdMasterData($masterData['masterJobFeatures']);
+        $masterJobFeatureIds = self::pluckIdMasterData($masterData['masterJobFeatures']);
+        $masterStations = self::pluckIdMasterData($masterData['masterStations']);
+
+        return [
+            'masterWorkTypes' => $masterWorkTypeIds,
+            'masterJobTypes' => $masterJobTypeIds,
+            'masterGenders' => $masterGenderIds,
+            'masterJobExperiences' => $masterJobExperienceIds,
+            'masterJobFeatures' => $masterJobFeatureIds,
+            'masterStations' => $masterStations,
+        ];
+    }
+
+    /**
+     * @param $data
+     * @return array
+     */
+    public static function pluckIdMasterData($data)
+    {
+        return collect($data)->pluck('id')->toArray();
     }
 
     /**
@@ -57,6 +91,7 @@ class JobHelper
         $gender = self::getTypeName($job->gender_ids, $masterData['masterGenders']);
         $experience = self::getTypeName($job->experience_ids, $masterData['masterJobExperiences']);
         $feature = self::getFeatureCategoryName($job->feature_ids, $masterData['masterJobFeatures']);
+        $stations = self::getStations($job->station_ids, $masterData['masterStations']);
 
         $isFavorite = self::inArrayCheck($job->id, $userAction['userFavoriteJobs']);
         $isApply = self::inArrayCheck($job->id, $userAction['userApplyJobs']);
@@ -75,6 +110,7 @@ class JobHelper
             'genders' => $gender,
             'is_favorite' => $isFavorite,
             'is_apply' => $isApply,
+            'stations' => $stations,
         ]);
     }
 
@@ -187,6 +223,33 @@ class JobHelper
                         'name' => $province['name'],
                     ]
                 ],
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param $typeIds
+     * @param $stations
+     * @return array
+     */
+    public static function getStations($typeIds, $stations)
+    {
+        $result = [];
+
+        if (!$typeIds) {
+            return $result;
+        }
+
+        foreach ($typeIds as $id) {
+            $station = $stations[$id - 1];
+
+            $result[] = [
+                'id' => $station['id'],
+                'province_name' => $station['province_name'],
+                'railway_name' => $station['railway_name'],
+                'station_name' => $station['station_name'],
             ];
         }
 
