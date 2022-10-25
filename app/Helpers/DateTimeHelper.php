@@ -174,6 +174,23 @@ class DateTimeHelper
     }
 
     /**
+     * @param $dateTime
+     * @return string|null
+     */
+    public static function formatDateDayOfWeekJa($dateTime)
+    {
+        if (!$dateTime) {
+            return null;
+        }
+
+        $dateTime = Carbon::parse($dateTime);
+        $date = $dateTime->format(config('date.fe_date_ja_format'));
+        $dayOfWeek = config('date.day_of_week_ja.' . $dateTime->dayOfWeek);
+
+        return sprintf('%s (%s)', $date, $dayOfWeek);
+    }
+
+    /**
      * Format dateTime Be
      *
      * @param $dateTime
