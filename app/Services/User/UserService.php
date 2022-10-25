@@ -112,4 +112,17 @@ class UserService extends Service
 
         return $user->update($data);
     }
+
+    /**
+     * Update motivation
+     *
+     * @param $data
+     * @return bool
+     */
+    public function updateMotivation($data)
+    {
+        $user = $this->user;
+
+        return $user->update($data);
+    }
 }
