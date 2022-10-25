@@ -2,6 +2,7 @@
 
 namespace App\Services\Recruiter;
 
+use App\Exceptions\InputException;
 use App\Helpers\DateTimeHelper;
 use App\Helpers\JobHelper;
 use App\Models\Store;
@@ -11,41 +12,43 @@ use App\Services\User\Job\JobService;
 class StoreService extends Service
 {
     /**
-     * List store
+     * get name master data JobType
      *
+     * @param $stores
      * @return array
      */
-    public function list()
+    public static function getNameJobTypes($stores)
     {
-        $rec = $this->user;
-        $stores = Store::query()->where('user_id', $rec->id)->orderByDesc('created_at')->get();
         $masterData = JobService::getMasterDataJobPostingTypes();
         $data = [];
 
         foreach ($stores as $store) {
-            $data[] = self::addFormatStoreJsonData($store, $masterData);
+            $store->specialize_ids = JobHelper::getTypeName(
+                $store->specialize_ids,
+                $masterData
+            );
+            $data[$store->id] = $store;
         }
 
         return $data;
     }
 
     /**
-     * @param $store
-     * @param $masterData
-     * @return array
+     * delete store
+     *
+     * @param $id
+     * @return bool
+     * @throws InputException
      */
-    public static function addFormatStoreJsonData($store, $masterData)
+    public function delete($id)
     {
-        $specializes = JobHelper::getTypeName($store->specialize_ids, $masterData);
+        $result = Store::where([['id', $id], ['user_id', $this->user->id]])->delete();
 
-        return [
-            'created_at' => DateTimeHelper::formatDateTimeJa($store->created_at),
-            'store_name' => $store->name,
-            'address' => $store->full_name_address,
-            'tel' => $store->tel,
-            'specialize' => $specializes,
-            'recruiter_name' => $store->rescuiter_name,
-        ];
+        if ($result) {
+            return true;
+        }
+        
+        throw new InputException(trans('response.not_found'));
     }
 
     /**
