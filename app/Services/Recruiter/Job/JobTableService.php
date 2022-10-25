@@ -87,9 +87,9 @@ class JobTableService extends TableService
                     }
                 });
             } elseif (in_array($filterItem['key'], $rangeMinKey)) {
-                $query->where('salary_min', '>=', $filterItem['data']);
+                $query->where($filterItem['key'], '>=', $filterItem['data']);
             } elseif (in_array($filterItem['key'], $rangeMaxKey)) {
-                $query->where('salary_max', '<=', $filterItem['data']);
+                $query->where($filterItem['key'], '<=', $filterItem['data']);
             } else {
                 $query->where($filterItem['key'], $filterItem['data']);
             }
