@@ -27,4 +27,9 @@ class MProvince extends Model
     {
         return $this->belongsTo(MProvinceDistrict::class, 'district_id');
     }
+
+    public function provinceCities()
+    {
+        return $this->hasMany(MProvinceCity::class, 'province_id');
+    }
 }
