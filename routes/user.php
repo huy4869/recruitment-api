@@ -33,10 +33,6 @@ Route::group(['as' => 'forgot-password.', 'prefix' => 'forgot-password'], functi
     Route::post('/reset-password', 'PasswordResetController@resetPassword')->name('reset.password');
 });
 
-Route::group(['as' => 'profile.', 'prefix' => 'profile'], function () {
-    Route::get('/', 'ProfileController@getCompletionPercent')->name('getCompletionPercent')->middleware('user');
-});
-
 Route::group(['as' => 'applications.', 'prefix' => 'applications', 'middleware' => 'user'], function () {
     Route::get('/', 'ApplicationController@list')->name('list');
     Route::get('/waiting-interview', 'ApplicationController@listWaitingInterview')->name('listWaitingInterview');
@@ -53,6 +49,7 @@ Route::group(['as' => 'profile.', 'prefix' => 'profile', 'middleware' => 'user']
     Route::post('/pr', 'UserController@updatePr')->name('update_pr');
     Route::get('/motivation', 'UserController@detailMotivation')->name('detail_motivation');
     Route::post('/motivation', 'UserController@updateMotivation')->name('update_motivation');
+    Route::get('/percentage', 'ProfileController@getCompletionPercent')->name('getCompletionPercent');
 });
 
 Route::group(['as' => 'contact.', 'prefix' => 'contact'], function () {
