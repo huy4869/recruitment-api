@@ -268,6 +268,11 @@ return [
         'capital_stock' => '資本金',
         'manager_name' => '担当者',
         'name_degree' => '資格名',
+        'store_banner' => 'カバー画像',
+        'business_segment' => '事業内容',
+        'recruiter_name' => '採用担当者',
+        'specialize_ids' => '得意な職種',
+        'store_features' => '店舗の特徴',
         'job_status_id' => 'ステータス',
     ],
 
@@ -281,6 +286,7 @@ return [
         '008' => ':attributeは255文字以内で入力してください。',
         '010' => ':attributeが選択されていません。',
         '011' => ':attributeは0から始まる10桁から13桁まで入力してください。',
+        '013' => ':attributeは2000文字以内で入力してください。',
         '014' => ':attributeは1000文字以内で入力してください。',
         '016' => ':attributeは数字とハイフンのみで入力してください。',
         '017' => ':attribute8桁数字まで入力してください。',
@@ -323,5 +329,14 @@ return [
     'content_chat' => 'チャット内容',
     'store_not_exist' => 'その店は存在しない',
     'store_id_required' => 'お店が入力されていません。',
-    'is_positive_number' => ':attributeは正の数です'
+    'is_positive_number' => ':attributeは正の数です',
+
+    'store' => [
+        'name' => '店舗名',
+        'website' => 'ホームページ',
+        'province_city_id' => '市区町村',
+        'city' => '番地',
+        'manager_name' => '店長',
+        'founded_year' => '設立',
+    ],
 ];
