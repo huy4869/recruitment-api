@@ -33,6 +33,7 @@ class MasterDataSeeder extends Seeder
         DB::table('m_job_features')->truncate();
         DB::table('m_stations')->truncate();
         DB::table('m_notice_types')->truncate();
+        DB::table('m_position_offices')->truncate();
 
         $time = Carbon::now();
         $dataRoles = [
@@ -153,6 +154,14 @@ class MasterDataSeeder extends Seeder
             ['name' => 'interview_pending', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_notice_types')->insert($dataNoticeTypes);
+
+        $dataPositionOffices = [
+            ['name' => 'マネジャー', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'スタッフ', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'ネイリスト、', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'ヘアスタイル', 'created_at' => $time, 'updated_at' => $time],
+        ];
+        DB::table('m_position_offices')->insert($dataPositionOffices);
 
         $path = base_path().'/database/seeders/location.sql';
         $sql = file_get_contents($path);

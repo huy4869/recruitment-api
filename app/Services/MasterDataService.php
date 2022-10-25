@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Models\MFeedbackType;
 use App\Models\MJobFeature;
 use App\Models\MJobFeatureCategory;
+use App\Models\MProvince;
+use App\Models\MProvinceCity;
 use App\Models\MSalaryType;
 use App\Models\MStation;
 use Exception;
@@ -123,6 +125,12 @@ class MasterDataService extends Service
             'driver' => self::DRIVER_CUSTOM,
             'target' => 'getMasterAge',
         ],
+
+        'm_provinces_cities' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMasterProvinceCity',
+        ],
+
     ];
 
     /**
@@ -555,6 +563,34 @@ class MasterDataService extends Service
                     $result[$i]['feature'][] = [
                         'id' => $feature->id,
                         'name' => $feature->name,
+                    ];
+                }
+            }
+
+            $i++;
+        }
+
+        return $result;
+    }
+
+    protected function getMasterProvinceCity()
+    {
+        $provinces = MProvince::with('provinceCities')->get();
+        $result = [];
+        $i = 0;
+
+        foreach ($provinces as $province) {
+            $result[] = [
+               'province_id' => $province->id,
+               'name' => $province->name,
+                'feature' => [],
+            ];
+
+            foreach ($province->provinceCities as $provinceCity) {
+                if ($provinceCity->province_id == $province->id) {
+                    $result[$i]['feature'][] = [
+                        'id' => $provinceCity->id,
+                        'name' => $provinceCity->name,
                     ];
                 }
             }
