@@ -75,6 +75,7 @@ class User extends Authenticatable
         'manager_name',
         'founded_year',
         'capital_stock',
+        'noteworthy',
     ];
 
     /**
