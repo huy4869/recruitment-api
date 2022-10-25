@@ -17,7 +17,7 @@ class StoreCollection extends ResourceCollection
     {
         $paginator = $this->resource;
 
-        $stores = StoreService::getNameJobTypes($paginator);
+        $stores = StoreService::appendMasterDataForStore($paginator);
 
         return [
             'data' => StoreResource::collection($stores),

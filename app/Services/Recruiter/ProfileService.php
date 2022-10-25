@@ -23,7 +23,6 @@ class ProfileService extends Service
      */
     public function updateInformation($data)
     {
-        $foundedYear = sprintf('%s%02d', $data['year'], $data['month']);
         $capitalStock = $data['capital_stock'] * config('common.capital_stock');
 
         return $this->user->update([
@@ -36,7 +35,7 @@ class ProfileService extends Service
             'address' => $data['address'],
             'alias_name' => $data['alias_name'],
             'employee_quantity' => $data['employee_quantity'],
-            'founded_year' => $foundedYear,
+            'founded_year' => str_replace('/', '', $data['founded_year']),
             'capital_stock' => $capitalStock,
             'manager_name' => $data['manager_name'],
             'line' => $data['line'],

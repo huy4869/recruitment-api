@@ -15,14 +15,17 @@ class StoreResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'name' => $this->name,
             'recruiter_name' => $this->recruiter_name,
             'tel' => $this->tel,
-            'province_id' => $this->province_id,
-            'province_name' => $this->province->name ?? null,
-            'province_city_id' => $this->province_city_id,
-            'province_city_name' => $this->provinceCity->name ?? null,
-            'address' => $this->address,
+            'address' => [
+                'district' => $this->province->provinceDistrict->name,
+                'province' => $this->province->name,
+                'province_city' => $this->provinceCity->name,
+                'city' => $this->city,
+                'address' => $this->address,
+            ],
             'specialize_ids' => $this->specialize_ids,
         ];
     }

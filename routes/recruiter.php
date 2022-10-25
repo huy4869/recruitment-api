@@ -55,6 +55,7 @@ Route::group(['as' => 'stores.', 'prefix' => 'stores', 'middleware' => 'recruite
     Route::post('/', 'StoreController@store')->name('store');
     Route::delete('/{id}', 'StoreController@delete')->name('delete');
     Route::get('/all', 'StoreController@listStoreNameByOwner')->name('listStoreNameByOwner');
+    Route::get('/{id}', 'StoreController@detail')->name('detail');
 });
 
 Route::group(['as' => 'applications.', 'prefix' => 'applications', 'middleware' => 'recruiter'], function () {

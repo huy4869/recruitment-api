@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Recruiter;
 
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateProfileRequest extends FormRequest
@@ -30,8 +31,11 @@ class UpdateProfileRequest extends FormRequest
             'home_page_rescuiter' => ['nullable', 'string', 'max:' . $lengthText],
             'alias_name' => ['nullable', 'string', 'max:' . $lengthText],
             'employee_quantity' => ['nullable', 'string', 'max:' . $lengthText],
-            'year' => ['nullable', 'digits:' . config('validate.year')],
-            'month' => ['nullable', 'digits_between:' . config('validate.month.min_length') . ',' . config('validate.month.max_length')],
+            'founded_year' => [
+                'nullable',
+                'date_format:' . config('date.fe_date_work_history_format'),
+                'before_or_equal:' . Carbon::now()->format(config('date.fe_date_work_history_format')),
+            ],
             'capital_stock' => ['nullable', 'numeric', 'min:1'],
             'manager_name' => ['nullable', 'string', 'max:' . $lengthText],
             'tel' => [
@@ -73,6 +77,7 @@ class UpdateProfileRequest extends FormRequest
             'facebook' => trans('common.facebook'),
             'instagram' => trans('common.instagram'),
             'twitter' => trans('common.twitter'),
+            'founded_year' => trans('validation.store.founded_year'),
         ];
     }
 }

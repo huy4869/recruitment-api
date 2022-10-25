@@ -25,7 +25,7 @@ class StoreService extends Service
      * @param $stores
      * @return array
      */
-    public static function getNameJobTypes($stores)
+    public static function appendMasterDataForStore($stores)
     {
         $masterData = JobService::getMasterDataJobPostingTypes();
         $data = [];
@@ -81,6 +81,22 @@ class StoreService extends Service
         }
 
         return $result;
+    }
+
+    public function detail($store_id)
+    {
+        $store = Store::with([
+                'storeBanner',
+                'provinceCity',
+                'provinceCity.province',
+            ])
+            ->where([
+                ['user_id', $this->user->id],
+                ['id', $store_id]
+            ])
+            ->get();
+
+        return self::appendMasterDataForStore($store);
     }
 
     /**
