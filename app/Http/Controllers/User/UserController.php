@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Exceptions\InputException;
 use App\Http\Requests\User\UpdateInformationPrRequest;
+use App\Http\Requests\User\UpdateMotivationRequest;
 use App\Http\Requests\User\UserUpdateRequest;
 use App\Http\Resources\User\InfoResource;
 use App\Http\Resources\User\InformationPrResource;
@@ -113,5 +114,25 @@ class UserController extends BaseController
         $user = $this->guard()->user();
 
         return $this->sendSuccessResponse(new MotivationResource($user));
+    }
+
+    /**
+     * Update motivation
+     *
+     * @param UpdateMotivationRequest $request
+     * @return JsonResponse
+     * @throws InputException
+     */
+    public function updateMotivation(UpdateMotivationRequest $request)
+    {
+        $user = $this->guard()->user();
+        $inputs = $request->only(['motivation', 'noteworthy']);
+        $data = $this->userService->withUser($user)->updateMotivation($inputs);
+
+        if ($data) {
+            return $this->sendSuccessResponse([], trans('response.update_success'));
+        }
+
+        throw new InputException(trans('response.ERR.006'));
     }
 }
