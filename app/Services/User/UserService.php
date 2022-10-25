@@ -73,7 +73,6 @@ class UserService extends Service
             'age' => $data['age'],
             'gender_id' => $data['gender_id'],
             'tel' => $data['tel'],
-            'email' => $data['email'],
             'line' => $data['line'],
             'facebook' => $data['facebook'],
             'instagram' => $data['instagram'],
@@ -90,7 +89,7 @@ class UserService extends Service
      */
     public function getBasicInfo()
     {
-        return $this->user->with(['avatarDetails', 'avatarBanner'])->first();
+        return User::query()->with(['avatarDetails', 'avatarBanner'])->where('id', '=', $this->user->id)->first();
     }
 
     /**
