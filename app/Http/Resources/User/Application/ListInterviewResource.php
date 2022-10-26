@@ -23,16 +23,16 @@ class ListInterviewResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'job_banner' => FileHelper::getFullUrl($this->jobPosting->bannerImage->url),
+            'job_banner' => FileHelper::getFullUrl($this->jobPosting->bannerImage->url ?? null),
             'job_name' => $this->jobPosting->name,
             'store_name' => $this->store->name,
             'interview_date' => DateTimeHelper::formatDateDayOfWeekTimeJa($this->date),
-            'interview_approach' => [
+            'interview_approach' => $approach ? [
                 'id' => $approach->id,
                 'method' => $interviewMethod[$approach->id - 1],
                 'approach_label' => config('application.interview_approach_label.' . $approach->id),
                 'approach' =>  $approach->approach,
-            ],
+            ] : [],
             'created_at' => DateTimeHelper::formatDateDayOfWeekTimeJa($this->created_at),
         ];
     }

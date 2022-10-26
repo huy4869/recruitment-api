@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Exceptions\InputException;
 use App\Http\Requests\User\Application\CancelAppliedRequest;
 use App\Http\Resources\User\Application\ListApplicationResource;
 use App\Http\Resources\User\Application\ListInterviewResource;
@@ -67,12 +68,14 @@ class ApplicationController extends BaseController
     /**
      * Cancel applied
      *
-     * @param CancelAppliedRequest $request
+     * @param $id
      * @return JsonResponse
+     * @throws InputException
      */
-    public function cancelApplied(CancelAppliedRequest $request)
+    public function cancelApplied($id)
     {
-        $result = $this->applicationService->cancelApplied($request->get('application_id'));
+        $user = $this->guard()->user();
+        $result = $this->applicationService->withUser($user)->cancelApplied($id);
 
         return $this->sendSuccessResponse($result, trans('response.INF_004.cancel_applied'));
     }
