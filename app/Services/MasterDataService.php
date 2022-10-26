@@ -7,6 +7,7 @@ use App\Models\MJobFeature;
 use App\Models\MJobFeatureCategory;
 use App\Models\MProvince;
 use App\Models\MProvinceCity;
+use App\Models\MProvinceDistrict;
 use App\Models\MSalaryType;
 use App\Models\MStation;
 use Exception;
@@ -86,9 +87,9 @@ class MasterDataService extends Service
             'target' => 'getMasterDataName',
         ],
 
-        'm_province_districts' => [
+        'province_districts' => [
             'driver' => self::DRIVER_CUSTOM,
-            'target' => 'getMasterDataName',
+            'target' => 'getMasterDataProvinceDistricts',
         ],
 
         'm_provinces' => [
@@ -587,7 +588,7 @@ class MasterDataService extends Service
             $result[] = [
                'province_id' => $province->id,
                'name' => $province->name,
-                'feature' => [],
+                'province_city' => [],
             ];
 
             foreach ($province->provinceCities as $provinceCity) {
@@ -601,6 +602,47 @@ class MasterDataService extends Service
 
             $i++;
         }
+
+        return $result;
+    }
+
+    protected function getMasterDataProvinceDistricts()
+    {
+        $provinceDistricts = MProvinceDistrict::with(['provinces', 'provinces.provinceCities'])->get();
+        $result = [];
+        $i = 0;
+
+        foreach ($provinceDistricts as $provinceDistrict) {
+            $result[] = [
+                'id' => $provinceDistrict->id,
+                'name' => $provinceDistrict->name,
+                'provinces' => [],
+            ];
+
+            $key = 0;
+            foreach ($provinceDistrict->provinces as $province) {
+                if ($province->district_id == $provinceDistrict->id) {
+                    $result[$i]['provinces'][] = [
+                        'id' => $province->id,
+                        'name' => $province->name,
+                        'province_city' => [],
+                    ];
+                }
+
+                foreach ($province->provinceCities as $provinceCity) {
+                    if ($provinceCity->province_id == $province->id) {
+                        $result[$i]['provinces'][$key]['province_city'][] = [
+                            'id' => $provinceCity->id,
+                            'name' => $provinceCity->name,
+                        ];
+                    }
+                }
+
+                $key++;
+            }
+
+            $i++;
+        }//end foreach
 
         return $result;
     }

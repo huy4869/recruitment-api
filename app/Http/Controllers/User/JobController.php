@@ -135,9 +135,9 @@ class JobController extends Controller
      *
      * @return \Illuminate\Http\JsonResponse
      */
-    public function getFavoriteJob()
+    public function getFavoriteJob(Request $request)
     {
-        $data = $this->jobService->withUser($this->guard()->user())->getFavoriteJobs();
+        $data = $this->jobService->withUser($this->guard()->user())->getFavoriteJobs($request->get('limit'));
 
         return $this->sendSuccessResponse($data);
     }

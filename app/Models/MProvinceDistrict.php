@@ -18,4 +18,9 @@ class MProvinceDistrict extends Model
      * @var string[]
      */
     protected $fillable = ['name'];
+
+    public function provinces()
+    {
+        return $this->hasMany(MProvince::class, 'district_id', 'id');
+    }
 }
