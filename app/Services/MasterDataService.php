@@ -131,6 +131,10 @@ class MasterDataService extends Service
             'target' => 'getMasterProvinceCity',
         ],
 
+        'order_by' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getListOrderBy',
+        ],
     ];
 
     /**
@@ -599,5 +603,13 @@ class MasterDataService extends Service
         }
 
         return $result;
+    }
+
+    /**
+     * @return Repository|Application|mixed
+     */
+    protected function getListOrderBy()
+    {
+        return config('order_by.job_posting');
     }
 }
