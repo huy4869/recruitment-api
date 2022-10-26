@@ -261,8 +261,9 @@ class JobService extends Service
      */
     public function getListNewJobPostings()
     {
-        $jobs = JobPosting::query()->released()->new();
-        $jobList = $jobs->with([
+        $jobs = JobPosting::query()->released();
+        $jobCount = $jobs->count();
+        $jobList = $jobs->new()->with([
                 'store',
                 'province',
                 'province.provinceDistrict',
@@ -274,7 +275,7 @@ class JobService extends Service
         $result = $this->appendMaster($this->user, $jobList);
 
         return [
-            'total_jobs' => $jobList->count(),
+            'total_jobs' => $jobCount,
             'list_jobs' => $result,
         ];
     }
