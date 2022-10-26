@@ -7,7 +7,7 @@ use App\Rules\PhoneJapan;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
-class CreateStoreRequest extends FormRequest
+class UpdateStoreRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
