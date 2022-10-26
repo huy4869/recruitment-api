@@ -43,7 +43,7 @@ class ApplicationService extends Service
     public function getWaitingInterviews($all)
     {
         $userInterviews = $this->user->applications()
-            ->whereHas('interview', function ($query) {
+            ->whereHas('interviews', function ($query) {
                 $query->where('id', Application::STATUS_WAITING_INTERVIEW);
             })
             ->orderBy('date', 'asc')
@@ -66,7 +66,7 @@ class ApplicationService extends Service
     public function getApplied($all)
     {
         $userInterviews = $this->user->applications()
-            ->whereHas('interview', function ($query) {
+            ->whereHas('interviews', function ($query) {
                 $query->whereNot('id', Application::STATUS_CANCELED);
             })
             ->orderBy('created_at', 'desc')
