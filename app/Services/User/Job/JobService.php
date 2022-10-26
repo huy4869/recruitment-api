@@ -216,8 +216,9 @@ class JobService extends Service
      *
      * @return array
      */
-    public function getFavoriteJobs()
+    public function getFavoriteJobs($limit)
     {
+        $limit = $limit ?: config('paginate.USER_015.favorite_job.limit_per_page');
         $userId = $this->user->id;
         $favoriteJob = FavoriteJob::where('favorite_jobs.user_id', $this->user->id)
             ->with([
@@ -233,7 +234,7 @@ class JobService extends Service
                 'jobPosting.bannerImage'
             ])
             ->orderByDesc('id')
-            ->paginate(config('paginate.USER_015.favorite_job.limit_per_page'));
+            ->paginate($limit);
 
         $masterData = JobHelper::getJobMasterData($this->user);
         $result = [];

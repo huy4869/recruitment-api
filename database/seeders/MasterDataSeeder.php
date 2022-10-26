@@ -34,6 +34,7 @@ class MasterDataSeeder extends Seeder
         DB::table('m_stations')->truncate();
         DB::table('m_notice_types')->truncate();
         DB::table('m_position_offices')->truncate();
+        DB::table('m_provinces_cities')->truncate();
 
         $time = Carbon::now();
         $dataRoles = [
