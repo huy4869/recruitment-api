@@ -2,6 +2,7 @@
 
 namespace App\Services\User;
 
+use App\Exceptions\InputException;
 use App\Models\Application;
 use App\Models\MInterviewApproach;
 use App\Services\Service;
@@ -83,10 +84,19 @@ class ApplicationService extends Service
      * Cancel applied
      *
      * @return bool
+     * @throws InputException
      */
-    public function cancelApplied($applicationId)
+    public function cancelApplied($id)
     {
-        $application = Application::query()->where('id', $applicationId)->first();
+        $application = Application::query()
+            ->where('user_id', $this->user->id)
+            ->where('id', $id)
+            ->whereNot('interview_status_id', Application::STATUS_CANCELED)
+            ->first();
+
+        if (!$application) {
+            throw new InputException(trans('response.invalid'));
+        }
 
         return $application->update([
             'interview_status_id' => Application::STATUS_CANCELED
