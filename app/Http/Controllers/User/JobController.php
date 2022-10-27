@@ -5,9 +5,11 @@ namespace App\Http\Controllers\User;
 use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\User\Job\DetailJobPostingResource;
+use App\Http\Resources\User\Job\JobCollection;
 use App\Http\Resources\User\Job\JobPostingResource;
 use App\Models\JobPosting;
 use App\Services\User\Job\JobService;
+use App\Services\User\Job\JobTableService;
 use App\Services\User\UserJobDesiredMatchService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -156,5 +158,16 @@ class JobController extends Controller
         $data = $this->jobService->withUser($user)->storeFavorite($request->get('job_posting_id'));
 
         return $this->sendSuccessResponse($data, trans('response.INF.001'));
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function list(Request $request)
+    {
+        [$search, $orders, $filters, $perPage] = $this->convertRequest($request);
+        $jobs = JobTableService::getInstance()->data($search, $orders, $filters, $perPage);
+
+        return $this->sendSuccessResponse(new JobCollection($jobs));
     }
 }

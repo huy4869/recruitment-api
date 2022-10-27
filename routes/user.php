@@ -67,6 +67,7 @@ Route::group(['as' => 'contact.', 'prefix' => 'contact'], function () {
 });
 
 Route::group(['as' => 'job.', 'prefix' => 'job'], function () {
+    Route::get('/', 'JobController@list')->name('list');
     Route::get('/news', 'JobController@getListNewJobPostings')->name('getListNewJobPostings');
     Route::get('/most-views', 'JobController@getListMostViewJobPostings')->name('getListMostViewJobPostings');
     Route::get('/most-applies', 'JobController@getListMostApplyJobPostings')->name('getListMostApplyJobPostings');
