@@ -27,10 +27,11 @@ class ProfileService extends Service
         $dateLearningHistory = UserHelper::getNewDate($userInformation->userLearningHistories);
         $dateQualification = UserHelper::getNewDate($userInformation->userLicensesQualifications);
         $dateWorkHistory = UserHelper::getNewDate($userInformation->userWordHistories);
-        $dateUser = date_format($userInformation->updated_at, 'Y/m/d');
-        $date = [];
-        array_push($date, $dateLearningHistory, $dateQualification, $dateWorkHistory, $dateUser);
-        $updatedAtNew = date(config('date.fe_date_ja_format'), max(array_map('strtotime', $date)));
+        $dateUser = $user->updated_at ? $user->updated_at->format('Y/m/d') : null;
+        $createdAt = $user->created_at ? $user->created_at->format(config('date.fe_date_ja_format')) : null;
+        $date = max($dateLearningHistory, $dateQualification, $dateWorkHistory, $dateUser);
+        $time = strtotime($date);
+        $updatedAtNew = $date ? date(config('date.fe_date_ja_format'), $time) : $createdAt;
 
         return [
             'updateDateNew' => $updatedAtNew,

@@ -66,7 +66,7 @@ class UserHelper
 
         $object = $data->sortByDesc('updated_at')->first();
 
-        return date_format($object->updated_at, 'Y/m/d');
+        return $object->updated_at ? $object->updated_at->format('Y/m/d') : null;
     }
 
     /**
