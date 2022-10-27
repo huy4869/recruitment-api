@@ -334,6 +334,7 @@ return [
     'store_not_exist' => 'その店は存在しない',
     'store_id_required' => 'お店が入力されていません。',
     'is_positive_number' => ':attributeは正の数です',
+    'job_posting_not_exist' => 'ジョブ情報が存在しません',
 
     'store' => [
         'name' => '店舗名',

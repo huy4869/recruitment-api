@@ -487,4 +487,23 @@ class JobService extends Service
             sprintf('%u', $jobId)
         ], $userRecentJobs);
     }
+
+    /**
+     * create store
+     *
+     * @param $jobPostingId
+     * @return mixed
+     * @throws InputException
+     */
+    public function storeFavorite($jobPostingId)
+    {
+        try {
+            return FavoriteJob::updateOrCreate([
+                'user_id' => $this->user->id,
+                'job_posting_id' => $jobPostingId
+            ]);
+        } catch (Exception $e) {
+            throw new InputException(trans('validation.job_posting_not_exist'));
+        }
+    }
 }

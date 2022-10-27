@@ -17,9 +17,10 @@ Route::get('/master-data', 'MasterDataController@show')->name('masterData');
 Route::post('/upload-image', 'UploadImageController@upload')->name('uploadImage')->middleware('user');
 Route::get('/zipcode', 'ZipcodeController@index')->name('getZipcode');
 
-Route::group(['as' => 'favorite-job.', 'prefix' => 'favorite-job', 'middleware' => 'user'], function () {
+Route::group(['as' => 'favoriteJob.', 'prefix' => 'favorite-job', 'middleware' => 'user'], function () {
     Route::get('/', 'JobController@getFavoriteJob')->name('favoriteJob');
     Route::delete('/delete/{id}', 'JobController@deleteFavoriteJob')->name('deleteFavoriteJob');
+    Route::post('/', 'JobController@storeFavorite');
 });
 
 Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {
