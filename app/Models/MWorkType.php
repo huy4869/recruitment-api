@@ -9,6 +9,9 @@ class MWorkType extends Model
 {
     use HasFactory;
 
+    public const NO_DEFAULT = 0;
+    public const IS_DEFAULT = 1;
+
     /**
      * @var string
      */
@@ -17,5 +20,5 @@ class MWorkType extends Model
     /**
      * @var string[]
      */
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'is_default'];
 }

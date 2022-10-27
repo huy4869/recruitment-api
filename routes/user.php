@@ -130,3 +130,7 @@ Route::group(['as' => 'location.', 'prefix' => 'location'], function () {
     Route::get('/most-apply', 'LocationController@getAccordingToMostApply')->name('getMostApply');
     Route::get('/amount-job-in-province', 'LocationController@amountJobInProvince')->name('amountJobInProvince');
 });
+
+Route::group(['as' => 'job-type.', 'prefix' => 'job-type'], function () {
+    Route::get('/amount-job-in-job-type', 'JobTypeController@amountJobInJobTypes')->name('amountJobInJobTypes');
+});

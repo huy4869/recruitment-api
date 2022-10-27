@@ -5,11 +5,13 @@ namespace App\Services;
 use App\Models\MFeedbackType;
 use App\Models\MJobFeature;
 use App\Models\MJobFeatureCategory;
+use App\Models\MJobType;
 use App\Models\MProvince;
 use App\Models\MProvinceCity;
 use App\Models\MProvinceDistrict;
 use App\Models\MSalaryType;
 use App\Models\MStation;
+use App\Models\MWorkType;
 use Exception;
 use Illuminate\Config\Repository;
 use Illuminate\Contracts\Foundation\Application;
@@ -135,6 +137,11 @@ class MasterDataService extends Service
         'order_by' => [
             'driver' => self::DRIVER_CUSTOM,
             'target' => 'getListOrderBy',
+        ],
+
+        'm_job_types_other' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getJobTypeNameOther',
         ],
     ];
 
@@ -653,5 +660,26 @@ class MasterDataService extends Service
     protected function getListOrderBy()
     {
         return config('order_by.job_posting');
+    }
+
+    /**
+     * @return Repository|Application|mixed
+     */
+    protected function getJobTypeNameOther()
+    {
+        $dataJobTypes = MJobType::query()->where('is_default', '=', MJobType::IS_DEFAULT)->get();
+        $result = [];
+
+        foreach ($dataJobTypes as $dataJobType) {
+            $result[] = [
+                'id' => $dataJobType->id,
+                'name' => $dataJobType->name
+            ];
+        }
+
+        return array_merge($result, [[
+            'id' => 'other',
+            'name' => 'その他',
+        ]]);
     }
 }
