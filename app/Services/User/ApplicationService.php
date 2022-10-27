@@ -19,22 +19,21 @@ class ApplicationService extends Service
      */
     public function list()
     {
-        $dataApplications =  Application::query()
+        return  Application::query()
             ->with(['jobPosting', 'store', 'interviews', 'jobPosting.bannerImage'])
             ->where('user_id', $this->user->id)
             ->orderBy('date', 'DESC')
-            ->get()
-            ->toArray();
+            ->get();
+    }
 
-        $dataInterviewApproaches = MInterviewApproach::all()->pluck('name', 'id')->toArray();
-        foreach ($dataApplications as $key => $application) {
-            $interviewApproaches = json_decode($application['interview_approaches']);
-            $dataApplications[$key]['interview_approaches_name'] = $interviewApproaches->approach;
-            $dataApplications[$key]['interview_approaches_id'] = $interviewApproaches->id;
-            $dataApplications[$key]['interview_approaches_status_name'] = $dataInterviewApproaches[$interviewApproaches->id];
-        }
-
-        return $dataApplications;
+    /**
+     * get interview approach
+     *
+     * @return array
+     */
+    public static function interviewApproach()
+    {
+         return $dataInterviewApproaches = MInterviewApproach::all()->pluck('name', 'id')->toArray();
     }
 
     /**

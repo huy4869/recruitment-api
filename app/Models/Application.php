@@ -38,6 +38,11 @@ class Application extends Model
         'update_times',
     ];
 
+
+    protected $casts = [
+        'interview_approaches' => 'array',
+    ];
+
     /**
      * @return BelongsTo
      */
