@@ -40,6 +40,7 @@ class MasterDataSeeder extends Seeder
         $dataRoles = [
             ['name' => 'USER', 'created_at' => $time, 'updated_at' => $time],
             ['name' => 'REC', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'SUB_ADMIN', 'created_at' => $time, 'updated_at' => $time],
             ['name' => 'ADMIN', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_roles')->insert($dataRoles);
