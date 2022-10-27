@@ -18,7 +18,7 @@ class ListInterviewResource extends JsonResource
      */
     public function toArray($request)
     {
-        $approach = json_decode($this->interview_approaches);
+        $approach = $this->interview_approaches;
         $interviewMethod = MInterviewApproach::query()->pluck('name')->toArray();
 
         return [
@@ -29,10 +29,10 @@ class ListInterviewResource extends JsonResource
             'interview_date' => DateTimeHelper::formatDateDayOfWeekTimeJa($this->date),
             'interview_date_status' => $this->date_status,
             'interview_approach' => $approach ? [
-                'id' => $approach->id,
-                'method' => $interviewMethod[$approach->id - 1],
-                'approach_label' => config('application.interview_approach_label.' . $approach->id),
-                'approach' =>  $approach->approach,
+                'id' => $approach['id'],
+                'method' => $interviewMethod[$approach['id'] - 1],
+                'approach_label' => config('application.interview_approach_label.' . $approach['id']),
+                'approach' =>  $approach['approach'],
             ] : [],
             'can_change_interview' => $this->can_change_interview,
             'can_cancel' => $this->can_cancel,
