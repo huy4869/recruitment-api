@@ -2,8 +2,8 @@
 
 return [
     'interview_approach_label' => [
-        1 => '場所:',
-        2 => '面接URL:',
+        1 => '面接URL:',
+        2 => '場所:',
         3 => '電話番号:',
     ],
 
