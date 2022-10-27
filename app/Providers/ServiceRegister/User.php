@@ -3,8 +3,10 @@
 namespace App\Providers\ServiceRegister;
 
 use App\Services\User\ApplicationService;
+use App\Services\User\ApplicationUserHistoryService;
 use App\Services\User\AuthService;
 use App\Services\User\Job\JobService;
+use App\Services\User\JobPostingService;
 use App\Services\User\LicensesQualificationService;
 use App\Services\User\LearningHistoryService;
 use App\Services\User\MasterDataService;
@@ -63,6 +65,14 @@ class User
 
         $app->scoped(LearningHistoryService::class, function ($app) {
             return new LearningHistoryService();
+        });
+
+        $app->scoped(JobPostingService::class, function ($app) {
+            return new JobPostingService();
+        });
+
+        $app->scoped(ApplicationUserHistoryService::class, function ($app) {
+            return new ApplicationUserHistoryService();
         });
     }
 }

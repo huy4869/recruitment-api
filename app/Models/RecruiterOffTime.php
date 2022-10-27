@@ -24,6 +24,10 @@ class RecruiterOffTime extends Model
         'off_times',
     ];
 
+    protected $casts = [
+        'off_times' => 'array'
+    ];
+
     /**
      * @return BelongsTo
      */

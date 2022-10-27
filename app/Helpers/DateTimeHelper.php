@@ -254,7 +254,6 @@ class DateTimeHelper
     public static function parseToDiffForHumansJa($dateTime = null, $format = 'Y-m-d H:i:s')
     {
         Carbon::setLocale(config('app.locale'));
-
         if (!$dateTime) {
             return null;
         }
@@ -265,7 +264,6 @@ class DateTimeHelper
 
         return self::formatDateDayOfWeekTimeJa($dateTime);
     }
-
 
     /**
      * format month year
@@ -279,5 +277,24 @@ class DateTimeHelper
         $year = substr($date, 0, 4);
 
         return sprintf('%s%s%s%s', $year, trans('common.year'), $month, trans('common.month'));
+    }
+
+    /**
+     * @return string
+     */
+    public static function getTime()
+    {
+        $now = now();
+        $hour = $now->hour;
+        $minute = $now->minute;
+
+        if ($minute > 0 && $minute < 30) {
+            $minute = '30';
+        } else {
+            $hour += 1;
+            $minute = '00';
+        }
+
+        return sprintf('%s:%s', substr("0{$hour}", -2), $minute);
     }
 }

@@ -40,9 +40,13 @@ Route::group(['as' => 'forgot-password.', 'prefix' => 'forgot-password'], functi
 
 Route::group(['as' => 'applications.', 'prefix' => 'applications', 'middleware' => 'user'], function () {
     Route::get('/', 'ApplicationController@list')->name('list');
+    Route::post('/', 'ApplicationController@store')->name('store');
     Route::get('/waiting-interview', 'ApplicationController@listWaitingInterview')->name('listWaitingInterview');
     Route::get('/applied', 'ApplicationController@listApplied')->name('listApplied');
     Route::post('/cancel/{id}', 'ApplicationController@cancelApplied')->name('cancelApplied');
+    Route::post('/cancel', 'ApplicationController@cancelApplied')->name('cancelApplied');
+    Route::get('/{application}', 'ApplicationController@detail')->name('detail');
+    Route::post('/{application}', 'ApplicationController@update')->name('update');
 });
 
 Route::group(['as' => 'profile.', 'prefix' => 'profile', 'middleware' => 'user'], function () {
@@ -70,6 +74,7 @@ Route::group(['as' => 'job.', 'prefix' => 'job'], function () {
     Route::get('/recent', 'JobController@recentJobs')->name('recentJobs');
     Route::get('/suggest/{id}', 'JobController@suggestJobs')->name('suggestJobs');
     Route::get('/{id}', 'JobController@detail')->name('detail');
+    Route::get('/{job}/application', 'JobPostingController@detailJobUserApplication')->name('detail');
 });
 
 Route::group(['as' => 'work-history.', 'prefix' => 'work-history', 'middleware' => 'user'], function () {

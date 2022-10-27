@@ -21,6 +21,7 @@ class UserLicensesQualification extends Model
      */
     protected $fillable = [
         'user_id',
+        'job_posting_id',
         'name',
         'new_issuance_date',
     ];

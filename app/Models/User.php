@@ -259,4 +259,9 @@ class User extends Authenticatable
 
         return sprintf('〒 %s %s%s%s', $this->postal_code, $provinceName, $this->city, $this->address);
     }
+
+    public function recruiterOffTimes()
+    {
+        return $this->HasOne(RecruiterOffTime::class, 'user_id', 'id');
+    }
 }

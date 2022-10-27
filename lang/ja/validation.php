@@ -276,6 +276,8 @@ return [
         'job_status_id' => 'ステータス',
         'job_type_name' => '職種',
         'work_type_name' => '役職',
+        'hours' => '希望時間',
+        'interview_approaches_id' => '面接方法',
     ],
 
     'COM' => [
