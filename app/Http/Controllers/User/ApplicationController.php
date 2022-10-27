@@ -49,7 +49,10 @@ class ApplicationController extends BaseController
         $user = $this->guard()->user();
         $data = $this->applicationService->withUser($user)->getWaitingInterviews($request->get('all'));
 
-        return $this->sendSuccessResponse(ListInterviewResource::collection($data));
+        return $this->sendSuccessResponse([
+            'data' => ListInterviewResource::collection($data['interviews']),
+            'view_all' => $data['view_all'],
+        ]);
     }
 
     /**
@@ -60,9 +63,12 @@ class ApplicationController extends BaseController
     public function listApplied(Request $request)
     {
         $user = $this->guard()->user();
-        $appliedCollection = $this->applicationService->withUser($user)->getApplied($request->get('all'));
+        $data = $this->applicationService->withUser($user)->getApplied($request->get('all'));
 
-        return $this->sendSuccessResponse(ListInterviewResource::collection($appliedCollection));
+        return $this->sendSuccessResponse([
+            'data' => ListInterviewResource::collection($data['interviews']),
+            'view_all' => $data['view_all'],
+        ]);
     }
 
     /**
