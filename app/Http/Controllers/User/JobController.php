@@ -7,9 +7,8 @@ use App\Http\Controllers\Controller;
 use App\Http\Resources\User\Job\DetailJobPostingResource;
 use App\Http\Resources\User\Job\JobCollection;
 use App\Http\Resources\User\Job\JobPostingResource;
-use App\Models\JobPosting;
-use App\Services\User\Job\JobService;
 use App\Services\User\Job\JobTableService;
+use App\Services\User\Job\JobService;
 use App\Services\User\UserJobDesiredMatchService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -108,10 +107,9 @@ class JobController extends Controller
             $jobPostings = UserJobDesiredMatchService::getInstance()->withUser($user)->getListMatch();
         } else {
             $jobPostings = JobService::getInstance()->getListMostViewJobPostings();
-            return $this->sendSuccessResponse($jobPostings);
         }
 
-        return $this->sendSuccessResponse($jobPostings);
+        return $this->sendSuccessResponse(JobPostingResource::collection($jobPostings));
     }
 
     /**
