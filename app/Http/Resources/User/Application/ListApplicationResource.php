@@ -4,6 +4,7 @@ namespace App\Http\Resources\User\Application;
 
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
+use App\Models\Application;
 use App\Services\User\ApplicationService;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
@@ -21,6 +22,10 @@ class ListApplicationResource extends JsonResource
     {
         $data = $this->resource;
         $interviewApproaches = ApplicationService::interviewApproach();
+        $isDirectInterview = $data->interview_approaches['id'] == Application::STATUS_INTERVIEW_DIRECT;
+        $applyOrInterview = !in_array($data->interview_status_id, [Application::STATUS_ACCEPTED, Application::STATUS_CANCELED]);
+        $allowEdit =  $data->interview_status_id == Application::STATUS_APPLYING;
+        $allowCancel =  !in_array($data->interview_status_id, [Application::STATUS_ACCEPTED, Application::STATUS_CANCELED, Application::STATUS_REJECTED]);
 
         return [
             'id' => $data->id,
@@ -31,12 +36,16 @@ class ListApplicationResource extends JsonResource
             'store_name' => $data->store->name,
             'interview_status_id' => $data->interview_status_id,
             'interview_status_name' => @$data->interviews->name,
-            'date' => DateTimeHelper::formatDateDayOfWeekJa($data['date']) . ' ' . $data->hours,
-            'interview_approaches' => [
+            'interview_date' => DateTimeHelper::formatDateDayOfWeekJa($data['date']) . ' ' . $data->hours,
+            'apply_or_interview' => $applyOrInterview,
+            'allow_edit' => $allowEdit,
+            'allow_cancel' => $allowCancel,
+            'interview_approach' => [
                 'id' => $data->interview_approaches['id'],
                 'method' => $interviewApproaches[$data->interview_approaches['id']],
                 'approach_label' => config('application.interview_approach_label.' . $data->interview_approaches['id']),
                 'approach' => $data->interview_approaches['approach'],
+                'is_direct_interview' => $isDirectInterview,
             ],
             'created_at' => DateTimeHelper::formatDateDayOfWeekTimeJa($data['created_at']),
         ];

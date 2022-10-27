@@ -18,6 +18,10 @@ class Application extends Model
     public const STATUS_ACCEPTED = 5;
     public const STATUS_CANCELED = 6;
 
+    public const STATUS_INTERVIEW_ONLINE = 1;
+    public const STATUS_INTERVIEW_DIRECT = 2;
+    public const STATUS_INTERVIEW_PHONE = 3;
+
     /**
      * @var string
      */
