@@ -34,8 +34,8 @@ class ListInterviewResource extends JsonResource
                 'approach_label' => config('application.interview_approach_label.' . $approach['id']),
                 'approach' =>  $approach['approach'],
             ] : [],
-            'can_change_interview' => $this->can_change_interview,
-            'can_cancel' => $this->can_cancel,
+            'allow_edit' => $this->can_change_interview,
+            'allow_cancel' => $this->can_cancel,
             'created_at' => DateTimeHelper::formatDateDayOfWeekTimeJa($this->created_at),
         ];
     }
