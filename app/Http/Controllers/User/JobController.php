@@ -141,4 +141,20 @@ class JobController extends Controller
 
         return $this->sendSuccessResponse($data);
     }
+
+    /**
+     * create store
+     *
+     * @param Request $request
+     * @return JsonResponse
+     * @throws InputException
+     */
+    public function storeFavorite(Request $request)
+    {
+        $user = $this->guard()->user();
+
+        $data = $this->jobService->withUser($user)->storeFavorite($request->get('job_posting_id'));
+
+        return $this->sendSuccessResponse($data, trans('response.INF.001'));
+    }
 }
