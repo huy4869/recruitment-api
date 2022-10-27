@@ -51,21 +51,29 @@ class ApplicationService extends Service
             ->orderBy('date', 'asc')
             ->get();
 
+        $amountInterviews = $userInterviews->count();
+
         self::addInterviewActionDateInfo($userInterviews);
 
         if ($all) {
             $userInterviews->shift(config('application.waiting_interview_nearest_amount'));
 
-            return $userInterviews->all();
+            return [
+                'interviews' => $userInterviews->all(),
+                'view_all' => false,
+            ];
         }
 
-        return $userInterviews->take(config('application.waiting_interview_nearest_amount'));
+        return [
+            'interviews' => $userInterviews->take(config('application.waiting_interview_nearest_amount')),
+            'view_all' => $amountInterviews > config('application.waiting_interview_nearest_amount'),
+        ];
     }
 
     /**
      * List applied
      *
-     * @return Collection
+     * @return array
      */
     public function getApplied($all)
     {
@@ -76,13 +84,21 @@ class ApplicationService extends Service
             ->orderBy('created_at', 'desc')
             ->get();
 
+        $amountInterviews = $userInterviews->count();
+
         self::addInterviewActionDateInfo($userInterviews);
 
         if ($all) {
-            return $userInterviews;
+            return [
+                'interviews' => $userInterviews,
+                'view_all' => false,
+            ];
         }
 
-        return $userInterviews->take(config('application.application_newest_amount'));
+        return [
+            'interviews' => $userInterviews->take(config('application.application_newest_amount')),
+            'view_all' => $amountInterviews > config('application.application_newest_amount'),
+        ];
     }
 
     /**
