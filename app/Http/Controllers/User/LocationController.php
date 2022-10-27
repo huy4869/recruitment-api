@@ -39,4 +39,14 @@ class LocationController extends BaseController
 
         return $this->sendSuccessResponse($data);
     }
+
+    /**
+     * @return JsonResponse
+     */
+    public function amountJobInProvince()
+    {
+        $data = LocationService::getInstance()->getAmountJobInProvince();
+
+        return $this->sendSuccessResponse($data);
+    }
 }

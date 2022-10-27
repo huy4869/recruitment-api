@@ -5,6 +5,7 @@ namespace App\Services\User;
 use App\Exceptions\InputException;
 use App\Helpers\DateTimeHelper;
 use App\Models\Application;
+use App\Models\JobPosting;
 use App\Models\MJobType;
 use App\Models\MProvince;
 use App\Models\UserLicensesQualification;
@@ -76,5 +77,21 @@ class LocationService extends Service
         }
 
         return $list;
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection
+     */
+    public function getAmountJobInProvince()
+    {
+        return DB::table('m_provinces_cities')
+            ->select('m_provinces.id as province_id', DB::raw('count(distinct job_postings.id) as amount_job'))
+            ->join('m_provinces', 'm_provinces_cities.province_id', '=', 'm_provinces.id')
+            ->leftJoin('job_postings', function ($join) {
+                $join->on('job_postings.province_id', '=', 'm_provinces.id')
+                    ->where('job_postings.job_status_id', '=', JobPosting::STATUS_RELEASE);
+            })
+            ->groupBy('m_provinces.id')
+            ->get();
     }
 }

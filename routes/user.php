@@ -16,7 +16,6 @@ use Illuminate\Support\Facades\Route;
 Route::get('/master-data', 'MasterDataController@show')->name('masterData');
 Route::post('/upload-image', 'UploadImageController@upload')->name('uploadImage')->middleware('user');
 Route::get('/zipcode', 'ZipcodeController@index')->name('getZipcode');
-Route::get('/location/most-apply', 'LocationController@getAccordingToMostApply')->name('getMostApply');
 
 Route::group(['as' => 'favorite-job.', 'prefix' => 'favorite-job', 'middleware' => 'user'], function () {
     Route::get('/', 'JobController@getFavoriteJob')->name('favoriteJob');
@@ -124,4 +123,9 @@ Route::group(['as' => 'notifications.', 'prefix' => 'notifications', 'middleware
 Route::group(['as' => 'search-jobs.', 'prefix' => 'search-jobs', 'middleware' => 'user'], function () {
     Route::get('/', 'SearchJobController@list')->name('list');
     Route::get('/delete/{id}', 'SearchJobController@destroy')->name('destroy');
+});
+
+Route::group(['as' => 'location.', 'prefix' => 'location'], function () {
+    Route::get('/most-apply', 'LocationController@getAccordingToMostApply')->name('getMostApply');
+    Route::get('/amount-job-in-province', 'LocationController@amountJobInProvince')->name('amountJobInProvince');
 });
