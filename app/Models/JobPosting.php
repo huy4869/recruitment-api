@@ -33,6 +33,7 @@ class JobPosting extends Model
         'work_type_ids',
         'job_status_id',
         'postal_code',
+        'province_city_id',
         'province_id',
         'city',
         'address',
@@ -183,5 +184,13 @@ class JobPosting extends Model
     public function applicationUserLearningHistory()
     {
         return $this->hasMany(ApplicationUserLearningHistory::class, 'job_posting_id', 'id');
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function provinceCity()
+    {
+        return $this->belongsTo(MProvinceCity::class, 'province_city_id');
     }
 }

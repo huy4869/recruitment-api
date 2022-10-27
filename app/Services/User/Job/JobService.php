@@ -506,4 +506,32 @@ class JobService extends Service
             throw new InputException(trans('validation.job_posting_not_exist'));
         }
     }
+
+    /**
+     * @param $jobList
+     * @param $user
+     * @return array
+     */
+    public static function appendInfoForJobs($jobList, $user)
+    {
+        $jobMasterData = JobHelper::getJobMasterData();
+        $jobUserFavorite = self::getUserFavoriteJobIds($user);
+        $jobArr = [];
+
+        foreach ($jobList as $job) {
+            $job->job_types = JobHelper::getTypeName(
+                $job->job_type_ids,
+                $jobMasterData['masterJobTypes']
+            );
+            $job->work_types = JobHelper::getTypeName(
+                $job->work_type_ids,
+                $jobMasterData['masterWorkTypes']
+            );
+            $job->is_favorite = !!in_array($job->id, $jobUserFavorite);
+
+            $jobArr[$job->id] = $job;
+        }//end foreach
+
+        return $jobArr;
+    }
 }
