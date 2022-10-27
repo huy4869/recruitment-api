@@ -23,7 +23,7 @@ class ListApplicationResource extends JsonResource
         $data = $this->resource;
         $interviewApproaches = ApplicationService::interviewApproach();
         $isDirectInterview = $data->interview_approaches['id'] == Application::STATUS_INTERVIEW_DIRECT;
-        $applyOrInterview = !in_array($data->interview_status_id, [Application::STATUS_ACCEPTED, Application::STATUS_CANCELED]);
+        $applyOrInterview = $data->interview_status_id != Application::STATUS_CANCELED;
         $allowEdit =  $data->interview_status_id == Application::STATUS_APPLYING;
         $allowCancel =  !in_array($data->interview_status_id, [Application::STATUS_ACCEPTED, Application::STATUS_CANCELED, Application::STATUS_REJECTED]);
 

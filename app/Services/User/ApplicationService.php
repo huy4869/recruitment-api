@@ -241,12 +241,12 @@ class ApplicationService extends Service
         foreach (config('date.time') as $time) {
             $data[] = [
                 'hours' => $time,
-                'is_enabled_time' => $hours == $time,
+                'is_enabled_time' => $hours == $time ? 1 : 0,
             ];
         }
 
         $dataPast[] = [
-            'date' => $date,
+            'date' => explode(' ', $date)[0],
             'date_format' => DateTimeHelper::formatDateDayOfWeekJa($date),
             'is_enable' => true,
             'times' => $data
@@ -287,7 +287,8 @@ class ApplicationService extends Service
         $hoursApplication = $application->hours;
 
         if ($application->interview_status_id != Application::STATUS_APPLYING ||
-            ($date == $dateApplication && $date < $now && $hours != $hoursApplication)) {
+            ($date == $dateApplication && $date < $now && $hours != $hoursApplication) ||
+            ($date != $dateApplication && $date < $now)) {
             throw new InputException(trans('response.not_found'));
         }
 
@@ -339,11 +340,11 @@ class ApplicationService extends Service
 
         foreach (config('date.time') as $key => $time) {
             if ($key < $checkTime && $hours == $time) {
-                return false;
+                return true;
             }
         }
 
-        return true;
+        return false;
     }
 
     /**
