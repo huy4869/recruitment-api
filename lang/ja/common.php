@@ -10,4 +10,7 @@ return [
     'employee_quantity' => '名',
     'year' => '年',
     'month' => '月',
+    'today' => '今日',
+    'tomorrow' => '明日',
+    'day_after_tomorrow' => '明後日',
 ];

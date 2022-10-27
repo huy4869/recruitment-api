@@ -27,12 +27,15 @@ class ListInterviewResource extends JsonResource
             'job_name' => $this->jobPosting->name,
             'store_name' => $this->store->name,
             'interview_date' => DateTimeHelper::formatDateDayOfWeekTimeJa($this->date),
+            'interview_date_status' => $this->date_status,
             'interview_approach' => $approach ? [
                 'id' => $approach->id,
                 'method' => $interviewMethod[$approach->id - 1],
                 'approach_label' => config('application.interview_approach_label.' . $approach->id),
                 'approach' =>  $approach->approach,
             ] : [],
+            'can_change_interview' => $this->can_change_interview,
+            'can_cancel' => $this->can_cancel,
             'created_at' => DateTimeHelper::formatDateDayOfWeekTimeJa($this->created_at),
         ];
     }

@@ -6,6 +6,7 @@ use App\Exceptions\InputException;
 use App\Models\Application;
 use App\Models\MInterviewApproach;
 use App\Services\Service;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -50,6 +51,8 @@ class ApplicationService extends Service
             ->orderBy('date', 'asc')
             ->get();
 
+        self::addInterviewActionDateInfo($userInterviews);
+
         if ($all) {
             $userInterviews->shift(config('application.waiting_interview_nearest_amount'));
 
@@ -73,6 +76,8 @@ class ApplicationService extends Service
             ->orderBy('created_at', 'desc')
             ->get();
 
+        self::addInterviewActionDateInfo($userInterviews);
+
         if ($all) {
             return $userInterviews;
         }
@@ -88,10 +93,16 @@ class ApplicationService extends Service
      */
     public function cancelApplied($id)
     {
+        $statusCanCancel = [
+            Application::STATUS_APPLYING,
+            Application::STATUS_WAITING_INTERVIEW,
+            Application::STATUS_WAITING_RESULT,
+        ];
+
         $application = Application::query()
             ->where('user_id', $this->user->id)
             ->where('id', $id)
-            ->whereNot('interview_status_id', Application::STATUS_CANCELED)
+            ->whereIn('interview_status_id', $statusCanCancel)
             ->first();
 
         if (!$application) {
@@ -101,5 +112,49 @@ class ApplicationService extends Service
         return $application->update([
             'interview_status_id' => Application::STATUS_CANCELED
         ]);
+    }
+
+    /**
+     * @param $userInterviews
+     * @return mixed
+     */
+    public static function addInterviewActionDateInfo($userInterviews)
+    {
+        $statusCanCancel = [
+            Application::STATUS_APPLYING,
+            Application::STATUS_WAITING_INTERVIEW,
+            Application::STATUS_WAITING_RESULT,
+        ];
+
+        $statusCanChangeInterview = [
+            Application::STATUS_APPLYING
+        ];
+
+        $today = now();
+        $tomorrow = now()->addDays();
+        $dayAfterTomorrow = now()->addDays(2);
+        $dayAfterThreeDays = now()->addDays(3);
+
+        foreach ($userInterviews as $interview) {
+            $interviewStatus = $interview->interview_status_id;
+            $interviewDate = Carbon::parse($interview->date);
+
+            if ($today <= $interviewDate && $interviewDate < $tomorrow) {
+                $interview->date_status = trans('common.today');
+            }
+
+            if ($tomorrow <= $interviewDate && $interviewDate < $dayAfterTomorrow) {
+                $interview->date_status = trans('common.tomorrow');
+            }
+
+            if ($dayAfterTomorrow <= $interviewDate && $interviewDate < $dayAfterThreeDays) {
+                $interview->date_status = trans('common.day_after_tomorrow');
+            }
+
+            $interview->can_cancel = !!in_array($interviewStatus, $statusCanCancel);
+            $interview->can_change_interview = !!in_array($interviewStatus, $statusCanChangeInterview);
+        }
+
+        return $userInterviews;
     }
 }
