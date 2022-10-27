@@ -17,7 +17,11 @@ Route::get('/master-data', 'MasterDataController@show')->name('masterData');
 Route::post('/upload-image', 'UploadImageController@upload')->name('uploadImage')->middleware('user');
 Route::get('/zipcode', 'ZipcodeController@index')->name('getZipcode');
 Route::get('/location/most-apply', 'LocationController@getAccordingToMostApply')->name('getMostApply');
-Route::get('/favorite-job', 'JobController@getFavoriteJob')->name('favoriteJob')->middleware('user');
+
+Route::group(['as' => 'favorite-job.', 'prefix' => 'favorite-job', 'middleware' => 'user'], function () {
+    Route::get('/', 'JobController@getFavoriteJob')->name('favoriteJob');
+    Route::delete('/delete/{id}', 'JobController@deleteFavoriteJob')->name('deleteFavoriteJob');
+});
 
 Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {
     Route::post('/register', 'AuthController@register')->name('register');
@@ -59,7 +63,6 @@ Route::group(['as' => 'contact.', 'prefix' => 'contact'], function () {
 });
 
 Route::group(['as' => 'job.', 'prefix' => 'job'], function () {
-    Route::delete('/delete-favorite/{id}', 'JobController@deleteFavoriteJob')->name('deleteFavoriteJob')->middleware('user');
     Route::get('/news', 'JobController@getListNewJobPostings')->name('getListNewJobPostings');
     Route::get('/most-views', 'JobController@getListMostViewJobPostings')->name('getListMostViewJobPostings');
     Route::get('/most-applies', 'JobController@getListMostApplyJobPostings')->name('getListMostApplyJobPostings');

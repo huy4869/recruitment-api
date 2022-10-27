@@ -3,9 +3,6 @@
 namespace App\Services\User;
 
 use App\Helpers\UserHelper;
-use App\Models\UserLearningHistory;
-use App\Models\UserLicensesQualification;
-use App\Models\UserWorkHistory;
 use App\Services\Service;
 
 class ProfileService extends Service
@@ -20,70 +17,94 @@ class ProfileService extends Service
         $user = $this->user;
         $userInformation = $user->load('userLearningHistories', 'userLicensesQualifications', 'userWordHistories');
 
-        $favorite = $user->favorite_skill ? config('percentage.favorite') : config('percentage.default');
-        $skill = $user->self_pr ? config('percentage.self_pr') : config('percentage.default');
-        $experience = $user->experience_knowledge ? config('percentage.experience') : config('percentage.default');
-        $motivation = $user->motivation ? config('percentage.motivation') : config('percentage.default');
-        $profile = [
-            'first_name' => $user->first_name,
-            'last_name' => $user->last_name,
-            'furi_first_name' => $user->furi_first_name,
-            'furi_last_name' => $user->furi_last_name,
-            'birthday' => $user->birthday,
-            'gender_id' => $user->gender_id,
-            'tel' => $user->tel,
-            'province_id' => $user->province_id,
-            'city' => $user->city,
-        ];
-        $baseInfo = UserHelper::getPercentage($profile, config('percentage.information'));
+        $motivation = self::getPercentUser($user->motivation, config('percentage.motivation'));
+        $baseInfo = self::getPercentBaseInfo($user);
+        $percentageUserLearning = $userInformation->userLearningHistories->first() ? config('percentage.user_learning_history') : config('percentage.default');
+        $qualification = $userInformation->userLicensesQualifications->first() ? config('percentage.user_learning_history') : config('percentage.default');
+        $percentWorkHistory = UserHelper::getPercentWorkHistory($userInformation->userWordHistories);
+        $selfPr = self::getPercentSelfPR($user);
 
-        if (is_null($userInformation->userLearningHistories->first())) {
-            $percentageUserLearning = config('percentage.default');
-        } else {
-            $dataUserLearn = [
-                'learning_status_id' => $userInformation->userLearningHistories->first()->learning_status_id,
-                'school_name' => $userInformation->userLearningHistories->first()->school_name,
-                'enrollment_period_start' => $userInformation->userLearningHistories->first()->enrollment_period_start,
-                'enrollment_period_end' => $userInformation->userLearningHistories->first()->enrollment_period_end,
-            ];
-            $percentageUserLearning = UserHelper::getPercentage($dataUserLearn, config('percentage.user_learning_history'));
-        }
-
-        if (is_null($userInformation->userLicensesQualifications->first())) {
-            $qualification = config('percentage.default');
-        } else {
-            $dataUserQualification = [
-                'name' => $userInformation->userLicensesQualifications->first()->name,
-                'new_issuance_date' => $userInformation->userLicensesQualifications->first()->new_issuance_date,
-            ];
-            $qualification = UserHelper::getPercentage($dataUserQualification, config('percentage.user_qualification'));
-        }
-
-        if (is_null($userInformation->userWordHistories->first())) {
-            $workHistory = config('percentage.default');
-        } else {
-            $dataWorkHistory = [
-              'job_type_id' => $userInformation->userWordHistories->first()->job_type_id,
-              'store_name' => $userInformation->userWordHistories->first()->store_name,
-              'position_offices' => $userInformation->userWordHistories->first()->position_offices,
-              'period_start' => $userInformation->userWordHistories->first()->period_start,
-              'period_end' => $userInformation->userWordHistories->first()->period_end,
-            ];
-            $percentageUserWorkHistory = UserHelper::getPercentage($dataWorkHistory, config('percentage.user_work_history'));
-            $businessContent = $userInformation->userWordHistories->first()->business_content ? config('percentage.business_content') : config('percentage.default');
-            $experienceAccumulation = $userInformation->userWordHistories->first()->experience_accumulation ? config('percentage.experience_accumulation') : config('percentage.default');
-            $workHistory = $percentageUserWorkHistory + $businessContent + $experienceAccumulation;
-        }
-
-        $selfPr = $favorite + $skill + $experience;
+        $dateLearningHistory = UserHelper::getNewDate($userInformation->userLearningHistories);
+        $dateQualification = UserHelper::getNewDate($userInformation->userLicensesQualifications);
+        $dateWorkHistory = UserHelper::getNewDate($userInformation->userWordHistories);
+        $dateUser = date_format($userInformation->updated_at, 'Y/m/d');
+        $date = [];
+        array_push($date, $dateLearningHistory, $dateQualification, $dateWorkHistory, $dateUser);
+        $updatedAtNew = date(config('date.fe_date_ja_format'), max(array_map('strtotime', $date)));
 
         return [
-            'baseInfo' => $baseInfo,
-            'workHistory' => $workHistory,
-            'selfPr' => $selfPr,
-            'qualification' => $qualification,
-            'percentageUserLearning' => $percentageUserLearning,
-            'motivation' => $motivation,
+            'updateDateNew' => $updatedAtNew,
+            'baseInfo' => [
+                'percent' => $baseInfo,
+                'total' => config('percentage.information'),
+            ],
+            'workHistory' => [
+                'percent' => $percentWorkHistory,
+                'total' => config('percentage.user_learning_history'),
+            ],
+            'selfPr' => [
+                'percent' => $selfPr,
+                'total' => config('percentage.pr'),
+            ],
+            'qualification' => [
+                'percent' => $qualification,
+                'total' => config('percentage.user_learning_history'),
+            ],
+            'percentageUserLearning' => [
+                'percent' => $percentageUserLearning,
+                'total' => config('percentage.user_learning_history'),
+            ],
+            'motivation' => [
+                'percent' => $motivation,
+                'total' => config('percentage.motivation'),
+            ],
         ];
+    }
+
+    /**
+     * @param $user
+     * @return \Illuminate\Config\Repository|\Illuminate\Contracts\Foundation\Application|mixed
+     */
+    public function getPercentBaseInfo($user)
+    {
+        $firstName = self::getPercentUser($user->first_name, config('percentage.motivation'));
+        $lastName = self::getPercentUser($user->last_name, config('percentage.motivation'));
+        $furiFirst = self::getPercentUser($user->furi_first_name, config('percentage.motivation'));
+        $furiLast = self::getPercentUser($user->furi_last_name, config('percentage.motivation'));
+        $birthday = self::getPercentUser($user->birthday, config('percentage.motivation'));
+        $genderId = self::getPercentUser($user->gender_id, config('percentage.motivation'));
+        $tel = self::getPercentUser($user->tel, config('percentage.motivation'));
+        $email = self::getPercentUser($user->email, config('percentage.motivation'));
+        $provinceId = self::getPercentUser($user->province_id, config('percentage.motivation'));
+        $city = self::getPercentUser($user->city, config('percentage.motivation'));
+
+        return $firstName + $lastName + $furiFirst + $furiLast + $birthday + $genderId + $tel + $email + $provinceId + $city;
+    }
+
+    /**
+     * @param $user
+     * @return \Illuminate\Config\Repository|\Illuminate\Contracts\Foundation\Application|mixed
+     */
+    public function getPercentSelfPR($user)
+    {
+        $favorite = self::getPercentUser($user->favorite_skill, config('percentage.favorite'));
+        $skill = self::getPercentUser($user->self_pr, config('percentage.self_pr'));
+        $experience = self::getPercentUser($user->experience_knowledge, config('percentage.experience'));
+
+        return $favorite + $skill + $experience;
+    }
+
+    /**
+     * @param $value
+     * @param $percent
+     * @return \Illuminate\Config\Repository|\Illuminate\Contracts\Foundation\Application|mixed
+     */
+    public function getPercentUser($value, $percent)
+    {
+        if ($value) {
+            return $percent;
+        }
+
+        return config('percentage.default');
     }
 }
