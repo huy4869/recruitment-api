@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Services\Common\CommonService;
 use App\Services\User\Job\JobService;
 
 class SearchJobHelper
@@ -16,6 +17,7 @@ class SearchJobHelper
         $masterJobExps = JobService::getMasterDataJobExperiences();
         $masterJobFeatures = JobService::getMasterDataJobFeatures();
         $masterProvinces = JobService::getMasterDataProvinces();
+        $masterProvinceCities = CommonService::getMasterDataProvinceCities();
 
         return [
             'masterWorkTypes' => $masterWorkTypes,
@@ -23,6 +25,7 @@ class SearchJobHelper
             'masterJobExps' => $masterJobExps,
             'masterJobFeatures' => $masterJobFeatures,
             'masterProvinces' => $masterProvinces,
+            'masterProvinceCities' => $masterProvinceCities,
         ];
     }
 
@@ -65,10 +68,17 @@ class SearchJobHelper
             );
         }
 
-        if (isset($content['province_ids'])) {
-            $content['province_ids'] = JobHelper::getProvinceDistrictName(
-                $content['province_ids'],
+        if (isset($content['province_id'])) {
+            $content['province_id'] = JobHelper::getProvinceDistrictName(
+                $content['province_id'],
                 $masterData['masterProvinces'],
+            );
+        }
+
+        if (isset($content['province_city_id'])) {
+            $content['province_city_id'] = self::getProvinceCityDistrictName(
+                $content['province_city_id'],
+                $masterData['masterProvinceCities'],
             );
         }
 
@@ -82,5 +92,40 @@ class SearchJobHelper
         $searchJob->content = $content;
 
         return $searchJob;
+    }
+
+    /**
+     * @param $typeIds
+     * @param $provinceCities
+     * @return array
+     */
+    public static function getProvinceCityDistrictName($typeIds, $provinceCities)
+    {
+        $result = [];
+
+        if (!$typeIds) {
+            return $result;
+        }
+
+        foreach ($typeIds as $id) {
+            $provinceCity = $provinceCities[$id - 1];
+
+            $result[] = [
+                'district' => [
+                    'id' => $provinceCity['province']['province_district']['id'],
+                    'name' => $provinceCity['province']['province_district']['name'],
+                    'province' => [
+                        'id' => $provinceCity['province']['id'],
+                        'name' => $provinceCity['province']['name'],
+                        'province_city' => [
+                            'id' => $provinceCity['id'],
+                            'name' => $provinceCity['name']
+                        ]
+                    ]
+                ],
+            ];
+        }
+
+        return $result;
     }
 }

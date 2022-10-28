@@ -9,6 +9,20 @@ use App\Services\Service;
 class SearchJobService extends Service
 {
     /**
+     * @param $data
+     * @return mixed
+     */
+    public function store($data)
+    {
+        $storeData = [
+            'user_id' => $this->user->id,
+            'content' => $data,
+        ];
+
+        return SearchJob::create($storeData);
+    }
+
+    /**
      * @param $id
      * @return bool
      * @throws InputException
