@@ -189,7 +189,7 @@ class WorkHistoryService extends Service
             return $dataObject->id;
         }
 
-        return $object->create(['name' => $name])->id;
+        return $object->create(['name' => $name, 'is_default' => MWorkType::NO_DEFAULT])->id;
     }
 
     /**

@@ -16,6 +16,7 @@ class MJobType extends Model
     CONST CLINIC = 5;
     CONST OTHER = 'other';
 
+    CONST NO_DEFAULT = 0;
     CONST IS_DEFAULT = 1;
 
     /**
@@ -26,5 +27,5 @@ class MJobType extends Model
     /**
      * @var string[]
      */
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'is_default'];
 }
