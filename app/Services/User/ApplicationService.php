@@ -132,7 +132,6 @@ class ApplicationService extends Service
     }
 
     /**
-<<<<<<< HEAD
      * @param $userInterviews
      * @return mixed
      */
@@ -221,6 +220,10 @@ class ApplicationService extends Service
                     'id' => $application->interview_status_id,
                     'name' => $application->interviews->name,
                 ],
+                'interview_approaches' => [
+                    'id' => $application->interview_approaches['id'],
+                    'approach' => $application->interview_approaches['approach'],
+                ],
             ],
             'list_time' => array_merge($datePast, $times)
         ];
@@ -271,7 +274,7 @@ class ApplicationService extends Service
         }
 
         $application = Application::query()
-            ->with('store.createdBy.recruiterOffTimes')
+            ->with(['store.owner.recruiterOffTimes', 'store.owner.stores.applications'])
             ->where('user_id', '=', $user->id)
             ->where('id', '=', $applicationId)
             ->first();
@@ -283,7 +286,7 @@ class ApplicationService extends Service
         $date = $data['date'];
         $hours = $data['hours'];
         $now = now()->format('Y-m-d');
-        $dateApplication = @explode(' ', $application->date)[0];
+        $dateApplication = explode(' ', $application->date)[0];
         $hoursApplication = $application->hours;
 
         if ($application->interview_status_id != Application::STATUS_APPLYING ||
@@ -315,8 +318,27 @@ class ApplicationService extends Service
             throw new InputException(trans('response.ERR.999'));
         }
 
+        $stores = $application->store->owner->stores;
+        $recruiterApplications = collect();
+
+        foreach ($stores as $store) {
+            $recruiterApplications = $recruiterApplications->merge($store->applications);
+        }
+
+        foreach ($recruiterApplications as $recruiterApplication) {
+            if (explode(' ', $recruiterApplication->date)[0] == $date
+                && $recruiterApplication->hours == $hours
+                && $recruiterApplication->id != $application->job_posting_id
+                && in_array($recruiterApplication->interview_status_id, [
+                   Application::STATUS_APPLYING,
+                    Application::STATUS_WAITING_INTERVIEW
+                ])) {
+                throw new InputException(trans('response.ERR.999'));
+            }
+        }
+
         $month = Carbon::parse($data['date'])->firstOfMonth()->format('Y-m-d');
-        $recruiterOffTimes = $application->store->createdBy->recruiterOffTimes->off_times ?? [];
+        $recruiterOffTimes = $application->store->owner->recruiterOffTimes->off_times ?? [];
         $recruiterOffTimes = JobPostingService::resultRecruiterOffTimes([$month], $recruiterOffTimes);
         $dataHours = preg_grep('/' . $date . '/i', $recruiterOffTimes);
 
@@ -369,7 +391,7 @@ class ApplicationService extends Service
             ],
             'date' => $data['date'],
             'hours' => $data['hours'],
-            'note' => $data['note'],
+            'note' => '',
             'update_times' => now(),
         ];
     }

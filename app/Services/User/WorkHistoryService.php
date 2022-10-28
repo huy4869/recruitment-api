@@ -119,7 +119,7 @@ class WorkHistoryService extends Service
             throw new InputException(trans('response.not_found'));
         }
 
-        $positionOffices = MPositionOffice::query()->whereIn('id', $userWorkHistory->position_office_ids)->get()->pluck('name')->toArray();
+        $positionOffices = MPositionOffice::query()->whereIn('id', $userWorkHistory->position_office_ids)->get();
         $userWorkHistory['position_offices'] = $positionOffices;
 
         return $userWorkHistory;
