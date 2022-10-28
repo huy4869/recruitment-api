@@ -28,6 +28,7 @@ class StoreRequest extends FormRequest
         $masterData = JobHelper::getJobMasterData();
         $masterDataIds = JobHelper::getListIdsMasterData($masterData);
         $masterDataLocation = CommonService::getListIdsLocationMasterData();
+        $orderByIds = config('order_by.job_posting_id');
 
         return [
             'work_type_ids' => 'nullable|array',
@@ -42,6 +43,8 @@ class StoreRequest extends FormRequest
             'province_id.*' => 'integer|in:' . implode(',', $masterDataLocation['provinceIds']),
             'province_city_id' => 'nullable|array',
             'province_city_id.*' => 'integer|in:' . implode(',', $masterDataLocation['provinceCityIds']),
+            'order_by_ids' => 'nullable|array',
+            'order_by_ids.*' => 'integer|in:' . implode(',', $orderByIds),
             'text' => 'nullable|string',
         ];
     }

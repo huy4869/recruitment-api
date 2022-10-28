@@ -34,7 +34,7 @@ class SearchJobController extends Controller
     {
         $user = $this->guard()->user();
         $inputs = $request->only([
-            'user_id',
+            'order_by_ids',
             'work_type_ids',
             'job_type_ids',
             'feature_ids',

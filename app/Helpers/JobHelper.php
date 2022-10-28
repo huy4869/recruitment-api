@@ -184,14 +184,8 @@ class JobHelper
             $feature = $features[$id - 1];
 
             $result[] = [
-                'category' => [
-                    'id' => $feature['category']['id'],
-                    'name' => $feature['category']['name'],
-                    'feature' => [
-                        'id' => $feature['id'],
-                        'name' => $feature['name'],
-                    ]
-                ],
+                'id' => $feature['id'],
+                'name' => $feature['name'],
             ];
         }
 
@@ -215,14 +209,8 @@ class JobHelper
             $province = $provinces[$id - 1];
 
             $result[] = [
-                'district' => [
-                    'id' => $province['province_district']['id'],
-                    'name' => $province['province_district']['name'],
-                    'province' => [
-                        'id' => $province['id'],
-                        'name' => $province['name'],
-                    ]
-                ],
+                'id' => $province['id'],
+                'name' => $province['name'],
             ];
         }
 
