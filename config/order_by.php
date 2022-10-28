@@ -10,5 +10,9 @@ return [
             'id' => 2,
             'name' => '更新順',
         ],
+    ],
+    'job_posting_id' => [
+        1,
+        2,
     ]
 ];

@@ -16,6 +16,7 @@ class SearchJobResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'id' => $this->id,
             'user_id' => $this->user_id,
             'content' => $this->content,
             'created_at' => DateTimeHelper::formatDateDayOfWeekTimeJa($this->created_at),

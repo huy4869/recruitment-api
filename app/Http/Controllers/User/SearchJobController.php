@@ -8,7 +8,6 @@ use App\Http\Requests\User\SearchJob\StoreRequest;
 use App\Http\Resources\User\SearchJob\SearchJobCollection;
 use App\Services\User\SearchJob\SearchJobService;
 use App\Services\User\SearchJob\SearchJobTableService;
-use http\Env\Request;
 use Illuminate\Http\JsonResponse;
 
 class SearchJobController extends Controller
@@ -33,7 +32,7 @@ class SearchJobController extends Controller
     {
         $user = $this->guard()->user();
         $inputs = $request->only([
-            'user_id',
+            'order_by_ids',
             'work_type_ids',
             'job_type_ids',
             'feature_ids',

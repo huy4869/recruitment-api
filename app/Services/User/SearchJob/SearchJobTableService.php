@@ -14,7 +14,7 @@ class SearchJobTableService extends TableService
     public function makeNewQuery()
     {
         return SearchJob::query()->where('user_id', $this->user->id)
-            ->orderBy('created_at')
+            ->orderBy('created_at', 'desc')
             ->selectRaw($this->getSelectRaw());
     }
 
@@ -25,7 +25,8 @@ class SearchJobTableService extends TableService
      */
     protected function getSelectRaw()
     {
-        return 'search_jobs.user_id,
+        return 'search_jobs.id,
+            search_jobs.user_id,
             search_jobs.content,
             search_jobs.created_at';
     }

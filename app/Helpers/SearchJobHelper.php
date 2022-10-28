@@ -111,18 +111,8 @@ class SearchJobHelper
             $provinceCity = $provinceCities[$id - 1];
 
             $result[] = [
-                'district' => [
-                    'id' => $provinceCity['province']['province_district']['id'],
-                    'name' => $provinceCity['province']['province_district']['name'],
-                    'province' => [
-                        'id' => $provinceCity['province']['id'],
-                        'name' => $provinceCity['province']['name'],
-                        'province_city' => [
-                            'id' => $provinceCity['id'],
-                            'name' => $provinceCity['name']
-                        ]
-                    ]
-                ],
+                'id' => $provinceCity['id'],
+                'name' => $provinceCity['name']
             ];
         }
 
