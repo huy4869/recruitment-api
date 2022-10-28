@@ -17,7 +17,8 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-        // $schedule->command('inspire')->hourly();
+         $schedule->command(self::NOTIFY_USER_INTERVIEW)
+             ->dailyAt(config('schedule.notify_user_interview'));
     }
 
     /**
