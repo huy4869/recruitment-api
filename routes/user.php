@@ -124,6 +124,7 @@ Route::group(['as' => 'notifications.', 'prefix' => 'notifications', 'middleware
 
 Route::group(['as' => 'search-jobs.', 'prefix' => 'search-jobs', 'middleware' => 'user'], function () {
     Route::get('/', 'SearchJobController@list')->name('list');
+    Route::post('/', 'SearchJobController@store')->name('store');
     Route::get('/delete/{id}', 'SearchJobController@destroy')->name('destroy');
 });
 
