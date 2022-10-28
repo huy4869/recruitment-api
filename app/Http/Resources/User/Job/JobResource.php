@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\User\Job;
 
+use App\Helpers\FileHelper;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class JobResource extends JsonResource
@@ -17,24 +18,13 @@ class JobResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'store' => [
-                'id' => $this->store->id,
-                'name' => $this->store->name,
-            ],
+            'banner_image' => FileHelper::getFullUrl($this->bannerImage->url),
+            'store_name' => $this->store->name,
+            'postal_code' => $this->postal_code,
             'address' => [
-                'postal_code' => $this->postal_code,
-                'province_city' => [
-                    'id' => $this->provinceCity->id,
-                    'name' => $this->provinceCity->name,
-                ],
-                'province' => [
-                    'id' => $this->province->id,
-                    'name' => $this->province->name,
-                ],
-                'district' => [
-                    'id' => $this->province->provinceDistrict->id,
-                    'name' => $this->province->provinceDistrict->name,
-                ],
+                'province_city' => $this->provinceCity->name,
+                'province' => $this->province->name,
+                'district' => $this->province->provinceDistrict->name,
                 'city' => $this->city,
                 'address' => $this->address,
             ],
@@ -51,7 +41,9 @@ class JobResource extends JsonResource
                 'end' => $this->end_work_time,
             ],
             'is_favorite' => $this->is_favorite,
+            'released_at' => $this->released_at,
             'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

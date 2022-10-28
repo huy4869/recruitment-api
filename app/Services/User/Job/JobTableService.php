@@ -107,6 +107,7 @@ class JobTableService extends TableService
                 'provinceCity',
                 'province',
                 'province.provinceDistrict',
+                'bannerImage',
             )
             ->orderBy('released_at', 'desc')
             ->selectRaw($this->getSelectRaw());
