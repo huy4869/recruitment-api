@@ -19,7 +19,8 @@ class NameTypeResource extends JsonResource
         $data = $this->resource;
 
         return [
-            'name' => $data,
+            'id' => $data->id,
+            'name' => $data->name,
         ];
     }
 }
