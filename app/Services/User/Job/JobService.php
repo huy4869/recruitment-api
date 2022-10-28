@@ -115,7 +115,7 @@ class JobService extends Service
 
         $jobIdsAvailable = $jobList->pluck('id')->toArray();
         $jobIds = array_diff($jobIds, array_diff($jobIds, $jobIdsAvailable));
-        $this->user->update(['recent_jobs' => array_values($jobIds)]);
+        $this->user?->update(['recent_jobs' => array_values($jobIds)]);
 
         $masterData = JobHelper::getJobMasterData();
         $userAction = JobHelper::getUserActionJob($this->user);
