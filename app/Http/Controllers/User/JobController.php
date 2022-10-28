@@ -4,6 +4,7 @@ namespace App\Http\Controllers\User;
 
 use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\User\FavoriteJobResource;
 use App\Http\Resources\User\Job\DetailJobPostingResource;
 use App\Http\Resources\User\Job\JobCollection;
 use App\Http\Resources\User\Job\JobPostingResource;
@@ -139,7 +140,10 @@ class JobController extends Controller
     {
         $data = $this->jobService->withUser($this->guard()->user())->getFavoriteJobs($request->get('limit'));
 
-        return $this->sendSuccessResponse($data);
+        return $this->sendSuccessResponse([
+            'paginate' => $data['paginate'],
+            'favorite' => FavoriteJobResource::collection($data['favoriteJob']),
+        ]);
     }
 
     /**

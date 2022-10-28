@@ -229,7 +229,9 @@ class JobService extends Service
                 },
                 'jobPosting.applications.interviews',
                 'jobPosting.store',
+                'jobPosting.provinceCity',
                 'jobPosting.province',
+                'jobPosting.province.provinceDistrict',
                 'jobPosting.salaryType',
                 'jobPosting.bannerImage'
             ])
@@ -240,7 +242,7 @@ class JobService extends Service
         $result = [];
 
         foreach ($favoriteJob as $job) {
-            $result[] = JobHelper::addFormatFavoriteJsonData($job, $masterData);
+            $result[] = self::addFormatFavoriteJsonData($job, $masterData);
         }
 
         return [
@@ -252,6 +254,24 @@ class JobService extends Service
             ],
             'favoriteJob' => $result,
         ];
+    }
+
+
+    /**
+     * @param $favoriteJob
+     * @param $masterData
+     * @return array
+     */
+    public static function addFormatFavoriteJsonData($favoriteJob, $masterData)
+    {
+        $jobPosting = $favoriteJob->jobPosting;
+        $workTypes = JobHelper::getTypeName($jobPosting->work_type_ids, $masterData['masterWorkTypes']);
+        $jobTypes = JobHelper::getTypeName($jobPosting->job_type_ids, $masterData['masterJobTypes']);
+
+        return array_merge($favoriteJob->toArray(), [
+            'work_types' => $workTypes,
+            'job_types' => $jobTypes,
+        ]);
     }
 
     /**
