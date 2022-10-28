@@ -4,6 +4,8 @@ namespace App\Services\User\Job;
 
 use App\Exceptions\InputException;
 use App\Models\JobPosting;
+use App\Models\MJobType;
+use App\Models\MWorkType;
 use App\Services\TableService;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -71,9 +73,27 @@ class JobTableService extends TableService
 
                     foreach ($types as $type) {
                         $query->orWhereJsonContains($filterItem['key'], $type);
-                    }
+
+                        if ($filterItem['key'] == 'job_type_ids' && $type == MJobType::OTHER) {
+                            $otherJobTypeIds = JobService::getOtherJobTypeIds();
+
+                            //other job types query
+                            foreach ($otherJobTypeIds as $jobType) {
+                                $query->orWhereJsonContains('job_type_ids', $jobType);
+                            }
+                        }
+
+                        if ($filterItem['key'] == 'work_type_ids' && $type == MWorkType::OTHER) {
+                            $otherWorkTypeIds = JobService::getOtherWorkTypeIds();
+
+                            //other work types query
+                            foreach ($otherWorkTypeIds as $workType) {
+                                $query->orWhereJsonContains('work_type_ids', $workType);
+                            }
+                        }
+                    }//end foreach
                 });
-            }
+            }//end if
         }//end foreach
 
         return $query;
