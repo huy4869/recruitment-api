@@ -8,19 +8,20 @@ use App\Http\Requests\User\SearchJob\StoreRequest;
 use App\Http\Resources\User\SearchJob\SearchJobCollection;
 use App\Services\User\SearchJob\SearchJobService;
 use App\Services\User\SearchJob\SearchJobTableService;
-use http\Env\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class SearchJobController extends Controller
 {
     /**
      * @return JsonResponse
      */
-    public function list()
+    public function list(Request $request)
     {
         $user = $this->guard()->user();
+        [$search, $orders, $filters, $perPage] = $this->convertRequest($request);
         $jobSearch = SearchJobTableService::getInstance()->withUser($user)
-            ->data(null, null, null, config('paginate.search_job.per_page'));
+            ->data($search, $orders, $filters, $perPage);
 
         return $this->sendSuccessResponse(new SearchJobCollection($jobSearch));
     }
