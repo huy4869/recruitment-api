@@ -115,39 +115,6 @@ class JobHelper
     }
 
     /**
-     * @param $favoriteJob
-     * @param $masterData
-     * @return array
-     */
-    public static function addFormatFavoriteJsonData($favoriteJob, $masterData)
-    {
-        $jobPosting = $favoriteJob->jobPosting;
-        $workTypes = self::getTypeName($jobPosting->work_type_ids, $masterData['masterWorkTypes']);
-        $jobTypes = self::getTypeName($jobPosting->job_type_ids, $masterData['masterJobTypes']);
-
-        return [
-            'favoriteId' => $favoriteJob->id,
-            'job_name' => $jobPosting->name,
-            'store_name' => $jobPosting->store->name,
-            'interview_status' => $jobPosting->applications->first()->interviews->name ?? null,
-            'postal_code' => $jobPosting->postal_code,
-            'province' => $jobPosting->province->name,
-            'city' => $jobPosting->city,
-            'address' => $jobPosting->address,
-            'salary_min' => $jobPosting->salary_min,
-            'salary_max' => $jobPosting->salary_max,
-            'salary_type' => $jobPosting->salaryType->name,
-            'start_work_time' => $jobPosting->start_work_time,
-            'end_work_time' => $jobPosting->end_work_time,
-            'holiday_description' => $jobPosting->holiday_description,
-            'description' => $jobPosting->description,
-            'banner_image' => FileHelper::getFullUrl($jobPosting->bannerImage->url ?? null),
-            'work_types' => $workTypes,
-            'job_types' => $jobTypes,
-        ];
-    }
-
-    /**
      * @param $typeIds
      * @param $masterDataType
      * @return array
