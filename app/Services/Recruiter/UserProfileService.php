@@ -8,7 +8,6 @@ use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
 use App\Helpers\JobHelper;
 use App\Helpers\UserHelper;
-use App\Http\Resources\User\Job\DetailImageResource;
 use App\Models\MPositionOffice;
 use App\Models\User;
 use App\Services\Service;
@@ -76,9 +75,9 @@ class UserProfileService extends Service
                     DateTimeHelper::formatMonthYear($wordHistory->period_start),
                     DateTimeHelper::formatMonthYear($wordHistory->period_end)
                 ),
-                'job_types' => JobHelper::getTypeName($wordHistory->job_type_ids, $masterData['masterJobTypes']),
+                'job_types' => $wordHistory->jobType->name,
                 'positionOffice' => JobHelper::getTypeName($wordHistory->position_office_ids, $masterData['masterPositionOffice']),
-                'work_types' => JobHelper::getTypeName($wordHistory->work_type_ids, $masterData['masterWorkTypes']),
+                'work_types' => $wordHistory->workType->name,
             ];
         }
 
@@ -103,36 +102,19 @@ class UserProfileService extends Service
             ];
         }
 
-        return [
-            'user' => [
-                'banner_image' => FileHelper::getFullUrl($user->avatarBanner->url ?? null),
-                'detail_image' => DetailImageResource::collection($user->avatarDetails),
-                'name' => $user->full_name,
-                'age' => $user->age,
-                'facebook' => $user->facebook,
-                'twitter' => $user->twitter,
-                'instagram' => $user->instagram,
-                'line' => $user->line,
-                'last_login_at' => DateTimeHelper::formatTimeChat($user->last_login_at),
-                'address' => $user->fullNameAddress,
-                'tel' => $user->tel,
-                'email' => $user->email,
-                'alias_name' => $user->alias_name,
-                'birthday' => DateTimeHelper::formatDateJa($user->birthday),
-                'full_name_furi' => $user->full_name_furi,
-                'gender' => $user->gender->name ?? null,
-            ],
+        return array_merge($user->toArray(), [
+            'avatar_banner' => FileHelper::getFullUrl($user->avatarBanner->url ?? null),
+            'avatar_details' => $user->avatarDetails ?: null,
+            'province' => $user->province->name,
+            'district_name' => $user->province->provinceDistrict->name,
+            'gender' => $user->gender->name ?? null,
             'user_word_histories' => $userWordHistories,
-            'pr' => [
-                'favorite_skill' => $user->favorite_skill,
-                'experience_knowledge' => $user->experience_knowledge,
-                'self_pr' => $user->self_pr,
-            ],
+            'favorite_skill' => $user->favorite_skill,
+            'experience_knowledge' => $user->experience_knowledge,
+            'self_pr' => $user->self_pr,
             'user_learning_histories' => $learningHistories,
             'user_licenses_qualifications' => $licensesQualifications,
-            'motivation' => [
-                'motivation' => $user->motivation,
-            ],
-        ];
+            'motivation' => $user->motivation,
+        ]);
     }
 }

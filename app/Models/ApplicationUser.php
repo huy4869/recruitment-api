@@ -5,6 +5,8 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class ApplicationUser extends Model
@@ -20,6 +22,8 @@ class ApplicationUser extends Model
      * @var string[]
      */
     protected $fillable = [
+        'application_id',
+        'user_id',
         'role_id',
         'first_name',
         'last_name',
@@ -39,22 +43,17 @@ class ApplicationUser extends Model
         'province_id',
         'city',
         'address',
-        'image_id',
-        'achievement_imgs',
-        'favorite',
-        'skill',
-        'experience',
-        'knowledge',
+        'favorite_skill',
+        'experience_knowledge',
         'self_pr',
-        'desire_city_id',
-        'desire_job_id',
-        'desire_job_work_id',
-        'desire_salary',
-        'experience_year',
-        'home_page_recruiter',
         'motivation',
-        'noteworthy_things',
+        'noteworthy',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
 
     /**
      * @return BelongsTo
@@ -126,5 +125,36 @@ class ApplicationUser extends Model
     public function experienceYear()
     {
         return $this->belongsTo(MJobExperience::class, 'experience_year');
+    }
+
+    public function getFullNameAttribute()
+    {
+        return sprintf('%s %s', $this->first_name, $this->last_name);
+    }
+
+    public function getFullNameFuriAttribute()
+    {
+        return sprintf('%s %s', $this->furi_first_name, $this->furi_last_name);
+    }
+
+    public function application()
+    {
+        return $this->belongsTo(Application::class, 'application_id');
+    }
+
+    /**
+     * @return MorphMany
+     */
+    public function avatarDetails()
+    {
+        return $this->morphMany(Image::class, 'imageable')->where('type', Image::AVATAR_DETAIL);
+    }
+
+    /**
+     * @return MorphOne
+     */
+    public function avatarBanner()
+    {
+        return $this->morphOne(Image::class, 'imageable')->where('type', Image::AVATAR_BANNER);
     }
 }

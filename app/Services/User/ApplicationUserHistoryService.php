@@ -2,9 +2,12 @@
 
 namespace App\Services\User;
 
+use App\Models\ApplicationUser;
 use App\Models\ApplicationUserLearningHistory;
 use App\Models\ApplicationUserLicensesQualification;
 use App\Models\ApplicationUserWorkHistory;
+use App\Models\Image;
+use App\Models\User;
 use App\Models\UserLearningHistory;
 use App\Models\UserLicensesQualification;
 use App\Models\UserWorkHistory;
@@ -27,7 +30,7 @@ class ApplicationUserHistoryService extends Service
         foreach ($userWorkHistories as $userWorkHistory) {
             $data[] = [
                 'user_id' => $userWorkHistory->user_id,
-                'job_posting_id' => $application->job_posting_id,
+                'application_id' => $application->id,
                 'job_type_id' => $userWorkHistory->job_type_id,
                 'store_name' => $userWorkHistory->store_name,
                 'company_name' => $userWorkHistory->company_name,
@@ -58,7 +61,7 @@ class ApplicationUserHistoryService extends Service
         foreach ($userLearningHistories as $userLearningHistory) {
             $data[] = [
                 'user_id' => $userLearningHistory->user_id,
-                'job_posting_id' => $application->job_posting_id,
+                'application_id' => $application->id,
                 'learning_status_id' => $userLearningHistory->learning_status_id,
                 'school_name' => $userLearningHistory->school_name,
                 'enrollment_period_start' => $userLearningHistory->enrollment_period_start,
@@ -85,7 +88,7 @@ class ApplicationUserHistoryService extends Service
         foreach ($userLicensesQualificationHistories as $userLicensesQualificationHistory) {
             $data[] = [
                 'user_id' => $userLicensesQualificationHistory->user_id,
-                'job_posting_id' => $application->job_posting_id,
+                'application_id' => $application->id,
                 'name' => $userLicensesQualificationHistory->name,
                 'new_issuance_date' => $userLicensesQualificationHistory->new_issuance_date,
                 'created_at' => now(),
@@ -94,5 +97,73 @@ class ApplicationUserHistoryService extends Service
         }
 
         return ApplicationUserLicensesQualification::query()->insert($data);
+    }
+
+    /**
+     * @param $application
+     * @return bool
+     */
+    public function storeApplicationUser($application)
+    {
+        $user = User::query()->with(['avatarBanner', 'avatarDetails'])->where('id', $application->user_id)->first();
+
+        $dataApplicationUser = [
+            'application_id' => $application->id,
+            'user_id' => $application->user_id,
+            'role_id' => $user->role_id,
+            'first_name' => $user->first_name,
+            'last_name' => $user->last_name,
+            'furi_first_name' => $user->furi_first_name,
+            'furi_last_name' => $user->furi_last_name,
+            'alias_name' => $user->alias_name,
+            'birthday' => $user->birthday,
+            'age' => $user->age,
+            'gender_id' => $user->gender_id,
+            'tel' => $user->tel,
+            'email' => $user->email,
+            'line' => $user->line,
+            'facebook' => $user->facebook,
+            'instagram' => $user->instagram,
+            'twitter' => $user->twitter,
+            'postal_code' => $user->postal_code,
+            'province_id' => $user->province_id,
+            'city' => $user->city,
+            'address' => $user->address,
+            'favorite_skill' => $user->favorite_skill,
+            'experience_knowledge' => $user->experience_knowledge,
+            'self_pr' => $user->self_pr,
+            'motivation' => $user->motivation,
+            'noteworthy' => $user->noteworthy,
+        ];
+
+        $applicationUser = ApplicationUser::query()->create($dataApplicationUser);
+
+        $images = [];
+
+        foreach ($user->avatarDetails as $avatar) {
+            $images[] = [
+                'imageable_id' => $applicationUser->id,
+                'imageable_type' => get_class($applicationUser),
+                'url' => $avatar->url,
+                'thumb' => $avatar->thumb,
+                'type' => $avatar->type,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        $images = array_merge([[
+            'imageable_id' => $applicationUser->id,
+            'imageable_type' => get_class($applicationUser),
+            'url' => $user->avatarBanner->url,
+            'thumb' => $user->avatarBanner->thumb,
+            'type' => $user->avatarBanner->type,
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]], $images);
+
+        Image::query()->insert($images);
+
+        return true;
     }
 }

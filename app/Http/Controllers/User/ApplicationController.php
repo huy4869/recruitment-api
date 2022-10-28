@@ -125,6 +125,7 @@ class ApplicationController extends BaseController
             $this->applicationUserHistoryService->storeApplicationWorkHistories($data);
             $this->applicationUserHistoryService->storeApplicationLearningHistories($data);
             $this->applicationUserHistoryService->storeApplicationLicensesQualificationHistories($data);
+            $this->applicationUserHistoryService->storeApplicationUser($data);
 
             DB::commit();
 

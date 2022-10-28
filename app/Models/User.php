@@ -273,4 +273,9 @@ class User extends Authenticatable
     {
         return $this->HasOne(RecruiterOffTime::class, 'user_id', 'id');
     }
+
+    public function applicationUser()
+    {
+        return $this->hasMany(ApplicationUser::class);
+    }
 }

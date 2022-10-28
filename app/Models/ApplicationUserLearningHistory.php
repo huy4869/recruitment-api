@@ -21,7 +21,7 @@ class ApplicationUserLearningHistory extends Model
      */
     protected $fillable = [
         'user_id',
-        'job_posting_id',
+        'application_id',
         'learning_status_id',
         'school_name',
         'enrollment_period_start',
@@ -50,5 +50,10 @@ class ApplicationUserLearningHistory extends Model
     public function learningStatus()
     {
         return $this->belongsTo(MLearningStatus::class, 'learning_status_id');
+    }
+
+    public function application()
+    {
+        return $this->belongsTo(Application::class, 'application_id');
     }
 }

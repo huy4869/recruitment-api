@@ -77,4 +77,24 @@ class Application extends Model
     {
         return $this->belongsTo(MInterviewStatus::class, 'interview_status_id');
     }
+
+    public function applicationUser()
+    {
+        return $this->hasOne(ApplicationUser::class);
+    }
+
+    public function applicationUserWorkHistories()
+    {
+        return $this->hasMany(ApplicationUserWorkHistory::class);
+    }
+
+    public function applicationUserLearningHistories()
+    {
+        return $this->hasMany(ApplicationUserLearningHistory::class);
+    }
+
+    public function applicationUserLicensesQualifications()
+    {
+        return $this->hasMany(ApplicationUserLicensesQualification::class);
+    }
 }
