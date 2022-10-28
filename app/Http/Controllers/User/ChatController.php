@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\User;
 
 use App\Exceptions\InputException;
+use App\Helpers\DateTimeHelper;
 use App\Http\Resources\User\ChatDetailResource;
 use App\Http\Resources\User\ChatResource;
 use App\Http\Requests\User\ChatCreateRequest;
 use App\Services\User\ChatService;
+use Carbon\Carbon;
 
 class ChatController extends BaseController
 {
@@ -42,9 +44,26 @@ class ChatController extends BaseController
 
         if ($updateReaded) {
             $data = $this->chatService->withUser($this->guard()->user())->getDetail($store_id);
+            $result = [];
+            $isCheck = true;
+            $dateShow = '';
 
-            return $this->sendSuccessResponse(ChatDetailResource::collection($data));
-        }
+            foreach ($data as $value) {
+                $detail = new ChatDetailResource($value);
+
+                if ($isCheck && Carbon::now()->format('Y-m-d') > date('Y-m-d', strtotime($value->created_at))) {
+                    $result[] = [
+                        'is_date_now' => true,
+                        'date_show' => $dateShow
+                    ];
+                    $isCheck = false;
+                }
+                $dateShow = DateTimeHelper::formatDateJa($value->created_at);
+                $result[] = $detail;
+            }
+
+            return $this->sendSuccessResponse($result);
+        }//end if
 
         throw new InputException(trans('response.readed_update_error'));
     }
@@ -59,21 +78,17 @@ class ChatController extends BaseController
      */
     public function store(ChatCreateRequest $request)
     {
-        if ($request->store_id) {
-            $input = $request->only([
-                'store_id',
-                'content'
-            ]);
-            $data = $this->chatService->withUser($this->guard()->user())->store($input);
+        $input = $request->only([
+            'store_id',
+            'content'
+        ]);
+        $data = $this->chatService->withUser($this->guard()->user())->store($input);
 
-            if ($data) {
-                return $this->sendSuccessResponse($data, trans('response.INF.006'));
-            }
-
-            throw new InputException(trans('validation.ERR.006'));
+        if ($data) {
+            return $this->sendSuccessResponse($data, trans('response.INF.006'));
         }
 
-        throw new InputException(trans('validation.store_id_required'));
+        throw new InputException(trans('validation.ERR.006'));
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Resources\User;
 
 use App\Helpers\DateTimeHelper;
+use App\Helpers\FileHelper;
 use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -20,7 +21,7 @@ class ChatDetailResource extends JsonResource
 
         return [
             'store_name' => $this->store->name,
-            'user_name' => $this->user->first_name,
+            'store_banner' => FileHelper::getFullUrl($this->store->storeBanner->url ?? null),
             'send_time' => $date,
             'initial_time' => DateTimeHelper::formatDateTimeJa($this->created_at),
             'content' => $this->content,

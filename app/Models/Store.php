@@ -78,6 +78,10 @@ class Store extends Model
         return $this->morphMany(Image::class, 'imageable');
     }
 
+    public function storeBanner()
+    {
+        return $this->morphOne(Image::class, 'imageable')->where('type', Image::STORE_BANNER);
+    }
 
     /**
      * @return HasMany

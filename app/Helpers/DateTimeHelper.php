@@ -213,13 +213,37 @@ class DateTimeHelper
 
         $time = new Carbon($dataTime);
         $now = new Carbon(Carbon::now());
+        $minute = $time->diffInMinutes($now);
+        $hour = $time->diffInHours($now);
 
-        if ($time->diffInMinutes($now) < config('date.less_than_hour')) {
-            $date = $time->diffInMinutes($now) . '分前';
-        } elseif ($time->diffInHours($now) >= config('date.more_than_hour')  && $time->diffInHours($now) < config('date.less_than_date')) {
-            $date = $time->diffInHours($now) . '時間前';
+        if ($minute < config('date.less_than_hour')) {
+            $date = $minute . '分前';
+        } elseif ($hour >= config('date.more_than_hour')  && $hour < config('date.less_than_date')) {
+            $date = $dataTime->format('H:i');
         } else {
             $date = DateTimeHelper::formatDateTimeJa($dataTime);
+        }
+
+        return $date;
+    }
+
+    public static function formatYearMonthChat($dataTime)
+    {
+        if (!$dataTime) {
+            return null;
+        }
+
+        $time = new Carbon($dataTime);
+        $now = new Carbon(Carbon::now());
+        $minute = $time->diffInMinutes($now);
+        $hour = $time->diffInHours($now);
+
+        if ($minute < config('date.less_than_hour')) {
+            $date = $minute . '分前';
+        } elseif ($hour >= config('date.more_than_hour')  && $hour < config('date.less_than_date')) {
+            $date = $dataTime->format(config('date.hour'));
+        } else {
+            $date = $dataTime->format(config('date.month_day'));
         }
 
         return $date;
