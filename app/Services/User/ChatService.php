@@ -17,7 +17,10 @@ class ChatService extends Service
     {
         $user = $this->user;
 
-        return Chat::with('store')
+        return Chat::with([
+            'store',
+            'store.storeBanner'
+            ])
             ->where('user_id', $user->id)
             ->orderByDesc('created_at')
             ->get()
@@ -33,7 +36,11 @@ class ChatService extends Service
     public function getDetail($store_id)
     {
         $user = $this->user;
-        $detailMessage = Chat::with('store', 'user')
+        $detailMessage = Chat::with([
+                'store',
+                'store.storeBanner',
+                'user'
+            ])
             ->where([['store_id', $store_id], ['user_id', $user->id]])
             ->orderByDesc('created_at')
             ->get();
@@ -67,6 +74,7 @@ class ChatService extends Service
     public function store($data)
     {
         $store = Store::pluck('id')->toArray();
+
         if (in_array($data['store_id'], $store)) {
             return Chat::create([
                 'user_id' => $this->user->id,
