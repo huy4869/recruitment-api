@@ -2,6 +2,9 @@
 
 namespace App\Http\Resources\User\WorkHistory;
 
+use App\Models\MJobType;
+use App\Models\MWorkType;
+use App\Services\User\WorkHistoryService;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -16,16 +19,24 @@ class DetailResource extends JsonResource
      */
     public function toArray($request)
     {
-         $data = $this->resource;
-         $periodYearStart = substr($data['period_start'], 0, 4);
-         $periodMonthStart = substr($data['period_start'], 4);
+        $data = $this->resource;
+        $periodYearStart = substr($data['period_start'], 0, 4);
+        $periodMonthStart = substr($data['period_start'], 4);
+        $jobTypeId = in_array($data['job_type_id'], WorkHistoryService::getInstance()->getTypeIds(MJobType::query())) ? $data['job_type_id'] : MJobType::OTHER;
+        $workTypeId = in_array($data['work_type_id'], WorkHistoryService::getInstance()->getTypeIds(MWorkType::query())) ? $data['work_type_id'] : MWorkType::OTHER;
 
         $dataWorkHistory = [
             'id' => $data->id,
-            'job_type_id' => $data['job_type_id'],
-            'job_type_name' => @$data['jobType']['name'],
-            'work_type_id' => $data['work_type_id'],
-            'work_type_name' => @$data['workType']['name'],
+            'job_types' => [
+                'id' => $jobTypeId,
+                'name' => @$data['jobType']['name'],
+            ],
+            'work_types' => [
+                'id' => $workTypeId,
+                'name' => @$data['workType']['name'],
+            ],
+            'is_other_job_type' => $jobTypeId == MJobType::OTHER,
+            'is_other_work_type' => $workTypeId == MWorkType::OTHER,
             'position_offices' => NameTypeResource::collection($data['position_offices']),
             'store_name' => $data->store_name,
             'company_name' => $data->company_name,

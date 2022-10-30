@@ -79,8 +79,8 @@ class WorkHistoryService extends Service
         try {
             DB::beginTransaction();
 
-            $jobTypeId = $this->checkNameObject($data['job_type_name'], WorkHistoryService::JOB_TYPES);
-            $workTypeId = $this->checkNameObject($data['work_type_name']);
+            $jobTypeId = $this->checkNameObject($data['job_types'], WorkHistoryService::JOB_TYPES);
+            $workTypeId = $this->checkNameObject($data['work_types']);
             $positionOfficesIds = $this->createObject($data['position_offices']);
 
             $dataWorkHistory = array_merge(
@@ -147,8 +147,8 @@ class WorkHistoryService extends Service
         try {
             DB::beginTransaction();
 
-            $jobTypeId = $this->checkNameObject($data['job_type_name'], WorkHistoryService::JOB_TYPES);
-            $workTypeId = $this->checkNameObject($data['work_type_name']);
+            $jobTypeId = $this->checkNameObject($data['job_types'], WorkHistoryService::JOB_TYPES);
+            $workTypeId = $this->checkNameObject($data['work_types']);
             $positionOfficesIds = $this->createObject($data['position_offices']);
 
             $dataWorkHistory = array_merge(
@@ -169,11 +169,11 @@ class WorkHistoryService extends Service
     }
 
     /**
-     * @param $name
+     * @param $types
      * @param string $object
      * @return HigherOrderBuilderProxy|mixed
      */
-    public function checkNameObject($name, $object = WorkHistoryService::WORK_TYPES)
+    public function checkNameObject($types, $object = WorkHistoryService::WORK_TYPES)
     {
         switch ($object) {
             case 'm_work_type':
@@ -183,13 +183,24 @@ class WorkHistoryService extends Service
                 $object = MJobType::query();
         }
 
-        $dataObject = $object->where('name', '=', $name)->first();
+        $dataObject = $object->where('name', '=', $types['name'])->first();
 
         if ($dataObject) {
             return $dataObject->id;
         }
 
-        return $object->create(['name' => $name, 'is_default' => MWorkType::NO_DEFAULT])->id;
+        return $object->create(['name' => $types['name'], 'is_default' => MWorkType::NO_DEFAULT])->id;
+    }
+
+    /**
+     * Get type ids
+     *
+     * @param $object
+     * @return mixed
+     */
+    public function getTypeIds($object)
+    {
+        return $object->where('is_default', '=', MJobType::IS_DEFAULT)->get()->pluck('id')->toArray();
     }
 
     /**

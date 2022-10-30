@@ -2,8 +2,11 @@
 
 namespace App\Http\Requests\User\WorkHistory;
 
+use App\Models\MJobType;
+use App\Models\MWorkType;
 use App\Models\UserWorkHistory;
 use App\Rules\CheckYearRule;
+use App\Services\User\WorkHistoryService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -27,11 +30,18 @@ class WorkHistoryRequest extends FormRequest
     public function rules()
     {
         $stringMaxLength = config('validate.string_max_length');
+        $textMaxLength = config('validate.text_max_length_information_pr');
         $type = [UserWorkHistory::TYPE_INACTIVE, UserWorkHistory::TYPE_ACTIVE];
+        $jobTypeIds = WorkHistoryService::getInstance()->getTypeIds(MJobType::query());
+        $workTypeIds = WorkHistoryService::getInstance()->getTypeIds(MWorkType::query());
 
         return [
-            'job_type_name' => ['required', 'string', 'max:' . $stringMaxLength],
-            'work_type_name' => ['required', 'string', 'max:' . $stringMaxLength],
+            'job_types' => ['required', 'array'],
+            'job_types.id' => ['required', 'in:' . implode(',', $jobTypeIds)],
+            'job_types.name' => ['required', 'string', 'max:' . $stringMaxLength],
+            'work_types' => ['required', 'array'],
+            'work_types.id' => ['required', 'in:' . implode(',', $workTypeIds)],
+            'work_types.name' => ['required', 'string', 'max:' . $stringMaxLength],
             'position_offices' => ['required', 'array'],
             'position_offices.*.id' => ['nullable', 'integer', 'exists:m_position_offices,id'],
             'position_offices.*.name' => ['required', 'string', 'max:' . $stringMaxLength, 'distinct'],
@@ -51,8 +61,8 @@ class WorkHistoryRequest extends FormRequest
                 'after_or_equal:period_start',
                 'before_or_equal:' . Carbon::now()->format(config('date.fe_date_work_history_format')),
             ],
-            'business_content' => ['nullable', 'string', 'max:' . $stringMaxLength],
-            'experience_accumulation' => ['nullable', 'string'],
+            'business_content' => ['nullable', 'string', 'max:' . $textMaxLength],
+            'experience_accumulation' => ['nullable', 'string', 'max:' . $textMaxLength],
         ];
     }
 
@@ -63,6 +73,7 @@ class WorkHistoryRequest extends FormRequest
     {
         return [
             'period_end.required_if' => trans('validation.required', ['attribute' => trans('validation.attributes.period_end')]),
+            'period_end.after_or_equal' => trans('validation.ERR.004'),
         ];
     }
 }
