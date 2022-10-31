@@ -170,8 +170,9 @@ class JobController extends Controller
      */
     public function list(Request $request)
     {
+        $user = $this->guard()->user();
         [$search, $orders, $filters, $perPage] = $this->convertRequest($request);
-        $jobs = JobTableService::getInstance()->data($search, $orders, $filters, $perPage);
+        $jobs = JobTableService::getInstance()->withUser($user)->data($search, $orders, $filters, $perPage);
 
         return $this->sendSuccessResponse(new JobCollection($jobs));
     }
