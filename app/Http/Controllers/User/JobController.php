@@ -84,13 +84,13 @@ class JobController extends Controller
     }
 
     /**
-     * Get most apply jobs
+     * Get most favorite jobs
      *
      * @return JsonResponse
      */
-    public function getListMostApplyJobPostings()
+    public function getListMostFavoriteJobPostings()
     {
-        $jobPostings = JobService::getInstance()->getListMostApplyJobPostings();
+        $jobPostings = JobService::getInstance()->getListMostFavoriteJobPostings();
 
         return $this->sendSuccessResponse(JobPostingResource::collection($jobPostings));
     }
