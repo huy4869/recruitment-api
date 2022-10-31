@@ -363,13 +363,13 @@ class JobService extends Service
      */
     public function deleteFavorite($id)
     {
-        $data = FavoriteJob::where('user_id', $this->user->id)->find($id);
+        $favorite = $this->user->favoriteJobs()->where('job_posting_id', $id)->delete();
 
-        if ($data) {
-            return $data->delete();
+        if ($favorite) {
+            return true;
         }
 
-        throw new InputException(trans('validation.ERR.exist.favorite_job'));
+        throw new InputException(trans('response.not_found'));
     }
 
     /**

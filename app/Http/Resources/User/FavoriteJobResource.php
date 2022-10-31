@@ -19,7 +19,6 @@ class FavoriteJobResource extends JsonResource
         $jobPosting = $this['job_posting'];
 
         return [
-                'id_favorite' => $this['id'],
                 'id' => $this['job_posting_id'],
                 'name' => $jobPosting['name'],
                 'banner_image' => FileHelper::getFullUrl($jobPosting['banner_image']['url'] ?? null),
