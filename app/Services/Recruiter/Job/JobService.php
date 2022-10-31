@@ -240,7 +240,7 @@ class JobService extends Service
         ])
         ->first();
 
-        if ($job->store->user_id != $recruiter->id) {
+        if (!$job || $job->store->user_id != $recruiter->id) {
             throw new InputException(trans('response.not_found'));
         }
 

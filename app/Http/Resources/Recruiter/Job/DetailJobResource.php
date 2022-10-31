@@ -18,10 +18,7 @@ class DetailJobResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'store' => [
-                'id' => $this->store->id,
-                'name' => $this->store->name,
-            ],
+            'store_name' => $this->store->name,
             'pick_up_point' => $this->pick_up_point,
             'banner_image' => $this->bannerImage->url,
             'detail_images' => DetailImageResource::collection($this->detailImages),
@@ -33,7 +30,6 @@ class DetailJobResource extends JsonResource
             'salary' => [
                 'min' => $this->salary_min,
                 'max' => $this->salary_max,
-                'id' => $this->salaryType->id,
                 'type' => $this->salaryType->name,
             ],
             'work_time' => [
