@@ -216,9 +216,9 @@ class JobService extends Service
      *
      * @return array
      */
-    public function getFavoriteJobs($limit)
+    public function getFavoriteJobs($perPage)
     {
-        $limit = $limit ?: config('paginate.USER_015.favorite_job.limit_per_page');
+        $perPage = $perPage ?: config('paginate.USER_015.favorite_job.limit_per_page');
         $userId = $this->user->id;
         $favoriteJob = FavoriteJob::where('favorite_jobs.user_id', $this->user->id)
             ->with([
@@ -236,7 +236,7 @@ class JobService extends Service
                 'jobPosting.bannerImage'
             ])
             ->orderByDesc('id')
-            ->paginate($limit);
+            ->paginate($perPage);
 
         $masterData = JobHelper::getJobMasterData($this->user);
         $result = [];
@@ -246,12 +246,10 @@ class JobService extends Service
         }
 
         return [
-            'paginate' => [
-                'currentPage' => $favoriteJob->currentPage(),
-                'path' => $favoriteJob->path(),
-                'totalPage' => $favoriteJob->lastPage(),
-                'total' => $favoriteJob->total(),
-            ],
+            'per_page' => $perPage,
+            'current_page' => $favoriteJob->currentPage(),
+            'total_page' => $favoriteJob->lastPage(),
+            'total' => $favoriteJob->total(),
             'favoriteJob' => $result,
         ];
     }

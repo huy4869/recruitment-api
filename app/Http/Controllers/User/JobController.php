@@ -138,11 +138,14 @@ class JobController extends Controller
      */
     public function getFavoriteJob(Request $request)
     {
-        $data = $this->jobService->withUser($this->guard()->user())->getFavoriteJobs($request->get('limit'));
+        $data = $this->jobService->withUser($this->guard()->user())->getFavoriteJobs($request->get('per_page'));
 
         return $this->sendSuccessResponse([
-            'paginate' => $data['paginate'],
-            'favorite' => FavoriteJobResource::collection($data['favoriteJob']),
+            'data' => FavoriteJobResource::collection($data['favoriteJob']),
+            'per_page' => $data['per_page'],
+            'current_page' => $data['current_page'],
+            'total_page' => $data['total_page'],
+            'total' => $data['total'],
         ]);
     }
 

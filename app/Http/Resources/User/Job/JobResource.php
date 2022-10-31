@@ -32,7 +32,7 @@ class JobResource extends JsonResource
             'work_types' => $this->work_types,
             'salary' => [
                 'id' => $this->salaryType->id,
-                'name' => $this->salaryType->name,
+                'type' => $this->salaryType->name,
                 'min' => $this->salary_min,
                 'max' => $this->salary_max,
             ],
