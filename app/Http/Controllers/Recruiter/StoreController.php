@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Recruiter;
 
-use App\Http\Controllers\Controller;
+use App\Exceptions\InputException;
 use App\Http\Requests\Recruiter\CreateStoreRequest;
 use App\Http\Resources\Recruiter\StoreCollection;
+use App\Http\Resources\Recruiter\StoreDetailResource;
 use App\Services\Recruiter\Store\StoreTableService;
 use App\Services\Recruiter\StoreService;
 use Illuminate\Http\JsonResponse;
@@ -56,6 +57,17 @@ class StoreController extends BaseController
         $data = StoreService::getInstance()->withUser($recruiter)->getAllStoreNameByOwner();
 
         return $this->sendSuccessResponse($data);
+    }
+
+    public function detail($id)
+    {
+        $data = $this->storeService->withUser($this->guard()->user())->detail($id);
+
+        if ($data) {
+            return $this->sendSuccessResponse(StoreDetailResource::collection($data));
+        }
+
+        throw new InputException(trans('response.not_found'));
     }
 
     /**

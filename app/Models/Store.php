@@ -83,7 +83,6 @@ class Store extends Model
     {
         return $this->morphOne(Image::class, 'imageable')->where('type', Image::STORE_BANNER);
     }
-
     /**
      * @return HasMany
      */
