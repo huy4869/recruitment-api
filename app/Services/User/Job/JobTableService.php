@@ -134,6 +134,7 @@ class JobTableService extends TableService
             case 'recommend':
                 return $query->select('job_postings.*', 'suitability_point')
                     ->join('user_job_desired_matches', 'job_postings.id', '=', 'user_job_desired_matches.job_id')
+                    ->where('user_job_desired_matches.user_id', $this->user->id)
                     ->orderBy('suitability_point', 'desc');
             default:
                 return $query;
