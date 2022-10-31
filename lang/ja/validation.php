@@ -290,6 +290,7 @@ return [
         'start_working_hour' => '開始時間',
         'end_working_hour' => '終了時間',
         'working_days' => '希望勤務曜日',
+        'store_id' => '店舗名',
     ],
 
     'COM' => [

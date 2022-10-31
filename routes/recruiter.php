@@ -62,3 +62,9 @@ Route::group(['as' => 'stores.', 'prefix' => 'stores', 'middleware' => 'recruite
 Route::group(['as' => 'applications.', 'prefix' => 'applications', 'middleware' => 'recruiter'], function () {
     Route::get('/', 'ApplicationController@list')->name('list');
 });
+
+Route::group(['as' => 'contacts.', 'prefix' => 'contacts', 'middleware' => 'recruiter'], function () {
+    Route::get('/all', 'StoreController@listStoreNameByOwner')->name('listStoreNameByOwner');
+    Route::post('/', 'ContactController@store')->name('store');
+    Route::get('/admin-tel', 'ContactController@getAdminPhone')->name('getAdminPhone');
+});
