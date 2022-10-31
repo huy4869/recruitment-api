@@ -34,9 +34,9 @@ class ContactRequest extends FormRequest
                 new Email(),
                 'max:' . config('validate.string_max_length')
             ],
-            'name' => 'nullable|string|max:' . config('validate.string_max_length'),
+            'name' => 'required|string|max:' . config('validate.string_max_length'),
             'tel' => [
-                'nullable',
+                'required',
                 new PhoneFirstChar(),
                 new PhoneJapan(),
                 'min:' . config('validate.phone_min_length'),
