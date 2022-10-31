@@ -669,7 +669,8 @@ class MasterDataService extends Service
         foreach ($dataJobTypes as $dataJobType) {
             $result[] = [
                 'id' => $dataJobType->id,
-                'name' => $dataJobType->name
+                'name' => $dataJobType->name,
+                'is_other' => $dataJobType->id == MJobType::OTHER
             ];
         }
 
@@ -687,7 +688,8 @@ class MasterDataService extends Service
         foreach ($dataWorkTypes as $dataWorkType) {
             $result[] = [
                 'id' => $dataWorkType->id,
-                'name' => $dataWorkType->name
+                'name' => $dataWorkType->name,
+                'is_other' => $dataWorkType->id == MWorkType::OTHER
             ];
         }
 
