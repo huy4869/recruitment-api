@@ -334,21 +334,23 @@ class JobService extends Service
     }
 
     /**
-     * Get most apply jobs
+     * Get most favorite jobs
      *
      * @return array
      */
-    public function getListMostApplyJobPostings()
+    public function getListMostFavoriteJobPostings()
     {
-        $jobList = JobPosting::query()->released()
+        $jobList = JobPosting::query()
+            ->select('job_postings.*', DB::raw('COUNT(favorite_jobs.id) as total_favorites'))
+            ->join('favorite_jobs', 'job_postings.id', '=', 'favorite_jobs.job_posting_id')
             ->with([
                 'store',
                 'province',
                 'province.provinceDistrict',
                 'salaryType',
             ])
-            ->orderby('applies', 'desc')
-            ->orderBy('released_at', 'desc')
+            ->groupBy('job_postings.id')
+            ->orderBy('total_favorites', 'desc')
             ->take(config('common.job_posting.most_applies'))
             ->get();
 

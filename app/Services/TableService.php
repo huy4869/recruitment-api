@@ -9,7 +9,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Query\Expression;
 use Illuminate\Pagination\LengthAwarePaginator;
-use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use InvalidArgumentException;
 
@@ -91,6 +91,10 @@ abstract class TableService extends Service implements TableContract
     {
         $perPage = $perPage ?? $this->perPage;
         $query = $this->buildQuery($search, $orders, $filters);
+
+        if (Route::getCurrentRoute()->uri() == 'user/job') {
+            $query->orderBy('released_at', 'desc');
+        }
 
         if ($this->isPaginate) {
             return $query->paginate(intval($perPage));
@@ -383,6 +387,6 @@ abstract class TableService extends Service implements TableContract
             return array_unique($result);
         } catch (Exception $e) {
             return null;
-        }
+        }//end try
     }
 }

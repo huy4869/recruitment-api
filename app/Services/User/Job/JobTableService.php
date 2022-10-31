@@ -8,6 +8,7 @@ use App\Models\MJobType;
 use App\Models\MWorkType;
 use App\Services\TableService;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class JobTableService extends TableService
 {
@@ -30,6 +31,7 @@ class JobTableService extends TableService
         'feature_ids' => 'filterTypes',
         'province_id' => 'filterProvinces',
         'province_city_id' => 'filterProvinces',
+        'list_type' => 'filterListType'
     ];
 
     /**
@@ -115,6 +117,29 @@ class JobTableService extends TableService
         return $query->whereIn($filter['key'], $provinceIds);
     }
 
+    protected function filterListType($query, $filter)
+    {
+        $mode = $filter['data'];
+
+        switch ($mode) {
+            case 'new':
+                return $query->new();
+            case 'most_favorite':
+                return $query->select('job_postings.*', DB::raw('COUNT(favorite_jobs.id) as total_favorites'))
+                    ->join('favorite_jobs', 'job_postings.id', '=', 'favorite_jobs.job_posting_id')
+                    ->groupBy('job_postings.id')
+                    ->orderBy('total_favorites', 'desc');
+            case 'most_view':
+                return $query->orderBy('views', 'desc');
+            case 'recommend':
+                return $query->select('job_postings.*', 'suitability_point')
+                    ->join('user_job_desired_matches', 'job_postings.id', '=', 'user_job_desired_matches.job_id')
+                    ->orderBy('suitability_point', 'desc');
+            default:
+                return $query;
+        }
+    }
+
     /**
      * @return Builder
      */
@@ -129,7 +154,6 @@ class JobTableService extends TableService
                 'province.provinceDistrict',
                 'bannerImage',
             )
-            ->orderBy('released_at', 'desc')
             ->selectRaw($this->getSelectRaw());
     }
 
@@ -151,6 +175,7 @@ class JobTableService extends TableService
             job_postings.city,
             job_postings.address,
             job_postings.name,
+            job_postings.views,
             job_postings.description,
             job_postings.salary_min,
             job_postings.salary_max,

@@ -70,7 +70,7 @@ Route::group(['as' => 'job.', 'prefix' => 'job'], function () {
     Route::get('/', 'JobController@list')->name('list');
     Route::get('/news', 'JobController@getListNewJobPostings')->name('getListNewJobPostings');
     Route::get('/most-views', 'JobController@getListMostViewJobPostings')->name('getListMostViewJobPostings');
-    Route::get('/most-applies', 'JobController@getListMostApplyJobPostings')->name('getListMostApplyJobPostings');
+    Route::get('/most-favorites', 'JobController@getListMostFavoriteJobPostings')->name('getListMostFavoriteJobPostings');
     Route::get('/recommends', 'JobController@getListRecommends')->name('getListRecommends');
     Route::get('/recent', 'JobController@recentJobs')->name('recentJobs');
     Route::get('/suggest/{id}', 'JobController@suggestJobs')->name('suggestJobs');
