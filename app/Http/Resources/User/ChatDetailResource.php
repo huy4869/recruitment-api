@@ -26,6 +26,7 @@ class ChatDetailResource extends JsonResource
             'initial_time' => DateTimeHelper::formatDateTimeJa($this->created_at),
             'content' => $this->content,
             'is_from_user' => $this->is_from_user,
+            'be_readed' => $this->be_readed,
         ];
     }
 }

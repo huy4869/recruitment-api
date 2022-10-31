@@ -15,8 +15,8 @@ class Chat extends Model
         'TRUE' => 1,
         'FALSE' => 0,
     ];
-    public const BE_READED = 0;
-    public const UNREAD = 1;
+    public const BE_READED = 1;
+    public const UNREAD = 0;
 
     /**
      * @var string

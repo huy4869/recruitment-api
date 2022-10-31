@@ -4,6 +4,7 @@ namespace App\Http\Resources\User;
 
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
+use App\Models\Chat;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ChatResource extends JsonResource
@@ -17,9 +18,12 @@ class ChatResource extends JsonResource
     public function toArray($request)
     {
         $date = DateTimeHelper::formatYearMonthChat($this->created_at);
+        $beRead = $this->be_readed;
+        if ($this->is_from_user == Chat::FROM_USER['TRUE']) {
+            $beRead = Chat::BE_READED;
+        }
 
         return [
-            'id' => $this->id,
             'user_id' => $this->user_id,
             'store_id' => $this->store_id,
             'store_name' => $this->store->name,
@@ -27,7 +31,7 @@ class ChatResource extends JsonResource
             'send_time' => $date,
             'initial_time' => DateTimeHelper::formatDateTimeJa($this->created_at),
             'content' => $this->content,
-            'be_readed' => $this->be_readed,
+            'be_readed' => $beRead,
         ];
     }
 }
