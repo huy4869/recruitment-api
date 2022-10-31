@@ -75,11 +75,6 @@ class MasterDataService extends Service
             'target' => 'getMasterDataName',
         ],
 
-        'm_job_types' => [
-            'driver' => self::DRIVER_CUSTOM,
-            'target' => 'getMasterDataName',
-        ],
-
         'm_learning_status' => [
             'driver' => self::DRIVER_CUSTOM,
             'target' => 'getMasterDataName',
@@ -110,11 +105,6 @@ class MasterDataService extends Service
             'target' => 'getMasterDataName',
         ],
 
-        'm_work_types' => [
-            'driver' => self::DRIVER_CUSTOM,
-            'target' => 'getMasterDataName',
-        ],
-
         'm_stations' => [
             'driver' => self::DRIVER_CUSTOM,
             'target' => 'getMasterDataStations',
@@ -140,14 +130,14 @@ class MasterDataService extends Service
             'target' => 'getListOrderBy',
         ],
 
-        'm_job_types_other' => [
+        'm_job_types' => [
             'driver' => self::DRIVER_CUSTOM,
-            'target' => 'getJobTypeNameOther',
+            'target' => 'getJobTypeName',
         ],
 
-        'm_work_types_other' => [
+        'm_work_types' => [
             'driver' => self::DRIVER_CUSTOM,
-            'target' => 'getWorkTypeNameOther',
+            'target' => 'getWorkTypeName',
         ],
     ];
 
@@ -671,7 +661,7 @@ class MasterDataService extends Service
     /**
      * @return Repository|Application|mixed
      */
-    protected function getJobTypeNameOther()
+    protected function getJobTypeName()
     {
         $dataJobTypes = MJobType::query()->where('is_default', '=', MJobType::IS_DEFAULT)->get();
         $result = [];
@@ -683,16 +673,13 @@ class MasterDataService extends Service
             ];
         }
 
-        return array_merge($result, [[
-            'id' => 'other',
-            'name' => 'その他',
-        ]]);
+        return $result;
     }
 
     /**
      * @return Repository|Application|mixed
      */
-    protected function getWorkTypeNameOther()
+    protected function getWorkTypeName()
     {
         $dataWorkTypes = MWorkType::query()->where('is_default', '=', MWorkType::IS_DEFAULT)->get();
         $result = [];
@@ -704,9 +691,6 @@ class MasterDataService extends Service
             ];
         }
 
-        return array_merge($result, [[
-            'id' => 'other',
-            'name' => 'その他',
-        ]]);
+        return $result;
     }
 }
