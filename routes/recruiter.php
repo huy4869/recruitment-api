@@ -64,6 +64,10 @@ Route::group(['as' => 'applications.', 'prefix' => 'applications', 'middleware' 
     Route::get('/user-profile/{id}', 'ApplicationController@profileUser');
 });
 
+Route::group(['as' => 'chats.', 'prefix' => 'chats', 'middleware' => 'recruiter'], function () {
+    Route::post('/', 'ChatController@store');
+});
+
 Route::group(['as' => 'contacts.', 'prefix' => 'contacts', 'middleware' => 'recruiter'], function () {
     Route::get('/all', 'StoreController@listStoreNameByOwner')->name('listStoreNameByOwner');
     Route::post('/', 'ContactController@store')->name('store');

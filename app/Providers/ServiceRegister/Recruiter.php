@@ -4,6 +4,7 @@ namespace App\Providers\ServiceRegister;
 
 use App\Services\Recruiter\Application\ApplicationService;
 use App\Services\Recruiter\AuthService;
+use App\Services\Recruiter\ChatService;
 use App\Services\Recruiter\PasswordResetService;
 use App\Services\Recruiter\UserProfileService;
 use App\Services\Recruiter\StoreService;
@@ -37,6 +38,10 @@ class Recruiter
 
         $app->scoped(ProfileService::class, function ($app) {
             return new ProfileService();
+        });
+
+        $app->scoped(ChatService::class, function ($app) {
+            return new ChatService();
         });
 
         $app->scoped(ApplicationService::class, function ($app) {

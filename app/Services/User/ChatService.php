@@ -4,8 +4,11 @@ namespace App\Services\User;
 
 use App\Exceptions\InputException;
 use App\Models\Chat;
+use App\Models\Notification;
 use App\Models\Store;
 use App\Services\Service;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ChatService extends Service
 {
@@ -73,19 +76,44 @@ class ChatService extends Service
      */
     public function store($data)
     {
-        $store = Store::pluck('id')->toArray();
+        $store = Store::where('id', $data['store_id'])->first();
 
-        if (in_array($data['store_id'], $store)) {
-            return Chat::create([
+        if (!$store) {
+            throw new InputException(trans('validation.store_not_exist'));
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $chat = Chat::create([
                 'user_id' => $this->user->id,
                 'store_id' => $data['store_id'],
                 'content' => $data['content'],
                 'is_from_user' => Chat::FROM_USER['TRUE'],
                 'be_readed' => Chat::UNREAD,
             ]);
-        }
 
-        throw new InputException(trans('validation.store_not_exist'));
+            Notification::query()->create([
+                'user_id' => $store->user_id,
+                'notice_type_id' => Notification::TYPE_NEW_MESSAGE,
+                'noti_object_ids' => [
+                    'store_id' => null,
+                    'application_id' => null,
+                    'user_id' => $this->user->id,
+                ],
+                'title' => sprintf('%s%s', $this->user->fullName, trans('notification.new_message.N002.title')),
+                'content' => sprintf('%s%s', $this->user->fullName, trans('notification.new_message.N002.content')),
+            ]);
+
+            DB::commit();
+
+            return $chat;
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage(), [$e]);
+
+            throw new InputException(trans('response.EXC.001'));
+        }//end try
     }
 
     /**
