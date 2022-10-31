@@ -9,6 +9,8 @@ class MWorkType extends Model
 {
     use HasFactory;
 
+    public const OTHER = 5;
+
     public const NO_DEFAULT = 0;
     public const IS_DEFAULT = 1;
 

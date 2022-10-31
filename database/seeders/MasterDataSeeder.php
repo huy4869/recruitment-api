@@ -58,6 +58,7 @@ class MasterDataSeeder extends Seeder
             ['name' => '整体・カイロ・酸素・温浴', 'created_at' => $time, 'updated_at' => $time],
             ['name' => 'フェイシャル・ボディ・脱毛', 'created_at' => $time, 'updated_at' => $time],
             ['name' => '美容クリニック', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'その他', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_job_types')->insert($dataJobType);
 
@@ -77,6 +78,7 @@ class MasterDataSeeder extends Seeder
             ['name' => '派遣社員', 'created_at' => $time, 'updated_at' => $time],
             ['name' => '契約社員', 'created_at' => $time, 'updated_at' => $time],
             ['name' => 'アルバイト', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'その他', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_work_types')->insert($dataWorkTypes);
 

@@ -554,4 +554,22 @@ class JobService extends Service
 
         return $jobArr;
     }
+
+    /**
+     * @return array
+     */
+    public static function getOtherJobTypeIds()
+    {
+        return MJobType::query()->where('is_default', MJobType::NO_DEFAULT)
+            ->pluck('id')->toArray();
+    }
+
+    /**
+     * @return array
+     */
+    public static function getOtherWorkTypeIds()
+    {
+        return MWorkType::query()->where('is_default', MWorkType::NO_DEFAULT)
+            ->pluck('id')->toArray();
+    }
 }

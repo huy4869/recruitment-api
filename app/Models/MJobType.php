@@ -9,15 +9,15 @@ class MJobType extends Model
 {
     use HasFactory;
 
-    CONST HAIR = 1;
-    CONST NAIL = 2;
-    CONST CHIRO_CAIRO_OXY_HOTBATH = 3;
-    CONST FACIAL_BODY_REMOVAL = 4;
-    CONST CLINIC = 5;
-    CONST OTHER = 'other';
+    public const HAIR = 1;
+    public const NAIL = 2;
+    public const CHIRO_CAIRO_OXY_HOTBATH = 3;
+    public const FACIAL_BODY_REMOVAL = 4;
+    public const CLINIC = 5;
+    public const OTHER = 6;
 
-    CONST NO_DEFAULT = 0;
-    CONST IS_DEFAULT = 1;
+    public const NO_DEFAULT = 0;
+    public const IS_DEFAULT = 1;
 
     /**
      * @var string
