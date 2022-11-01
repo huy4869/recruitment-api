@@ -16,6 +16,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class ApplicationController extends BaseController
 {
@@ -113,15 +114,19 @@ class ApplicationController extends BaseController
      *
      * @param StoreRequest $request
      * @return JsonResponse
+     * @throws InputException
+     * @throws ValidationException
      */
     public function store(StoreRequest $request)
     {
         $user = $this->guard()->user();
         $inputs = $request->only(['id', 'date', 'hours', 'interview_approaches_id', 'note']);
+        $jobPosting = $this->jobPostingService->withUser($user)->checkSchedulingApplication($inputs);
+
         try {
             DB::beginTransaction();
 
-            $data = $this->jobPostingService->withUser($user)->store($inputs);
+            $data = $this->jobPostingService->withUser($user)->store($inputs, $jobPosting);
             $this->applicationUserHistoryService->storeApplicationWorkHistories($data);
             $this->applicationUserHistoryService->storeApplicationLearningHistories($data);
             $this->applicationUserHistoryService->storeApplicationLicensesQualificationHistories($data);
@@ -159,7 +164,7 @@ class ApplicationController extends BaseController
      * @param $id
      * @param UpdateRequest $request
      * @return JsonResponse
-     * @throws InputException
+     * @throws InputException|ValidationException
      */
     public function update($id, UpdateRequest $request)
     {

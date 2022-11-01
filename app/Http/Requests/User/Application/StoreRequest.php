@@ -25,7 +25,7 @@ class StoreRequest extends FormRequest
     {
         return [
             'id' => ['required', 'numeric', 'exists:job_postings,id'],
-            'date' => ['required', 'date', 'after_or_equal:today'],
+            'date' => ['required', 'date'],
             'hours' => ['required', 'string'],
             'interview_approaches_id' => ['required', 'numeric'],
             'note' => ['nullable', 'string', 'max:' . config('validate.text_max_length')],
