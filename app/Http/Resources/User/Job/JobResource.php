@@ -4,6 +4,7 @@ namespace App\Http\Resources\User\Job;
 
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
+use App\Helpers\JobHelper;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class JobResource extends JsonResource
@@ -42,6 +43,7 @@ class JobResource extends JsonResource
                 'end' => $this->end_work_time,
             ],
             'is_favorite' => $this->is_favorite,
+            'is_new' => JobHelper::isNew($this->released_at),
             'released_at' => DateTimeHelper::formatDateJa($this->released_at),
             'created_at' => DateTimeHelper::formatDateJa($this->created_at),
             'updated_at' => DateTimeHelper::formatDateJa($this->updated_at),
