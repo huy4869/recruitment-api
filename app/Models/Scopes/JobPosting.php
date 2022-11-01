@@ -26,6 +26,6 @@ trait JobPosting
      */
     protected function scopeNew($query)
     {
-        return $query->whereDate('released_at', '>=', Carbon::now()->subDays(config('validate.date_in_new_range')));
+        return $query->where('released_at', '>=', Carbon::now()->subDays(config('validate.date_range.new_job_list')));
     }
 }

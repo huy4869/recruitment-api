@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Services\User\Job\JobService;
+use Carbon\Carbon;
 
 class JobHelper
 {
@@ -221,5 +222,20 @@ class JobHelper
         }
 
         return in_array($id, $array);
+    }
+
+    /**
+     * @param $date
+     * @return bool
+     */
+    public static function isNew($date)
+    {
+        if (!$date) {
+            return false;
+        }
+
+        $twoWeekAgo = Carbon::now()->subDays(config('validate.date_range.new_job_marker'));
+
+        return $date >= $twoWeekAgo;
     }
 }

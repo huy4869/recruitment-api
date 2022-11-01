@@ -16,7 +16,10 @@ return [
     'token_expire' => (int)env('TOKEN_EXPIRE', 90),
     'text_max_length' => 1000,
     'text_max_length_information_pr' => 2000,
-    'date_in_new_range' => 7,
+    'date_range' => [
+        'new_job_marker' => 14,
+        'new_job_list' => 14,
+    ],
     'min_age' => 20,
     'notify_user_interview_delay' => env('NOTIFY_INTERVIEW_DELAY', 1),
     'max_length_text' => 255,

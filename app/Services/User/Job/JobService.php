@@ -280,8 +280,8 @@ class JobService extends Service
     public function getListNewJobPostings()
     {
         $jobs = JobPosting::query()->released();
-        $jobCount = $jobs->count();
-        $jobList = $jobs->new()->with([
+        $jobCount = $jobs->new()->count();
+        $jobList = $jobs->with([
                 'store',
                 'province',
                 'province.provinceDistrict',
