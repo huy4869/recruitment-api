@@ -18,9 +18,10 @@ use Illuminate\Support\Facades\Log;
 
 class WorkHistoryService extends Service
 {
-    const JOB_TYPES = 'm_job_type';
-    const WORK_TYPES = 'm_work_type';
+    const JOB_TYPES = 'm_job_types';
+    const WORK_TYPES = 'm_work_types';
     const POSITION_OFFICES = 'position_offices';
+    const START_ID_FOR_NOT_DEFAULT_RECORD = 1000;
 
     /**
      * List user work history
@@ -79,8 +80,8 @@ class WorkHistoryService extends Service
         try {
             DB::beginTransaction();
 
-            $jobTypeId = $this->checkNameObject($data['job_types'], WorkHistoryService::JOB_TYPES);
-            $workTypeId = $this->checkNameObject($data['work_types']);
+            $jobTypeId = $this->buildIndexFromObject($data['job_types'], WorkHistoryService::JOB_TYPES);
+            $workTypeId = $this->buildIndexFromObject($data['work_types']);
             $positionOfficesIds = $this->createObject($data['position_offices']);
 
             $dataWorkHistory = array_merge(
@@ -147,8 +148,8 @@ class WorkHistoryService extends Service
         try {
             DB::beginTransaction();
 
-            $jobTypeId = $this->checkNameObject($data['job_types'], WorkHistoryService::JOB_TYPES);
-            $workTypeId = $this->checkNameObject($data['work_types']);
+            $jobTypeId = $this->buildIndexFromObject($data['job_types'], WorkHistoryService::JOB_TYPES);
+            $workTypeId = $this->buildIndexFromObject($data['work_types']);
             $positionOfficesIds = $this->createObject($data['position_offices']);
 
             $dataWorkHistory = array_merge(
@@ -173,23 +174,32 @@ class WorkHistoryService extends Service
      * @param string $object
      * @return HigherOrderBuilderProxy|mixed
      */
-    public function checkNameObject($types, $object = WorkHistoryService::WORK_TYPES)
+    public function buildIndexFromObject($types, $object = WorkHistoryService::WORK_TYPES)
     {
-        switch ($object) {
-            case 'm_work_type':
-                $object = MWorkType::query();
-                break;
-            default:
-                $object = MJobType::query();
-        }
-
-        $dataObject = $object->where('name', '=', $types['name'])->first();
+        $dataObject = DB::table($object)->where('name', '=', $types['name'])->first();
 
         if ($dataObject) {
             return $dataObject->id;
         }
 
-        return $object->create(['name' => $types['name'], 'is_default' => MWorkType::NO_DEFAULT])->id;
+        $lastCurrentRecord = DB::table($object)->where('is_default', MWorkType::NO_DEFAULT)
+            ->latest()
+            ->first();
+
+        if ($lastCurrentRecord) {
+            $lastId = $lastCurrentRecord->id + 1;
+        } else {
+            $lastId = self::START_ID_FOR_NOT_DEFAULT_RECORD;
+        }
+
+        DB::table($object)->insert([
+            'id' => $lastId,
+            'name' => $types['name'],
+            'is_default' => MWorkType::NO_DEFAULT,
+            'created_at' => now(),
+        ]);
+
+        return $lastId;
     }
 
     /**
