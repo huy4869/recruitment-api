@@ -524,8 +524,6 @@ class MasterDataService extends Service
             $result[] = [
                 'id' => $feedbackType->id,
                 'name' => $feedbackType->name,
-                'has_extend' => $feedbackType->has_extend,
-                'placeholder_extend' => $feedbackType->placeholder_extend,
             ];
         }
 
