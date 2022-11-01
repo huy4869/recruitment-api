@@ -53,6 +53,7 @@ Route::group(['as' => 'jobs.', 'prefix' => 'jobs', 'middleware' => 'recruiter'],
 Route::group(['as' => 'stores.', 'prefix' => 'stores', 'middleware' => 'recruiter'], function () {
     Route::get('/', 'StoreController@list')->name('list');
     Route::post('/', 'StoreController@store')->name('store');
+    Route::post('/update/{id}', 'StoreController@update')->name('update');
     Route::delete('/{id}', 'StoreController@delete')->name('delete');
     Route::get('/all', 'StoreController@listStoreNameByOwner')->name('listStoreNameByOwner');
     Route::get('/{id}', 'StoreController@detail')->name('detail');

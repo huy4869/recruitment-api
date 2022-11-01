@@ -111,8 +111,11 @@ class StoreService extends Service
         $dataImage = array(FileHelper::fullPathNotDomain($data['url']));
         try {
             DB::beginTransaction();
-
-            $store = Store::create($this->storeData($data));
+            $data['user_id'] = $this->user->id;
+            $data['created_by'] = $this->user->id;
+            $data['name'] = $data['store_name'];
+            $data['founded_year'] = str_replace('/', '', $data['founded_year']);
+            $store = Store::create($data);
             FileService::getInstance()->updateImageable($store, $dataImage, [Image::STORE_BANNER]);
 
             DB::commit();
@@ -126,31 +129,32 @@ class StoreService extends Service
     }
 
     /**
-     * data
-     *
      * @param $data
-     * @return array
+     * @return mixed
+     * @throws Exception
      */
-    private function storeData($data)
+    public function update($data, $id)
     {
-        return [
-            'name' => $data['name'],
-            'website' => $data['website'],
-            'tel' => $data['tel'],
-            'postal_code' => $data['postal_code'],
-            'province_id' => $data['province_id'],
-            'province_city_id' => $data['province_city_id'],
-            'city' => $data['city'],
-            'address' => $data['address'],
-            'manager_name' => $data['manager_name'],
-            'employee_quantity' => $data['employee_quantity'],
-            'founded_year' => str_replace('/', '', $data['founded_year']),
-            'business_segment' => $data['business_segment'],
-            'specialize_ids' => $data['specialize_ids'],
-            'store_features' => $data['store_features'],
-            'recruiter_name' => $data['recruiter_name'],
-            'user_id' => $this->user->id,
-            'created_by' => $this->user->id,
-        ];
+        $store = $this->user->stores()->find($id);
+        $dataImage = array(FileHelper::fullPathNotDomain($data['url']));
+
+        if (!$store) {
+            throw new InputException(trans('response.not_found'));
+        }
+
+        try {
+            DB::beginTransaction();
+            $data['name'] = $data['store_name'];
+            $data['founded_year'] = str_replace('/', '', $data['founded_year']);
+            FileService::getInstance()->updateImageable($store, $dataImage, [Image::STORE_BANNER]);
+            $store->update($data);
+            DB::commit();
+
+            return $data;
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage(), [$e]);
+            throw new Exception($e->getMessage());
+        }
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Recruiter;
 
 use App\Exceptions\InputException;
 use App\Http\Requests\Recruiter\CreateStoreRequest;
+use App\Http\Requests\Recruiter\UpdateStoreRequest;
 use App\Http\Resources\Recruiter\StoreCollection;
 use App\Http\Resources\Recruiter\StoreDetailResource;
 use App\Services\Recruiter\Store\StoreTableService;
@@ -82,7 +83,7 @@ class StoreController extends BaseController
         $rec = $this->guard()->user();
         $input = $request->only([
             'url',
-            'name',
+            'store_name',
             'website',
             'tel',
             'postal_code',
@@ -98,7 +99,35 @@ class StoreController extends BaseController
             'store_features',
             'recruiter_name',
         ]);
+
         $data = $this->storeService->withUser($rec)->store($input);
+
+        return $this->sendSuccessResponse($data, trans('response.INF.010'));
+    }
+
+    public function update(UpdateStoreRequest $request, $id)
+    {
+        $rec = $this->guard()->user();
+        $input = $request->only([
+            'url',
+            'store_name',
+            'website',
+            'tel',
+            'postal_code',
+            'province_id',
+            'province_city_id',
+            'city',
+            'address',
+            'manager_name',
+            'employee_quantity',
+            'founded_year',
+            'business_segment',
+            'specialize_ids',
+            'store_features',
+            'recruiter_name',
+        ]);
+
+        $data = $this->storeService->withUser($rec)->update($input, $id);
 
         return $this->sendSuccessResponse($data, trans('response.INF.010'));
     }
