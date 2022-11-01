@@ -9,6 +9,7 @@ use App\Models\Application;
 use App\Models\FavoriteJob;
 use App\Models\Gender;
 use App\Models\JobPosting;
+use App\Models\MInterviewApproach;
 use App\Models\MJobExperience;
 use App\Models\MJobFeature;
 use App\Models\MJobType;
@@ -43,6 +44,12 @@ class JobService extends Service
                         }
                     });
             })
+            ->with([
+                'applications' => function ($query) use ($user) {
+                    $query->where('user_id', $user->id);
+                },
+                'applications.interviews'
+            ])
             ->first();
 
         if (!$job) {
@@ -571,5 +578,13 @@ class JobService extends Service
     {
         return MWorkType::query()->where('is_default', MWorkType::NO_DEFAULT)
             ->pluck('id')->toArray();
+    }
+
+    /**
+     * @return array
+     */
+    public static function getInterviewMethodName()
+    {
+        return MInterviewApproach::query()->pluck('name')->toArray();
     }
 }

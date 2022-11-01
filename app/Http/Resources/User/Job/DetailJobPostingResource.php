@@ -17,6 +17,9 @@ class DetailJobPostingResource extends JsonResource
      */
     public function toArray($request)
     {
+        $application = $this['applications'][0] ?? [];
+        $interviewMethod = JobService::getInterviewMethodName();
+
         return [
             'id' => $this['id'],
             'name' => $this['name'],
@@ -54,6 +57,20 @@ class DetailJobPostingResource extends JsonResource
             'welfare_treatment_description' => $this['welfare_treatment_description'],
             'is_favorite' => $this['is_favorite'],
             'is_apply' => $this['is_apply'],
+            'application' => $application ? [
+                'id' => $application['id'],
+                'status' => [
+                    'id' => $application['interviews']['id'],
+                    'name' => $application['interviews']['name'],
+                ],
+                'date' => DateTimeHelper::formatDateDayOfWeekTimeJa($application['date']),
+                'interview_approaches' => [
+                    'id' => $application['interview_approaches']['id'],
+                    'method' => $interviewMethod[$application['interview_approaches']['id'] - 1],
+                    'approach_label' => config('application.interview_approach_label.' . $application['interview_approaches']['id']),
+                    'approach' => $application['interview_approaches']['approach'],
+                ]
+            ] : [],
             'released_at' => DateTimeHelper::formatDateJa($this['released_at']),
             'updated_at' => DateTimeHelper::formatDateJa($this['updated_at']),
         ];
