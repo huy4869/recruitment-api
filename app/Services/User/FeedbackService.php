@@ -19,11 +19,7 @@ class FeedbackService extends Service
      */
     public function store(JobPosting $jobPosting, $data)
     {
-        if (!in_array(FeedbackJob::FEEDBACK_TYPE_DESIRE_SALARY, $data['feedback_type_ids'])
-            && isset($data['desired_salary'])
-        ) {
-            throw new InputException(trans('validation.ERR.012'));
-        }
+        $data['feedback_type_ids'] = collect($data['feedback_type_ids'])->unique()->toArray();
 
         $data = array_merge($data, [
             'job_posting_id' => $jobPosting->id,

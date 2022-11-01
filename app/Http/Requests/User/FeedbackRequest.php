@@ -31,7 +31,6 @@ class FeedbackRequest extends FormRequest
                 'integer',
                 new FeedbackTypeIds(),
             ],
-            'desired_salary' => 'nullable|string|max:' . config('validate.string_max_length'),
             'content' => 'nullable|string|max:' . config('validate.text_max_length'),
         ];
     }

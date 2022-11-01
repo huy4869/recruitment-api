@@ -22,7 +22,7 @@ class FeedbackController extends Controller
     public function store(JobPosting $jobPosting, FeedbackRequest $request)
     {
         $user = $this->guard()->user();
-        $inputs = $request->only(['feedback_type_ids', 'desired_salary', 'content']);
+        $inputs = $request->only(['feedback_type_ids', 'content']);
         $data = FeedbackService::getInstance()->withUser($user)->store($jobPosting, $inputs);
 
         return $this->sendSuccessResponse($data, trans('validation.INF.008'));
