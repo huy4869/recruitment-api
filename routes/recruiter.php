@@ -63,3 +63,9 @@ Route::group(['as' => 'applications.', 'prefix' => 'applications', 'middleware' 
     Route::get('/', 'ApplicationController@list')->name('list');
     Route::get('/user-profile/{id}', 'ApplicationController@profileUser');
 });
+
+Route::group(['as' => 'contacts.', 'prefix' => 'contacts', 'middleware' => 'recruiter'], function () {
+    Route::get('/all', 'StoreController@listStoreNameByOwner')->name('listStoreNameByOwner');
+    Route::post('/', 'ContactController@store')->name('store');
+    Route::get('/admin-tel', 'ContactController@getAdminPhone')->name('getAdminPhone');
+});
