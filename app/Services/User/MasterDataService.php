@@ -3,6 +3,7 @@
 namespace App\Services\User;
 
 use App\Models\MFeedbackType;
+use App\Models\MInterviewApproach;
 use App\Models\MJobFeature;
 use App\Models\MJobFeatureCategory;
 use App\Models\MJobType;
@@ -52,7 +53,7 @@ class MasterDataService extends Service
 
         'm_interview_approaches' => [
             'driver' => self::DRIVER_CUSTOM,
-            'target' => 'getMasterDataName',
+            'target' => 'getInterviewApproaches',
         ],
 
         'm_interviews_status' => [
@@ -713,6 +714,35 @@ class MasterDataService extends Service
                 'name' => $day,
             ];
         }
+
+        return $result;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getInterviewApproaches()
+    {
+        $dataInterViewApproaches = MInterviewApproach::query()->get();
+        $result = [];
+
+        foreach ($dataInterViewApproaches as $dataInterViewApproach) {
+            $id = $dataInterViewApproach->id;
+
+            if ($id == MInterviewApproach::ONLINE_INTERVIEW) {
+                $output = '（2営業日以内にZoomURLをメールにて送付いたします）';
+            } elseif ($id == MInterviewApproach::IN_PERSON) {
+                $output = '（東京都港区虎ノ門１－２－３)';
+            } else {
+                $output = '';
+            }
+
+            $result[] = [
+                'id' => $id,
+                'name' => $dataInterViewApproach->name . $output,
+            ];
+        }
+
         return $result;
     }
 }

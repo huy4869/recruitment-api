@@ -11,6 +11,7 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
 
 class ApplicationService extends Service
 {
@@ -264,7 +265,7 @@ class ApplicationService extends Service
      * @param $applicationId
      * @param $data
      * @return int
-     * @throws InputException
+     * @throws InputException|ValidationException
      */
     public function updateApplication($applicationId, $data)
     {
@@ -289,20 +290,22 @@ class ApplicationService extends Service
         $dateApplication = explode(' ', $application->date)[0];
         $hoursApplication = $application->hours;
 
-        if ($application->interview_status_id != Application::STATUS_APPLYING ||
-            ($date == $dateApplication && $date < $now && $hours != $hoursApplication) ||
-            ($date != $dateApplication && $date < $now)) {
+        if ($application->interview_status_id != Application::STATUS_APPLYING) {
             throw new InputException(trans('response.not_found'));
+        }
+
+        if (($date == $now && $this->checkTimeUpdate($hours))
+            || ($date == $dateApplication && $date < $now && $hours != $hoursApplication)
+            || ($date != $dateApplication && $date < $now)) {
+            throw ValidationException::withMessages([
+                'date' => trans('validation.ERR.037')
+            ]);
         }
 
         $data = $this->saveMakeData($data);
 
         if ($date == $dateApplication && $hours == $hoursApplication) {
             return $application->update($data);
-        }
-
-        if ($date == $now && $this->checkTimeUpdate($hours)) {
-            throw new InputException(trans('response.ERR.999'));
         }
 
         $applications = Application::query()
@@ -315,7 +318,7 @@ class ApplicationService extends Service
             ->toArray();
 
         if (in_array($user->id, $applications) || in_array($application->job_posting_id, array_keys($applications))) {
-            throw new InputException(trans('response.ERR.999'));
+            throw new InputException(trans('validation.ERR.036'));
         }
 
         $stores = $application->store->owner->stores;
@@ -333,7 +336,7 @@ class ApplicationService extends Service
                    Application::STATUS_APPLYING,
                     Application::STATUS_WAITING_INTERVIEW
                 ])) {
-                throw new InputException(trans('response.ERR.999'));
+                throw new InputException(trans('validation.ERR.036'));
             }
         }
 
@@ -344,7 +347,7 @@ class ApplicationService extends Service
 
         foreach ($dataHours as $dataHour) {
             if ($hours == explode(' ', $dataHour)[1]) {
-                throw new InputException(trans('response.ERR.999'));
+                throw new InputException(trans('validation.ERR.036'));
             }
         }
 

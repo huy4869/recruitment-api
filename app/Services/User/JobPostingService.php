@@ -11,6 +11,7 @@ use App\Services\Service;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Validation\ValidationException;
 
 class JobPostingService extends Service
 {
@@ -177,24 +178,27 @@ class JobPostingService extends Service
     }
 
     /**
-     * Store user application
+     * Check scheduling application
      *
      * @param $data
-     * @return Builder|Model
+     * @return Builder|Model|object
      * @throws InputException
+     * @throws ValidationException
      */
-    public function store($data)
+    public function checkSchedulingApplication($data)
     {
         $date = $data['date'];
         $hours = $data['hours'];
         $now = now()->format('Y-m-d');
         $user = $this->user;
         if (!in_array($data['hours'], config('date.time'))) {
-            throw new InputException(trans('response.ERR.999'));
+            throw new InputException(trans('validation.ERR.036'));
         }
 
-        if ($date == $now && $this->checkTimeStore($hours)) {
-            throw new InputException(trans('response.ERR.999'));
+        if (($date == $now && $this->checkTimeStore($hours)) || $date < $now) {
+            throw ValidationException::withMessages([
+                'date' => trans('validation.ERR.037')
+            ]);
         }
 
         $jobPosting = $this->checkJobPosting($data['id']);
@@ -217,7 +221,7 @@ class JobPostingService extends Service
             ->toArray();
 
         if (in_array($user->id, $applications) || in_array($jobPosting->id, array_keys($applications))) {
-            throw new InputException(trans('response.ERR.999'));
+            throw new InputException(trans('validation.ERR.036'));
         }
 
         $stores = $jobPosting->store->owner->stores;
@@ -234,7 +238,7 @@ class JobPostingService extends Service
                     Application::STATUS_APPLYING,
                     Application::STATUS_WAITING_INTERVIEW
                 ])) {
-                throw new InputException(trans('response.ERR.999'));
+                throw new InputException(trans('validation.ERR.036'));
             }
         }
 
@@ -245,10 +249,23 @@ class JobPostingService extends Service
 
         foreach ($dataHours as $dataHour) {
             if ($hours == explode(' ', $dataHour)[1]) {
-                throw new InputException(trans('response.ERR.999'));
+                throw new InputException(trans('validation.ERR.036'));
             }
         }
 
+        return $jobPosting;
+    }
+
+    /**
+     * Store user application
+     *
+     * @param $data
+     * @param $jobPosting
+     * @return Builder|Model
+     * @throws InputException
+     */
+    public function store($data, $jobPosting)
+    {
         return Application::query()->create($this->makeSaveData($jobPosting, $data));
     }
 
