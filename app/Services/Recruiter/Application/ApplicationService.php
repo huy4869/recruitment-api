@@ -7,11 +7,14 @@ use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
 use App\Helpers\JobHelper;
 use App\Helpers\UserHelper;
-use App\Http\Resources\Recruiter\MultipleImageResoure;
 use App\Models\Application;
-use App\Models\ApplicationUser;
-use App\Models\Image;
+use App\Models\MInterviewStatus;
+use App\Models\Notification;
 use App\Services\Service;
+use Exception;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
 
 class ApplicationService extends Service
 {
@@ -87,9 +90,9 @@ class ApplicationService extends Service
             'avatar_banner' => FileHelper::getFullUrl($application->applicationUser->avatarBanner->url ?? null),
             'avatar_details' => $application->applicationUser->avatarDetails,
             'last_login_at' => $application->user->last_login_at,
-            'province' => @$application->applicationUser->province->name,
-            'district_name' => @$application->applicationUser->province->provinceDistrict->name,
-            'gender' => @$application->applicationUser->gender->name,
+            'province' => $application->applicationUser->province->name ?? null,
+            'district_name' => $application->applicationUser->province->provinceDistrict->name ?? null,
+            'gender' => $application->applicationUser->gender->name ?? null,
             'applicationUserWorkHistories' => $applicationUserWorkHistories,
             'favorite_skill' => $application->favorite_skill,
             'experience_knowledge' => $application->experience_knowledge,
@@ -97,5 +100,111 @@ class ApplicationService extends Service
             'applicationLearningHistories' => $applicationLearningHistories,
             'applicationLicensesQualifications' => $applicationLicensesQualifications,
         ]);
+    }
+
+    /**
+     * @param $id
+     * @return Builder|Model|object
+     * @throws InputException
+     */
+    public function getDetail($id)
+    {
+        $recruiter = $this->user;
+
+        $application = Application::query()
+            ->where('id', $id)
+            ->whereHas('store', function ($query) use ($recruiter) {
+                $query->where('user_id', $recruiter->id);
+            })
+            ->with([
+                'applicationUser',
+                'applicationUser.avatarDetails',
+                'applicationUser.avatarBanner',
+                'applicationUser.gender',
+                'applicationUser.province',
+                'applicationUser.provinceCity',
+                'applicationUser.province.provinceDistrict',
+                'jobPosting',
+                'interviews',
+            ])
+            ->first();
+
+        if (!$application) {
+            throw new InputException(trans('response.not_found'));
+        }
+
+        return $application;
+    }
+
+    /**
+     * @param $id
+     * @param $data
+     * @return bool
+     * @throws InputException
+     * @throws Exception
+     */
+    public function update($id, $data)
+    {
+        $recruiter = $this->user;
+
+        $application = Application::query()
+            ->where('id', $id)
+            ->whereHas('store', function ($query) use ($recruiter) {
+                $query->where('user_id', $recruiter->id);
+            })
+            ->with([
+                'store',
+                'interviews'
+            ])
+            ->first();
+
+        if (!$application) {
+            throw new InputException(trans('response.not_found'));
+        }
+
+        $data['interview_approaches'] = [
+            'id' => $application->interview_approaches['id'],
+            'approach' => $data['approach'],
+        ];
+        unset($data['approach']);
+
+        try {
+            DB::beginTransaction();
+
+            $application->update($data);
+
+            $userNotifyData = [
+                'user_id' => $application->user_id,
+                'notice_type_id' => Notification::TYPE_INTERVIEW_CHANGED,
+                'noti_object_ids' => [
+                    'store_id' => $application->store_id,
+                    'application_id' => $application->id,
+                    'user_id' => $this->user->id
+                ],
+                'title' => trans('notification.N006.title', [
+                    'store_name' => $application->store->name,
+                ]),
+                'content' => trans('notification.N006.content', [
+                    'store_name' => $application->store->name,
+                    'interview_status' => $application->interviews->name,
+                ]),
+            ];
+
+            Notification::create($userNotifyData);
+
+            DB::commit();
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }//end try
+    }
+
+    /**
+     * @return array
+     */
+    public static function getApplicationStatusIds()
+    {
+        return MInterviewStatus::query()->pluck('id')->toArray();
     }
 }
