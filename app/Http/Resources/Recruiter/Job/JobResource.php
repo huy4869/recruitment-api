@@ -19,11 +19,8 @@ class JobResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'banner' => FileHelper::getFullUrl($this->bannerImage->url ?? null),
-            'store' => [
-                'id' => $this->store->id,
-                'name' => $this->store->name,
-            ],
+            'banner_image' => FileHelper::getFullUrl($this->bannerImage->url ?? null),
+            'store_name' => $this->store->name,
             'job_status' => [
                 'id' => $this->status->id,
                 'name' => $this->status->name,
@@ -38,10 +35,9 @@ class JobResource extends JsonResource
                 'address' => $this->address,
             ],
             'salary' => [
-                'salary_type_id' => $this->salaryType->id,
-                'salary_type' => $this->salaryType->name,
-                'salary_min' => $this->salary_min,
-                'salary_max' => $this->salary_max,
+                'type' => $this->salaryType->name,
+                'min' => $this->salary_min,
+                'max' => $this->salary_max,
             ],
             'work_time' => [
                 'start' => $this->start_work_time,

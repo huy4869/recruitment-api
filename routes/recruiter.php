@@ -43,11 +43,11 @@ Route::group(['as' => 'profile.', 'prefix' => 'profile', 'middleware' => 'recrui
 
 Route::group(['as' => 'jobs.', 'prefix' => 'jobs', 'middleware' => 'recruiter'], function () {
     Route::get('/', 'JobController@list')->name('list');
+    Route::get('/all', 'JobController@listJobNameByOwner')->name('listJobNameByOwner');
     Route::get('/{id}', 'JobController@detail')->name('detail');
     Route::post('/delete/{id}', 'JobController@destroy')->name('destroy');
     Route::post('/update/{id}', 'JobController@update')->name('update');
     Route::post('/create', 'JobController@create')->name('create');
-    Route::get('/all', 'JobController@listJobNameByOwner')->name('listJobNameByOwner');
 });
 
 Route::group(['as' => 'stores.', 'prefix' => 'stores', 'middleware' => 'recruiter'], function () {
