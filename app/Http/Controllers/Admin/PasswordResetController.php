@@ -25,7 +25,7 @@ class PasswordResetController extends Controller
     {
         $data = PasswordResetService::getInstance()->sendMail($request->get('email'));
 
-        return $this->sendSuccessResponse($data, trans('response.send_mail_success'));
+        return $this->sendSuccessResponse($data, trans('validation.INF.007'));
     }
 
     /**
