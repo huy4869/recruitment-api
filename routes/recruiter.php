@@ -64,12 +64,13 @@ Route::group(['as' => 'applications.', 'prefix' => 'applications', 'middleware' 
     Route::get('/user-profile/{id}', 'ApplicationController@profileUser');
 });
 
-Route::group(['as' => 'chats.', 'prefix' => 'chats', 'middleware' => 'recruiter'], function () {
-    Route::post('/', 'ChatController@store');
-});
-
 Route::group(['as' => 'contacts.', 'prefix' => 'contacts', 'middleware' => 'recruiter'], function () {
     Route::get('/all', 'StoreController@listStoreNameByOwner')->name('listStoreNameByOwner');
     Route::post('/', 'ContactController@store')->name('store');
     Route::get('/admin-tel', 'ContactController@getAdminPhone')->name('getAdminPhone');
+});
+
+Route::group(['as' => 'chats.', 'prefix' => 'chats', 'middleware' => 'recruiter'], function () {
+    Route::get('/list-by-store/{store_id}', 'ChatController@getChatListOfStore');
+    Route::post('/', 'ChatController@store');
 });

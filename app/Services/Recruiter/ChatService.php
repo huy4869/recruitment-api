@@ -62,4 +62,30 @@ class ChatService extends Service
             throw new InputException(trans('response.EXC.001'));
         }//end try
     }
+
+    /**
+     * list chat
+     *
+     * @param $store_id
+     * @return mixed
+     * @throws InputException
+     */
+    public function getChatListOfStore($store_id)
+    {
+        $store = Store::query()
+            ->where([
+                ['id', $store_id],
+                ['user_id', $this->user->id]
+            ])
+            ->with('chats', function ($query) {
+                $query->orderByDesc('created_at');
+            })
+            ->first();
+
+        if ($store) {
+             return $store->chats->unique('user_id');
+        }
+
+        throw new InputException(trans('response.not_found'));
+    }
 }
