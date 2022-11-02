@@ -79,6 +79,7 @@ class UserService extends Service
             'twitter' => $data['twitter'],
             'postal_code' => $data['postal_code'],
             'province_id' => $data['province_id'],
+            'province_city_id' => $data['province_city_id'],
             'city' => $data['city'],
             'address' => $data['address'],
         ];
@@ -89,7 +90,7 @@ class UserService extends Service
      */
     public function getBasicInfo()
     {
-        return User::query()->with(['avatarDetails', 'avatarBanner'])->where('id', '=', $this->user->id)->first();
+        return User::query()->with(['avatarDetails', 'avatarBanner', 'provinceCity', 'provinceCity.province'])->where('id', '=', $this->user->id)->first();
     }
 
     /**
