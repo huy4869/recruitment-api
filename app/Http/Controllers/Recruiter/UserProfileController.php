@@ -3,13 +3,14 @@
 namespace App\Http\Controllers\Recruiter;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\Recruiter\UserProfileResource;
+use App\Http\Resources\Recruiter\ProfileUserResource;
 use App\Services\Recruiter\UserProfileService;
 use Illuminate\Http\Request;
 
 class UserProfileController extends Controller
 {
     private $userProfile;
+
     public function __construct(UserProfileService $userProfile)
     {
         $this->userProfile = $userProfile;
@@ -22,10 +23,10 @@ class UserProfileController extends Controller
      * @return \Illuminate\Http\JsonResponse
      * @throws \App\Exceptions\InputException
      */
-    public function detail(Request $request)
+    public function detail($id)
     {
-        $data = $this->userProfile->detail($request->get('user_id'));
+        $data = $this->userProfile->detail($id);
 
-        return $this->sendSuccessResponse($data);
+        return $this->sendSuccessResponse(new ProfileUserResource($data));
     }
 }

@@ -33,7 +33,7 @@ Route::group(['as' => 'users.', 'prefix' => 'users', 'middleware' => 'recruiter'
     Route::get('/', 'UserController@list')->name('list');
     Route::get('/new', 'UserController@newUsers')->name('newUsers');
     Route::get('/suggest', 'UserController@suggestUsers')->name('suggestUsers');
-    Route::get('/detail', 'UserProfileController@detail')->name('detail');
+    Route::get('/detail/{id}', 'UserProfileController@detail')->name('detail');
 });
 
 Route::group(['as' => 'profile.', 'prefix' => 'profile', 'middleware' => 'recruiter'], function () {
@@ -61,4 +61,5 @@ Route::group(['as' => 'stores.', 'prefix' => 'stores', 'middleware' => 'recruite
 
 Route::group(['as' => 'applications.', 'prefix' => 'applications', 'middleware' => 'recruiter'], function () {
     Route::get('/', 'ApplicationController@list')->name('list');
+    Route::get('/user-profile/{id}', 'ApplicationController@profileUser');
 });

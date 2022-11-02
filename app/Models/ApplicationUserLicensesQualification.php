@@ -20,6 +20,7 @@ class ApplicationUserLicensesQualification extends Model
      * @var string[]
      */
     protected $fillable = [
+        'application_id',
         'user_id',
         'name',
         'new_issuance_date',
@@ -39,5 +40,10 @@ class ApplicationUserLicensesQualification extends Model
     public function jobPosting()
     {
         return $this->belongsTo(JobPosting::class, 'job_posting_id');
+    }
+
+    public function application()
+    {
+        return $this->belongsTo(Application::class, 'application_id');
     }
 }
