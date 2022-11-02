@@ -22,13 +22,13 @@ class AuthService extends Service
         $admin = User::query()->where('email', $data['email'])->roleAdmin()->first();
 
         if (!$admin) {
-            throw new InputException(trans('validation.exists', [
+            throw new InputException(trans('validation.COM.006', [
                 'attribute' => trans('validation.attributes.email')
             ]));
         }
 
         if (!Hash::check($data['password'], $admin->password)) {
-            throw new InputException(trans('validation.custom.wrong_password'));
+            throw new InputException(trans('validation.ERR.001'));
         }
 
         $token = $admin->createToken('authAdminToken', ['*'], Carbon::now()
