@@ -79,14 +79,16 @@ class AuthService extends Service
         $admin = $this->user;
 
         if (!Hash::check($data['current_password'], $admin->password)) {
-            throw new InputException(trans('auth.password'));
+            throw new InputException(trans('validation.ERR.009'));
         }
 
-        $admin->update([
+        if ($data['password'] == $data['password_confirmation']) {
+            throw new InputException(trans('validation.COM.007'));
+        }
+
+        return $admin->update([
             'password' => Hash::make($data['password'])
         ]);
-
-        return true;
     }
 
     /**
