@@ -55,7 +55,11 @@ class PasswordResetController extends Controller
      */
     public function resetPassword(ResetPasswordRequest $request)
     {
-        PasswordResetService::getInstance()->resetPassword($request->all());
+        PasswordResetService::getInstance()->resetPassword($request->only([
+            'token',
+            'password',
+            'password_confirmation',
+        ]));
 
         return $this->sendSuccessResponse([], trans('response.reset_password'));
     }
