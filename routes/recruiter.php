@@ -62,6 +62,8 @@ Route::group(['as' => 'stores.', 'prefix' => 'stores', 'middleware' => 'recruite
 Route::group(['as' => 'applications.', 'prefix' => 'applications', 'middleware' => 'recruiter'], function () {
     Route::get('/', 'ApplicationController@list')->name('list');
     Route::get('/user-profile/{id}', 'ApplicationController@profileUser');
+    Route::get('/{id}', 'ApplicationController@detail')->name('detail');
+    Route::post('/{id}', 'ApplicationController@update')->name('update');
 });
 
 Route::group(['as' => 'chats.', 'prefix' => 'chats', 'middleware' => 'recruiter'], function () {

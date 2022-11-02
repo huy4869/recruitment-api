@@ -157,4 +157,12 @@ class ApplicationUser extends Model
     {
         return $this->morphOne(Image::class, 'imageable')->where('type', Image::AVATAR_BANNER);
     }
+
+    /**
+     * @return BelongsTo
+     */
+    public function provinceCity()
+    {
+        return $this->belongsTo(MProvinceCity::class, 'province_city_id', 'id');
+    }
 }

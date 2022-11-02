@@ -36,4 +36,5 @@ return [
         'max' => 128,
     ],
     'salary_max' => '99999999',
+    'approach_text_max_length' => 2000,
 ];
