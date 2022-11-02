@@ -48,6 +48,7 @@ class UserController extends BaseController
             'twitter',
             'postal_code',
             'province_id',
+            'province_city_id',
             'city',
             'address',
             'avatar',

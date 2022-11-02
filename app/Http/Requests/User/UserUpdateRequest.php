@@ -47,6 +47,7 @@ class UserUpdateRequest extends FormRequest
             'twitter' => ['nullable', 'string', 'max:' . $stringMaxLength],
             'postal_code' => ['nullable', 'numeric', 'digits:' . $zipcodeLength],
             'province_id' => ['required', 'numeric', 'exists:m_provinces,id'],
+            'province_city_id' => ['required', 'numeric', 'exists:m_provinces_cities,id'],
             'city' => ['required', 'string', 'max:' . $stringMaxLength],
             'address' => ['nullable', 'string', 'max:' . $stringMaxLength],
             'avatar' => ['nullable', 'string', 'url', 'max:' . $stringMaxLength],

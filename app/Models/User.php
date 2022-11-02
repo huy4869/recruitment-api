@@ -63,6 +63,7 @@ class User extends Authenticatable
         'twitter',
         'postal_code',
         'province_id',
+        'province_city_id',
         'city',
         'address',
         'favorite_skill',
@@ -131,6 +132,14 @@ class User extends Authenticatable
     public function province()
     {
         return $this->belongsTo(MProvince::class, 'province_id');
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function provinceCity()
+    {
+        return$this->belongsTo(MProvinceCity::class, 'province_city_id');
     }
 
     /**
