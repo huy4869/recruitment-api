@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\MJobType;
+use App\Models\MWorkType;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -18,9 +20,7 @@ class MasterDataSeeder extends Seeder
         DB::statement('SET FOREIGN_KEY_CHECKS=0;');
         DB::table('m_roles')->truncate();
         DB::table('m_genders')->truncate();
-        DB::table('m_job_types')->truncate();
         DB::table('m_job_experiences')->truncate();
-        DB::table('m_work_types')->truncate();
         DB::table('m_job_feature_categories')->truncate();
         DB::table('m_province_districts')->truncate();
         DB::table('m_learning_status')->truncate();
@@ -35,6 +35,14 @@ class MasterDataSeeder extends Seeder
         DB::table('m_notice_types')->truncate();
         DB::table('m_position_offices')->truncate();
         DB::table('m_provinces_cities')->truncate();
+        DB::table('m_job_types')->where([
+            ['is_default', MJobType::IS_DEFAULT],
+            ['id', '>' , 0]
+        ])->delete();
+        DB::table('m_work_types')->where([
+            ['is_default', MWorkType::IS_DEFAULT],
+            ['id', '>' , 0]
+        ])->delete();
 
         $time = Carbon::now();
         $dataRoles = [
@@ -53,12 +61,12 @@ class MasterDataSeeder extends Seeder
         DB::table('m_genders')->insert($dataGenders);
 
         $dataJobType = [
-            ['name' => 'ヘア', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'ネイル・マツゲ', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => '整体・カイロ・酸素・温浴', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'フェイシャル・ボディ・脱毛', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => '美容クリニック', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'その他', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => MJobType::HAIR, 'name' => 'ヘア', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => MJobType::NAIL, 'name' => 'ネイル・マツゲ', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => MJobType::CHIRO_CAIRO_OXY_HOTBATH, 'name' => '整体・カイロ・酸素・温浴', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => MJobType::FACIAL_BODY_REMOVAL, 'name' => 'フェイシャル・ボディ・脱毛', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => MJobType::CLINIC, 'name' => '美容クリニック', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => MJobType::OTHER, 'name' => 'その他', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_job_types')->insert($dataJobType);
 
@@ -74,11 +82,11 @@ class MasterDataSeeder extends Seeder
         DB::table('m_job_experiences')->insert($dataJobExperiences);
 
         $dataWorkTypes = [
-            ['name' => '正社員', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => '派遣社員', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => '契約社員', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'アルバイト', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'その他', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => MWorkType::FULL_TIME_EMPLOYEE, 'name' => '正社員', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => MWorkType::TEMPORARY_STAFF, 'name' => '派遣社員', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => MWorkType::CONTRACT_EMPLOYEE, 'name' => '契約社員', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => MWorkType::PART_TIME_EMPLOYEE, 'name' => 'アルバイト', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => MWorkType::OTHER, 'name' => 'その他', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_work_types')->insert($dataWorkTypes);
 
@@ -126,11 +134,11 @@ class MasterDataSeeder extends Seeder
         DB::table('m_interview_approaches')->insert($dataInterviewApproaches);
 
         $dataFeedbackTypes = [
-            ['name' => '年収／月収に関する相談', 'has_extend' => 1, 'placeholder_extend' => 'ご希望の年収/月収などを入力', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => '福利厚生に関するお問合せ', 'has_extend' => 0, 'placeholder_extend' => null,'created_at' => $time, 'updated_at' => $time],
-            ['name' => '教育制度を知りたい', 'has_extend' => 0, 'placeholder_extend' => null,'created_at' => $time, 'updated_at' => $time],
-            ['name' => '残業代が出るか知りたいなど','has_extend' => 0, 'placeholder_extend' => null, 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'その他', 'has_extend' => 0, 'placeholder_extend' => null, 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '年収／月収に関する相談', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '福利厚生に関するお問合せ', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '教育制度を知りたい', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '残業代が出るか知りたいなど', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'その他', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_feedback_types')->insert($dataFeedbackTypes);
 

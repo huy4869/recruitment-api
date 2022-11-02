@@ -9,6 +9,10 @@ class MWorkType extends Model
 {
     use HasFactory;
 
+    public const FULL_TIME_EMPLOYEE = 1;
+    public const TEMPORARY_STAFF  = 2;
+    public const CONTRACT_EMPLOYEE = 3;
+    public const PART_TIME_EMPLOYEE = 4;
     public const OTHER = 5;
 
     public const NO_DEFAULT = 0;
