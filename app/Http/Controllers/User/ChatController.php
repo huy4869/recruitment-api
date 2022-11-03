@@ -7,6 +7,7 @@ use App\Helpers\DateTimeHelper;
 use App\Http\Resources\User\ChatDetailResource;
 use App\Http\Resources\User\ChatResource;
 use App\Http\Requests\User\ChatCreateRequest;
+use App\Http\Resources\User\DateChatResources;
 use App\Services\User\ChatService;
 use Carbon\Carbon;
 
@@ -40,32 +41,11 @@ class ChatController extends BaseController
      */
     public function detail($store_id)
     {
-        $updateReaded = $this->chatService->withUser($this->guard()->user())->updateBeReaded($store_id);
+        $this->chatService->withUser($this->guard()->user())->updateBeReaded($store_id);
 
-        if ($updateReaded) {
-            $data = $this->chatService->withUser($this->guard()->user())->getDetail($store_id);
-            $result = [];
-            $isCheck = true;
-            $dateShow = '';
+        $chatDetails = $this->chatService->withUser($this->guard()->user())->getDetail($store_id);
 
-            foreach ($data as $value) {
-                $detail = new ChatDetailResource($value);
-
-                if ($isCheck && Carbon::now()->format('Y-m-d') > date('Y-m-d', strtotime($value->created_at))) {
-                    $result[] = [
-                        'is_date_now' => true,
-                        'date_show' => $dateShow
-                    ];
-                    $isCheck = false;
-                }
-                $dateShow = DateTimeHelper::formatDateJa($value->created_at);
-                $result[] = $detail;
-            }
-
-            return $this->sendSuccessResponse($result);
-        }//end if
-
-        throw new InputException(trans('response.readed_update_error'));
+        return $this->sendSuccessResponse(DateChatResources::collection($chatDetails));
     }
 
     /**

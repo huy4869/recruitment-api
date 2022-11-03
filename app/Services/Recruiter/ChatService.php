@@ -8,6 +8,7 @@ use App\Models\Notification;
 use App\Models\Store;
 use App\Models\User;
 use App\Services\Service;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Support\Facades\Log;
@@ -87,5 +88,77 @@ class ChatService extends Service
         }
 
         throw new InputException(trans('response.not_found'));
+    }
+
+    /**
+     * get Store with Rec
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
+    public function getStoreWithRec()
+    {
+        return $this->user->stores()->get();
+    }
+
+    /**
+     * get detail chat
+     *
+     * @param $store_id
+     * @param $user_id
+     * @return array
+     * @throws InputException
+     */
+    public function getDetailChat($store_id, $user_id)
+    {
+        $rec = $this->user->id;
+
+        $chats = Chat::query()->with('user')
+            ->whereHas('store', function ($q) use ($store_id, $rec) {
+                $q->where([
+                    ['id', $store_id],
+                    ['user_id', $rec]
+                ]);
+            })
+            ->where([
+                ['store_id', $store_id],
+                ['user_id', $user_id]
+            ])
+            ->orderByDesc('created_at')
+            ->get()
+            ->groupBy(function ($date) {
+                return Carbon::parse($date->created_at)->format('Y-m-d');
+            });
+
+        foreach ($chats as $item) {
+            $result[] = [
+                'date' => $item->first()->created_at->format('Y-m-d'),
+                'data' => $item,
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param $store_id
+     * @param $user_id
+     * @return int
+     */
+    public function updateBeReaded($store_id, $user_id)
+    {
+        $rec = $this->user->id;
+
+        return Chat::query()
+            ->whereHas('store', function ($q) use ($store_id, $rec) {
+                $q->where([
+                    ['id', $store_id],
+                    ['user_id', $rec]]);
+            })
+            ->where([
+                ['store_id', $store_id],
+                ['user_id', $user_id],
+                ['is_from_user', Chat::FROM_USER['TRUE']]
+            ])
+            ->update(['be_readed' => Chat::BE_READED]);
     }
 }
