@@ -47,8 +47,8 @@ class DesiredConditionRequest extends FormRequest
             'job_feature_ids.*' => ['integer', 'exists:m_job_features,id'],
             'working_days' => ['nullable', 'array'],
             'working_days.*' => ['nullable', 'integer', 'in:' . implode(',', $dayIds)],
-            'start_working_hour' => ['nullable', 'required_with:end_working_hour', 'date_format:Hi'],
-            'end_working_hour' => ['nullable', 'required_with:start_working_hour', 'after_or_equal:start_working_hour', 'date_format:Hi'],
+            'start_working_time' => ['nullable', 'required_with:end_working_time', 'date_format:Hi'],
+            'end_working_time' => ['nullable', 'required_with:start_working_time', 'after_or_equal:start_working_time', 'date_format:Hi'],
         ];
     }
 
@@ -63,9 +63,9 @@ class DesiredConditionRequest extends FormRequest
             'salary_max.between' => trans('validation.COM.017', ['attribute' => trans('validation.attributes.salary_max')]),
             'salary_max.numeric' => trans('validation.COM.004', ['attribute' => trans('validation.attributes.salary_max')]),
             'salary_max.gt' => trans('validation.ERR.044'),
-            'start_working_hour.required_with' => trans('validation.COM.022'),
-            'end_working_hour.required_with' => trans('validation.COM.023'),
-            'end_working_hour.after_or_equal' => trans('validation.COM.021'),
+            'start_working_time.required_with' => trans('validation.COM.022'),
+            'end_working_time.required_with' => trans('validation.COM.023'),
+            'end_working_time.after_or_equal' => trans('validation.COM.021'),
         ];
     }
 }

@@ -75,8 +75,8 @@ class DesiredConditionController extends BaseController
             'job_experience_ids',
             'job_feature_ids',
             'working_days',
-            'start_working_hour',
-            'end_working_hour',
+            'start_working_time',
+            'end_working_time',
         ]);
     }
 }
