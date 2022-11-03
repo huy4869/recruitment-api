@@ -165,4 +165,12 @@ class ApplicationUser extends Model
     {
         return $this->belongsTo(MProvinceCity::class, 'province_city_id', 'id');
     }
+
+    /**
+     * @return MorphMany
+     */
+    public function images()
+    {
+        return $this->morphMany(Image::class, 'imageable');
+    }
 }

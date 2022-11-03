@@ -2,8 +2,11 @@
 
 namespace App\Services\Admin\User;
 
+use App\Helpers\StringHelper;
 use App\Models\User;
 use App\Services\TableService;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\DB;
 
 class UserTableService extends TableService
 {
@@ -16,23 +19,95 @@ class UserTableService extends TableService
      * @var string[]
      */
     protected $filterables = [
-        'status' => 'users.status',
+        'role_id' => 'filterRole',
+        'user_name' => 'searchUserName',
+        'email' => 'search',
     ];
 
     /**
      * @var string[]
      */
-    protected $orderables = [
-        'status' => 'users.status',
-        'created_at' => 'users.created_at',
-    ];
+    protected $orderables = [];
+
+    /**
+     * @param $query
+     * @param $filter
+     * @return mixed
+     */
+    protected function filterRole($query, $filter)
+    {
+        return $query->whereIn($filter['key'], json_decode($filter['data']));
+    }
+
+    /**
+     * @param $query
+     * @param $search
+     * @return Builder
+     */
+    protected function search($query, $search)
+    {
+        return $query->where($search['key'], 'like', '%' . $search['data'] . '%');
+    }
+
+    /**
+     * @param $query
+     * @param $filter
+     * @return Builder
+     */
+    protected function searchUserName($query, $filter)
+    {
+        if (!count($filter) || !is_string($filter['data'])) {
+            return $query;
+        }
+
+        $queryKeys = [];
+
+        switch ($filter['key']) {
+            case 'user_name':
+                $queryKeys = [
+                    'users.first_name',
+                    'users.last_name',
+                    'CONCAT(users.first_name, users.last_name)',
+                ];
+                break;
+            case 'user_furi_name':
+                $queryKeys = [
+                    'users.furi_first_name',
+                    'users.furi_last_name',
+                    'CONCAT(users.furi_first_name, users.furi_last_name)',
+                ];
+                break;
+            case 'job_name':
+                $queryKeys = [
+                    'job_postings.name'
+                ];
+                break;
+            default:
+                return $query;
+        }//end switch
+
+        $content = '%' . str_replace(' ', '', $filter['data']) . '%';
+        $query->where(function ($q) use ($content, $queryKeys) {
+            foreach ($queryKeys as $key) {
+                $key = sprintf('replace(%s, \' \', \'\')', $key);
+                $q->orWhere(DB::raw($key), 'like', $content);
+            }
+        });
+
+        return $query;
+    }
 
     /**
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      */
     public function makeNewQuery()
     {
-        return User::query()->selectRaw($this->getSelectRaw());
+        return User::query()
+            ->with([
+                'role',
+                'stores'
+            ])
+            ->selectRaw($this->getSelectRaw());
     }
 
     /**
@@ -42,13 +117,12 @@ class UserTableService extends TableService
      */
     protected function getSelectRaw()
     {
-        $fields = [
-            'users.id',
-            'users.name',
-            'users.email',
-            'users.status',
-            'users.created_at',
-        ];
-        return implode(', ', $fields);
+        return 'users.id,
+            users.role_id,
+            users.first_name,
+            users.last_name,
+            users.email,
+            users.last_login_at,
+            users.created_at';
     }
 }

@@ -19,4 +19,12 @@ return [
         'title' => ':store_nameから、応募状況の進捗が更新されました。',
         'content' => ':store_nameから、応募状況の進捗が:interview_statusに更新されました。内容は応募詳細画面でご確認ください。'
     ],
+    'N013' => [
+        'title' => '美容室オーナが削除されました。',
+        'content' => ':recruiter_nameが削除されましたので、:job_titleのご応募を不採用になります。',
+    ],
+    'N014' => [
+        'title' => '求職者が削除されました。',
+        'content' => ':user_name様が削除されましたので、:user_name様より:job_titleのご応募のステータスが不採用に変更されました。',
+    ],
 ];

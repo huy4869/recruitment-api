@@ -95,4 +95,17 @@ class UserController extends Controller
 
         return $this->sendSuccessResponse($data, trans('validation.INF.001'));
     }
+
+    /**
+     * @param $id
+     * @return JsonResponse
+     * @throws InputException
+     */
+    public function destroy($id)
+    {
+        $admin = $this->guard()->user();
+        $result = UserService::getInstance()->withUser($admin)->destroy($id);
+
+        return $this->sendSuccessResponse($result, trans('validation.INF.005'));
+    }
 }

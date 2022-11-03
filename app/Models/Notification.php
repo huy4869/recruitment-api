@@ -20,6 +20,8 @@ class Notification extends Model
     public const TYPE_NEW_MESSAGE = 3;
     public const TYPE_INTERVIEW_CHANGED = 4;
     public const TYPE_INTERVIEW_PENDING = 5;
+    public const TYPE_DELETE_USER = 6;
+    public const TYPE_DELETE_RECRUITER = 7;
 
     /**
      * The attributes that are mass assignable.
