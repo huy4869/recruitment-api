@@ -32,6 +32,7 @@ class ApplicationUserHistoryService extends Service
                 'user_id' => $userWorkHistory->user_id,
                 'application_id' => $application->id,
                 'job_type_id' => $userWorkHistory->job_type_id,
+                'work_type_id' => $userWorkHistory->work_type_id,
                 'store_name' => $userWorkHistory->store_name,
                 'company_name' => $userWorkHistory->company_name,
                 'period_start' => $userWorkHistory->period_start,
@@ -152,15 +153,17 @@ class ApplicationUserHistoryService extends Service
             ];
         }
 
-        $images = array_merge([[
-            'imageable_id' => $applicationUser->id,
-            'imageable_type' => get_class($applicationUser),
-            'url' => $user->avatarBanner->url,
-            'thumb' => $user->avatarBanner->thumb,
-            'type' => $user->avatarBanner->type,
-            'created_at' => now(),
-            'updated_at' => now(),
-        ]], $images);
+        if ($user->avatarBanner) {
+            $images = array_merge([[
+                'imageable_id' => $applicationUser->id,
+                'imageable_type' => get_class($applicationUser),
+                'url' => $user->avatarBanner->url,
+                'thumb' => $user->avatarBanner->thumb,
+                'type' => $user->avatarBanner->type,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]], $images);
+        }
 
         Image::query()->insert($images);
 
