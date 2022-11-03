@@ -176,4 +176,14 @@ class JobController extends Controller
 
         return $this->sendSuccessResponse(new JobCollection($jobs));
     }
+
+    /**
+     * @return JsonResponse
+     */
+    public function totalJobs()
+    {
+        $total = JobService::getInstance()->getTotalJobs();
+
+        return $this->sendSuccessResponse($total);
+    }
 }

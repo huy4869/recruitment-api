@@ -591,4 +591,12 @@ class JobService extends Service
     {
         return MInterviewApproach::query()->pluck('name')->toArray();
     }
+
+    /**
+     * @return mixed
+     */
+    public function getTotalJobs()
+    {
+        return JobPosting::query()->released()->count();
+    }
 }
