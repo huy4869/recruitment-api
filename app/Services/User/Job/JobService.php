@@ -46,7 +46,11 @@ class JobService extends Service
             })
             ->with([
                 'applications' => function ($query) use ($user) {
-                    $query->where('user_id', $user->id);
+                    if (!$user) {
+                         return $query;
+                    }
+
+                    return $query->where('user_id', $user->id);
                 },
                 'applications.interviews'
             ])
@@ -554,7 +558,7 @@ class JobService extends Service
                 $job->work_type_ids,
                 $jobMasterData['masterWorkTypes']
             );
-            $job->is_favorite = !!in_array($job->id, $jobUserFavorite);
+            $job->is_favorite = $jobUserFavorite && !!in_array($job->id, $jobUserFavorite);
 
             $jobArr[$job->id] = $job;
         }//end foreach
