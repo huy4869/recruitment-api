@@ -102,8 +102,8 @@ class DesiredConditionService extends Service
             'job_experience_ids' => $data['job_experience_ids'],
             'job_feature_ids' => $data['job_feature_ids'],
             'working_days' => $data['working_days'],
-            'start_working_hour' => $data['start_working_hour'],
-            'end_working_hour' => $data['end_working_hour'],
+            'start_working_time' => $data['start_working_time'],
+            'end_working_time' => $data['end_working_time'],
         ];
     }
 }

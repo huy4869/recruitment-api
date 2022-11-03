@@ -23,12 +23,12 @@ class DesiredConditionResource extends JsonResource
         $salaryMax = $data['salary_max'];
         $salaryTypeName = $data['salary_type']['name'];
         $expectedSalary = sprintf('%s ~ %s%s', $salaryMin, $salaryMax, $salaryTypeName);
-        $startWorkingHours = substr($data['start_working_hour'], 0, 2);
-        $startWorkingMinutes = substr($data['start_working_hour'], 2);
-        $endWorkingHours = substr($data['end_working_hour'], 0, 2);
-        $endWorkingMinutes = substr($data['end_working_hour'], 2);
+        $startWorkingHours = substr($data['start_working_time'], 0, 2);
+        $startWorkingMinutes = substr($data['start_working_time'], 2);
+        $endWorkingHours = substr($data['end_working_time'], 0, 2);
+        $endWorkingMinutes = substr($data['end_working_time'], 2);
 
-        if ($data['start_working_hour'] && $data['end_working_hour']) {
+        if ($data['start_working_time'] && $data['end_working_time']) {
             $startWorkingTimes = $startWorkingHours . ':' . $startWorkingMinutes;
             $endWorkingTimes = $endWorkingHours . ':' . $endWorkingMinutes;
             $startHoursWorking = $startWorkingTimes . ' ~ ' . $endWorkingTimes;
