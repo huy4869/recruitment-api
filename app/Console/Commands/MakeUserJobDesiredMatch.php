@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Console\Kernel;
 use App\Models\MJobExperience;
 use App\Models\MJobFeature;
 use App\Models\MJobType;
@@ -17,20 +18,20 @@ use Illuminate\Support\Facades\Log;
 
 class makeUserJobDesiredMatch extends Command
 {
-    CONST QUANTITY_CHUNK = 1000;
+    const QUANTITY_CHUNK = 1000;
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'command:make_user_job_desired_match';
+    protected $signature = Kernel::MAKE_USER_JOB_DESIRED_MATCH;
 
     /**
      * The console command description.
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Make user job desired match';
 
     /**
      * Execute the console command.
@@ -48,6 +49,8 @@ class makeUserJobDesiredMatch extends Command
             'salary',
             'job_experience_ids',
             'job_feature_ids',
+            'working_days',
+            'work_time',
         ];
 
         $desires = DesiredConditionService::getInstance()->getList();
@@ -114,8 +117,24 @@ class makeUserJobDesiredMatch extends Command
                                 ]
                             );
                             break;
-                    }
-                }
+                        case 'working_days':
+                            $matchResult = $this->compareWorkingDay($matchResult, $desire->working_days, $jobPosting->working_days);
+                            break;
+                        case 'work_time':
+                            $matchResult = $this->compareWorkTime(
+                                $matchResult,
+                                [
+                                    'start' => $desire->start_working_time,
+                                    'end' => $desire->end_working_time
+                                ],
+                                [
+                                    'start' => $jobPosting->start_work_time,
+                                    'end' => $jobPosting->end_work_time
+                                ]
+                            );
+                            break;
+                    }//end switch
+                }//end foreach
 
                 $dataCreate[] = [
                     'user_id' => $desire->user_id,
@@ -125,8 +144,8 @@ class makeUserJobDesiredMatch extends Command
                     'created_at' => $now,
                     'updated_at' => $now,
                 ];
-            }
-        }
+            }//end foreach
+        }//end foreach
 
         try {
             DB::beginTransaction();
@@ -258,6 +277,26 @@ class makeUserJobDesiredMatch extends Command
                     $salaryInfo_d['max'] ? min($salaryInfo_d['max'], $salaryInfo_j['max']) : $salaryInfo_j['max']
                 ]),
             ];
+        }
+
+        return $matchResult;
+    }
+
+    public function compareWorkingDay($matchResult, $workingDays_d, $workingDays_j) {
+        return $this->compareJson(
+            $matchResult,
+            $workingDays_d,
+            $workingDays_j,
+            'WorkingDays',
+            config('criteria_ratio.match_job.working_days')
+        );
+    }
+
+    public function compareWorkTime($matchResult, $workTimes_d, $workTimes_j)
+    {
+        if ($workTimes_d['start'] >= $workTimes_j['start']
+            && $workTimes_d['end'] <=$workTimes_j['end']) {
+            $matchResult['point'] += config('criteria_ratio.match_job.work_time');
         }
 
         return $matchResult;
