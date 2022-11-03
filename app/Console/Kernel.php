@@ -8,6 +8,7 @@ use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 class Kernel extends ConsoleKernel
 {
     public const NOTIFY_USER_INTERVIEW = 'notify_user:interview';
+    public const MAKE_USER_JOB_DESIRED_MATCH = 'command:make_user_job_desired_match';
 
     /**
      * Define the application's command schedule.
@@ -19,6 +20,8 @@ class Kernel extends ConsoleKernel
     {
          $schedule->command(self::NOTIFY_USER_INTERVIEW)
              ->dailyAt(config('schedule.notify_user_interview'));
+
+         $schedule->command(self::MAKE_USER_JOB_DESIRED_MATCH)->everyFifteenMinutes();
     }
 
     /**
