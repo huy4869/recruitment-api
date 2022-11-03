@@ -3,16 +3,12 @@
 namespace App\Http\Controllers\Recruiter;
 
 use App\Exceptions\InputException;
-use App\Helpers\DateTimeHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Recruiter\ChatCreateRequest;
 use App\Http\Resources\Recruiter\ChatListResourse;
 use App\Http\Resources\Recruiter\ChatResource;
-use App\Http\Resources\Recruiter\DateChatResources;
 use App\Http\Resources\Recruiter\StoreNameResource;
-use App\Http\Resources\Recruiter\ChatDetailResource;
 use App\Services\Recruiter\ChatService;
-use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -82,6 +78,6 @@ class ChatController extends Controller
         $this->chatService->withUser($this->guard()->user())->updateBeReaded($store_id, $request->get('user_id'));
         $chatDetails = $this->chatService->withUser($this->guard()->user())->getDetailChat($store_id, $request->get('user_id'));
 
-        return $this->sendSuccessResponse(DateChatResources::collection($chatDetails));
+        return $this->sendSuccessResponse($chatDetails);
     }
 }
