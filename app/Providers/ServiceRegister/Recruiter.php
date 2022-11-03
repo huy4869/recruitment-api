@@ -5,6 +5,7 @@ namespace App\Providers\ServiceRegister;
 use App\Services\Recruiter\Application\ApplicationService;
 use App\Services\Recruiter\AuthService;
 use App\Services\Recruiter\ChatService;
+use App\Services\Recruiter\NotificationService;
 use App\Services\Recruiter\PasswordResetService;
 use App\Services\Recruiter\UserProfileService;
 use App\Services\Recruiter\StoreService;
@@ -46,6 +47,10 @@ class Recruiter
 
         $app->scoped(ApplicationService::class, function ($app) {
             return new ApplicationService();
+        });
+
+        $app->scoped(NotificationService::class, function ($app) {
+            return new NotificationService();
         });
     }
 }
