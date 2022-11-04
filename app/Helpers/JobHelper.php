@@ -150,11 +150,25 @@ class JobHelper
 
         foreach ($typeIds as $id) {
             $feature = $features[$id - 1];
-
-            $result[] = [
-                'id' => $feature['id'],
-                'name' => $feature['name'],
+            $categories[] = [
+                'category_id' => $feature['category']['id'],
+                'category_name' => $feature['category']['name'],
             ];
+        }
+
+        $categories = collect($categories)->unique('category_id')->toArray();
+
+        foreach ($categories as $category) {
+            foreach ($typeIds as $id) {
+                $feature = $features[$id - 1];
+
+                if ($feature['category_id'] == $category['category_id']) {
+                    $category['features'][] = $feature['name'];
+                }
+            }
+
+            $category['features'] = implode('/', $category['features']);
+            $result[] = $category;
         }
 
         return $result;
@@ -237,5 +251,26 @@ class JobHelper
         $twoWeekAgo = Carbon::now()->subDays(config('validate.date_range.new_job_marker'));
 
         return $date >= $twoWeekAgo;
+    }
+
+    /**
+     * @param $charTime
+     * @return string
+     */
+    public static function makeWorkTimeFormat($charTime)
+    {
+        $startWorkingHours = substr($charTime, 0, 2);
+        $startWorkingMinutes = substr($charTime, 2);
+
+        return sprintf('%s:%s', $startWorkingHours, $startWorkingMinutes);
+    }
+
+    /**
+     * @param $number
+     * @return string
+     */
+    public static function thousandNumberFormat($number)
+    {
+        return number_format($number, 0, '.', ',');
     }
 }

@@ -35,8 +35,8 @@ class JobPostingResource extends JsonResource
                 'type' => $this['salary_type'],
             ],
             'work_time' => [
-                'start' => $this['start_work_time'],
-                'end' => $this['end_work_time'],
+                'start' => JobHelper::makeWorkTimeFormat($this['start_work_time']),
+                'end' => JobHelper::makeWorkTimeFormat($this['end_work_time']),
             ],
             'work_types' =>  $this['work_types'],
             'is_favorite' => $this['is_favorite'],

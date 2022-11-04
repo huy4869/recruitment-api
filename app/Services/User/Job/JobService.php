@@ -305,7 +305,7 @@ class JobService extends Service
         $result = $this->appendMaster($this->user, $jobList);
 
         return [
-            'total_jobs' => $jobCount,
+            'total_jobs' => JobHelper::thousandNumberFormat($jobCount),
             'list_jobs' => $result,
         ];
     }
@@ -594,10 +594,12 @@ class JobService extends Service
     }
 
     /**
-     * @return mixed
+     * @return string
      */
     public function getTotalJobs()
     {
-        return JobPosting::query()->released()->count();
+        $totalJobs = JobPosting::query()->released()->count();
+
+        return JobHelper::thousandNumberFormat($totalJobs);
     }
 }
