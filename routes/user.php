@@ -76,7 +76,7 @@ Route::group(['as' => 'job.', 'prefix' => 'job'], function () {
     Route::get('/suggest/{id}', 'JobController@suggestJobs')->name('suggestJobs');
     Route::get('/total', 'JobController@totalJobs')->name('totalJobs');
     Route::get('/{id}', 'JobController@detail')->name('detail');
-    Route::get('/{job}/application', 'JobPostingController@detailJobUserApplication')->name('detail')->middleware('user');
+    Route::get('/{job}/application', 'JobController@detailJobUserApplication')->name('detail')->middleware('user');
 });
 
 Route::group(['as' => 'work-history.', 'prefix' => 'work-history', 'middleware' => 'user'], function () {

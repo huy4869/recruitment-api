@@ -3,14 +3,13 @@
 namespace App\Http\Controllers\User;
 
 use App\Exceptions\InputException;
-use App\Http\Requests\User\Application\CancelAppliedRequest;
 use App\Http\Requests\User\Application\StoreRequest;
 use App\Http\Requests\User\Application\UpdateRequest;
 use App\Http\Resources\User\Application\ListApplicationResource;
 use App\Http\Resources\User\Application\ListInterviewResource;
 use App\Services\User\ApplicationService;
 use App\Services\User\ApplicationUserHistoryService;
-use App\Services\User\JobPostingService;
+use App\Services\User\Job\JobService;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -26,7 +25,7 @@ class ApplicationController extends BaseController
     private $applicationService;
 
     /**
-     * @var JobPostingService
+     * @var JobService
      */
     private $jobPostingService;
 
@@ -38,10 +37,10 @@ class ApplicationController extends BaseController
     /**
      * ApplicationController constructor.
      * @param ApplicationService $applicationService
-     * @param JobPostingService $jobPostingService
+     * @param JobService $jobPostingService
      * @param ApplicationUserHistoryService $applicationUserHistoryService
      */
-    public function __construct(ApplicationService $applicationService, JobPostingService $jobPostingService, ApplicationUserHistoryService $applicationUserHistoryService)
+    public function __construct(ApplicationService $applicationService, JobService $jobPostingService, ApplicationUserHistoryService $applicationUserHistoryService)
     {
         $this->applicationService = $applicationService;
         $this->jobPostingService = $jobPostingService;
