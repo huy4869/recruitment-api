@@ -29,6 +29,7 @@ Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {
 Route::group(['as' => 'users.', 'prefix' => 'users'], function () {
     Route::get('/', 'UserController@index')->name('index');
     Route::get('/{user}', 'UserController@detail')->name('detail');
+    Route::post('/', 'UserController@store')->name('store');
     Route::post('/{user}', 'UserController@update')->name('update');
 });
 
