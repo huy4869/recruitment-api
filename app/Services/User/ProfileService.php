@@ -4,6 +4,8 @@ namespace App\Services\User;
 
 use App\Helpers\UserHelper;
 use App\Services\Service;
+use Illuminate\Config\Repository;
+use Illuminate\Contracts\Foundation\Application;
 
 class ProfileService extends Service
 {
@@ -19,8 +21,8 @@ class ProfileService extends Service
 
         $motivation = self::getPercentUser($user->motivation, config('percentage.motivation'));
         $baseInfo = self::getPercentBaseInfo($user);
-        $percentageUserLearning = $userInformation->userLearningHistories->first() ? config('percentage.user_learning_history') : config('percentage.default');
-        $qualification = $userInformation->userLicensesQualifications->first() ? config('percentage.user_learning_history') : config('percentage.default');
+        $percentageUserLearning = self::getPercentLearningHistories($userInformation->userLearningHistories);
+        $qualification = $userInformation->userLicensesQualifications->first() ? config('percentage.motivation') : config('percentage.default');
         $percentWorkHistory = UserHelper::getPercentWorkHistory($userInformation->userWordHistories);
         $selfPr = self::getPercentSelfPR($user);
 
@@ -49,7 +51,7 @@ class ProfileService extends Service
             ],
             'qualification' => [
                 'percent' => $qualification,
-                'total' => config('percentage.user_learning_history'),
+                'total' => config('percentage.motivation'),
             ],
             'percentageUserLearning' => [
                 'percent' => $percentageUserLearning,
@@ -94,6 +96,26 @@ class ProfileService extends Service
 
         return $favorite + $skill + $experience;
     }
+
+    /**
+     * check record
+     *
+     * @param $learningHistories
+     * @return Repository|Application|mixed
+     */
+    public function getPercentLearningHistories($learningHistories)
+    {
+        if ($learningHistories) {
+            foreach ($learningHistories as $value) {
+                if ($value['learning_status_id'] && $value['school_name'] && $value['enrollment_period_start'] && $value['enrollment_period_end']) {
+                    return config('percentage.user_learning_history');
+                }
+            }
+        }
+
+        return config('percentage.default');
+    }
+
 
     /**
      * @param $value
