@@ -4,6 +4,7 @@ namespace App\Http\Resources\User\Job;
 
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
+use App\Helpers\JobHelper;
 use App\Services\User\Job\JobService;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -38,8 +39,8 @@ class DetailJobPostingResource extends JsonResource
                 'type' => $this['salary_type'],
             ],
             'work_time' => [
-                'start' => $this['start_work_time'],
-                'end' => $this['end_work_time'],
+                'start' => JobHelper::makeWorkTimeFormat($this['start_work_time']),
+                'end' => JobHelper::makeWorkTimeFormat($this['end_work_time']),
                 'shifts' => $this['shifts'],
             ],
             'age' => [
