@@ -6,6 +6,7 @@ use App\Helpers\JobHelper;
 use App\Models\DesiredConditionUser;
 use App\Models\UserJobDesiredMatch;
 use App\Services\Service;
+use Illuminate\Support\Facades\DB;
 
 class UserJobDesiredMatchService extends Service
 {
@@ -15,13 +16,11 @@ class UserJobDesiredMatchService extends Service
      */
     public function getListMatch()
     {
-        $res =  UserJobDesiredMatch::query()
-            ->with('job', function ($q) {
-                return $q->orderBy('released_at', 'DESC');
-            })
-            ->where('user_id', $this->user->id)
+        $res = UserJobDesiredMatch::query()
+            ->join('job_postings', 'user_job_desired_matches.job_id', '=', 'job_postings.id')
+            ->where('user_job_desired_matches.user_id', $this->user->id)
             ->orderBy('suitability_point', 'DESC')
-            ->orderBy('released_at', 'desc')
+            ->orderBy('released_at', 'DESC')
             ->take(config('common.job_posting.recommend'))
             ->get();
 
