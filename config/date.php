@@ -67,7 +67,7 @@ return [
     ],
 
     'time_max' => '21:00:00',
-    'range_time' => 12,
+    'range_time' => env('RANGE_TIME', 12),
     'hours' => 24,
     'day_of_week_ja_fe' => [
         1 => '月',
@@ -79,4 +79,5 @@ return [
         7 => '日',
         8 => '祝日',
     ],
+    'max_year' => 10,
 ];

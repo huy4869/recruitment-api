@@ -31,17 +31,30 @@ class LearningHistoryRequest extends FormRequest
             'enrollment_period_start' => [
                 'required',
                 'date_format:' . config('date.fe_date_work_history_format'),
-                'before_or_equal:' . Carbon::now()->format(config('date.fe_date_work_history_format')),
+                'before_or_equal:' . Carbon::now()->addYears(config('date.max_year'))->format(config('date.fe_date_work_history_format')),
                 new CheckYearRule(),
             ],
             'enrollment_period_end' => [
                 'required',
                 'date_format:' . config('date.fe_date_work_history_format'),
                 'after_or_equal:enrollment_period_start',
-                'before_or_equal:' . Carbon::now()->format(config('date.fe_date_work_history_format')),
-                new CheckYearCountRule()
+                'before_or_equal:' . Carbon::now()->addYears(config('date.max_year'))->format(config('date.fe_date_work_history_format')),
             ],
             'learning_status_id' => ['required', 'integer', 'exists:m_learning_status,id'],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'enrollment_period_start.required' => trans('validation.COM.010', ['attributes' => trans('validation.attributes.enrollment_period_start')]),
+            'enrollment_period_end.required' => trans('validation.COM.010', ['attributes' => trans('validation.attributes.enrollment_period_end')]),
+            'enrollment_period_start.before_or_equal' => trans('validation.ERR.043'),
+            'enrollment_period_end.before_or_equal' => trans('validation.ERR.043'),
+            'enrollment_period_end.after_or_equal' => trans('validation.ERR.004'),
         ];
     }
 }

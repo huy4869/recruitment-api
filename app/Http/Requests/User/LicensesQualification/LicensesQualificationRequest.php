@@ -45,6 +45,7 @@ class LicensesQualificationRequest extends FormRequest
             'name.required' => trans('validation.required', ['attribute' => trans('validation.attributes.name_degree')]),
             'name.max' => trans('validation.max', ['attribute' => trans('validation.attributes.name_degree')]),
             'name.string' => trans('validation.string', ['attribute' => trans('validation.attributes.name_degree')]),
+            'new_issuance_date.before_or_equal' => trans('validation.ERR.043'),
         ];
     }
 }
