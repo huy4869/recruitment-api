@@ -20,13 +20,18 @@ class LicensesQualificationResource extends JsonResource
         $data = $this->resource;
         $year = substr($data->new_issuance_date, 0, 4);
         $month = substr($data->new_issuance_date, 4);
+        $newIssuanceDate = '';
+
+        if ($data->new_issuance_date) {
+            $newIssuanceDate = $year . '/' . $month;
+        }
 
         return [
             'id' => $data->id,
             'name' => $data->name,
             'year' => $year,
             'month' => $month,
-            'new_issuance_date' => $year . '/' . $month,
+            'new_issuance_date' => $newIssuanceDate,
             'new_issuance_date_format' => DateTimeHelper::formatNameDateHalfJa($year, $month),
         ];
     }
