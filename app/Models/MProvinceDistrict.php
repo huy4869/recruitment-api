@@ -9,6 +9,15 @@ class MProvinceDistrict extends Model
 {
     use HasFactory;
 
+    CONST HOKKAIDO = 1;
+    CONST TOHOKU = 2;
+    CONST KANTO = 3;
+    CONST CHUBU = 4;
+    CONST KINKI = 5;
+    CONST CHINA = 6;
+    CONST SHIKOKU = 7;
+    CONST KYUSHU_OKINAWA = 8;
+
     /**
      * @var string
      */
