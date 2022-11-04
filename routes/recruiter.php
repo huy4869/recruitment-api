@@ -75,6 +75,8 @@ Route::group(['as' => 'contacts.', 'prefix' => 'contacts', 'middleware' => 'recr
 Route::group(['as' => 'chats.', 'prefix' => 'chats', 'middleware' => 'recruiter'], function () {
     Route::get('/list-by-store/{store_id}', 'ChatController@getChatListOfStore');
     Route::post('/', 'ChatController@store');
+    Route::get('/stores', 'ChatController@getListStore');
+    Route::get('/detail/{store_id}', 'ChatController@getDetailChat');
 });
 
 Route::group(['as' => 'interview-schedule.', 'prefix' => 'interview-schedule', 'middleware' => 'recruiter'], function () {

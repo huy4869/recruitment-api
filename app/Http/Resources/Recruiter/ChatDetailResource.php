@@ -1,10 +1,9 @@
 <?php
 
-namespace App\Http\Resources\User;
+namespace App\Http\Resources\Recruiter;
 
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
-use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class ChatDetailResource extends JsonResource
@@ -17,11 +16,12 @@ class ChatDetailResource extends JsonResource
      */
     public function toArray($request)
     {
-        $date = DateTimeHelper::formatTimeChat($this->created_at);
+        $date = DateTimeHelper::formatTimeChat($this['created_at']);
 
         return [
-            'store_name' => $this['store']['name'],
-            'store_banner' => FileHelper::getFullUrl($this['store']['storeBanner']['url'] ?? null),
+            'first_name' => @$this['user']['first_name'],
+            'last_name' => @$this['user']['last_name'],
+            'avatar' => FileHelper::getFullUrl($this['user']['avatarBanner']['url'] ?? null),
             'send_time' => $date,
             'initial_time' => DateTimeHelper::formatDateTimeJa($this->created_at),
             'content' => $this->content,

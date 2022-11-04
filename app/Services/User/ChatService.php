@@ -7,6 +7,7 @@ use App\Models\Chat;
 use App\Models\Notification;
 use App\Models\Store;
 use App\Services\Service;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -34,7 +35,7 @@ class ChatService extends Service
      * detail message
      *
      * @param $store_id
-     * @return \Illuminate\Database\Eloquent\Collection
+     * @return array
      */
     public function getDetail($store_id)
     {
@@ -44,11 +45,24 @@ class ChatService extends Service
                 'store.storeBanner',
                 'user'
             ])
-            ->where([['store_id', $store_id], ['user_id', $user->id]])
+            ->where([
+                ['store_id', $store_id],
+                ['user_id', $user->id]
+            ])
             ->orderByDesc('created_at')
-            ->get();
+            ->get()
+            ->groupBy(function ($date) {
+                return Carbon::parse($date->created_at)->format('Y-m-d');
+            });
 
-        return $detailMessage;
+        foreach ($detailMessage as $item) {
+            $result[] = [
+                'date' => $item->first()->created_at->format('Y-m-d'),
+                'data' => $item,
+            ];
+        }
+
+        return $result;
     }
 
     /**
