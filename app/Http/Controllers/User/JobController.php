@@ -186,4 +186,19 @@ class JobController extends Controller
 
         return $this->sendSuccessResponse($total);
     }
+
+    /**
+     * Check date
+     *
+     * @param $id
+     * @return JsonResponse
+     * @throws InputException
+     */
+    public function detailJobUserApplication($id)
+    {
+        $user = $this->guard()->user();
+        $data = $this->jobService->withUser($user)->detailJobUserApplication($id);
+
+        return $this->sendSuccessResponse($data);
+    }
 }
