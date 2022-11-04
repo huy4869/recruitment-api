@@ -31,25 +31,12 @@ class UserHelper
      */
     public static function getPercentWorkHistory($workHistories)
     {
-        $percentPeriod = config('percentage.default');
-
-        foreach ($workHistories as $workHistory) {
-            if ($workHistory->period_start && $workHistory->period_end) {
-                $percentPeriod += config('percentage.complete');
-            } else {
-                $percentPeriod += config('percentage.default');
-            }
-        }
-
-        if ($percentPeriod > config('percentage.default')) {
-            $percentPeriod = config('percentage.complete');
-        }
-
         $percentStoreName = self::getPercentage($workHistories, 'store_name', config('percentage.complete'));
         $percentJobType = self::getPercentage($workHistories, 'job_type_id', config('percentage.complete'));
         $percentPositionOffice = self::getPercentage($workHistories, 'position_office_ids', config('percentage.work_history'));
         $percentBusinessContent = self::getPercentage($workHistories, 'business_content', config('percentage.work_history'));
         $percentExperienceAccumulation = self::getPercentage($workHistories, 'experience_accumulation', config('percentage.work_history'));
+        $percentPeriod = self::getPercentage($workHistories, 'period_start', config('percentage.complete'));
 
         return $percentStoreName + $percentJobType + $percentPositionOffice + $percentBusinessContent + $percentPeriod + $percentExperienceAccumulation;
     }
