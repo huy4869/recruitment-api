@@ -19,9 +19,9 @@ class DesiredConditionResource extends JsonResource
         $data = $this->resource;
         $workingDayString = '';
         $startHoursWorking = '';
-        $salaryMin = $data['salary_min'];
-        $salaryMax = $data['salary_max'];
-        $salaryTypeName = $data['salary_type']['name'];
+        $salaryMin = @$data['salary_min'];
+        $salaryMax = @$data['salary_max'];
+        $salaryTypeName = @$data['salary_type']['name'];
         $expectedSalary = sprintf('%s ~ %s%s', $salaryMin, $salaryMax, $salaryTypeName);
         $startWorkingHours = substr($data['start_working_time'], 0, 2);
         $startWorkingMinutes = substr($data['start_working_time'], 2);
