@@ -6,6 +6,44 @@ use Carbon\Carbon;
 
 class DateTimeHelper
 {
+
+    /**
+     * Get day of week
+     *
+     * @param $date
+     * @return false
+     */
+    public static function firstDayOfWeek($date)
+    {
+        if (!$date) {
+             return false;
+        }
+
+        $numberDay = Carbon::parse($date)->dayOfWeek;
+
+        if ($numberDay != 0) {
+            return false;
+        }
+
+        return $date;
+    }
+
+    /**
+     * Format day of week
+     *
+     * @param $date
+     * @return string
+     */
+    public static function formatDayOfMothFe($date)
+    {
+        $date = Carbon::parse($date);
+        $day = $date->format(config('date.month_day'));
+        $dayOfWeek = config('date.day_of_week_ja.' . $date->dayOfWeek);
+
+
+        return sprintf('%s (%s)', $day, $dayOfWeek);
+    }
+
     /**
      * Format date
      *
