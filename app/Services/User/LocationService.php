@@ -8,6 +8,8 @@ use App\Models\Application;
 use App\Models\JobPosting;
 use App\Models\MJobType;
 use App\Models\MProvince;
+use App\Models\MProvinceCity;
+use App\Models\MProvinceDistrict;
 use App\Models\UserLicensesQualification;
 use App\Services\Service;
 use Illuminate\Database\Eloquent\Builder;
@@ -27,11 +29,23 @@ class LocationService extends Service
 
         $list = [];
         $provinceAccordingJobTypes = [];
-        $applications = Application::query()->with('jobPosting', 'jobPosting.province')->get();
+        $applications = Application::query()
+            ->with('jobPosting', 'jobPosting.province', 'jobPosting.province.provinceCities')
+            ->get();
+
         $mJobTypes = MJobType::query()->get();
         $mProvinces = MProvince::query()->get()->pluck('name', 'id');
-        $defaultJobTypeIds = $mJobTypes->where('is_default', MJobType::IS_DEFAULT)->pluck('id', 'id')->toArray();
-        $mJobTypes = $mJobTypes->where('is_default', MJobType::IS_DEFAULT)->pluck('name', 'id');
+        $mProvinceCities = MProvinceCity::query()->get()->pluck('name', 'id');
+        $other = $mJobTypes->where('id', MJobType::OTHER)->first();
+        $defaultJobTypeIds = $mJobTypes
+            ->where('is_default', '=', MJobType::IS_DEFAULT)
+            ->where('id', '!=', MJobType::OTHER)
+            ->pluck('id', 'id')
+            ->toArray();
+
+        $mJobTypes = $mJobTypes
+            ->where('is_default', MJobType::IS_DEFAULT)
+            ->pluck('name', 'id');
 
         $tmpJobTypeIds = array_intersect($defaultJobTypeIds, $jobTypeIds);
 
@@ -46,18 +60,24 @@ class LocationService extends Service
         }
 
         foreach ($applications as $application) {
+            if ($application->jobPosting->province->district_id == MProvinceDistrict::HOKKAIDO) {
+                $locationId = 'city_' . $application->jobPosting->province_city_id;
+            } else {
+                $locationId = $application->jobPosting->province_id;
+            }
+
             foreach ($application->jobPosting->job_type_ids as $jobTypeId) {
-                if ($application->jobPosting->province_id) {
+                if ($locationId) {
                     if (!isset($defaultJobTypeIds[$jobTypeId])) {
-                        if (!isset($provinceAccordingJobTypes[MJobType::OTHER][$application->jobPosting->province_id])) {
-                            $provinceAccordingJobTypes[MJobType::OTHER][$application->jobPosting->province_id] = 1;
+                        if (!isset($provinceAccordingJobTypes[MJobType::OTHER][$locationId])) {
+                            $provinceAccordingJobTypes[MJobType::OTHER][$locationId] = 1;
                         } else {
-                            $provinceAccordingJobTypes[MJobType::OTHER][$application->jobPosting->province_id]++;
+                            $provinceAccordingJobTypes[MJobType::OTHER][$locationId]++;
                         }
-                    } else if (!isset($provinceAccordingJobTypes[$jobTypeId][$application->jobPosting->province_id])) {
-                        $provinceAccordingJobTypes[$jobTypeId][$application->jobPosting->province_id] = 1;
+                    } else if (!isset($provinceAccordingJobTypes[$jobTypeId][$locationId])) {
+                        $provinceAccordingJobTypes[$jobTypeId][$locationId] = 1;
                     } else {
-                        $provinceAccordingJobTypes[$jobTypeId][$application->jobPosting->province_id]++;
+                        $provinceAccordingJobTypes[$jobTypeId][$locationId]++;
                     }
                 }
             }
@@ -65,13 +85,19 @@ class LocationService extends Service
 
         foreach ($provinceAccordingJobTypes as $jobType => $provinceAccordingJobType) {
             asort($provinceAccordingJobType, SORT_DESC);
-            $provinces = array_slice($provinceAccordingJobType, 0, is_null($limit) ? self::DEFAULT_LIMIT_LOCATION : $limit, true);
-            $list[$jobType == MJobType::OTHER ? 'その他' : $mJobTypes[$jobType]] = [];
 
-            foreach ($provinces as $id => $count) {
-                $list[$jobType == MJobType::OTHER ? 'その他' : $mJobTypes[$jobType]][] = [
-                    'id' => $id,
-                    'name' => $mProvinces[$id],
+            $locations = array_slice($provinceAccordingJobType, 0, is_null($limit) ? self::DEFAULT_LIMIT_LOCATION : $limit, true);
+            $locationName = isset($mJobTypes[$jobType]) ? $mJobTypes[$jobType] : $other['name'];
+            $list[$locationName] = [];
+
+
+            foreach ($locations as $id => $count) {
+                preg_match("/^city_(\d+)$/", $id, $match);
+
+                $list[$locationName][] = [
+                    'id' => count($match) ? $match[1] : $id,
+                    'name' => count($match) ? $mProvinceCities[$match[1]] : $mProvinces[$id],
+                    'is_city' => !!count($match),
                 ];
             }
         }
