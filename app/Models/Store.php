@@ -105,4 +105,9 @@ class Store extends Model
 
         return sprintf('〒 %s %s%s%s', $this->postal_code, $provinceName, $this->city, $this->address);
     }
+
+    public function chats()
+    {
+        return $this->hasMany(Chat::class);
+    }
 }

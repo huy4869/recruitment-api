@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Recruiter;
 use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Recruiter\ChatCreateRequest;
+use App\Http\Resources\Recruiter\ChatListResourse;
 use App\Http\Resources\Recruiter\ChatResource;
 use App\Services\Recruiter\ChatService;
 use Illuminate\Http\JsonResponse;
@@ -16,6 +17,18 @@ class ChatController extends Controller
     public function __construct(ChatService $chatService)
     {
         $this->chatService = $chatService;
+    }
+
+    /**
+     * @param $store_id
+     * @return JsonResponse
+     * @throws InputException
+     */
+    public function getChatListOfStore($store_id)
+    {
+        $data = $this->chatService->withUser($this->guard()->user())->getChatListOfStore($store_id);
+
+        return $this->sendSuccessResponse(ChatListResourse::collection($data));
     }
 
     /**
