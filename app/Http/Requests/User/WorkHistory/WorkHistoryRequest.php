@@ -37,10 +37,10 @@ class WorkHistoryRequest extends FormRequest
 
         return [
             'job_types' => ['required', 'array'],
-            'job_types.id' => ['required', 'in:' . implode(',', $jobTypeIds)],
+            'job_types.id' => ['nullable', 'in:' . implode(',', $jobTypeIds)],
             'job_types.name' => ['required', 'string', 'max:' . $stringMaxLength],
             'work_types' => ['required', 'array'],
-            'work_types.id' => ['required', 'in:' . implode(',', $workTypeIds)],
+            'work_types.id' => ['nullable', 'in:' . implode(',', $workTypeIds)],
             'work_types.name' => ['required', 'string', 'max:' . $stringMaxLength],
             'position_offices' => ['required', 'array'],
             'position_offices.*.id' => ['nullable', 'integer', 'exists:m_position_offices,id'],

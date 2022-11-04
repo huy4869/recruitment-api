@@ -29,13 +29,13 @@ class ListResource extends JsonResource
         if ($periodEnd) {
             $periodFullFormat = $periodStart . ' ~ ' . $periodEnd;
         } else {
-            $periodFullFormat = $periodStart;
+            $periodFullFormat = $periodStart . ' ~ ' . '現在';
         }
 
         return [
             'id' => $data['id'],
-            'job_type_name' => @$data['job_type']['name'],
-            'work_type_name' => @$data['work_type']['name'],
+            'job_type_name' => $data['job_type']['name'],
+            'work_type_name' => $data['work_type']['name'],
             'position_offices' => $data['position_offices'],
             'store_name' => $data['store_name'],
             'company_name' => $data['company_name'],
