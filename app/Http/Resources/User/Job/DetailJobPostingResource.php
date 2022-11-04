@@ -40,6 +40,7 @@ class DetailJobPostingResource extends JsonResource
             'work_time' => [
                 'start' => $this['start_work_time'],
                 'end' => $this['end_work_time'],
+                'shifts' => $this['shifts'],
             ],
             'age' => [
                 'min' => $this['age_min'],
