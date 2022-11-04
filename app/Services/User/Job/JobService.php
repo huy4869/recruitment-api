@@ -298,6 +298,7 @@ class JobService extends Service
                 'province.provinceDistrict',
                 'salaryType',
             ])
+            ->orderBy('released_at', 'desc')
             ->take(config('common.job_posting.newest_amount'))
             ->get();
 

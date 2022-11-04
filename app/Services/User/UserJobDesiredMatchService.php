@@ -21,6 +21,7 @@ class UserJobDesiredMatchService extends Service
             })
             ->where('user_id', $this->user->id)
             ->orderBy('suitability_point', 'DESC')
+            ->orderBy('released_at', 'desc')
             ->take(config('common.job_posting.recommend'))
             ->get();
 
