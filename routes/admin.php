@@ -37,3 +37,10 @@ Route::group(['as' => 'forgot-password.', 'prefix' => 'forgot-password'], functi
     Route::post('/check-token', 'PasswordResetController@checkToken')->name('check-token');
     Route::post('/reset-password', 'PasswordResetController@resetPassword')->name('reset.password');
 });
+
+Route::group(['as' => 'stores.', 'prefix' => 'stores', 'middleware' => 'admin'], function () {
+    Route::get('/', 'StoreController@list');
+    Route::get('/{id}', 'StoreController@detail');
+    Route::post('/', 'StoreController@store');
+    Route::post('/update/{id}', 'StoreController@update');
+});
