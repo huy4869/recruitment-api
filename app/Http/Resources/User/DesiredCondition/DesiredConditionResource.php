@@ -21,13 +21,12 @@ class DesiredConditionResource extends JsonResource
         $startHoursWorking = '';
         $salaryMin = @$data['salary_min'];
         $salaryMax = @$data['salary_max'];
-        $salaryTypeName = @$data['salary_type']['name'];
-        $expectedSalary = sprintf('%s ~ %s%s', $salaryMin, $salaryMax, $salaryTypeName);
         $startWorkingHours = substr($data['start_working_time'], 0, 2);
         $startWorkingMinutes = substr($data['start_working_time'], 2);
         $endWorkingHours = substr($data['end_working_time'], 0, 2);
         $endWorkingMinutes = substr($data['end_working_time'], 2);
         $salaryTypeName = @$data['salary_type']['name'];
+
         if ($salaryMin && $salaryMax) {
             $expectedSalary = sprintf('%s ~ %s%s', $salaryMin, $salaryMax, $salaryTypeName);
         }
@@ -38,16 +37,10 @@ class DesiredConditionResource extends JsonResource
             $startHoursWorking = $startWorkingTimes . ' ~ ' . $endWorkingTimes;
         }
 
-        if ($data['province']['name'] == $data['province']['province_district']['name']) {
-            $province = $data['province']['name'];
-        } else {
-            $province = $data['province']['province_district']['name'] . ', ' . $data['province']['name'];
-        }
-
         return [
             'id' => $data['id'],
             'province_id' => $data['province_id'],
-            'province' => $province,
+            'province' => @$data['province']['name'],
             'salary_type_id' => $data['salary_type_id'],
             'salary_min' => $salaryMin,
             'salary_max' => $salaryMax,
