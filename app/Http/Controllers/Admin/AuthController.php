@@ -118,7 +118,11 @@ class AuthController extends BaseController
         $inputs = $request->only(['current_password', 'password']);
         $data = AuthService::getInstance()->withUser($currentUser)->changePassword($inputs);
 
-        return $this->sendSuccessResponse($data, trans('auth.logout_success'));
+        if ($data) {
+            return $this->sendSuccessResponse([], trans('validation.INF.001'));
+        }
+
+        throw new InputException(trans('validation.ERR.010'));
     }
 
     /**

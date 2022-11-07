@@ -26,7 +26,38 @@ class ChangePasswordRequest extends FormRequest
     {
         return [
             'current_password' => 'required',
-            'password' => ['required', 'confirmed', new Password()],
+            'password' => [
+                'required',
+                'confirmed',
+                new Password(),
+                'min:' . config('validate.password_min_length'),
+                'max:' . config('validate.password_max_length'),
+            ],
+            'password_confirmation' => 'required',
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'password_confirmation.required' => trans('validation.COM.001'),
+            'password.min' => trans('validation.COM.005'),
+            'password.max' => trans('validation.COM.005'),
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function attributes()
+    {
+        return [
+            'current_password' => '現在のパスワード',
+            'password' => '新しいパスワード',
+            'password_confirmation' => '新しいパスワード確認',
         ];
     }
 }
