@@ -42,7 +42,8 @@ class SendMailRequest extends FormRequest
     public function messages()
     {
         return [
-            'email.max' => trans('validation.custom.email.max'),
+            'email.max' => trans('validation.COM.003'),
+            'email.exists' => trans('validation.COM.006'),
         ];
     }
 }
