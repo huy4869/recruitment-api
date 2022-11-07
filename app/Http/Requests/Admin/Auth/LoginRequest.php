@@ -49,9 +49,10 @@ class LoginRequest extends FormRequest
     public function messages()
     {
         return [
-            'email.max' => trans('validation.custom.email.max'),
-            'password.min' => trans('validation.custom.password.min'),
-            'password.max' => trans('validation.custom.password.max'),
+            'email.max' => trans('validation.COM.003'),
+            'email.exists' => trans('validation.COM.006'),
+            'password.min' => trans('validation.COM.005'),
+            'password.max' => trans('validation.COM.005'),
         ];
     }
 }
