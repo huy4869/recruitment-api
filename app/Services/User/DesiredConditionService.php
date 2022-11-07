@@ -35,16 +35,16 @@ class DesiredConditionService extends Service
     public function detail()
     {
         $userWorkHistory = DesiredConditionUser::query()
-            ->with(['province', 'province.provinceDistrict', 'salaryType'])
+            ->with(['province', 'salaryType'])
             ->where('user_id', '=', $this->user->id)
             ->first()
             ->toArray();
 
         if ($userWorkHistory) {
-            $userWorkHistory['work_type_string'] = $this->getDataStringObject($userWorkHistory['work_type_ids'], MWorkType::query());
-            $userWorkHistory['job_type_string'] = $this->getDataStringObject($userWorkHistory['job_type_ids'], MJobType::query());
-            $userWorkHistory['job_experience_strings'] = $this->getDataStringObject($userWorkHistory['job_experience_ids'], MJobExperience::query());
-            $userWorkHistory['job_feature_string'] = $this->getDataStringObject($userWorkHistory['job_feature_ids'], MJobFeature::query());
+            $userWorkHistory['work_type_string'] = $this->getDataStringObject($userWorkHistory['work_type_ids'] ?? [], MWorkType::query());
+            $userWorkHistory['job_type_string'] = $this->getDataStringObject($userWorkHistory['job_type_ids'] ?? [], MJobType::query());
+            $userWorkHistory['job_experience_strings'] = $this->getDataStringObject($userWorkHistory['job_experience_ids'] ?? [], MJobExperience::query());
+            $userWorkHistory['job_feature_string'] = $this->getDataStringObject($userWorkHistory['job_feature_ids'] ?? [], MJobFeature::query());
 
             return $userWorkHistory;
         }
