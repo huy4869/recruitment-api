@@ -47,32 +47,29 @@ class JobService extends Service
                                 });
                         }
                     });
-            })
-            ->with([
-                'applications' => function ($query) use ($user) {
-                    if (!$user) {
-                         return $query;
-                    }
+            })->with([
+                'store',
+                'bannerImage',
+                'detailImages',
+                'province',
+                'province.provinceDistrict',
+                'salaryType',
+            ]);
 
+        if ($user) {
+            $job = $job->with([
+                'applications' => function ($query) use ($user) {
                     return $query->where('user_id', $user->id);
                 },
                 'applications.interviews'
-            ])
-            ->first();
+            ]);
+        }
+
+        $job = $job->first();
 
         if (!$job) {
             throw new InputException(trans('response.not_found'));
         }
-
-        $job->with([
-            'store',
-            'bannerImage',
-            'detailImages',
-            'province',
-            'province.provinceDistrict',
-            'salaryType',
-        ])
-        ->get();
 
         $masterData = JobHelper::getJobMasterData();
         $userAction = JobHelper::getUserActionJob($user);
