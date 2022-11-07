@@ -3,6 +3,8 @@
 namespace App\Services\Recruiter;
 
 use App\Exceptions\InputException;
+use App\Helpers\DateTimeHelper;
+use App\Helpers\FileHelper;
 use App\Models\Chat;
 use App\Models\Notification;
 use App\Models\Store;
@@ -112,7 +114,7 @@ class ChatService extends Service
     {
         $rec = $this->user->id;
 
-        $chats = Chat::query()->with('user')
+        $detailChats = Chat::query()->with('user')
             ->whereHas('store', function ($q) use ($store_id, $rec) {
                 $q->where([
                     ['id', $store_id],
@@ -129,11 +131,24 @@ class ChatService extends Service
                 return Carbon::parse($date->created_at)->format('Y-m-d');
             });
 
-        foreach ($chats as $item) {
-            $result[] = [
-                'date' => $item->first()->created_at->format('Y-m-d'),
-                'data' => $item,
-            ];
+        $result = [];
+
+        foreach ($detailChats as $key => $items) {
+            $data = [];
+
+            foreach ($items as $item) {
+                $data[] = [
+                    'store_name' => $item['store']['name'],
+                    'store_banner' => FileHelper::getFullUrl($item['store']['storeBanner']['url'] ?? null),
+                    'send_time' => DateTimeHelper::formatTimeChat($item['created_at']),
+                    'initial_time' => DateTimeHelper::formatDateTimeJa($item['created_at']),
+                    'content' => $item['content'],
+                    'is_from_user' => $item['is_from_user'],
+                    'be_readed' => $item['be_readed'],
+                ];
+            }
+
+            $result[Carbon::parse($key)->format(config('date.month_day'))] = $data;
         }
 
         return $result;

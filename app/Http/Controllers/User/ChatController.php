@@ -45,7 +45,7 @@ class ChatController extends BaseController
 
         $chatDetails = $this->chatService->withUser($this->guard()->user())->getDetail($store_id);
 
-        return $this->sendSuccessResponse(DateChatResources::collection($chatDetails));
+        return $this->sendSuccessResponse($chatDetails);
     }
 
     /**
