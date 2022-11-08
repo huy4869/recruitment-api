@@ -19,6 +19,7 @@ Route::get('/master-data', 'MasterDataController@show')->name('masterData')->mid
 Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {
     Route::post('/login', 'AuthController@login')->name('login');
     Route::post('/logout', 'AuthController@logout')->name('logout');
+    Route::get('/me', 'AuthController@me')->name('me')->middleware('recruiter');
     Route::post('/register', 'AuthController@register')->name('register');
     Route::post('/change-password', 'AuthController@changePassword')->name('changePassword')->middleware('recruiter');
 });
