@@ -8,6 +8,7 @@ use App\Http\Requests\Recruiter\Auth\RegisterRequest;
 use App\Helpers\ResponseHelper;
 use App\Http\Requests\Recruiter\Auth\LoginRequest;
 use App\Http\Requests\Recruiter\ChangePasswordRequest;
+use App\Http\Resources\Recruiter\MeResource;
 use App\Services\Recruiter\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Str;
@@ -103,6 +104,17 @@ class AuthController extends BaseController
         $currentUser->currentAccessToken()->delete();
 
         return $this->sendSuccessResponse(null, trans('auth.logout_success'));
+    }
+
+    /**
+     * Current rec login
+     * @return JsonResponse
+     */
+    public function me()
+    {
+        $data = $this->guard()->user();
+
+        return $this->sendSuccessResponse(new MeResource($data));
     }
 
     /**
