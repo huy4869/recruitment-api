@@ -7,6 +7,7 @@ use App\Helpers\DateTimeHelper;
 use App\Models\Application;
 use App\Models\MInterviewApproach;
 use App\Services\Service;
+use App\Services\User\Job\JobService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
@@ -342,7 +343,7 @@ class ApplicationService extends Service
 
         $month = Carbon::parse($data['date'])->firstOfMonth()->format('Y-m-d');
         $recruiterOffTimes = $application->store->owner->recruiterOffTimes->off_times ?? [];
-        $recruiterOffTimes = JobPostingService::resultRecruiterOffTimes([$month], $recruiterOffTimes);
+        $recruiterOffTimes = JobService::resultRecruiterOffTimes([$month], $recruiterOffTimes);
         $dataHours = preg_grep('/' . $date . '/i', $recruiterOffTimes);
 
         foreach ($dataHours as $dataHour) {

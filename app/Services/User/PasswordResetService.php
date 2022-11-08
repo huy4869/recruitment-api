@@ -66,7 +66,7 @@ class PasswordResetService extends Service
     {
         $timeCheck = config('password_reset.time_reset_pass');
         $date = date('Y-m-d H:i:s', strtotime('-' . $timeCheck .' minutes', time()));
-        $passwordReset = PasswordReset::query()->where('token', $token)->where('created_at', '>=', $date)->first();
+        $passwordReset = PasswordReset::query()->where('token', $token)->where('updated_at', '>=', $date)->first();
 
         return !!$passwordReset;
     }
@@ -82,7 +82,7 @@ class PasswordResetService extends Service
     {
         $timeCheck = config('password_reset.time_reset_pass');
         $date = date('Y-m-d H:i:s', strtotime('-' . $timeCheck .' minutes', time()));
-        $passwordReset = PasswordReset::query()->where('token', $data['token'])->where('created_at', '>=', $date)->first();
+        $passwordReset = PasswordReset::query()->where('token', $data['token'])->where('updated_at', '>=', $date)->first();
 
         if (!$passwordReset) {
             throw new InputException(trans('response.invalid_token'));
