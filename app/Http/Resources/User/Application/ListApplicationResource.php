@@ -23,6 +23,15 @@ class ListApplicationResource extends JsonResource
         $data = $this->resource;
         $interviewApproaches = ApplicationService::interviewApproach();
         $isDirectInterview = $data->interview_approaches['id'] == Application::STATUS_INTERVIEW_DIRECT;
+
+        if ($isDirectInterview) {
+            $dataApproach = @$data->store->address;
+        } elseif ($data->interview_approaches['id'] == Application::STATUS_INTERVIEW_ONLINE) {
+            $dataApproach = '2営業日以内にZoomURLをメールにて送付いたします';
+        } else {
+            $dataApproach = @$data->store->owner->tel;
+        }
+
         $applyOrInterview = $data->interview_status_id != Application::STATUS_CANCELED;
         $allowEdit =  $data->interview_status_id == Application::STATUS_APPLYING;
         $allowCancel =  !in_array($data->interview_status_id, [Application::STATUS_ACCEPTED, Application::STATUS_CANCELED, Application::STATUS_REJECTED]);
@@ -36,7 +45,7 @@ class ListApplicationResource extends JsonResource
             'store_name' => $data->store->name,
             'interview_status_id' => $data->interview_status_id,
             'interview_status_name' => @$data->interviews->name,
-            'interview_date' => DateTimeHelper::formatDateDayOfWeekJa($data['date']) . ' ' . $data->hours,
+            'interview_date' => DateTimeHelper::formatDateDayOfWeekJa($data['date']) . $data->hours,
             'apply_or_interview' => $applyOrInterview,
             'allow_edit' => $allowEdit,
             'allow_cancel' => $allowCancel,
@@ -44,7 +53,7 @@ class ListApplicationResource extends JsonResource
                 'id' => $data->interview_approaches['id'],
                 'method' => $interviewApproaches[$data->interview_approaches['id']],
                 'approach_label' => config('application.interview_approach_label.' . $data->interview_approaches['id']),
-                'approach' => $data->interview_approaches['approach'],
+                'approach' => $dataApproach,
                 'is_direct_interview' => $isDirectInterview,
             ],
             'created_at' => DateTimeHelper::formatDateDayOfWeekTimeJa($data['created_at']),
