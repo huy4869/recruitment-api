@@ -208,7 +208,7 @@ class DateTimeHelper
         $dayOfWeek = config('date.day_of_week_ja.' . $dateTime->dayOfWeek);
         $time = $dateTime->format('H:i');
 
-        return sprintf('%s (%s) %s', $date, $dayOfWeek, $time);
+        return sprintf('%s（%s）%s', $date, $dayOfWeek, $time);
     }
 
     /**
@@ -225,7 +225,7 @@ class DateTimeHelper
         $date = $dateTime->format(config('date.fe_date_ja_format'));
         $dayOfWeek = config('date.day_of_week_ja.' . $dateTime->dayOfWeek);
 
-        return sprintf('%s (%s)', $date, $dayOfWeek);
+        return sprintf('%s（%s）', $date, $dayOfWeek);
     }
 
     /**

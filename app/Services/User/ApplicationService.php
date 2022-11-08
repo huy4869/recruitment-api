@@ -23,9 +23,9 @@ class ApplicationService extends Service
     public function list()
     {
         return  Application::query()
-            ->with(['jobPosting', 'store', 'interviews', 'jobPosting.bannerImage'])
+            ->with(['jobPosting', 'store', 'store.owner', 'interviews', 'jobPosting.bannerImage'])
             ->where('user_id', $this->user->id)
-            ->orderBy('date', 'DESC')
+            ->orderBy('created_at', 'DESC')
             ->get();
     }
 
