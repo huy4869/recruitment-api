@@ -374,5 +374,6 @@ return [
         'city' => '番地',
         'manager_name' => '店長',
         'founded_year' => '設立',
+        'user_id' => 'リクルーター',
     ],
 ];

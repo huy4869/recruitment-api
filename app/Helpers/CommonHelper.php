@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Models\MJobType;
 use Illuminate\Contracts\Translation\Translator;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -26,5 +27,12 @@ class CommonHelper
         }
 
         return $result;
+    }
+
+    public static function getMasterDataJobPostingTypes()
+    {
+        $jobTypes = MJobType::all();
+
+        return self::getMasterDataIdName($jobTypes);
     }
 }
