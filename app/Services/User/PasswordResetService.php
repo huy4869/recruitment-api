@@ -27,7 +27,7 @@ class PasswordResetService extends Service
         $user = User::query()->where('email', $email)->roleUser()->first();
 
         if (!$user) {
-            throw new InputException(trans('validation.exists', [
+            throw new InputException(trans('validation.COM.006', [
                 'attribute' => trans('validation.attributes.email')
             ]));
         }
