@@ -3,10 +3,10 @@
 namespace App\Services\Admin\User;
 
 use App\Exceptions\InputException;
-use App\Helpers\DateTimeHelper;
-use App\Helpers\FileHelper;
 use App\Helpers\JobHelper;
 use App\Helpers\UserHelper;
+use App\Helpers\DateTimeHelper;
+use App\Helpers\FileHelper;
 use App\Jobs\Admin\User\JobStore;
 use App\Jobs\Admin\User\JobUpdate;
 use App\Models\MRole;
@@ -426,5 +426,41 @@ class UserService extends Service
             ->roleUser()
             ->where('id', $userId)
             ->update($data);
+    }
+
+    /**
+     * Get user info for list user
+     *
+     * @param $userList
+     * @return array
+     */
+    public static function appendMasterDataForUser($userList)
+    {
+        $jobMasterData = UserHelper::getJobMasterData();
+        $userArr = [];
+
+        foreach ($userList as $user) {
+            $userDesiredCondition = $user->desiredConditionUser;
+            $user->job_types = JobHelper::getTypeName(
+                @$userDesiredCondition->job_type_ids,
+                $jobMasterData['masterJobTypes']
+            );
+            $user->job_experiences = JobHelper::getTypeName(
+                @$userDesiredCondition->job_experience_ids,
+                $jobMasterData['masterJobExperiences']
+            );
+            $user->job_features = JobHelper::getFeatureCategoryName(
+                @$userDesiredCondition->job_feature_ids,
+                $jobMasterData['masterJobFeatures']
+            );
+            $user->work_types = JobHelper::getTypeName(
+                @$userDesiredCondition->work_type_ids,
+                $jobMasterData['masterWorkTypes']
+            );
+
+            $userArr[$user->id] = $user;
+        }//end foreach
+
+        return $userArr;
     }
 }

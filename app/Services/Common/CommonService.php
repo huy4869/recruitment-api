@@ -4,14 +4,17 @@ namespace App\Services\Common;
 
 use App\Helpers\CommonHelper;
 use App\Models\MJobFeature;
+use App\Models\MJobType;
 use App\Models\MProvince;
 use App\Models\MProvinceCity;
 use App\Models\MStation;
+use App\Models\MWorkType;
 use App\Services\Service;
 use Illuminate\Support\Facades\DB;
 
 class CommonService extends Service
 {
+    const DEFAULT = 0;
     /**
      * @return array
      */
@@ -54,5 +57,16 @@ class CommonService extends Service
         }
 
         return CommonHelper::getMasterDataIdName($masterData);
+    }
+
+    /**
+     * get other job type
+     *
+     * @return array
+     */
+    public static function getOtherTypeIds($table)
+    {
+        return DB::table($table)->where('is_default', self::DEFAULT)
+            ->pluck('id')->toArray();
     }
 }

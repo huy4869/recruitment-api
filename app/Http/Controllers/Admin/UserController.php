@@ -12,6 +12,9 @@ use App\Http\Requests\Admin\User\StoreRequest;
 use App\Http\Requests\Admin\User\UpdateRequest;
 use App\Http\Resources\Admin\User\DetailUserResource;
 use App\Http\Resources\Admin\User\UserCollection;
+use App\Http\Resources\Admin\User\UserDetailResource;
+use App\Http\Resources\Admin\UserInfoCollection;
+use App\Services\Admin\User\UserInfoTableService;
 use App\Services\Admin\User\UserService;
 use App\Services\Admin\User\UserTableService;
 use Exception;
@@ -172,5 +175,23 @@ class UserController extends Controller
         }
 
         throw new InputException(trans('validation.ERR.007'));
+    }
+
+    /**
+     * List user
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function listInfoUser(Request $request)
+    {
+        $data = UserInfoTableService::getInstance()->data(
+            null,
+            null,
+            $request->get('filters'),
+            $request->get('per_page'),
+        );
+
+        return $this->sendSuccessResponse(new UserInfoCollection($data));
     }
 }

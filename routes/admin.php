@@ -29,12 +29,13 @@ Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {
 Route::group(['as' => 'users.', 'prefix' => 'users', 'middleware' => 'admin'], function () {
     Route::get('/', 'UserController@list')->name('list');
     Route::delete('/delete/{user}', 'UserController@destroy')->name('destroy');
+    Route::get('/list-user', 'UserController@listInfoUser');
+    Route::get('/{id}', 'UserController@detail')->name('detail');
     Route::post('/update-pr/{user_id}', 'UserController@updatePr');
     Route::post('/update-user/{id}', 'UserController@updateUser');
     Route::get('/{id}/detail', 'UserController@detailUser');
-    Route::get('/{user}', 'UserController@detail')->name('detail');
     Route::post('/', 'UserController@store')->name('store');
-    Route::post('/{user}', 'UserController@update')->name('update');
+    Route::post('/{id}', 'UserController@update')->name('update');
 });
 
 Route::group(['as' => 'forgot-password.', 'prefix' => 'forgot-password'], function () {
