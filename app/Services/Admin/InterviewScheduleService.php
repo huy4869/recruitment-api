@@ -1,14 +1,16 @@
 <?php
 
-namespace App\Services\Recruiter;
+namespace App\Services\Admin;
 
+use App\Exceptions\InputException;
 use App\Helpers\DateTimeHelper;
 use App\Models\Application;
+use App\Models\MInterviewApproach;
 use App\Models\RecruiterOffTime;
 use App\Models\Store;
+use App\Models\User;
 use App\Services\Service;
 use App\Services\User\Job\JobService;
-use App\Services\User\JobPostingService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -21,16 +23,16 @@ class InterviewScheduleService extends Service
     public const IS_HAS_INTERVIEW = 1;
 
     /**
-     * @param $date
+     * @param $data
      * @return array
      */
-    public function getInterviewSchedule($date)
+    public function getInterviewSchedule($data)
     {
-        $date = DateTimeHelper::firstDayOfWeek($date);
+        $date = DateTimeHelper::firstDayOfWeek($data['start_date']);
 
         if ($date) {
-            $recruiterOffTimes = $this->getRecruiterOffTimes($date);
-            $applications = $this->getApplicationOffTimes($date);
+            $recruiterOffTimes = $this->getRecruiterOffTimes($date, $data['rec_id']);
+            $applications = $this->getApplicationOffTimes($date, $data['rec_id']);
 
             return $this->resultDate($date, $recruiterOffTimes, $applications);
         }
@@ -40,9 +42,10 @@ class InterviewScheduleService extends Service
 
     /**
      * @param $date
+     * @param $recId
      * @return array
      */
-    public function getApplicationOffTimes($date)
+    public function getApplicationOffTimes($date, $recId)
     {
         $data = [];
         $startDate = now()->format(config('date.format_date'));
@@ -53,7 +56,7 @@ class InterviewScheduleService extends Service
                     ->whereDate('date', '<=', $endDate)
                     ->whereIn('interview_status_id', [Application::STATUS_APPLYING, Application::STATUS_WAITING_INTERVIEW]);
             }, 'applications.applicationUser'])
-            ->where('user_id', '=', $this->user->id)->get();
+            ->where('user_id', '=', $recId)->get();
         $applications = collect();
 
         foreach ($stores as $store) {
@@ -69,7 +72,11 @@ class InterviewScheduleService extends Service
                 $nameUserApplication = @$application->applicationUser->email;
             }
 
-            $data[$applicationDate][$application->hours] = $nameUserApplication;
+            $data[$applicationDate][$application->hours] = [
+                'name' => $nameUserApplication,
+                'application_id' => $application->id,
+                'user_id' => $application->user_id,
+            ];
         }
 
         return $data;
@@ -111,13 +118,19 @@ class InterviewScheduleService extends Service
 
     /**
      * @param $date
+     * @param $recId
      * @return mixed
      */
-    public function getRecruiterOffTimes($date)
+    public function getRecruiterOffTimes($date, $recId)
     {
         $startMonthOfWeek = Carbon::parse($date)->firstOfMonth()->format('Y-m-d');
         $endMonthOfWeek = Carbon::parse($date)->addDays(config('date.day_of_week'))->firstOfMonth()->format('Y-m-d');
-        $recruiterOffTimes = RecruiterOffTime::query()->where('user_id', '=', $this->user->id)->first()->off_times ?? [];
+        $user = User::query()
+            ->with('recruiterOffTimes')
+            ->where('id', '=', $recId)
+            ->first();
+
+        $recruiterOffTimes = @$user->recruiterOffTimes->off_times ?? [];
 
         return JobService::resultRecruiterOffTimes([$startMonthOfWeek, $endMonthOfWeek], $recruiterOffTimes);
     }
@@ -143,6 +156,8 @@ class InterviewScheduleService extends Service
             $isNotGood = InterviewScheduleService::RESULT;
             $isHasInterview = InterviewScheduleService::RESULT;
             $applierName = '';
+            $applierId = '';
+            $applierUserId = '';
 
             if (isset($recruiterOffTimes[$date . ' ' . $time])) {
                 $isNotGood = !$isNotGood;
@@ -150,7 +165,9 @@ class InterviewScheduleService extends Service
             }
 
             if (isset($applications[$time])) {
-                $applierName = $applications[$time];
+                $applierName = $applications[$time]['name'];
+                $applierId = $applications[$time]['application_id'];
+                $applierUserId = $applications[$time]['user_id'];
                 $isHasInterview = !$isHasInterview;
                 $isNotGood = InterviewScheduleService::RESULT;
                 $isGood = InterviewScheduleService::RESULT;
@@ -162,6 +179,8 @@ class InterviewScheduleService extends Service
                 $isNotGood = InterviewScheduleService::RESULT;
                 $isHasInterview = InterviewScheduleService::RESULT;
                 $applierName = '';
+                $applierId = '';
+                $applierUserId = '';
             }
 
             $data[] = [
@@ -171,6 +190,8 @@ class InterviewScheduleService extends Service
                 'is_not_good' => $isNotGood,
                 'is_has_interview' => $isHasInterview,
                 'applier_name' => $applierName,
+                'applier_id' => $applierId,
+                'applier_user_id' => $applierUserId,
             ];
         }//end foreach
 
@@ -192,6 +213,8 @@ class InterviewScheduleService extends Service
                 'is_not_good' => InterviewScheduleService::RESULT,
                 'is_has_interview' => InterviewScheduleService::RESULT,
                 'applier_name' => '',
+                'applier_id' => '',
+                'applier_user_id' => '',
             ];
         }
 
@@ -199,13 +222,158 @@ class InterviewScheduleService extends Service
     }
 
     /**
-     * Update or create or delete recruiter off time
+     * @return array
+     */
+    public static function getRecIds()
+    {
+        return User::query()->roleRecruiter()->get()->pluck('id')->toArray();
+    }
+
+    /**
+     * Admin update application
      *
+     * @param $applicationId
+     * @param $data
+     * @return int
+     * @throws InputException
+     * @throws ValidationException
+     */
+    public function updateApplication($applicationId, $data)
+    {
+        $userId = $data['user_id'];
+
+        if (!in_array($data['hours'], config('date.time'))) {
+            throw new InputException(trans('response.ERR.999'));
+        }
+
+        $application = Application::query()
+            ->with(['store.owner.recruiterOffTimes', 'store.owner.stores.applications'])
+            ->where('user_id', '=', $userId)
+            ->where('id', '=', $applicationId)
+            ->first();
+
+        if (!$application) {
+            throw new InputException(trans('response.not_found'));
+        }
+
+        $date = $data['date'];
+        $hours = $data['hours'];
+        $now = now()->format('Y-m-d');
+        $dateApplication = explode(' ', $application->date)[0];
+        $hoursApplication = $application->hours;
+
+        if ($application->interview_status_id != Application::STATUS_APPLYING) {
+            throw new InputException(trans('response.not_found'));
+        }
+
+        if (($date == $now && $this->checkTimeUpdate($hours))
+            || ($date == $dateApplication && $date < $now && $hours != $hoursApplication)
+            || ($date != $dateApplication && $date < $now)) {
+            throw ValidationException::withMessages([
+                'date' => trans('validation.ERR.037')
+            ]);
+        }
+
+        $data = $this->saveMakeData($data);
+
+        if ($date == $dateApplication && $hours == $hoursApplication) {
+            return $application->update($data);
+        }
+
+        $applications = Application::query()
+            ->whereIn('interview_status_id', [Application::STATUS_APPLYING, Application::STATUS_WAITING_INTERVIEW])
+            ->where('id', '!=', $applicationId)
+            ->whereDate('date', $date)
+            ->where('hours', '=', $hours)
+            ->get()
+            ->pluck('user_id', 'job_posting_id')
+            ->toArray();
+
+        if (in_array($userId, $applications) || in_array($application->job_posting_id, array_keys($applications))) {
+            throw new InputException(trans('validation.ERR.036'));
+        }
+
+        $stores = $application->store->owner->stores;
+        $recruiterApplications = collect();
+
+        foreach ($stores as $store) {
+            $recruiterApplications = $recruiterApplications->merge($store->applications);
+        }
+
+        foreach ($recruiterApplications as $recruiterApplication) {
+            if (explode(' ', $recruiterApplication->date)[0] == $date
+                && $recruiterApplication->hours == $hours
+                && $recruiterApplication->id != $application->job_posting_id
+                && in_array($recruiterApplication->interview_status_id, [
+                    Application::STATUS_APPLYING,
+                    Application::STATUS_WAITING_INTERVIEW
+                ])) {
+                throw new InputException(trans('validation.ERR.036'));
+            }
+        }
+
+        $month = Carbon::parse($data['date'])->firstOfMonth()->format('Y-m-d');
+        $recruiterOffTimes = $application->store->owner->recruiterOffTimes->off_times ?? [];
+        $recruiterOffTimes = JobService::resultRecruiterOffTimes([$month], $recruiterOffTimes);
+        $dataHours = preg_grep('/' . $date . '/i', $recruiterOffTimes);
+
+        if (isset($dataHours[$date . ' ' . $hours])) {
+            throw new InputException(trans('validation.ERR.036'));
+        }
+
+        return $application->update($data);
+    }
+
+    /**
+     * @param $hours
+     * @return false
+     */
+    public function checkTimeUpdate($hours)
+    {
+        $checkTime = array_search(DateTimeHelper::getTime(), config('date.time'));
+
+        foreach (config('date.time') as $key => $time) {
+            if (($key < $checkTime && $hours == $time) || !$checkTime) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Save make data
+     *
+     * @param $data
+     * @return array
+     * @throws InputException
+     */
+    public function saveMakeData($data)
+    {
+        $interviewApproaches = MInterviewApproach::query()->where('id', $data['interview_approaches_id'])->first();
+
+        if (!$interviewApproaches) {
+            throw new InputException('response.not_found');
+        }
+
+        return [
+            'interview_approach_id' => $interviewApproaches->id,
+            'date' => $data['date'],
+            'hours' => $data['hours'],
+            'note' => $data['note'],
+            'update_times' => now(),
+        ];
+    }
+
+    /**
+     * Admin update or create or delete recruiter off time
+     *
+     * @param $recId
      * @param $data
      * @return bool|Builder|Model|int
      * @throws ValidationException
      */
-    public function updateOrCreateInterviewSchedule($data)
+    public function updateOrCreateInterviewSchedule($recId, $data)
     {
         $date = $data['date'];
         $hours = $data['hours'];
@@ -229,7 +397,7 @@ class InterviewScheduleService extends Service
                     ->where('hours', '=', $hours)
                     ->whereIn('interview_status_id', [Application::STATUS_APPLYING, Application::STATUS_WAITING_INTERVIEW]);
             }, 'applications.user'])
-            ->where('user_id', '=', $this->user->id)->get();
+            ->where('user_id', '=', $recId)->get();
 
         foreach ($stores as $store) {
             if ($store->applications->count()) {
@@ -241,11 +409,11 @@ class InterviewScheduleService extends Service
 
         $dateTime = $date . ' ' . $hours;
         $firstMonth = Carbon::parse($date)->firstOfMonth()->format('Y-m-d');
-        $recruiterOffTime = RecruiterOffTime::query()->where('user_id', '=', $this->user->id)->first();
+        $recruiterOffTime = RecruiterOffTime::query()->where('user_id', '=', $recId)->first();
 
         if (!$recruiterOffTime) {
             return RecruiterOffTime::query()->create([
-                'user_id' => $this->user->id,
+                'user_id' => $recId,
                 'off_times' => [
                     $firstMonth => [
                         $dateTime => $dateTime

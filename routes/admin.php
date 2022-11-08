@@ -54,3 +54,9 @@ Route::group(['as' => 'applications.', 'prefix' => 'applications', 'middleware' 
     Route::get('/{id}', 'ApplicationController@detail')->name('detail');
     Route::post('/{id}', 'ApplicationController@update')->name('update');
 });
+
+Route::group(['as' => 'interview-schedule.', 'prefix' => 'interview-schedule', 'middleware' => 'admin'], function () {
+    Route::get('/', 'InterviewScheduleController@getInterviewSchedule')->name('getInterviewSchedule');
+    Route::post('/application/{id}', 'InterviewScheduleController@updateApplication')->name('updateApplication');
+    Route::post('/{user_id}', 'InterviewScheduleController@updateInterviewSchedule')->name('updateInterviewSchedule');
+});
