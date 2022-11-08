@@ -77,6 +77,7 @@ class User extends Authenticatable
         'founded_year',
         'capital_stock',
         'noteworthy',
+        'last_login_at'
     ];
 
     /**
