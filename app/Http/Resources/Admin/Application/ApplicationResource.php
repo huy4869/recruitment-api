@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Resources\Recruiter\Application;
+namespace App\Http\Resources\Admin\Application;
 
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;

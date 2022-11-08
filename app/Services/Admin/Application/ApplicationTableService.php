@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Recruiter\Application;
+namespace App\Services\Admin\Application;
 
 use App\Models\Application;
 use App\Services\TableService;
@@ -113,16 +113,6 @@ class ApplicationTableService extends TableService
      */
     public function makeNewQuery()
     {
-        $recruiter = $this->user;
-        $recruiterStores = $recruiter->stores()->with(['jobs'])->get();
-        $jobIds = [];
-
-        foreach ($recruiterStores as $store) {
-            foreach ($store->jobs as $job) {
-                $jobIds[] = $job->id;
-            }
-        }
-
         return Application::query()
             ->selectRaw($this->getSelectRaw())
             ->leftJoin('application_users', 'applications.id', '=', 'application_users.application_id')
@@ -131,8 +121,7 @@ class ApplicationTableService extends TableService
                 'interviews',
                 'applicationUser.avatarBanner'
             ])
-            ->whereIn('job_posting_id', $jobIds)
-            ->orderBy('created_at', 'desc');
+            ->orderBy('created_at', 'DESC');
     }
 
     /**
