@@ -4,8 +4,11 @@
 namespace App\Services\Recruiter\User;
 
 use App\Exceptions\InputException;
+use App\Models\MJobType;
+use App\Models\MWorkType;
 use App\Models\User;
 use App\Services\TableService;
+use App\Services\User\Job\JobService;
 
 class UserTableService extends TableService
 {
@@ -59,7 +62,25 @@ class UserTableService extends TableService
 
                         foreach ($types as $type) {
                             $query->orWhereJsonContains($filterItem['key'], $type);
-                        }
+
+                            if ($filterItem['key'] == 'job_type_ids' && $type == MJobType::OTHER) {
+                                $otherJobTypeIds = JobService::getOtherJobTypeIds();
+
+                                //other job types query
+                                foreach ($otherJobTypeIds as $jobType) {
+                                    $query->orWhereJsonContains('job_type_ids', $jobType);
+                                }
+                            }
+
+                            if ($filterItem['key'] == 'work_type_ids' && $type == MWorkType::OTHER) {
+                                $otherWorkTypeIds = JobService::getOtherWorkTypeIds();
+
+                                //other work types query
+                                foreach ($otherWorkTypeIds as $workType) {
+                                    $query->orWhereJsonContains('work_type_ids', $workType);
+                                }
+                            }
+                        }//end foreach
                     });
                 } elseif ($filterItem['key'] == 'salary_min') {
                     $query->where('salary_min', '>=', $filterItem['data']);
@@ -67,7 +88,7 @@ class UserTableService extends TableService
                     $query->where('salary_max', '<=', $filterItem['data']);
                 } else {
                     $query->where($filterItem['key'], $filterItem['data']);
-                }
+                }//end if
             }//end foreach
         });
 
