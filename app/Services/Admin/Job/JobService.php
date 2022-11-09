@@ -124,6 +124,44 @@ class JobService extends Service
     }
 
     /**
+     * @param $id
+     * @param $data
+     * @return Builder|Model|object
+     * @throws InputException
+     * @throws Exception
+     */
+    public function update($id, $data)
+    {
+        $job = JobPosting::query()->where('id', $id)->with(['store'])->first();
+
+        if (!$job) {
+            throw new InputException(trans('response.not_found'));
+        }
+
+        $dataImage = $this->makeSaveDataImage($data);
+        unset($data['job_banner']);
+        unset($data['job_thumbnails']);
+
+        try {
+            DB::beginTransaction();
+
+            FileService::getInstance()->updateImageable($job, $dataImage, [
+                Image::JOB_BANNER,
+                Image::JOB_DETAIL
+            ]);
+
+            $job->update($data);
+
+            DB::commit();
+            return $job;
+        } catch (Exception $exception) {
+            DB::rollBack();
+            Log::error($exception->getMessage(), [$exception]);
+            throw new Exception($exception->getMessage());
+        }//end try
+    }
+
+    /**
      * @param $job
      * @return array
      */

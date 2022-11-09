@@ -6,6 +6,7 @@ use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Admin\Job\DetailJobResource;
 use App\Http\Resources\Admin\Job\JobCollection;
+use App\Models\JobPosting;
 use App\Services\Admin\Job\JobTableService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -58,6 +59,35 @@ class JobController extends Controller
         $job = JobService::getInstance()->getDetail($id);
 
         return $this->sendSuccessResponse(new DetailJobResource($job));
+    }
+
+    /**
+     * @param $id
+     * @param CreateRequest $request
+     * @return JsonResponse
+     * @throws Exception
+     */
+    public function update($id, CreateRequest $request)
+    {
+        $inputs = self::makeRequestData($request);
+        $job = JobService::getInstance()->update($id, $inputs);
+
+        switch ($job->job_status_id) {
+            case JobPosting::STATUS_DRAFT:
+                $msg = trans('validation.INF.009');
+                break;
+            case JobPosting::STATUS_RELEASE:
+                $msg = trans('validation.INF.010');
+                break;
+            case JobPosting::STATUS_END:
+                $msg = trans('validation.INF.012');
+                break;
+            default:
+                $msg = trans('response.INF.006');
+                break;
+        }
+
+        return $this->sendSuccessResponse([], $msg);
     }
 
     /**

@@ -49,6 +49,7 @@ Route::group(['as' => 'jobs.', 'prefix' => 'jobs', 'middleware' => 'admin'], fun
     Route::get('/', 'JobController@list')->name('list');
     Route::post('/', 'JobController@store')->name('store');
     Route::get('/{id}', 'JobController@detail')->name('detail');
+    Route::post('/{id}', 'JobController@update')->name('update');
 });
 
 Route::group(['as' => 'applications.', 'prefix' => 'applications', 'middleware' => 'admin'], function () {
