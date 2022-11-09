@@ -885,7 +885,7 @@ class JobService extends Service
             ],
             'date' => $data['date'],
             'hours' => $data['hours'],
-            'note' => '',
+            'note' => $data['note'],
             'update_times' => now(),
         ];
     }

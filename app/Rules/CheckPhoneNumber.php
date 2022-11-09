@@ -25,12 +25,15 @@ class CheckPhoneNumber implements Rule
      */
     public function passes($attribute, $value)
     {
-        $value = str_replace('-', '', $value);
         $countValue = strlen($value);
+        $valueNumber = str_replace('-', '', $value);
+        $countValueNumber = strlen($valueNumber);
 
         if ($countValue < config('validate.phone_min_length')
             || $countValue > config('validate.phone_max_length')
-            || !preg_match('/^0[0-9]+$/', $value)) {
+            || $countValueNumber < config('validate.string_phone_min_length')
+            || $countValueNumber > config('validate.string_phone_max_length')
+            || !preg_match('/^0[0-9]+$/', $valueNumber)) {
             return false;
         }
 

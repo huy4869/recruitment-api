@@ -37,4 +37,6 @@ return [
     ],
     'salary_max' => '99999999',
     'approach_text_max_length' => 2000,
+    'string_phone_min_length' => 8,
+    'string_phone_max_length' => 11,
 ];

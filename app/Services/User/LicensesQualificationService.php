@@ -22,6 +22,7 @@ class LicensesQualificationService extends Service
         return UserLicensesQualification::query()
             ->where('user_id', $this->user->id)
             ->orderBy('new_issuance_date', 'ASC')
+            ->orderBy('created_at', 'ASC')
             ->get();
     }
 

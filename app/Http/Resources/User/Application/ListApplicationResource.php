@@ -32,7 +32,7 @@ class ListApplicationResource extends JsonResource
             $dataApproach = @$data->store->owner->tel;
         }
 
-        $applyOrInterview = $data->interview_status_id != Application::STATUS_CANCELED;
+        $applyOrInterview = in_array($data->interview_status_id, [Application::STATUS_INTERVIEW_ONLINE, Application::STATUS_WAITING_INTERVIEW]);
         $allowEdit =  $data->interview_status_id == Application::STATUS_APPLYING;
         $allowCancel =  !in_array($data->interview_status_id, [Application::STATUS_ACCEPTED, Application::STATUS_CANCELED, Application::STATUS_REJECTED]);
 
