@@ -139,6 +139,16 @@ class MasterDataService extends Service
             'driver' => self::DRIVER_CUSTOM,
             'target' => 'getWorkTypeName',
         ],
+
+        'days_of_week' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getDaysOfWeek',
+        ],
+
+        'm_social_links' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMasterDataSocialLinks',
+        ],
     ];
 
     /**
@@ -694,5 +704,31 @@ class MasterDataService extends Service
         }
 
         return $result;
+    }
+
+    /**
+     * @return array
+     */
+    protected function getDaysOfWeek()
+    {
+        $dataDays = config('date.day_of_week_ja_fe');
+        $result = [];
+
+        foreach ($dataDays as $key => $day) {
+            $result[] = [
+                'id' => $key,
+                'name' => $day,
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @return Repository|Application|mixed
+     */
+    public function getMasterDataSocialLinks()
+    {
+        return config('social.link');
     }
 }
