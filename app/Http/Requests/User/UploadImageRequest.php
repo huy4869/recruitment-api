@@ -24,7 +24,18 @@ class UploadImageRequest extends FormRequest
     public function rules()
     {
         return [
-            'image' => ['required', 'image', 'mimes:jpeg,png', 'mimetypes:image/jpeg,image/png', 'max:' . config('upload.size_max')],
+            'image' => ['required', 'image', 'mimes:jpg,jpeg,png,svg', 'mimetypes:image/jpeg,image/png,image/jpg,image/svg', 'max:' . config('upload.size_max')],
+        ];
+    }
+
+    /**
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'image.max' => trans('validation.ERR.003'),
+            'image.mimetypes' => trans('validation.ERR.005'),
         ];
     }
 }

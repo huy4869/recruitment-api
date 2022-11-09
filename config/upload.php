@@ -3,28 +3,28 @@
 return [
     'image_types' => [
         'avatar_banner' => [
-            'crop' => false,
-            'full_size' => [100, 100],
-            'thumb_size' => [100, 100],
+            'crop' => true,
+            'full_size' => [319, 319],
+            'thumb_size' => [190, 190],
         ],
         'avatar_detail' => [
-            'crop' => false,
-            'full_size' => [100, 100],
+            'crop' => true,
+            'full_size' => [140, 140],
             'thumb_size' => [100, 100],
         ],
         'job_banner' => [
-            'crop' => false,
-            'full_size' => [100, 100],
-            'thumb_size' => [100, 100],
+            'crop' => true,
+            'full_size' => [866, 577],
+            'thumb_size' => [195, 130],
         ],
         'job_detail' => [
-            'crop' => false,
-            'full_size' => [100, 100],
-            'thumb_size' => [100, 100],
+            'crop' => true,
+            'full_size' => [276, 184],
+            'thumb_size' => [195, 130],
         ],
         'store_banner' => [
-            'crop' => false,
-            'full_size' => [100, 100],
+            'crop' => true,
+            'full_size' => [130, 130],
             'thumb_size' => [100, 100],
         ],
     ],
