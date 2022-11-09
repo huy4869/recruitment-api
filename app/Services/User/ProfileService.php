@@ -39,15 +39,15 @@ class ProfileService extends Service
             'updateDateNew' => $updatedAtNew,
             'baseInfo' => [
                 'percent' => $baseInfo,
-                'total' => config('percentage.information'),
+                'total' => config('percentage.information.total'),
             ],
             'workHistory' => [
                 'percent' => $percentWorkHistory,
-                'total' => config('percentage.user_learning_history'),
+                'total' => config('percentage.work_history.total'),
             ],
             'selfPr' => [
                 'percent' => $selfPr,
-                'total' => config('percentage.pr'),
+                'total' => config('percentage.pr.total'),
             ],
             'qualification' => [
                 'percent' => $qualification,
@@ -70,18 +70,18 @@ class ProfileService extends Service
      */
     public function getPercentBaseInfo($user)
     {
-        $firstName = self::getPercentUser($user->first_name, config('percentage.motivation'));
-        $lastName = self::getPercentUser($user->last_name, config('percentage.motivation'));
-        $furiFirst = self::getPercentUser($user->furi_first_name, config('percentage.motivation'));
-        $furiLast = self::getPercentUser($user->furi_last_name, config('percentage.motivation'));
-        $birthday = self::getPercentUser($user->birthday, config('percentage.motivation'));
-        $genderId = self::getPercentUser($user->gender_id, config('percentage.motivation'));
-        $tel = self::getPercentUser($user->tel, config('percentage.motivation'));
-        $email = self::getPercentUser($user->email, config('percentage.motivation'));
-        $provinceId = self::getPercentUser($user->province_id, config('percentage.motivation'));
-        $city = self::getPercentUser($user->city, config('percentage.motivation'));
+        $percent = config('percentage.information.total')/config('percentage.information.attribute_required');
+        $name = self::getPercentNameUser($user->first_name, $user->last_name, $percent);
+        $furiName = self::getPercentNameUser($user->furi_first_name, $user->furi_last_name, $percent);
+        $birthday = self::getPercentUser($user->birthday, $percent);
+        $genderId = self::getPercentUser($user->gender_id, $percent);
+        $tel = self::getPercentUser($user->tel, $percent);
+        $email = self::getPercentUser($user->email, $percent);
+        $provinceId = self::getPercentUser($user->province_id, $percent);
+        $provinceCityId = self::getPercentUser($user->province_city_id, $percent);
+        $city = self::getPercentUser($user->city, $percent);
 
-        return $firstName + $lastName + $furiFirst + $furiLast + $birthday + $genderId + $tel + $email + $provinceId + $city;
+        return round($name + $furiName + $birthday + $genderId + $tel + $email + $provinceId + $city + $provinceCityId);
     }
 
     /**
@@ -90,9 +90,9 @@ class ProfileService extends Service
      */
     public function getPercentSelfPR($user)
     {
-        $favorite = self::getPercentUser($user->favorite_skill, config('percentage.favorite'));
-        $skill = self::getPercentUser($user->self_pr, config('percentage.self_pr'));
-        $experience = self::getPercentUser($user->experience_knowledge, config('percentage.experience'));
+        $favorite = self::getPercentUser($user->favorite_skill, config('percentage.pr.attribute.favorite'));
+        $skill = self::getPercentUser($user->self_pr, config('percentage.pr.attribute.self_pr'));
+        $experience = self::getPercentUser($user->experience_knowledge, config('percentage.pr.attribute.experience'));
 
         return $favorite + $skill + $experience;
     }
@@ -125,6 +125,15 @@ class ProfileService extends Service
     public function getPercentUser($value, $percent)
     {
         if ($value) {
+            return $percent;
+        }
+
+        return config('percentage.default');
+    }
+
+    public function getPercentNameUser($firstValue, $lastValue, $percent)
+    {
+        if ($firstValue && $lastValue) {
             return $percent;
         }
 

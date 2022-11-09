@@ -31,12 +31,12 @@ class UserHelper
      */
     public static function getPercentWorkHistory($workHistories)
     {
-        $percentStoreName = self::getPercentage($workHistories, 'store_name', config('percentage.complete'));
-        $percentJobType = self::getPercentage($workHistories, 'job_type_id', config('percentage.complete'));
-        $percentPositionOffice = self::getPercentage($workHistories, 'position_office_ids', config('percentage.work_history'));
-        $percentBusinessContent = self::getPercentage($workHistories, 'business_content', config('percentage.work_history'));
-        $percentExperienceAccumulation = self::getPercentage($workHistories, 'experience_accumulation', config('percentage.work_history'));
-        $percentPeriod = self::getPercentage($workHistories, 'period_start', config('percentage.complete'));
+        $percentStoreName = self::getPercentage($workHistories, 'store_name', config('percentage.work_history.attribute.store_name'));
+        $percentJobType = self::getPercentage($workHistories, 'job_type_id', config('percentage.work_history.attribute.job_type_id'));
+        $percentPositionOffice = self::getPercentage($workHistories, 'position_office_ids', config('percentage.work_history.attribute.position_office_ids'));
+        $percentBusinessContent = self::getPercentage($workHistories, 'business_content', config('percentage.work_history.attribute.business_content'));
+        $percentExperienceAccumulation = self::getPercentage($workHistories, 'experience_accumulation', config('percentage.work_history.attribute.experience_accumulation'));
+        $percentPeriod = self::getPercentage($workHistories, 'period_start', config('percentage.work_history.attribute.period_start'));
 
         return $percentStoreName + $percentJobType + $percentPositionOffice + $percentBusinessContent + $percentPeriod + $percentExperienceAccumulation;
     }
