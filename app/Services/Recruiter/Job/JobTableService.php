@@ -4,7 +4,10 @@ namespace App\Services\Recruiter\Job;
 
 use App\Exceptions\InputException;
 use App\Models\JobPosting;
+use App\Models\MJobType;
+use App\Models\MWorkType;
 use App\Services\TableService;
+use App\Services\User\Job\JobService;
 
 class JobTableService extends TableService
 {
@@ -84,7 +87,25 @@ class JobTableService extends TableService
 
                     foreach ($types as $type) {
                         $query->orWhereJsonContains($filterItem['key'], $type);
-                    }
+
+                        if ($filterItem['key'] == 'job_type_ids' && $type == MJobType::OTHER) {
+                            $otherJobTypeIds = JobService::getOtherJobTypeIds();
+
+                            //other job types query
+                            foreach ($otherJobTypeIds as $jobType) {
+                                $query->orWhereJsonContains('job_type_ids', $jobType);
+                            }
+                        }
+
+                        if ($filterItem['key'] == 'work_type_ids' && $type == MWorkType::OTHER) {
+                            $otherWorkTypeIds = JobService::getOtherWorkTypeIds();
+
+                            //other work types query
+                            foreach ($otherWorkTypeIds as $workType) {
+                                $query->orWhereJsonContains('work_type_ids', $workType);
+                            }
+                        }
+                    }//end foreach
                 });
             } elseif (in_array($filterItem['key'], $rangeMinKey)) {
                 $query->where($filterItem['key'], '>=', $filterItem['data']);
@@ -92,7 +113,7 @@ class JobTableService extends TableService
                 $query->where($filterItem['key'], '<=', $filterItem['data']);
             } else {
                 $query->where($filterItem['key'], $filterItem['data']);
-            }
+            }//end if
         }//end foreach
 
         return $query;
