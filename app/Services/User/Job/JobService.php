@@ -49,10 +49,12 @@ class JobService extends Service
                     });
             })->with([
                 'store',
+                'store.owner',
                 'bannerImage',
                 'detailImages',
                 'province',
                 'province.provinceDistrict',
+                'provinceCity',
                 'salaryType',
             ]);
 
@@ -61,7 +63,8 @@ class JobService extends Service
                 'applications' => function ($query) use ($user) {
                     return $query->where('user_id', $user->id);
                 },
-                'applications.interviews'
+                'applications.interviews',
+                'applications.interviewApproach',
             ]);
         }
 
@@ -879,10 +882,7 @@ class JobService extends Service
             'job_posting_id' => $jobPosting->id,
             'store_id' => $jobPosting->store_id,
             'interview_status_id' => Application::STATUS_APPLYING,
-            'interview_approaches' => [
-                'id' => $interviewApproaches->id,
-                'approach' => $data['note'],
-            ],
+            'interview_approach_id' => $interviewApproaches->id,
             'date' => $data['date'],
             'hours' => $data['hours'],
             'note' => $data['note'],

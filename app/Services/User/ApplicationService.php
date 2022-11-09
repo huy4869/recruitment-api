@@ -51,6 +51,14 @@ class ApplicationService extends Service
             ->whereHas('interviews', function ($query) {
                 $query->where('id', Application::STATUS_WAITING_INTERVIEW);
             })
+            ->with([
+                'store',
+                'store.owner',
+                'jobPosting',
+                'jobPosting.province',
+                'jobPosting.provinceCity',
+                'interviewApproach'
+            ])
             ->orderBy('date', 'asc')
             ->get();
 
@@ -84,6 +92,14 @@ class ApplicationService extends Service
             ->whereHas('interviews', function ($query) {
                 $query->whereNot('id', Application::STATUS_CANCELED);
             })
+            ->with([
+                'store',
+                'store.owner',
+                'jobPosting',
+                'jobPosting.province',
+                'jobPosting.provinceCity',
+                'interviewApproach'
+            ])
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -223,8 +239,8 @@ class ApplicationService extends Service
                     'name' => $application->interviews->name,
                 ],
                 'interview_approaches' => [
-                    'id' => $application->interview_approaches['id'],
-                    'approach' => $application->interview_approaches['approach'],
+                    'id' => $application->interview_approach_id,
+                    'approach' => $application->note,
                 ],
             ],
             'list_time' => array_merge($datePast, $times)
@@ -389,10 +405,7 @@ class ApplicationService extends Service
         }
 
         return [
-            'interview_approaches' => [
-                'id' => $interviewApproaches->id,
-                'approach' => $data['note'],
-            ],
+            'interview_approach_id' => $interviewApproaches->id,
             'date' => $data['date'],
             'hours' => $data['hours'],
             'note' => $data['note'],

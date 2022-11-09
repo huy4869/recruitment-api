@@ -162,10 +162,8 @@ class ApplicationService extends Service
             throw new InputException(trans('response.not_found'));
         }
 
-        $data['interview_approaches'] = [
-            'id' => $application->interview_approaches['id'],
-            'approach' => $data['approach'],
-        ];
+        $data['interview_approach_id'] = $application->interview_approach_id;
+        $data['note'] = $data['approach'];
         unset($data['approach']);
 
         try {
