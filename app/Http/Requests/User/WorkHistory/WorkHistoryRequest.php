@@ -72,6 +72,8 @@ class WorkHistoryRequest extends FormRequest
     public function messages()
     {
         return [
+            'job_types.required' => trans('validation.COM.010', ['attributes' => trans('validation.attributes.job_types')]),
+            'work_types.required' => trans('validation.COM.010', ['attributes' => trans('validation.attributes.work_types')]),
             'period_start.required' => trans('validation.COM.010', ['attributes' => trans('validation.attributes.period_start')]),
             'period_end.required_if' => trans('validation.COM.010', ['attribute' => trans('validation.attributes.period_end')]),
             'period_end.after_or_equal' => trans('validation.ERR.004'),

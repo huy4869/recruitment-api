@@ -65,6 +65,10 @@ class UserUpdateRequest extends FormRequest
             'postal_code.digits' => trans('validation.COM.012', ['attribute' => trans('validation.attributes.postal_code')]),
             'tel.min' => trans('validation.COM.011', ['attribute' => trans('validation.attributes.tel')]),
             'tel.max' => trans('validation.COM.011', ['attribute' => trans('validation.attributes.tel')]),
+            'gender_id.required' => trans('validation.COM.010', ['attributes' => trans('validation.attributes.gender_id')]),
+            'birthday.required' => trans('validation.COM.010', ['attributes' => trans('validation.attributes.birthday')]),
+            'province_id.required' => trans('validation.COM.010', ['attributes' => trans('validation.attributes.province_id')]),
+            'province_city_id.required' => trans('validation.COM.010', ['attributes' => trans('validation.attributes.province_city_id')]),
         ];
     }
 }

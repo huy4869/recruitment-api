@@ -56,7 +56,7 @@ class UserController extends BaseController
         ]);
         $this->userService->withUser($user)->update($inputs);
 
-        return $this->sendSuccessResponse([], trans('response.update_base_info_success'));
+        return $this->sendSuccessResponse([], trans('validation.INF.001'));
     }
 
     /**
