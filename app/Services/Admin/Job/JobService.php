@@ -2,7 +2,9 @@
 
 namespace App\Services\Admin\Job;
 
+use App\Exceptions\InputException;
 use App\Helpers\FileHelper;
+use App\Helpers\JobHelper;
 use App\Models\Image;
 use App\Models\JobPosting;
 use App\Models\MJobStatus;
@@ -94,5 +96,66 @@ class JobService extends Service
     public static function getJobStatusIdsNotEnd()
     {
         return MJobStatus::query()->whereNot('id', JobPosting::STATUS_END)->pluck('id')->toArray();
+    }
+
+    /**
+     * @param $id
+     * @return array
+     * @throws InputException
+     */
+    public function getDetail($id)
+    {
+        $job = JobPosting::query()->where('id', $id)->with([
+            'store',
+            'bannerImage',
+            'detailImages',
+            'province',
+            'provinceCity',
+            'province.provinceDistrict',
+            'salaryType',
+        ])
+            ->first();
+
+        if (!$job) {
+            throw new InputException(trans('response.not_found'));
+        }
+
+        return self::getJobInfoForDetailJob($job);
+    }
+
+    /**
+     * @param $job
+     * @return array
+     */
+    public static function getJobInfoForDetailJob($job)
+    {
+        $jobMasterData = JobHelper::getJobMasterData();
+
+        $job->job_types = JobHelper::getTypeName(
+            $job->job_type_ids,
+            $jobMasterData['masterJobTypes']
+        );
+        $job->work_types = JobHelper::getTypeName(
+            $job->work_type_ids,
+            $jobMasterData['masterWorkTypes']
+        );
+        $job->genders = JobHelper::getTypeName(
+            $job->gender_ids,
+            $jobMasterData['masterGenders']
+        );
+        $job->expericence_types = JobHelper::getTypeName(
+            $job->work_type_ids,
+            $jobMasterData['masterJobExperiences']
+        );
+        $job->feature_types = JobHelper::getFeatureCategoryName(
+            $job->feature_ids,
+            $jobMasterData['masterJobFeatures']
+        );
+        $job->stations = JobHelper::getStations(
+            $job->station_ids,
+            $jobMasterData['masterStations']
+        );
+
+        return $job;
     }
 }

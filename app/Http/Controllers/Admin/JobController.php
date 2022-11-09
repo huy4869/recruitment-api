@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
+use App\Http\Resources\Admin\Job\DetailJobResource;
 use App\Http\Resources\Admin\Job\JobCollection;
 use App\Services\Admin\Job\JobTableService;
 use Illuminate\Http\JsonResponse;
@@ -44,6 +46,18 @@ class JobController extends Controller
         }
 
         return $this->sendSuccessResponse($data, trans('validation.INF.009'));
+    }
+
+    /**
+     * @param $id
+     * @return JsonResponse
+     * @throws InputException
+     */
+    public function detail($id)
+    {
+        $job = JobService::getInstance()->getDetail($id);
+
+        return $this->sendSuccessResponse(new DetailJobResource($job));
     }
 
     /**
