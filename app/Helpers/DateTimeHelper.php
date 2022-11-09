@@ -257,7 +257,7 @@ class DateTimeHelper
         if ($minute < config('date.less_than_hour')) {
             $date = $minute . '分前';
         } elseif ($hour >= config('date.more_than_hour')  && $hour < config('date.less_than_date')) {
-            $date = $dataTime->format('H:i');
+            $date = $time->format('H:i');
         } else {
             $date = DateTimeHelper::formatDateTimeJa($dataTime);
         }
@@ -335,10 +335,12 @@ class DateTimeHelper
      */
     public static function formatMonthYear($date)
     {
-        $month = substr($date, 4);
-        $year = substr($date, 0, 4);
+        if ($date) {
+            $month = substr($date, 4);
+            $year = substr($date, 0, 4);
 
-        return sprintf('%s%s%s%s', $year, trans('common.year'), $month, trans('common.month'));
+            return sprintf('%s%s%s%s', $year, trans('common.year'), $month, trans('common.month'));
+        }
     }
 
     /**

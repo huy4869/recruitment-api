@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\User\UserUpdateRequest;
+use App\Http\Resources\Admin\DetailUserInfoResource;
 use App\Http\Requests\Admin\User\StoreRequest;
 use App\Http\Requests\Admin\User\UpdateRequest;
 use App\Http\Resources\Admin\User\DetailUserResource;
@@ -107,5 +109,19 @@ class UserController extends Controller
         $result = UserService::getInstance()->withUser($admin)->destroy($id);
 
         return $this->sendSuccessResponse($result, trans('validation.INF.005'));
+    }
+
+    /**
+     * detail user
+     *
+     * @param $id
+     * @return JsonResponse
+     * @throws InputException
+     */
+    public function detailUser($id)
+    {
+        $data = UserService::getInstance()->detailInfoUser($id);
+
+        return $this->sendSuccessResponse(new DetailUserInfoResource($data));
     }
 }
