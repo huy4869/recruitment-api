@@ -45,6 +45,7 @@ class ListInterviewResource extends JsonResource
 
         return [
             'id' => $this->id,
+            'job_id' => $this->jobPosting->id,
             'job_banner' => FileHelper::getFullUrl($this->jobPosting->bannerImage->url ?? null),
             'job_name' => $this->jobPosting->name,
             'store_name' => $this->store->name,
