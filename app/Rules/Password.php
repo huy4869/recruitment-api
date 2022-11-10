@@ -35,6 +35,6 @@ class Password implements Rule
      */
     public function message()
     {
-        return trans('validation.custom.half_size');
+        return trans('validation.COM.002', ['attribute' => trans('validation.attributes.password')]);
     }
 }

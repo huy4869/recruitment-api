@@ -34,7 +34,7 @@ class WorkHistoryService extends Service
         $userWorkHistories = UserWorkHistory::query()
             ->with(['jobType', 'workType'])
             ->where('user_id', $user->id)
-            ->orderBy('period_end', 'DESC')
+            ->orderByRaw('-period_end DESC, period_start DESC')
             ->get()
             ->toArray();
 
@@ -70,13 +70,6 @@ class WorkHistoryService extends Service
      */
     public function store($data)
     {
-        $dataWorkHistory = $this->makeSaveData($data);
-        $dataWorkHistories = UserWorkHistory::query()->where('user_id', $dataWorkHistory['user_id'])->count();
-
-        if ($dataWorkHistories >= UserWorkHistory::MAX_USER_WORK_HISTORY) {
-            throw new InputException(trans('response.user_work_history.count_error'));
-        }
-
         try {
             DB::beginTransaction();
 
