@@ -125,7 +125,7 @@ class ChatService extends Service
                 ['store_id', $store_id],
                 ['user_id', $user_id]
             ])
-            ->orderByDesc('created_at')
+            ->orderBy('created_at', 'asc')
             ->get()
             ->groupBy(function ($date) {
                 return Carbon::parse($date->created_at)->format('Y-m-d');
