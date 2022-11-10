@@ -398,6 +398,7 @@ return [
     'store_id_required' => 'お店が入力されていません。',
     'is_positive_number' => ':attributeは正の数です',
     'job_posting_not_exist' => 'ジョブ情報が存在しません',
+    'user' => 'ユーザー',
 
     'store' => [
         'name' => '店舗名',

@@ -65,3 +65,8 @@ Route::group(['as' => 'interview-schedule.', 'prefix' => 'interview-schedule', '
     Route::post('/application/{id}', 'InterviewScheduleController@updateApplication')->name('updateApplication');
     Route::post('/{user_id}', 'InterviewScheduleController@updateInterviewSchedule')->name('updateInterviewSchedule');
 });
+
+Route::group(['as' => 'work-histories', 'prefix' => 'work-histories', 'middleware' => 'admin'], function () {
+    Route::post('/', 'WorkHistoryController@store');
+    Route::post('/{id}', 'WorkHistoryController@update');
+});
