@@ -21,29 +21,31 @@ class DetailJobPostingResource extends JsonResource
     {
         $application = $this['applications'][0] ?? [];
 
-        switch ($application['interview_approach_id']) {
-            case Application::STATUS_INTERVIEW_ONLINE:
-                $approach = config('application.interview_approach_online');
-                break;
-            case Application::STATUS_INTERVIEW_DIRECT:
-                $postalCode = $this['postal_code'];
-                $province = $this['province'];
-                $provinceCity = $this['province_city']['name'];
-                $city = $this['city'];
-                $address = $this['address'];
-                $approach = sprintf(
-                    '〒%s %s%s%s%s',
-                    $postalCode,
-                    $province,
-                    $provinceCity,
-                    $city,
-                    $address
-                );
-                break;
-            case Application::STATUS_INTERVIEW_PHONE:
-                $approach = $this['store']['owner']['tel'];
-                break;
-        }//end switch
+        if (count($application)) {
+            switch ($application['interview_approach_id']) {
+                case Application::STATUS_INTERVIEW_ONLINE:
+                    $approach = config('application.interview_approach_online');
+                    break;
+                case Application::STATUS_INTERVIEW_DIRECT:
+                    $postalCode = $this['postal_code'];
+                    $province = $this['province'];
+                    $provinceCity = $this['province_city']['name'];
+                    $city = $this['city'];
+                    $address = $this['address'];
+                    $approach = sprintf(
+                        '〒%s %s%s%s%s',
+                        $postalCode,
+                        $province,
+                        $provinceCity,
+                        $city,
+                        $address
+                    );
+                    break;
+                case Application::STATUS_INTERVIEW_PHONE:
+                    $approach = $this['store']['owner']['tel'];
+                    break;
+            }//end switch
+        }//end if
 
         return [
             'id' => $this['id'],
