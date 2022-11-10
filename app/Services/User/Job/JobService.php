@@ -171,7 +171,7 @@ class JobService extends Service
         }
 
         $querySuggestJobs = sprintf(
-            '(SELECT id, released_at, province_id, %sIF(province_id = %u, %u, 0) as provinceRatio
+            '(SELECT id, job_status_id, released_at, province_id, %sIF(province_id = %u, %u, 0) as provinceRatio
             FROM job_postings
             WHERE id != %u
             ) as tmp',
@@ -183,6 +183,7 @@ class JobService extends Service
 
         $jobIds = DB::table(DB::raw($querySuggestJobs))
         ->select('id', 'released_at', DB::raw($jobAlias . 'provinceRatio as total'))
+        ->where('job_status_id', JobPosting::STATUS_RELEASE)
         ->orderByRaw('total DESC')
         ->orderByRaw('released_at DESC')
         ->limit(config('common.job_posting.suggest_amount'))
