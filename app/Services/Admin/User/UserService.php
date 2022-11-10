@@ -14,10 +14,12 @@ use App\Models\Store;
 use App\Models\Application;
 use App\Models\Notification;
 use App\Models\User;
+use App\Services\Common\FileService;
 use App\Services\Service;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -377,5 +379,44 @@ class UserService extends Service
             'user_licenses_qualifications' => $licensesQualifications,
             'motivation' => $user->motivation,
         ]);
+    }
+
+    public function updateUser($data, $id)
+    {
+        $user = User::query()->where('id', $id)->roleUser()->first();
+
+        if (!$user) {
+            throw new InputException(trans('response.not_found'));
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $user->update($data);
+            FileService::getInstance()->updateImageable($user, $this->makeSaveDataImage($data));
+
+            DB::commit();
+            return true;
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            Log::error($exception->getMessage(), [$exception]);
+            throw new InputException($exception->getMessage());
+        }
+    }
+
+    /**
+     * Make Save data images
+     *
+     * @param $data
+     * @return array
+     */
+    private function makeSaveDataImage($data)
+    {
+        $dataUrl = [];
+        foreach ($data['images'] as $image) {
+            $dataUrl[] = FileHelper::fullPathNotDomain($image['url']);
+        }
+
+        return array_merge([FileHelper::fullPathNotDomain($data['avatar'])], $dataUrl);
     }
 }
