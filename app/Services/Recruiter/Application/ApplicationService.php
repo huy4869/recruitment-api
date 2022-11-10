@@ -133,6 +133,10 @@ class ApplicationService extends Service
             throw new InputException(trans('response.not_found'));
         }
 
+        $application->update([
+            'checked_at' => now()
+        ]);
+
         return $application;
     }
 

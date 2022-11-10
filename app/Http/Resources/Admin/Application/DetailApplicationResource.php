@@ -1,9 +1,10 @@
 <?php
 
-namespace App\Http\Resources\Recruiter\Application;
+namespace App\Http\Resources\Admin\Application;
 
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
+use App\Http\Resources\Admin\Application\DetailAvatarResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class DetailApplicationResource extends JsonResource
