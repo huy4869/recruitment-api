@@ -35,15 +35,11 @@ class Application extends Model
         'job_posting_id',
         'store_id',
         'interview_status_id',
-        'interview_approaches',
+        'interview_approach_id',
         'date',
         'note',
         'hours',
         'update_times',
-    ];
-
-    protected $casts = [
-        'interview_approaches' => 'array',
     ];
 
     /**
@@ -96,5 +92,13 @@ class Application extends Model
     public function applicationUserLicensesQualifications()
     {
         return $this->hasMany(ApplicationUserLicensesQualification::class);
+    }
+
+    /**
+     * @return BelongsTo
+     */
+    public function interviewApproach()
+    {
+        return $this->belongsTo(MInterviewApproach::class, 'interview_approach_id');
     }
 }

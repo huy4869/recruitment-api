@@ -22,12 +22,12 @@ class ListApplicationResource extends JsonResource
     {
         $data = $this->resource;
         $interviewApproaches = ApplicationService::interviewApproach();
-        $isDirectInterview = $data->interview_approaches['id'] == Application::STATUS_INTERVIEW_DIRECT;
+        $isDirectInterview = $data->interview_approach_id == Application::STATUS_INTERVIEW_DIRECT;
 
         if ($isDirectInterview) {
             $dataApproach = @$data->store->address;
-        } elseif ($data->interview_approaches['id'] == Application::STATUS_INTERVIEW_ONLINE) {
-            $dataApproach = '2営業日以内にZoomURLをメールにて送付いたします';
+        } elseif ($data->interview_approach_id == Application::STATUS_INTERVIEW_ONLINE) {
+            $dataApproach = config('application.interview_approach_online');
         } else {
             $dataApproach = @$data->store->owner->tel;
         }
@@ -50,9 +50,9 @@ class ListApplicationResource extends JsonResource
             'allow_edit' => $allowEdit,
             'allow_cancel' => $allowCancel,
             'interview_approach' => [
-                'id' => $data->interview_approaches['id'],
-                'method' => $interviewApproaches[$data->interview_approaches['id']],
-                'approach_label' => config('application.interview_approach_label.' . $data->interview_approaches['id']),
+                'id' => $data->interview_approach_id,
+                'method' => $interviewApproaches[$data->interview_approach_id],
+                'approach_label' => config('application.interview_approach_label.' . $data->interview_approach_id),
                 'approach' => $dataApproach,
                 'is_direct_interview' => $isDirectInterview,
             ],

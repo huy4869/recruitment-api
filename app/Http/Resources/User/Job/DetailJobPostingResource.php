@@ -5,6 +5,7 @@ namespace App\Http\Resources\User\Job;
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
 use App\Helpers\JobHelper;
+use App\Models\Application;
 use App\Services\User\Job\JobService;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,7 +20,30 @@ class DetailJobPostingResource extends JsonResource
     public function toArray($request)
     {
         $application = $this['applications'][0] ?? [];
-        $interviewMethod = JobService::getInterviewMethodName();
+
+        switch ($application['interview_approach_id']) {
+            case Application::STATUS_INTERVIEW_ONLINE:
+                $approach = config('application.interview_approach_online');
+                break;
+            case Application::STATUS_INTERVIEW_DIRECT:
+                $postalCode = $this['postal_code'];
+                $province = $this['province'];
+                $provinceCity = $this['province_city']['name'];
+                $city = $this['city'];
+                $address = $this['address'];
+                $approach = sprintf(
+                    '〒%s %s%s%s%s',
+                    $postalCode,
+                    $province,
+                    $provinceCity,
+                    $city,
+                    $address
+                );
+                break;
+            case Application::STATUS_INTERVIEW_PHONE:
+                $approach = $this['store']['owner']['tel'];
+                break;
+        }//end switch
 
         return [
             'id' => $this['id'],
@@ -67,10 +91,10 @@ class DetailJobPostingResource extends JsonResource
                 ],
                 'date' => DateTimeHelper::formatDateDayOfWeekTimeJa($application['date']),
                 'interview_approaches' => [
-                    'id' => $application['interview_approaches']['id'],
-                    'method' => $interviewMethod[$application['interview_approaches']['id'] - 1],
-                    'approach_label' => config('application.interview_approach_label.' . $application['interview_approaches']['id']),
-                    'approach' => $application['interview_approaches']['approach'],
+                    'id' => $application['interview_approach_id'],
+                    'method' => $application['interview_approach']['name'],
+                    'approach_label' => config('application.interview_approach_label.' . $application['interview_approach_id']),
+                    'approach' => $approach,
                 ]
             ] : [],
             'released_at' => DateTimeHelper::formatDateJa($this['released_at']),
