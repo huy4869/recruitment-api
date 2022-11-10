@@ -54,8 +54,8 @@ class InfoResource extends JsonResource
             'province_name' => @$data->provinceCity->province->name,
             'province_city_id' => $data->province_city_id,
             'province_city_name' => @$data->provinceCity->name,
-            'city' => $data->city,
             'address' => $data->address,
+            'building' => $data->building,
             'avatar' => FileHelper::getFullUrl(@$data->avatarBanner->url),
             'images' => ImagesResource::collection($data->avatarDetails)
         ];

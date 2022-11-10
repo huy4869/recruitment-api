@@ -128,7 +128,7 @@ class ApplicationUserHistoryService extends Service
             'twitter' => $user->twitter,
             'postal_code' => $user->postal_code,
             'province_id' => $user->province_id,
-            'city' => $user->city,
+            'building' => $user->building,
             'address' => $user->address,
             'favorite_skill' => $user->favorite_skill,
             'experience_knowledge' => $user->experience_knowledge,

@@ -31,7 +31,7 @@ class ProfileService extends Service
             'tel' => $data['tel'],
             'postal_code' => $data['postal_code'],
             'province_id' => $data['province_id'],
-            'city' => $data['city'],
+            'building' => $data['building'],
             'address' => $data['address'],
             'alias_name' => $data['alias_name'],
             'employee_quantity' => $data['employee_quantity'],

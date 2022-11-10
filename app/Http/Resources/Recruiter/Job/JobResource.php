@@ -31,8 +31,8 @@ class JobResource extends JsonResource
                 'province_name' => $this->province->name,
                 'district_id' => $this->province->provinceDistrict->id,
                 'district_name' => $this->province->provinceDistrict->name,
-                'city' => $this->city,
                 'address' => $this->address,
+                'building' => $this->building,
             ],
             'salary' => [
                 'type' => $this->salaryType->name,

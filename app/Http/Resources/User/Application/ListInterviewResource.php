@@ -27,15 +27,15 @@ class ListInterviewResource extends JsonResource
                 $postalCode = $this->jobPosting->postal_code;
                 $province = $this->jobPosting->province->name;
                 $provinceCity = $this->jobPosting->provinceCity->name;
-                $city = $this->city;
                 $address = $this->address;
+                $building = $this->building;
                 $approach = sprintf(
                     '〒%s %s%s%s%s',
                     $postalCode,
                     $province,
                     $provinceCity,
-                    $city,
-                    $address
+                    $address,
+                    $building,
                 );
                 break;
             case Application::STATUS_INTERVIEW_PHONE:

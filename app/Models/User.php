@@ -65,8 +65,8 @@ class User extends Authenticatable
         'postal_code',
         'province_id',
         'province_city_id',
-        'city',
         'address',
+        'building',
         'favorite_skill',
         'experience_knowledge',
         'self_pr',
@@ -268,7 +268,7 @@ class User extends Authenticatable
     {
         $provinceName = $this->province->name ?? '';
 
-        return sprintf('〒 %s %s%s%s', $this->postal_code, $provinceName, $this->city, $this->address);
+        return sprintf('〒 %s %s%s%s', $this->postal_code, $provinceName, $this->address, $this->building);
     }
 
     public function recruiterOffTimes()
