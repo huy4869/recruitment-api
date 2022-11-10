@@ -48,9 +48,7 @@ class WorkHistoryController extends BaseController
         $inputs = $this->makeDataInputs($request);
         $data = $this->workHistoryService->withUser($user)->store($inputs);
 
-        return $this->sendSuccessResponse($data, trans('response.created', [
-            'object' => trans('response.label.user_work_history')
-        ]));
+        return $this->sendSuccessResponse($data, trans('validation.INF.006'));
     }
 
     /**
@@ -82,9 +80,7 @@ class WorkHistoryController extends BaseController
         $inputs = $this->makeDataInputs($request);
         $data = $this->workHistoryService->withUser($user)->update($id, $inputs);
 
-        return $this->sendSuccessResponse($data, trans('response.updated', [
-            'object' => trans('response.label.user_work_history')
-        ]));
+        return $this->sendSuccessResponse($data, trans('validation.INF.001'));
     }
 
     /**
@@ -100,9 +96,7 @@ class WorkHistoryController extends BaseController
         $user = $this->guard()->user();
         $this->workHistoryService->withUser($user)->delete($id);
 
-        return $this->sendSuccessResponse([], trans('response.deleted', [
-            'object' => trans('response.label.user_work_history')
-        ]));
+        return $this->sendSuccessResponse([], trans('response.INF.005'));
     }
 
     /**

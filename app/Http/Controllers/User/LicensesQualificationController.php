@@ -87,7 +87,7 @@ class LicensesQualificationController extends BaseController
         $data = $this->licensesQualificationService->withUser($user)->update($id, $inputs);
 
         if ($data) {
-            return $this->sendSuccessResponse($data, trans('response.update_success'));
+            return $this->sendSuccessResponse($data, trans('validation.INF.001'));
         }
 
         throw new InputException(trans('response.ERR.006'));

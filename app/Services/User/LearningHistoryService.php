@@ -21,8 +21,8 @@ class LearningHistoryService extends Service
         return UserLearningHistory::query()
             ->with('learningStatus')
             ->where('user_id', $this->user->id)
-            ->orderBy('enrollment_period_end', 'ASC')
             ->orderBy('enrollment_period_start', 'ASC')
+            ->orderBy('enrollment_period_end', 'ASC')
             ->get();
     }
 

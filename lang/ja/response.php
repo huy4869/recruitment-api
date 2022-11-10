@@ -4,7 +4,7 @@ return [
     'not_found' => 'データが見つかりません。',
     'not_found_with' => ':objectが見つかりません。',
     'invalid' => '入力したデータが正しくありません。もう一度やり直してください。',
-    'invalid_token' => 'トークンが存在しないか、有効期限が切れています.',
+    'invalid_token' => 'トークンの有効期限が切れています。',
     'cart_invalid' => 'ショッピングカートは既に存在します。後でもう一度やり直してください。',
     'unauthenticated' => 'セッションの有効期限がきれました。もう一度ログインください。',
     'update_successfully' => ':objectの更新が完了しました。',
