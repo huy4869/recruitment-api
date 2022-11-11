@@ -17,6 +17,7 @@ class FavoriteJobResource extends JsonResource
     public function toArray($request)
     {
         $jobPosting = $this['job_posting'];
+        $releasedAt = sprintf('%s%s', DateTimeHelper::formatDateJa($this['created_at']), trans('common.update'));
 
         return [
                 'id' => $this['job_posting_id'],
@@ -46,7 +47,7 @@ class FavoriteJobResource extends JsonResource
                 ],
                 'holiday_description' => $jobPosting['holiday_description'],
                 'description' => $jobPosting['description'],
-                'released_at' => DateTimeHelper::formatDateJa($jobPosting['released_at']),
+                'released_at' => $releasedAt,
         ];
     }
 }
