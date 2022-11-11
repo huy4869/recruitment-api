@@ -13,4 +13,5 @@ return [
     'today' => '今日',
     'tomorrow' => '明日',
     'day_after_tomorrow' => '明後日',
+    'update' => '更新',
 ];
