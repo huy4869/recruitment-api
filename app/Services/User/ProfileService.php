@@ -79,9 +79,9 @@ class ProfileService extends Service
         $email = self::getPercentUser($user->email, $percent);
         $provinceId = self::getPercentUser($user->province_id, $percent);
         $provinceCityId = self::getPercentUser($user->province_city_id, $percent);
-        $city = self::getPercentUser($user->city, $percent);
+        $address = self::getPercentUser($user->address, $percent);
 
-        return round($name + $furiName + $birthday + $genderId + $tel + $email + $provinceId + $city + $provinceCityId);
+        return round($name + $furiName + $birthday + $genderId + $tel + $email + $provinceId + $address + $provinceCityId);
     }
 
     /**

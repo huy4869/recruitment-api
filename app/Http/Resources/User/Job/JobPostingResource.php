@@ -25,8 +25,8 @@ class JobPostingResource extends JsonResource
             'address' => [
                 'province' => $this['province'],
                 'district' => $this['district'],
-                'city' => $this['city'],
                 'address' => $this['address'],
+                'building' => $this['building'],
             ],
             'job_types' => $this['job_types'],
             'salary' => [

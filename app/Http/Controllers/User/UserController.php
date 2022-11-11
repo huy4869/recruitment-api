@@ -49,7 +49,7 @@ class UserController extends BaseController
             'postal_code',
             'province_id',
             'province_city_id',
-            'city',
+            'building',
             'address',
             'avatar',
             'images',

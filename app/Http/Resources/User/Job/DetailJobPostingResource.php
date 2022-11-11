@@ -30,15 +30,15 @@ class DetailJobPostingResource extends JsonResource
                     $postalCode = $this['postal_code'];
                     $province = $this['province'];
                     $provinceCity = $this['province_city']['name'];
-                    $city = $this['city'];
                     $address = $this['address'];
+                    $building = $this['building'];
                     $approach = sprintf(
                         '〒%s %s%s%s%s',
                         $postalCode,
                         $province,
                         $provinceCity,
-                        $city,
-                        $address
+                        $address,
+                        $building,
                     );
                     break;
                 case Application::STATUS_INTERVIEW_PHONE:
@@ -78,8 +78,8 @@ class DetailJobPostingResource extends JsonResource
             'address' => [
                 'province' => $this['province'],
                 'district' => $this['district'],
-                'city' => $this['city'],
                 'address' => $this['address'],
+                'building' => $this['building'],
             ],
             'stations' => $this['stations'],
             'welfare_treatment_description' => $this['welfare_treatment_description'],

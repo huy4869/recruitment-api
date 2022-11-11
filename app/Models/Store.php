@@ -24,8 +24,8 @@ class Store extends Model
         'postal_code',
         'province_id',
         'province_city_id',
-        'city',
         'address',
+        'building',
         'name',
         'website',
         'tel',
@@ -103,7 +103,7 @@ class Store extends Model
     {
         $provinceName = $this->province->name ?? '';
 
-        return sprintf('〒 %s %s%s%s', $this->postal_code, $provinceName, $this->city, $this->address);
+        return sprintf('〒 %s %s%s%s', $this->postal_code, $provinceName, $this->address, $this->building);
     }
 
     public function chats()

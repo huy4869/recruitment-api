@@ -33,8 +33,8 @@ class InformationResource extends JsonResource
             'address_information' => [
                 'postal_code' => $this->postal_code,
                 'province_name' => $this->province->name ?? '',
-                'city' => $this->city,
                 'address' => $this->address,
+                'building' => $this->building,
                 'full_address' => $this->fullNameAddress,
             ],
             'representative_name' =>$this->alias_name,

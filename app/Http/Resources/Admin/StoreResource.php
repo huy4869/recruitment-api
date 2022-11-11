@@ -23,8 +23,8 @@ class StoreResource extends JsonResource
                 'district' => $this->province->provinceDistrict->name,
                 'province' => $this->province->name,
                 'province_city' => $this->provinceCity->name,
-                'city' => $this->city,
                 'address' => $this->address,
+                'building' => $this->building,
             ],
             'specialize_ids' => $this->specialize_ids,
         ];

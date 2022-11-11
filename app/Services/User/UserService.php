@@ -80,8 +80,8 @@ class UserService extends Service
             'postal_code' => $data['postal_code'],
             'province_id' => $data['province_id'],
             'province_city_id' => $data['province_city_id'],
-            'city' => $data['city'],
             'address' => $data['address'],
+            'building' => $data['building'],
         ];
     }
 
