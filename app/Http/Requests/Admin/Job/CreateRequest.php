@@ -2,7 +2,8 @@
 
 namespace App\Http\Requests\Admin\Job;
 
-use App\Helpers\JobHelper;
+use App\Models\MJobType;
+use App\Models\MWorkType;
 use App\Services\Admin\Job\JobService;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -26,10 +27,7 @@ class CreateRequest extends FormRequest
     public function rules()
     {
         $storeIds = JobService::getStoreIdsAccordingToAdmin();
-        $salaryTypeIds = JobService::getSalaryTypeIds();
         $jobStatusIds = JobService::getJobStatusIdsNotEnd();
-        $masterData = JobHelper::getJobMasterData();
-        $masterDataIds = JobHelper::getListIdsMasterData($masterData);
         $stringMaxLength = config('validate.string_max_length');
         $textMaxLength = config('validate.text_max_length');
         $dayIds = array_keys(config('date.day_of_week_ja_fe'));
@@ -43,11 +41,11 @@ class CreateRequest extends FormRequest
             'job_thumbnails' => ['required', 'array', 'max:' . config('validate.max_image_detail')],
             'job_thumbnails.*' => ['string', 'url', 'string', 'url', 'max:' . $stringMaxLength],
             'job_type_ids' => ['required', 'array'],
-            'job_type_ids.*' => ['integer', 'in:' . implode(',', $masterDataIds['masterJobTypes'])],
+            'job_type_ids.*' => 'integer|exists:m_job_types,id,is_default,' . MJobType::IS_DEFAULT,
             'description' => ['required', 'string', 'max:' . $textMaxLength],
             'work_type_ids' => ['required', 'array'],
-            'work_type_ids.*' => ['integer', 'in:' . implode(',', $masterDataIds['masterWorkTypes'])],
-            'salary_type_id' => ['required', 'integer', 'in:' . implode(',', $salaryTypeIds)],
+            'work_type_ids.*' => 'integer|exists:m_work_types,id,is_default,' . MWorkType::IS_DEFAULT,
+            'salary_type_id' => 'required|integer|exists:m_salary_types,id',
             'salary_min' => ['required', 'integer', 'max:' . config('validate.salary_max_value')],
             'salary_max' => ['required', 'integer', 'greater_than_field:salary_min', 'max:' . config('validate.salary_max_value')],
             'salary_description' => ['nullable', 'string', 'max:' . $stringMaxLength],
@@ -57,9 +55,9 @@ class CreateRequest extends FormRequest
             'age_min' => ['nullable', 'integer', 'min:' . config('validate.age.min'), 'max:' . config('validate.age.max')],
             'age_max' => ['nullable', 'integer', 'greater_than_field:age_min', 'max:' . config('validate.age.max')],
             'gender_ids' => ['nullable', 'array'],
-            'gender_ids.*' => ['integer', 'in:' . implode(',', $masterDataIds['masterGenders'])],
+            'gender_ids.*' => 'integer|exists:m_genders',
             'experience_ids' => ['nullable', 'array'],
-            'experience_ids.*' => ['integer', 'in:' . implode(',', $masterDataIds['masterJobExperiences'])],
+            'experience_ids.*' => 'integer|exists:m_job_experiences,id',
             'postal_code' => ['required', 'numeric', 'digits:' . config('validate.zip_code_max_length')],
             'province_id' => ['required', 'numeric', 'exists:m_provinces,id'],
             'province_city_id' => ['required', 'numeric', 'exists:m_provinces_cities,id'],
@@ -68,10 +66,10 @@ class CreateRequest extends FormRequest
             'city' => ['required', 'max:' . $stringMaxLength],
             'address' => ['nullable', 'max:' . $stringMaxLength],
             'station_ids' => ['nullable', 'array', 'max:' . config('validate.max_image_detail')],
-            'stations_ids.*' => ['integer', 'in:' . implode(',', $masterDataIds['masterStations'])],
+            'stations_ids.*' => 'integer|exists:m_stations,id',
             'welfare_treatment_description' => ['required', 'max:' . $textMaxLength],
             'feature_ids' => ['required', 'array'],
-            'feature_ids.*' => ['integer', 'in:' . implode(',', $masterDataIds['masterJobFeatures'])],
+            'feature_ids.*' => 'integer|exists:m_job_features,id',
         ];
     }
 

@@ -3,6 +3,10 @@
 namespace App\Http\Resources\User\SearchJob;
 
 use App\Helpers\SearchJobHelper;
+use App\Models\MJobExperience;
+use App\Models\MJobFeature;
+use App\Models\MJobType;
+use App\Models\MWorkType;
 use App\Services\User\Job\JobService;
 use Illuminate\Http\Resources\Json\ResourceCollection;
 

@@ -8,7 +8,9 @@ use App\Helpers\JobHelper;
 use App\Models\Image;
 use App\Models\JobPosting;
 use App\Models\MJobStatus;
+use App\Models\MJobType;
 use App\Models\MSalaryType;
+use App\Models\MWorkType;
 use App\Services\Common\FileService;
 use App\Services\Service;
 use Exception;
@@ -253,7 +255,11 @@ class JobService extends Service
      */
     public static function getJobInfoForListJob($jobList)
     {
-        $jobMasterData = JobHelper::getJobMasterData();
+        $needMasterData = [
+            MJobType::getTableName(),
+            MWorkType::getTableName(),
+        ];
+        $jobMasterData = JobHelper::getJobMasterData($needMasterData);
         $jobArr = [];
 
         foreach ($jobList as $job) {

@@ -5,6 +5,8 @@ namespace App\Services\User;
 use App\Helpers\JobHelper;
 use App\Models\DesiredConditionUser;
 use App\Models\JobPosting;
+use App\Models\MJobType;
+use App\Models\MWorkType;
 use App\Models\UserJobDesiredMatch;
 use App\Services\Service;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +23,7 @@ class UserJobDesiredMatchService extends Service
             ->join('job_postings', 'user_job_desired_matches.job_id', '=', 'job_postings.id')
             ->where('job_status_id', JobPosting::STATUS_RELEASE)
             ->where('user_job_desired_matches.user_id', $this->user->id)
+            ->with('job')
             ->orderBy('suitability_point', 'DESC')
             ->orderBy('released_at', 'DESC')
             ->take(config('common.job_posting.recommend'))
@@ -30,7 +33,11 @@ class UserJobDesiredMatchService extends Service
             return $item->job;
         });
 
-        $masterData = JobHelper::getJobMasterData();
+        $needMasterData = [
+            MJobType::getTableName(),
+            MWorkType::getTableName(),
+        ];
+        $masterData = JobHelper::getJobMasterData($needMasterData);
         $userAction = JobHelper::getUserActionJob($this->user);
         $result = [];
 

@@ -2,6 +2,13 @@
 
 namespace App\Helpers;
 
+use App\Models\Gender;
+use App\Models\MJobExperience;
+use App\Models\MJobFeature;
+use App\Models\MJobType;
+use App\Models\MStation;
+use App\Models\MWorkType;
+use App\Services\Common\CommonService;
 use App\Services\User\Job\JobService;
 use Carbon\Carbon;
 
@@ -10,22 +17,32 @@ class JobHelper
     /**
      * @return array
      */
-    public static function getJobMasterData()
+    public static function getJobMasterData($needMasterData = [])
     {
-        $masterWorkTypes = JobService::getMasterDataJobPostingWorkTypes();
-        $masterJobTypes = JobService::getMasterDataJobPostingTypes();
-        $masterGenders = JobService::getMasterDataJobGenders();
-        $masterJobExperiences = JobService::getMasterDataJobExperiences();
-        $masterJobFeatures = JobService::getMasterDataJobFeatures();
-        $masterStations = JobService::getMasterDataStations();
+        $masterData = [];
+
+        if (!count($needMasterData)) {
+            $needMasterData = [
+                MJobType::getTableName(),
+                MWorkType::getTableName(),
+                MJobExperience::getTableName(),
+                MJobFeature::getTableName(),
+                Gender::getTableName(),
+                MStation::getTableName(),
+            ];
+        }
+
+        foreach ($needMasterData as $table) {
+            $masterData[$table] = CommonService::getMasterDataFromTable($table);
+        }
 
         return [
-            'masterWorkTypes' => $masterWorkTypes,
-            'masterJobTypes' => $masterJobTypes,
-            'masterJobExperiences' => $masterJobExperiences,
-            'masterJobFeatures' => $masterJobFeatures,
-            'masterGenders' => $masterGenders,
-            'masterStations' => $masterStations,
+            'masterWorkTypes' => $masterData['m_work_types'] ?? [],
+            'masterJobTypes' => $masterData['m_job_types'] ?? [],
+            'masterJobExperiences' => $masterData['m_job_experiences'] ?? [],
+            'masterJobFeatures' => $masterData['m_job_features'] ?? [],
+            'masterGenders' => $masterData['m_genders'] ?? [],
+            'masterStations' => $masterData['m_stations'] ?? [],
         ];
     }
 
@@ -124,7 +141,7 @@ class JobHelper
     {
         $result = [];
 
-        if (!$typeIds) {
+        if (!$typeIds || !$masterDataType) {
             return $result;
         }
 
@@ -144,7 +161,7 @@ class JobHelper
     {
         $result = [];
 
-        if (!$typeIds) {
+        if (!$typeIds || !$features) {
             return $result;
         }
 
@@ -208,7 +225,7 @@ class JobHelper
     {
         $result = [];
 
-        if (!$typeIds) {
+        if (!$typeIds || !$stations) {
             return $result;
         }
 

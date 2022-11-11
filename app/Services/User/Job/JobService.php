@@ -132,7 +132,11 @@ class JobService extends Service
         $jobIds = array_diff($jobIds, array_diff($jobIds, $jobIdsAvailable));
         $this->user?->update(['recent_jobs' => array_values($jobIds)]);
 
-        $masterData = JobHelper::getJobMasterData();
+        $needMasterData = [
+            MJobType::getTableName(),
+            MWorkType::getTableName(),
+        ];
+        $masterData = JobHelper::getJobMasterData($needMasterData);
         $userAction = JobHelper::getUserActionJob($this->user);
         $jobArr = [];
 
@@ -201,7 +205,11 @@ class JobService extends Service
             ])
             ->get();
 
-        $masterData = JobHelper::getJobMasterData();
+        $needMasterData = [
+            MJobType::getTableName(),
+            MWorkType::getTableName(),
+        ];
+        $masterData = JobHelper::getJobMasterData($needMasterData);
         $userAction = JobHelper::getUserActionJob($this->user);
         $jobArr = [];
 
@@ -254,7 +262,11 @@ class JobService extends Service
             ->orderByDesc('id')
             ->paginate($perPage);
 
-        $masterData = JobHelper::getJobMasterData($this->user);
+        $needMasterData = [
+            MJobType::getTableName(),
+            MWorkType::getTableName(),
+        ];
+        $masterData = JobHelper::getJobMasterData($needMasterData);
         $result = [];
 
         foreach ($favoriteJob as $job) {
@@ -307,7 +319,12 @@ class JobService extends Service
             ->take(config('common.job_posting.newest_amount'))
             ->get();
 
-        $result = $this->appendMaster($this->user, $jobList);
+        $needMasterData = [
+            MJobType::getTableName(),
+            MWorkType::getTableName(),
+        ];
+
+        $result = $this->appendMaster($this->user, $jobList, $needMasterData);
 
         return [
             'total_jobs' => JobHelper::thousandNumberFormat($jobCount),
@@ -315,9 +332,9 @@ class JobService extends Service
         ];
     }
 
-    public static function appendMaster($user, $jobs)
+    public static function appendMaster($user, $jobs, $needMasterData = [])
     {
-        $masterData = JobHelper::getJobMasterData();
+        $masterData = JobHelper::getJobMasterData($needMasterData);
         $userAction = JobHelper::getUserActionJob($user);
         $result = [];
 
@@ -347,7 +364,12 @@ class JobService extends Service
             ->take(config('common.job_posting.most_view_amount'))
             ->get();
 
-        return $this->appendMaster($this->user, $jobList);
+        $needMasterData = [
+            MJobType::getTableName(),
+            MWorkType::getTableName(),
+        ];
+
+        return $this->appendMaster($this->user, $jobList, $needMasterData);
     }
 
     /**
@@ -371,7 +393,12 @@ class JobService extends Service
             ->take(config('common.job_posting.most_applies'))
             ->get();
 
-        return $this->appendMaster($this->user, $jobList);
+        $needMasterData = [
+            MJobType::getTableName(),
+            MWorkType::getTableName(),
+        ];
+
+        return $this->appendMaster($this->user, $jobList, $needMasterData);
     }
 
     /**
@@ -551,7 +578,11 @@ class JobService extends Service
      */
     public static function appendInfoForJobs($jobList, $user)
     {
-        $jobMasterData = JobHelper::getJobMasterData();
+        $needMasterData = [
+            MJobType::getTableName(),
+            MWorkType::getTableName(),
+        ];
+        $jobMasterData = JobHelper::getJobMasterData($needMasterData);
         $jobUserFavorite = self::getUserFavoriteJobIds($user);
         $jobArr = [];
 

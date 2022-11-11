@@ -19,6 +19,14 @@ class MWorkType extends Model
     public const IS_DEFAULT = 1;
 
     /**
+     * @return string
+     */
+    public static function getTableName()
+    {
+        return (new self)->getTable();
+    }
+
+    /**
      * @var string
      */
     protected $table = 'm_work_types';

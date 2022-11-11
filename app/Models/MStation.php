@@ -23,4 +23,12 @@ class MStation extends Model
         'railway_name',
         'station_name',
     ];
+
+    /**
+     * @return string
+     */
+    public static function getTableName()
+    {
+        return (new self)->getTable();
+    }
 }
