@@ -8,6 +8,7 @@ use App\Services\Admin\PasswordResetService;
 use App\Services\Admin\Store\StoreService;
 use App\Services\Admin\User\UserService;
 use App\Services\Admin\User\UserTableService;
+use App\Services\Admin\WorkHistoryService;
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Foundation\Application;
 
@@ -43,6 +44,10 @@ class Admin
 
         $app->scoped(StoreService::class, function ($app) {
             return new StoreService();
+        });
+
+        $app->scoped(WorkHistoryService::class, function ($app) {
+            return new WorkHistoryService();
         });
     }
 }
