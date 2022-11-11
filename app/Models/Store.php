@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\MorphToMany;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Store extends Model
@@ -99,6 +101,27 @@ class Store extends Model
         return $this->HasManyThrough(Application::class, JobPosting::class);
     }
 
+    /**
+     * @return HasManyThrough
+     */
+    public function feedbacks()
+    {
+        return $this->HasManyThrough(FeedbackJob::class, JobPosting::class);
+    }
+
+    /**
+     * @return HasManyThrough
+     */
+    public function jobImages()
+    {
+        return $this->HasManyThrough(
+            Image::class,
+            JobPosting::class,
+            'id',
+            'imageable_id',
+        )->where('imageable_type', JobPosting::class);
+    }
+
     public function getFullNameAddressAttribute()
     {
         $provinceName = $this->province->name ?? '';
@@ -109,5 +132,10 @@ class Store extends Model
     public function chats()
     {
         return $this->hasMany(Chat::class);
+    }
+
+    public function contacts()
+    {
+        return $this->hasMany(Contact::class);
     }
 }

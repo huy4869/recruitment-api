@@ -6,14 +6,17 @@ use App\Exceptions\InputException;
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
 use App\Helpers\JobHelper;
+use App\Models\Application;
 use App\Models\Image;
 use App\Models\JobPosting;
 use App\Models\MJobType;
+use App\Models\Notification;
 use App\Models\Store;
 use App\Services\Common\FileService;
 use App\Services\Service;
 use App\Services\User\Job\JobService;
 use Exception;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -47,16 +50,74 @@ class StoreService extends Service
      * @param $id
      * @return bool
      * @throws InputException
+     * @throws Exception
      */
     public function delete($id)
     {
-        $result = Store::where([['id', $id], ['user_id', $this->user->id]])->delete();
+        $store = Store::where([
+            ['id', $id],
+            ['user_id', $this->user->id]
+        ])->first();
 
-        if ($result) {
-            return true;
+        if (!$store) {
+            throw new InputException(trans('response.not_found'));
         }
 
-        throw new InputException(trans('response.not_found'));
+        try {
+            DB::beginTransaction();
+
+            $store->contacts()?->delete();
+            $store->images()?->delete();
+
+            $jobHasApplicationNotReject = $store->jobs()?->whereHas('applications', function ($query) {
+                $query->whereNot('interview_status_id', Application::STATUS_REJECTED);
+            })->with([
+                'store',
+                'applications'
+            ])->get();
+
+            $store->applications()?->whereIn('interview_status_id', [
+                Application::STATUS_APPLYING,
+                Application::STATUS_WAITING_INTERVIEW,
+                Application::STATUS_WAITING_RESULT
+            ])->update([
+                'interview_status_id' => Application::STATUS_REJECTED
+            ]);
+
+            $store->jobImages()?->delete();
+            $store->jobs()?->delete();
+            $store->delete();
+
+            if ($jobHasApplicationNotReject->count()) {
+                foreach ($jobHasApplicationNotReject as $job) {
+                    foreach ($job->applications as $application) {
+                        $userNotifyData[] = [
+                            'user_id' => $application->user_id,
+                            'notice_type_id' => Notification::TYPE_DELETE_STORE,
+                            'noti_object_ids' => json_encode([
+                                'job_posting_id' => $application->job_posting_id,
+                                'application_id' => $application->id,
+                                'user_id' => $this->user->id,
+                            ]),
+                            'title' => trans('notification.N012.title'),
+                            'content' => trans('notification.N012.content', [
+                                'store_name' => $job->store->name,
+                                'job_name' => $job->name,
+                            ]),
+                            'created_at' => now(),
+                        ];
+                    }
+                }//end foreach
+            }//end if
+
+            Notification::insert($userNotifyData);
+
+            DB::commit();
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }//end try
     }
 
     /**
