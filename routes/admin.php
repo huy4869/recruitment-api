@@ -29,6 +29,7 @@ Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {
 Route::group(['as' => 'users.', 'prefix' => 'users', 'middleware' => 'admin'], function () {
     Route::get('/', 'UserController@list')->name('list');
     Route::delete('/delete/{user}', 'UserController@destroy')->name('destroy');
+    Route::post('/update-pr/{user_id}', 'UserController@updatePr');
     Route::post('/update-user/{id}', 'UserController@updateUser');
     Route::get('/{id}/detail', 'UserController@detailUser');
     Route::get('/{user}', 'UserController@detail')->name('detail');
@@ -71,4 +72,14 @@ Route::group(['as' => 'interview-schedule.', 'prefix' => 'interview-schedule', '
 Route::group(['as' => 'work-histories', 'prefix' => 'work-histories', 'middleware' => 'admin'], function () {
     Route::post('/', 'WorkHistoryController@store');
     Route::post('/{id}', 'WorkHistoryController@update');
+});
+
+Route::group(['as' => 'learning-histories', 'prefix' => 'learning-histories', 'middleware' => 'admin'], function () {
+    Route::post('/', 'LearningHistoryController@store');
+    Route::post('/{id}', 'LearningHistoryController@update');
+});
+
+Route::group(['as' => 'licenses-qualifications', 'prefix' => 'licenses-qualifications', 'middleware' => 'admin'], function () {
+    Route::post('/', 'LicensesQualificationController@store');
+    Route::post('/{id}', 'LicensesQualificationController@update');
 });

@@ -419,4 +419,12 @@ class UserService extends Service
 
         return array_merge([FileHelper::fullPathNotDomain($data['avatar'])], $dataUrl);
     }
+
+    public function updatePr($data, $userId)
+    {
+        return User::query()
+            ->roleUser()
+            ->where('id', $userId)
+            ->update($data);
+    }
 }

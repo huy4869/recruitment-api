@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\UpdatePrRequest;
 use App\Http\Requests\Admin\User\UserInfoUpdateRequest;
 use App\Http\Requests\Admin\User\UserUpdateRequest;
 use App\Http\Resources\Admin\DetailUserInfoResource;
@@ -154,5 +155,22 @@ class UserController extends Controller
         UserService::getInstance()->updateUser($input, $id);
 
         return $this->sendSuccessResponse([], trans('validation.INF.001'));
+    }
+
+    public function updatePr($userId, UpdatePrRequest $request)
+    {
+        $input = $request->only([
+            'favorite_skill',
+            'experience_knowledge',
+            'self_pr'
+        ]);
+
+        $data = UserService::getInstance()->updatePr($input, $userId);
+
+        if ($data) {
+            return $this->sendSuccessResponse([], trans('validation.INF.001'));
+        }
+
+        throw new InputException(trans('validation.ERR.007'));
     }
 }

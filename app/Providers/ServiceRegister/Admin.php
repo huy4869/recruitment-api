@@ -3,6 +3,8 @@
 namespace App\Providers\ServiceRegister;
 
 use App\Services\Admin\AuthService;
+use App\Services\Admin\LearningHistoryService;
+use App\Services\Admin\LicensesQualificationService;
 use App\Services\Admin\MasterDataService;
 use App\Services\Admin\PasswordResetService;
 use App\Services\Admin\Store\StoreService;
@@ -48,6 +50,14 @@ class Admin
 
         $app->scoped(WorkHistoryService::class, function ($app) {
             return new WorkHistoryService();
+        });
+
+        $app->scoped(LearningHistoryService::class, function ($app) {
+            return new LearningHistoryService();
+        });
+
+        $app->scoped(LicensesQualificationService::class, function ($app) {
+            return new LicensesQualificationService();
         });
     }
 }
