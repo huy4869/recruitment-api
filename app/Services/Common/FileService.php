@@ -14,6 +14,8 @@ use Intervention\Image\Facades\Image;
 
 class FileService extends Service
 {
+    public const COUNT_IMAGE = 1;
+
     /**
      * @var string
      */
@@ -91,9 +93,13 @@ class FileService extends Service
         $storageDeletes = [];
 
         foreach ($objectDeleteImage->get() as $img) {
-            $url = $linkImage . $img->url;
-            $thumb = $linkImage . $img->thumb;
-            array_push($storageDeletes, $url, $thumb);
+            $countImage = Images::query()->where('url', '=', $img->url)->get()->count();
+
+            if ($countImage == self::COUNT_IMAGE) {
+                $url = $linkImage . $img->url;
+                $thumb = $linkImage . $img->thumb;
+                array_push($storageDeletes, $url, $thumb);
+            }
         }
         Storage::delete($storageDeletes);
 
