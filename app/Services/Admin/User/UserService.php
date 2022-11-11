@@ -3,6 +3,10 @@
 namespace App\Services\Admin\User;
 
 use App\Exceptions\InputException;
+use App\Helpers\DateTimeHelper;
+use App\Helpers\FileHelper;
+use App\Helpers\JobHelper;
+use App\Helpers\UserHelper;
 use App\Jobs\Admin\User\JobStore;
 use App\Jobs\Admin\User\JobUpdate;
 use App\Models\MRole;
@@ -266,5 +270,112 @@ class UserService extends Service
             DB::rollBack();
             throw $e;
         }//end try
+    }
+
+    public function detailInfoUser($user_id)
+    {
+        $user = User::query()
+            ->with([
+                'userLearningHistories',
+                'userLicensesQualifications',
+                'userWordHistories',
+                'avatarBanner',
+                'avatarDetails'
+            ])
+            ->where('id', $user_id)
+            ->roleUser()
+            ->first();
+
+        if ($user) {
+            $masterData = UserHelper::getMasterDataWithUser();
+
+            return self::addFormatUserProfileJsonData($user, $masterData);
+        }
+
+        throw new InputException(trans('validation.ERR.exist.user_not_exist'));
+    }
+
+    public static function addFormatUserProfileJsonData($user, $masterData)
+    {
+        $userWorkHistories = [];
+        foreach ($user->userWordHistories as $workHistory) {
+            $userWorkHistories[] = [
+                'id' => $workHistory->id,
+                'store_name' => $workHistory->store_name,
+                'company_name' => $workHistory->company_name,
+                'business_content' => $workHistory->business_content,
+                'experience_accumulation' => $workHistory->experience_accumulation,
+                'date_time' => [
+                    'work_time' => [
+                        'period_start' => DateTimeHelper::formatMonthYear($workHistory->period_start),
+                        'period_end' => DateTimeHelper::formatMonthYear($workHistory->period_end),
+                    ],
+                    'period_start' => [
+                        'month' => substr($workHistory->period_start, 4),
+                        'year' => substr($workHistory->period_start, 0, 4),
+                    ],
+                    'period_end' => [
+                        'month' => substr($workHistory->period_end, 4),
+                        'year' => substr($workHistory->period_end, 0, 4),
+                    ]
+                ],
+                'job_type' => $workHistory->jobType->name,
+                'positionOffice' => JobHelper::getTypeName($workHistory->position_office_ids, $masterData['masterPositionOffice']),
+                'work_type' => $workHistory->workType->name,
+            ];
+        }//end foreach
+
+        $learningHistories = [];
+        foreach ($user->userLearningHistories as $learningHistory) {
+            $learningHistories[] = [
+                'id' => $learningHistory->id,
+                'school_name' => $learningHistory->school_name,
+                'date_time' => [
+                    'time_start_end' => [
+                        'enrollment_period_start' => DateTimeHelper::formatMonthYear($learningHistory->enrollment_period_start),
+                        'enrollment_period_end' => DateTimeHelper::formatMonthYear($learningHistory->enrollment_period_end),
+                        'learn_status' => $learningHistory->learningStatus->name,
+                    ],
+                    'enrollment_period_start' => [
+                        'month' => substr($learningHistory->enrollment_period_start, 4),
+                        'year' => substr($learningHistory->enrollment_period_start, 0, 4),
+                    ],
+                    'enrollment_period_end' => [
+                        'month' => substr($learningHistory->enrollment_period_end, 4),
+                        'year' => substr($learningHistory->enrollment_period_end, 0, 4),
+                    ]
+                ],
+            ];
+        }//end foreach
+
+        $licensesQualifications = [];
+        foreach ($user->userLicensesQualifications as $userLicensesQualification) {
+            $licensesQualifications[] = [
+                'name' => $userLicensesQualification->name,
+                'date_time' => [
+                    'new_issuance_date' => DateTimeHelper::formatMonthYear($userLicensesQualification->new_issuance_date),
+                    'format_issuance_date' => [
+                        'month' => substr($userLicensesQualification->enrollment_period_end, 4),
+                        'year' => substr($userLicensesQualification->enrollment_period_end, 0, 4),
+                    ]
+                ]
+            ];
+        }
+
+        return array_merge($user->toArray(), [
+            'avatar_banner' => FileHelper::getFullUrl($user->avatarBanner->url ?? null),
+            'avatar_details' => $user->avatarDetails ?: null,
+            'province' => $user->province->name,
+            'province_city' => @$user->provinceCity->name,
+            'gender' => $user->gender->name ?? null,
+            'gender_id' => $user->gender->id ?? null,
+            'user_word_histories' => $userWorkHistories,
+            'favorite_skill' => $user->favorite_skill,
+            'experience_knowledge' => $user->experience_knowledge,
+            'self_pr' => $user->self_pr,
+            'user_learning_histories' => $learningHistories,
+            'user_licenses_qualifications' => $licensesQualifications,
+            'motivation' => $user->motivation,
+        ]);
     }
 }
