@@ -49,8 +49,8 @@ class CreateRequest extends FormRequest
             'salary_min' => ['required', 'integer', 'max:' . config('validate.salary_max_value')],
             'salary_max' => ['required', 'integer', 'greater_than_field:salary_min', 'max:' . config('validate.salary_max_value')],
             'salary_description' => ['nullable', 'string', 'max:' . $stringMaxLength],
-            'start_work_time' => ['required', 'required_with:end_work_time', 'date_format:Hi'],
-            'end_work_time' => ['required', 'required_with:start_work_time', 'after_or_equal:start_work_time', 'date_format:Hi'],
+            'start_work_time' => ['required', 'date_format:Hi'],
+            'end_work_time' => ['required', 'after_or_equal:start_work_time', 'date_format:Hi'],
             'shifts' => ['nullable', 'max:' . $textMaxLength],
             'age_min' => ['nullable', 'integer', 'min:' . config('validate.age.min'), 'max:' . config('validate.age.max')],
             'age_max' => ['nullable', 'integer', 'greater_than_field:age_min', 'max:' . config('validate.age.max')],
@@ -123,8 +123,6 @@ class CreateRequest extends FormRequest
             'end_work_time.required' => trans('validation.COM.010', [
                 'attribute' => trans('job_posting.attributes.end_work_time')
             ]),
-            'start_work_time.required_with' => trans('validation.COM.022'),
-            'end_work_time.required_with' => trans('validation.COM.023'),
             'end_work_time.after_or_equal' => trans('validation.COM.021'),
             'age_min.min' => trans('validation.ERR.040'),
             'age_min.max' => trans('validation.ERR.033'),

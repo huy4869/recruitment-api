@@ -26,6 +26,7 @@ class CreateRequest extends FormRequest
      */
     public function rules()
     {
+        $dayIds = array_keys(config('date.day_of_week_ja_fe'));
         $recruiter = auth()->user();
         $storeIds = JobService::getStoreIdsAccordingToRecruiter($recruiter);
         $jobStatusIds = JobService::getJobStatusIdsNotEnd();
@@ -47,8 +48,8 @@ class CreateRequest extends FormRequest
             'salary_min' => 'required|integer|max:' . config('validate.salary_max_value'),
             'salary_max' => 'required|integer|greater_than_field:salary_min|max:' . config('validate.salary_max_value'),
             'salary_description' => 'nullable|string|max:' . config('validate.string_max_length'),
-            'start_work_time' => 'string|max:' . config('validate.work_time_max_length'),
-            'end_work_time' => 'string|greater_than_field:start_work_time|max:' . config('validate.work_time_max_length'),
+            'start_work_time' => 'required|string|max:' . config('validate.work_time_max_length'),
+            'end_work_time' => 'required|string|greater_than_field:start_work_time|max:' . config('validate.work_time_max_length'),
             'shifts' => 'nullable|max:' . config('validate.text_max_length'),
             'age_min' => 'nullable|integer|min:' . config('validate.age.min') . '|max:' . config('validate.age.max'),
             'age_max' => 'nullable|integer|greater_than_field:age_min|max:' . config('validate.age.max'),
@@ -58,6 +59,9 @@ class CreateRequest extends FormRequest
             'experience_ids.*' => 'integer|exists:m_job_experiences,id',
             'postal_code' => 'required',
             'province_id' => 'required',
+            'province_city_id' => ['required', 'numeric', 'exists:m_provinces_cities,id'],
+            'working_days' => ['nullable', 'array'],
+            'working_days.*' => ['nullable', 'integer', 'in:' . implode(',', $dayIds)],
             'address' => 'required|max:' . config('validate.string_max_length'),
             'building' => 'nullable|max:' . config('validate.string_max_length'),
             'station_ids' => 'nullable|array',

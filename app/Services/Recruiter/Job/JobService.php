@@ -238,6 +238,7 @@ class JobService extends Service
             'detailImages',
             'province',
             'province.provinceDistrict',
+            'provinceCity',
             'salaryType',
         ])
         ->first();
