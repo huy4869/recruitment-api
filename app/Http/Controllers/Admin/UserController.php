@@ -4,12 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\User\UserUpdateRequest;
+use App\Http\Requests\Admin\User\StoreRequest;
+use App\Http\Requests\Admin\User\UpdateRequest;
+use App\Http\Resources\Admin\User\DetailUserResource;
 use App\Http\Resources\Admin\User\UserCollection;
-use App\Http\Resources\Admin\User\UserDetailResource;
-use App\Http\Resources\Admin\User\UserResource;
 use App\Services\Admin\User\UserService;
 use App\Services\Admin\User\UserTableService;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
@@ -48,28 +49,50 @@ class UserController extends Controller
     {
         $data = UserService::getInstance()->detail($id);
 
-        return $this->sendSuccessResponse(new UserDetailResource($data));
+        return $this->sendSuccessResponse(new DetailUserResource($data));
     }
 
     /**
-     * Update user
-     *
-     * @param $id
-     * @param UserUpdateRequest $request
+     * @param StoreRequest $request
      * @return JsonResponse
-     * @throws InputException
+     * @throws Exception
      */
-    public function update($id, UserUpdateRequest $request)
+    public function store(StoreRequest $request)
     {
         $inputs = $request->only([
-            'name',
+            'role_id',
+            'first_name',
+            'last_name',
+            'furi_first_name',
+            'furi_last_name',
             'email',
-            'status'
+            'password',
+            'store_ids',
         ]);
-        $data = UserService::getInstance()->update($id, $inputs);
+        $data = UserService::getInstance()->store($inputs);
 
-        return $this->sendSuccessResponse($data, trans('response.updated', [
-            'object' => trans('response.label.user')
-        ]));
+        return $this->sendSuccessResponse($data, trans('validation.INF.010'));
+    }
+
+    /**
+     * @param $id
+     * @param UpdateRequest $request
+     * @return JsonResponse
+     * @throws Exception
+     */
+    public function update($id, UpdateRequest $request)
+    {
+        $admin = $this->guard()->user();
+        $inputs = $request->only([
+            'first_name',
+            'last_name',
+            'furi_first_name',
+            'furi_last_name',
+            'password',
+            'store_ids',
+        ]);
+        $data = UserService::getInstance()->withUser($admin)->update($id, $inputs);
+
+        return $this->sendSuccessResponse($data, trans('validation.INF.001'));
     }
 }
