@@ -14,8 +14,8 @@ class Application extends Model
     public const STATUS_APPLYING = 1;
     public const STATUS_WAITING_INTERVIEW = 2;
     public const STATUS_WAITING_RESULT = 3;
-    public const STATUS_REJECTED = 4;
-    public const STATUS_ACCEPTED = 5;
+    public const STATUS_ACCEPTED = 4;
+    public const STATUS_REJECTED = 5;
     public const STATUS_CANCELED = 6;
 
     public const STATUS_INTERVIEW_ONLINE = 1;

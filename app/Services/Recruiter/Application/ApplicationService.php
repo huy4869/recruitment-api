@@ -162,11 +162,13 @@ class ApplicationService extends Service
             ])
             ->first();
 
-        if (!$application) {
+        if (!$application || (
+            $application->interview_status_id == Application::STATUS_REJECTED
+            && $data['interview_status_id'] != Application::STATUS_REJECTED
+        )) {
             throw new InputException(trans('response.not_found'));
         }
 
-        $data['interview_approach_id'] = $application->interview_approach_id;
         $data['note'] = $data['approach'];
         unset($data['approach']);
 
