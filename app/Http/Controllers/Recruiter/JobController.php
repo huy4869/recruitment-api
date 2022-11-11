@@ -49,14 +49,20 @@ class JobController extends Controller
 
         switch ($jobStatusIds) {
             case JobPosting::STATUS_DRAFT:
-                return $this->sendSuccessResponse($jobStatusIds, trans('validation.INF.009'));
+                $msg = trans('validation.INF.009');
+                break;
             case JobPosting::STATUS_RELEASE:
-                return $this->sendSuccessResponse($jobStatusIds, trans('validation.INF.010'));
+                $msg = trans('validation.INF.010');
+                break;
             case JobPosting::STATUS_END:
-                return $this->sendSuccessResponse($jobStatusIds, trans('validation.INF.012'));
+                $msg = trans('validation.INF.012');
+                break;
             default:
-                return $this->sendSuccessResponse($jobStatusIds);
+                $msg = trans('response.INF.006');
+                break;
         }
+
+        return $this->sendSuccessResponse($jobStatusIds, $msg);
     }
 
     /**
@@ -137,6 +143,8 @@ class JobController extends Controller
             'experience_ids',
             'postal_code',
             'province_id',
+            'province_city_id',
+            'working_days',
             'address',
             'building',
             'station_ids',
