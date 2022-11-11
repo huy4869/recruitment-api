@@ -3,6 +3,7 @@
 namespace App\Helpers;
 
 use App\Models\MJobType;
+use App\Models\MWorkType;
 use Illuminate\Contracts\Translation\Translator;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
