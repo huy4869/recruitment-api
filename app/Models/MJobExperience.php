@@ -18,4 +18,12 @@ class MJobExperience extends Model
      * @var string[]
      */
     protected $fillable = ['name'];
+
+    /**
+     * @return string
+     */
+    public static function getTableName()
+    {
+        return (new self)->getTable();
+    }
 }

@@ -27,4 +27,12 @@ class MJobFeature extends Model
     {
         return $this->belongsTo(MJobFeatureCategory::class, 'category_id');
     }
+
+    /**
+     * @return string
+     */
+    public static function getTableName()
+    {
+        return (new self)->getTable();
+    }
 }

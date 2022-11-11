@@ -2,9 +2,13 @@
 
 namespace App\Services\Common;
 
+use App\Helpers\CommonHelper;
+use App\Models\MJobFeature;
 use App\Models\MProvince;
 use App\Models\MProvinceCity;
+use App\Models\MStation;
 use App\Services\Service;
+use Illuminate\Support\Facades\DB;
 
 class CommonService extends Service
 {
@@ -31,5 +35,24 @@ class CommonService extends Service
             'province',
             'province.provinceDistrict'
         ])->get()->toArray();
+    }
+
+    /**
+     * @param $table
+     * @return array
+     */
+    public static function getMasterDataFromTable($table)
+    {
+        if ($table == MJobFeature::getTableName()) {
+            return MJobFeature::query()->with(['category'])->get();
+        }
+
+        $masterData = DB::table($table)->get();
+
+        if ($table == MStation::getTableName()) {
+            return CommonHelper::getMasterDataStations($masterData);
+        }
+
+        return CommonHelper::getMasterDataIdName($masterData);
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests\Recruiter\Job;
 
-use App\Helpers\JobHelper;
-use App\Models\JobPosting;
+use App\Models\MJobType;
+use App\Models\MWorkType;
 use App\Services\Recruiter\Job\JobService;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -28,10 +28,7 @@ class CreateRequest extends FormRequest
     {
         $recruiter = auth()->user();
         $storeIds = JobService::getStoreIdsAccordingToRecruiter($recruiter);
-        $salaryTypeIds = JobService::getSalaryTypeIds();
         $jobStatusIds = JobService::getJobStatusIdsNotEnd();
-        $masterData = JobHelper::getJobMasterData();
-        $masterDataIds = JobHelper::getListIdsMasterData($masterData);
 
         return [
             'name' => 'required|string|max:' . config('validate.string_max_length'),
@@ -42,11 +39,11 @@ class CreateRequest extends FormRequest
             'job_thumbnails' => 'required|array',
             'job_thumbnails.*' => 'string',
             'job_type_ids' => 'required|array',
-            'job_type_ids.*' => 'integer|in:' . implode(',', $masterDataIds['masterJobTypes']),
+            'job_type_ids.*' => 'integer|exists:m_job_types,id,is_default,' . MJobType::IS_DEFAULT,
             'description' => 'required|string|max:' . config('validate.text_max_length'),
             'work_type_ids' => 'required|array',
-            'work_type_ids.*' => 'integer|in:' . implode(',', $masterDataIds['masterWorkTypes']),
-            'salary_type_id' => 'required|integer|in:' . implode(',', $salaryTypeIds),
+            'work_type_ids.*' => 'integer|exists:m_work_types,id,is_default,' . MWorkType::IS_DEFAULT,
+            'salary_type_id' => 'required|integer|exists:m_salary_types,id',
             'salary_min' => 'required|integer|max:' . config('validate.salary_max_value'),
             'salary_max' => 'required|integer|greater_than_field:salary_min|max:' . config('validate.salary_max_value'),
             'salary_description' => 'nullable|string|max:' . config('validate.string_max_length'),
@@ -56,18 +53,18 @@ class CreateRequest extends FormRequest
             'age_min' => 'nullable|integer|min:' . config('validate.age.min') . '|max:' . config('validate.age.max'),
             'age_max' => 'nullable|integer|greater_than_field:age_min|max:' . config('validate.age.max'),
             'gender_ids' => 'nullable|array',
-            'gender_ids.*' => 'integer|in:' . implode(',', $masterDataIds['masterGenders']),
+            'gender_ids.*' => 'integer|exists:m_genders,id',
             'experience_ids' => 'nullable|array',
-            'experience_ids.*' => 'integer|in:' . implode(',', $masterDataIds['masterJobExperiences']),
+            'experience_ids.*' => 'integer|exists:m_job_experiences,id',
             'postal_code' => 'required',
             'province_id' => 'required',
             'address' => 'required|max:' . config('validate.string_max_length'),
             'building' => 'nullable|max:' . config('validate.string_max_length'),
             'station_ids' => 'nullable|array',
-            'stations_ids.*' => 'integer|in:' . implode(',', $masterDataIds['masterStations']),
+            'stations_ids.*' => 'integer|exists:m_stations,id',
             'welfare_treatment_description' => 'required|max:' . config('validate.text_max_length'),
             'feature_ids' => 'required|array',
-            'feature_ids.*' => 'integer|in:' . implode(',', $masterDataIds['masterJobFeatures']),
+            'feature_ids.*' => 'integer|exists:m_job_features,id',
         ];
     }
 

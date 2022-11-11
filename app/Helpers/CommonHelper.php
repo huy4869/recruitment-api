@@ -29,6 +29,26 @@ class CommonHelper
         return $result;
     }
 
+    /**
+     * @param $queryModel
+     * @return array
+     */
+    public static function getMasterDataStations($queryModel)
+    {
+        $result = [];
+
+        foreach ($queryModel as $item) {
+            $result[] = [
+                'id' => $item->id,
+                'province_name' => $item->province_name,
+                'railway_name' => $item->railway_name,
+                'station_name' => $item->station_name,
+            ];
+        }
+
+        return $result;
+    }
+
     public static function getMasterDataJobPostingTypes()
     {
         $jobTypes = MJobType::all();
