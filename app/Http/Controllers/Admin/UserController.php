@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\User\UserInfoUpdateRequest;
 use App\Http\Requests\Admin\User\UserUpdateRequest;
 use App\Http\Resources\Admin\DetailUserInfoResource;
 use App\Http\Requests\Admin\User\StoreRequest;
@@ -123,5 +124,35 @@ class UserController extends Controller
         $data = UserService::getInstance()->detailInfoUser($id);
 
         return $this->sendSuccessResponse(new DetailUserInfoResource($data));
+    }
+
+    public function updateUser(UserInfoUpdateRequest $request, $id)
+    {
+        $input = $request->only([
+            'avatar',
+            'images',
+            'first_name',
+            'last_name',
+            'alias_name',
+            'furi_first_name',
+            'furi_last_name',
+            'birthday',
+            'gender_id',
+            'tel',
+            'line',
+            'age',
+            'facebook',
+            'instagram',
+            'twitter',
+            'postal_code',
+            'province_id',
+            'province_city_id',
+            'address',
+            'building',
+        ]);
+
+        UserService::getInstance()->updateUser($input, $id);
+
+        return $this->sendSuccessResponse([], trans('validation.INF.001'));
     }
 }
