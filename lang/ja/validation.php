@@ -289,10 +289,13 @@ return [
         'job_feature_ids.*' => '希望特徴',
         'start_working_time' => '開始時間',
         'end_working_time' => '終了時間',
+        'start_work_time' => '開始時間',
+        'end_work_time' => '終了時間',
         'working_days' => '希望勤務曜日',
         'store_id' => '店舗名',
         'school_name' => '学校名',
         'date' => '日にち',
+        'job_thumbnails' => 'サブ画像',
     ],
 
     'COM' => [

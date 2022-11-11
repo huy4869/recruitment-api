@@ -57,7 +57,8 @@ class JobPosting extends Model
         'age_max',
         'views',
         'created_by',
-        'released_at'
+        'released_at',
+        'working_days',
     ];
 
     /**
