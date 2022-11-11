@@ -26,8 +26,9 @@ Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {
     Route::post('/register', 'AuthController@register')->name('register');
 });
 
-Route::group(['as' => 'users.', 'prefix' => 'users'], function () {
-    Route::get('/', 'UserController@index')->name('index');
+Route::group(['as' => 'users.', 'prefix' => 'users', 'middleware' => 'admin'], function () {
+    Route::get('/', 'UserController@list')->name('list');
+    Route::delete('/delete/{user}', 'UserController@destroy')->name('destroy');
     Route::get('/{user}', 'UserController@detail')->name('detail');
     Route::post('/', 'UserController@store')->name('store');
     Route::post('/{user}', 'UserController@update')->name('update');

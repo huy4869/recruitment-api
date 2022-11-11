@@ -46,10 +46,10 @@ class MasterDataSeeder extends Seeder
 
         $time = Carbon::now();
         $dataRoles = [
-            ['name' => 'USER', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'REC', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'SUB_ADMIN', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'ADMIN', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '求職者', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '美容室オーナ', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '管理者', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'SUPER ADMIN', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_roles')->insert($dataRoles);
 
@@ -164,6 +164,8 @@ class MasterDataSeeder extends Seeder
             ['name' => 'new_message', 'created_at' => $time, 'updated_at' => $time],
             ['name' => 'interview_changed', 'created_at' => $time, 'updated_at' => $time],
             ['name' => 'interview_pending', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'delete_user', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'delete_recruiter', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_notice_types')->insert($dataNoticeTypes);
 

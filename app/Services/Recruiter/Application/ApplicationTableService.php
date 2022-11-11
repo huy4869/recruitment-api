@@ -97,7 +97,7 @@ class ApplicationTableService extends TableService
                 return $query;
         }//end switch
 
-        $content = '%' . trim($filter['data']) . '%';
+        $content = '%' . str_replace(' ', '', $filter['data']) . '%';
         $query->where(function ($q) use ($content, $queryKeys) {
             foreach ($queryKeys as $key) {
                 $key = sprintf('replace(%s, \' \', \'\')', $key);

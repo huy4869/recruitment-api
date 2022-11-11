@@ -7,11 +7,12 @@ use App\Jobs\Admin\User\JobStore;
 use App\Jobs\Admin\User\JobUpdate;
 use App\Models\MRole;
 use App\Models\Store;
+use App\Models\Application;
+use App\Models\Notification;
 use App\Models\User;
 use App\Services\Service;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -136,5 +137,134 @@ class UserService extends Service
         return MRole::query()->whereNot('id', $condition)
             ->pluck('id')
             ->toArray();
+    }
+
+    /**
+     * @param $id
+     * @return bool
+     * @throws InputException
+     * @throws Exception
+     */
+    public function destroy($id)
+    {
+        $admin = $this->user;
+
+        $user = User::query()->where('id', $id)->with([
+            'stores',
+            'stores.jobs',
+            'stores.jobs.applications',
+            'applications.jobPosting',
+            'applications.jobPosting.store.owner',
+        ])
+        ->first();
+
+        if (!$user || (
+            $admin->role_id == User::ROLE_SUB_ADMIN
+            && $user->role_id == User::ROLE_SUB_ADMIN
+        )) {
+            throw new InputException(trans('response.not_found'));
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $userNotifyData = [];
+
+            switch ($user->role_id) {
+                case User::ROLE_USER:
+                    foreach ($user->applications as $application) {
+                        $recruiter = $application->jobPosting->store->owner;
+
+                        $userNotifyData[] = [
+                            'user_id' => $recruiter->id,
+                            'notice_type_id' => Notification::TYPE_DELETE_USER,
+                            'noti_object_ids' => json_encode([
+                                'job_posting_id' => $application->job_posting_id,
+                                'application_id' => $application->id,
+                                'user_id' => $admin->id,
+                            ]),
+                            'title' => trans('notification.N014.title'),
+                            'content' => trans('notification.N014.content', [
+                                'user_name' => sprintf('%s %s', $user->first_name, $user->last_name),
+                                'job_title' => $application->jobPosting->name,
+                            ]),
+                            'created_at' => now(),
+                        ];
+                    }
+                    break;
+
+                case User::ROLE_RECRUITER:
+                    foreach ($user->stores as $store) {
+                        foreach ($store->jobs as $job) {
+                            foreach ($job->applications as $application) {
+                                $userNotifyData[] = [
+                                    'user_id' => $application->user->id,
+                                    'notice_type_id' => Notification::TYPE_DELETE_RECRUITER,
+                                    'noti_object_ids' => json_encode([
+                                        'job_posting_id' => $job->id,
+                                        'application_id' => $application->id,
+                                        'user_id' => $admin->id,
+                                    ]),
+                                    'title' => trans('notification.N013.title'),
+                                    'content' => trans('notification.N013.content', [
+                                        'recruiter_name' => sprintf('%s %s', $user->first_name, $user->last_name),
+                                        'job_title' => $application->jobPosting->name,
+                                    ]),
+                                    'created_at' => now(),
+                                ];
+                            }
+                        }
+                    }
+                    break;
+            }
+
+            Notification::insert($userNotifyData);
+
+            $user->applicationUserLearningHistories()?->delete();
+            $user->applicationUserLicensesQualifications()?->delete();
+            $user->applicationUserWorkHistories()?->delete();
+
+            foreach ($user->applicationUser as $item) {
+                $item->images()?->delete();
+            }
+
+            $user->applications()?->update([
+                'interview_status_id' => Application::STATUS_REJECTED,
+            ]);
+
+            $user->chats()?->delete();
+            $user->contacts()?->delete();
+            $user->desiredConditionUser()?->delete();
+            $user->favoriteJobs()?->delete();
+            $user->favoriteUser()?->delete();
+            $user->feedbacks()?->delete();
+            $user->images()?->delete();
+            $user->notifications()?->delete();
+            $user->recruiterOffTimes()?->delete();
+            $user->searchJobs()?->delete();
+
+            foreach ($user->stores as $store) {
+                foreach ($store->jobs() as $job) {
+                    $job->applications()->update([
+                        'interview_status_id' => Application::STATUS_REJECTED,
+                    ]);
+                }
+
+                $store->jobs()?->delete();
+            }
+
+            $user->stores()?->delete();
+            $user->userJobDesiredMatches()?->delete();
+            $user->userLearningHistories()?->delete();
+            $user->userLicensesQualifications()?->delete();
+            $user->userWordHistories()?->delete();
+            $user->delete();
+
+            DB::commit();
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }//end try
     }
 }

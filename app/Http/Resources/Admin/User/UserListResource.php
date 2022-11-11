@@ -2,6 +2,8 @@
 
 namespace App\Http\Resources\Admin\User;
 
+use App\Helpers\DateTimeHelper;
+use App\Models\User;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -17,12 +19,17 @@ class UserListResource extends JsonResource
      */
     public function toArray($request)
     {
-        $data = $this->resource;
-
         return [
-            'id' => $data->id,
-            'name' => $data->name,
-            'email' => $data->email,
+            'id' => $this->id,
+            'first_name' => $this->first_name,
+            'last_name' => $this->last_name,
+            'role' => [
+                'id' => $this->role->id,
+                'name' => $this->role->name,
+            ],
+            'stores' => $this->getAllOwnStoreNames(),
+            'email' => $this->email,
+            'last_login_at' => DateTimeHelper::formatDateTimeJa($this->last_login_at),
         ];
     }
 }

@@ -280,4 +280,49 @@ class User extends Authenticatable
     {
         return $this->hasMany(ApplicationUser::class);
     }
+
+    /**
+     * @return mixed|void
+     */
+    public function getAllOwnStoreNames()
+    {
+        $storeNames = $this->stores()->pluck('name')->toArray();
+
+        return $storeNames ? implode('、', $storeNames) : null;
+    }
+
+    public function searchJobs()
+    {
+        return $this->hasMany(SearchJob::class);
+    }
+
+    public function feedbacks()
+    {
+        return $this->hasMany(FeedbackJob::class);
+    }
+
+    public function contacts()
+    {
+        return $this->hasMany(Contact::class);
+    }
+
+    public function userJobDesiredMatches()
+    {
+        return $this->hasMany(UserJobDesiredMatch::class);
+    }
+
+    public function applicationUserLearningHistories()
+    {
+        return $this->hasMany(ApplicationUserLearningHistory::class);
+    }
+
+    public function applicationUserLicensesQualifications()
+    {
+        return $this->hasMany(ApplicationUserLicensesQualification::class);
+    }
+
+    public function applicationUserWorkHistories()
+    {
+        return $this->hasMany(ApplicationUserWorkHistory::class);
+    }
 }
