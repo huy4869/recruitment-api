@@ -8,6 +8,7 @@ return [
     'cart_invalid' => 'ショッピングカートは既に存在します。後でもう一度やり直してください。',
     'unauthenticated' => 'セッションの有効期限がきれました。もう一度ログインください。',
     'update_successfully' => ':objectの更新が完了しました。',
+    'submission_date_label' => '電話番号：',
     'created' => ':objectの登録が完了しました。',
     'updated' => ':objectの編集が完了しました。',
     'deleted' => ':objectの削除が完了しました。',

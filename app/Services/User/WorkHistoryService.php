@@ -34,7 +34,7 @@ class WorkHistoryService extends Service
         $userWorkHistories = UserWorkHistory::query()
             ->with(['jobType', 'workType'])
             ->where('user_id', $user->id)
-            ->orderByRaw('ISNULL(period_end), period_start DESC, period_end DESC')
+            ->orderByRaw('period_end is not null, period_start DESC, period_end DESC')
             ->get()
             ->toArray();
 
@@ -286,7 +286,7 @@ class WorkHistoryService extends Service
             'store_name' => $data['store_name'],
             'company_name' => $data['company_name'],
             'period_start' => str_replace('/', '', $data['period_start']),
-            'period_end' => str_replace('/', '', $data['period_end']),
+            'period_end' => $data['period_end'] ? str_replace('/', '', $data['period_end']) : NULL,
             'business_content' => $data['business_content'],
             'experience_accumulation' => $data['experience_accumulation'],
         ];

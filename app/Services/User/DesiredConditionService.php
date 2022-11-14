@@ -37,8 +37,7 @@ class DesiredConditionService extends Service
         $userWorkHistory = DesiredConditionUser::query()
             ->with(['province', 'salaryType'])
             ->where('user_id', '=', $this->user->id)
-            ->first()
-            ->toArray();
+            ->first();
 
         if ($userWorkHistory) {
             $userWorkHistory['work_type_string'] = $this->getDataStringObject($userWorkHistory['work_type_ids'] ?? [], MWorkType::query());
