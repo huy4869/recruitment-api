@@ -33,11 +33,7 @@ class PasswordResetController extends BaseController
      */
     public function checkToken(CheckTokenResetPasswordRequest $request)
     {
-        $token = PasswordResetService::getInstance()->checkToken($request->get('token'));
-
-        if (!$token) {
-            throw new InputException(trans('response.invalid_token'));
-        }
+        PasswordResetService::getInstance()->checkToken($request->get('token'));
 
         return $this->sendSuccessResponse([]);
     }

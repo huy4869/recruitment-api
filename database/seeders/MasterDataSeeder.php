@@ -111,7 +111,7 @@ class MasterDataSeeder extends Seeder
 
         $dataLearningStatus = [
             ['name' => '卒業', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => '卒業見込み·', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '卒業見込み', 'created_at' => $time, 'updated_at' => $time],
             ['name' => '休退', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_learning_status')->insert($dataLearningStatus);
@@ -172,7 +172,7 @@ class MasterDataSeeder extends Seeder
         $dataPositionOffices = [
             ['name' => 'マネジャー', 'created_at' => $time, 'updated_at' => $time],
             ['name' => 'スタッフ', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'ネイリスト、', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'ネイリスト', 'created_at' => $time, 'updated_at' => $time],
             ['name' => 'ヘアスタイル', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_position_offices')->insert($dataPositionOffices);
