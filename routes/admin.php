@@ -84,3 +84,8 @@ Route::group(['as' => 'licenses-qualifications', 'prefix' => 'licenses-qualifica
     Route::post('/', 'LicensesQualificationController@store');
     Route::post('/{id}', 'LicensesQualificationController@update');
 });
+
+Route::group(['as' => 'contacts.', 'prefix' => 'contacts', 'middleware' => 'admin'], function () {
+    Route::get('/', 'ContactsController@list')->name('list');
+    Route::get('/{id}', 'ContactsController@detail')->name('detail');
+});
