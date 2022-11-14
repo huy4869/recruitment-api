@@ -11,6 +11,9 @@ class Contact extends Model
 {
     use HasFactory, SoftDeletes;
 
+    public const NOT_READ = 0;
+    public const BE_READ = 1;
+
     /**
      * @var string
      */
