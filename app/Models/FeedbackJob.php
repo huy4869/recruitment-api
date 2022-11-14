@@ -13,6 +13,9 @@ class FeedbackJob extends Model
 
     public const FEEDBACK_TYPE_DESIRE_SALARY = 1;
 
+    public const NOT_READ = 0;
+    public const BE_READ = 1;
+
     /**
      * @var string
      */
@@ -27,10 +30,8 @@ class FeedbackJob extends Model
         'job_posting_id',
         'type',
         'desired_salary',
-        'email',
-        'name',
-        'tel',
         'content',
+        'be_read'
     ];
 
     /**

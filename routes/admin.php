@@ -89,3 +89,8 @@ Route::group(['as' => 'contacts.', 'prefix' => 'contacts', 'middleware' => 'admi
     Route::get('/', 'ContactsController@list')->name('list');
     Route::get('/{id}', 'ContactsController@detail')->name('detail');
 });
+
+Route::group(['as' => 'feedback-jobs.', 'prefix' => 'feedback-jobs', 'middleware' => 'admin'], function () {
+    Route::get('/', 'FeedbackJobsController@list')->name('list');
+    Route::get('/{id}', 'FeedbackJobsController@detail')->name('detail');
+});
