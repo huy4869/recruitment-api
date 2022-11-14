@@ -52,7 +52,7 @@ class DesiredConditionController extends BaseController
         $data = $this->desiredConditionService->withUser($user)->storeOrUpdate($inputs);
 
         if ($data) {
-            return $this->sendSuccessResponse($data, trans('response.update_success'));
+            return $this->sendSuccessResponse($data, trans('validation.INF.001'));
         }
 
         throw new InputException(trans('response.ERR.006'));

@@ -56,6 +56,7 @@ class ListApplicationResource extends JsonResource
                 'approach' => $dataApproach,
                 'is_direct_interview' => $isDirectInterview,
             ],
+            'submission_date_label' => trans('response.submission_date_label'),
             'created_at' => DateTimeHelper::formatDateDayOfWeekTimeJa($data['created_at']),
         ];
     }
