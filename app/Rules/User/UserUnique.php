@@ -17,7 +17,7 @@ class UserUnique implements Rule
      */
     public function passes($attribute, $value)
     {
-        $q = DB::table(User::query()->getQuery()->from)->where($attribute, $value)->get();
+        $q = DB::table('users')->where($attribute, $value)->get();
 
         return !$q->count();
     }
