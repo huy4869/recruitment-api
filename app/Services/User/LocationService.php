@@ -95,7 +95,7 @@ class LocationService extends Service
                 preg_match("/^city_(\d+)$/", $id, $match);
 
                 $list[$locationName][] = [
-                    'id' => count($match) ? $match[1] : $id,
+                    'id' => count($match) ? (int)$match[1] : $id,
                     'name' => count($match) ? $mProvinceCities[$match[1]] : $mProvinces[$id],
                     'is_city' => !!count($match),
                 ];
