@@ -61,14 +61,23 @@ class PasswordResetService extends Service
      *
      * @param $token
      * @return bool
+     * @throws InputException
      */
     public function checkToken($token): bool
     {
         $timeCheck = config('password_reset.time_reset_pass');
         $date = date('Y-m-d H:i:s', strtotime('-' . $timeCheck .' minutes', time()));
-        $passwordReset = PasswordReset::query()->where('token', $token)->where('updated_at', '>=', $date)->first();
+        $passwordReset = PasswordReset::query()->where('token', $token)->first();
 
-        return !!$passwordReset;
+        if (!$passwordReset) {
+            throw new InputException(trans('validation.ERR.048'));
+        }
+
+        if ($passwordReset->updated_at < $date) {
+            throw new InputException(trans('validation.ERR.047'));
+        }
+
+        return true;
     }
 
     /**
@@ -82,13 +91,18 @@ class PasswordResetService extends Service
     {
         $timeCheck = config('password_reset.time_reset_pass');
         $date = date('Y-m-d H:i:s', strtotime('-' . $timeCheck .' minutes', time()));
-        $passwordReset = PasswordReset::query()->where('token', $data['token'])->where('updated_at', '>=', $date)->first();
+        $passwordReset = PasswordReset::query()->where('token', $data['token'])->first();
 
         if (!$passwordReset) {
-            throw new InputException(trans('response.invalid_token'));
+            throw new InputException(trans('validation.ERR.048'));
+        }
+
+        if (!$passwordReset->updated_at < $date) {
+            throw new InputException(trans('validation.ERR.047'));
         }
 
         $user = User::query()->where('email', $passwordReset['email'])->roleUser()->first();
+
         if (!$user) {
             throw new InputException(trans('response.not_found'));
         }
