@@ -17,12 +17,15 @@ use App\Models\MJobType;
 use App\Models\MProvince;
 use App\Models\MStation;
 use App\Models\MWorkType;
+use App\Models\Notification;
 use App\Services\Service;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\HigherOrderBuilderProxy;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 
 class JobService extends Service
@@ -561,15 +564,65 @@ class JobService extends Service
      */
     public function storeFavorite($jobPostingId)
     {
+        $userFavoriteByRec = self::getUserFavoriteByRec($jobPostingId);
+        $user = $this->user;
+
         try {
-            return FavoriteJob::updateOrCreate([
-                'user_id' => $this->user->id,
+            DB::beginTransaction();
+
+            $favoriteJob = FavoriteJob::updateOrCreate([
+                'user_id' => $user->id,
                 'job_posting_id' => $jobPostingId
             ]);
+
+            if (in_array($user->id, $userFavoriteByRec->favorite_ids ?? [])) {
+                Notification::query()->create([
+                    'user_id' => $userFavoriteByRec->user_id,
+                    'notice_type_id' => Notification::TYPE_MATCHING_FAVORITE,
+                    'noti_object_ids' => [
+                        'store_id' => null,
+                        'application_id' => null,
+                        'user_id' => $user->id,
+                        'job_posting_id' => $jobPostingId
+                    ],
+                    'title' => trans('notification.N009.title', [
+                        'user_name' => sprintf('%s %s', $user->first_name, $user->last_name),
+                    ]),
+                    'content' => trans('notification.N009.content', [
+                        'user_name' => sprintf('%s %s', $user->first_name, $user->last_name),
+                    ]),
+                ]);
+            }
+
+            DB::commit();
+
+            return $favoriteJob;
         } catch (Exception $e) {
-            throw new InputException(trans('validation.job_posting_not_exist'));
-        }
+            DB::rollBack();
+            Log::error($e->getMessage(), [$e]);
+
+            throw new InputException(trans('response.EXC.001'));
+        }//end try
     }
+
+    /**
+     * @param $jobPostingId
+     * @return HigherOrderBuilderProxy|mixed
+     */
+    public static function getUserFavoriteByRec($jobPostingId)
+    {
+        $jobPosting = JobPosting::query()
+            ->where('id', $jobPostingId)
+            ->with([
+                'store',
+                'store.owner',
+                'store.owner.favoriteUser'
+            ])
+            ->first();
+
+        return @$jobPosting->store->owner->favoriteUser;
+    }
+
 
     /**
      * @param $jobList

@@ -19,6 +19,10 @@ return [
         'title' => ':store_nameから、応募状況の進捗が更新されました。',
         'content' => ':store_nameから、応募状況の進捗が:interview_statusに更新されました。内容は応募詳細画面でご確認ください。'
     ],
+    'N009' => [
+        'title' => ':user_name様とお互いにお気に入りになりました。',
+        'content' => ':user_name様とお互いにお気に入りになりました。求職者詳細画面に確認しましょう！'
+    ],
     'N012' => [
         'title' => '店舗が削除されました。',
         'content' => ':store_nameが削除されましたので、:job_nameのご応募を不採用になります。',
