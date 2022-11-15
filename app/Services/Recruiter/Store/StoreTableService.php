@@ -11,7 +11,8 @@ class StoreTableService extends TableService
     const FIRST_ARRAY = 0;
 
     protected $filterables =[
-        'province_id' => 'filterTypes',
+        'province_ids' => 'filterTypes',
+        'province_city_ids' => 'filterTypes',
         'specialize_ids' => 'filterTypes',
         'store_name' => 'filterTypes',
         'recruiter_name' => 'filterTypes',
@@ -23,16 +24,12 @@ class StoreTableService extends TableService
             return $query;
         }
 
-        $jsonKey = [
-            'specialize_ids'
-        ];
-
         foreach ($filters as $filterItem) {
             if (!isset($filterItem['key']) || !isset($filterItem['data'])) {
                 throw new InputException(trans('response.invalid'));
             }
 
-            if (in_array($filterItem['key'], $jsonKey)) {
+            if ($filterItem['key'] == 'specialize_ids') {
                 $query->where(function ($query) use ($filterItem) {
                     $types = json_decode($filterItem['data']);
                     $query->whereJsonContains($filterItem['key'], $types[self::FIRST_ARRAY]);
@@ -44,8 +41,24 @@ class StoreTableService extends TableService
                 });
             }
 
-            if ($filterItem['key'] == 'province_id') {
-                $query->where('province_id', $filterItem['data']);
+            if ($filterItem['key'] == 'province_ids') {
+                $query->where(function ($query) use ($filterItem) {
+                    $provinceIds = json_decode($filterItem['data']);
+
+                    foreach ($provinceIds as $id) {
+                        $query->orWhere('province_id', $id);
+                    }
+                });
+            }
+
+            if ($filterItem['key'] == 'province_city_ids') {
+                $query->where(function ($query) use ($filterItem) {
+                    $provinceCityIds = json_decode($filterItem['data']);
+
+                    foreach ($provinceCityIds as $id) {
+                        $query->orWhere('province_city_id', $id);
+                    }
+                });
             }
 
             if ($filterItem['key'] == 'store_name') {
@@ -88,7 +101,7 @@ class StoreTableService extends TableService
             province_city_id,
             recruiter_name,
             postal_code,
-            city,
+            building,
             address,
             specialize_ids';
     }

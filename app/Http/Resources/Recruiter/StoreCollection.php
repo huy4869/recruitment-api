@@ -23,7 +23,6 @@ class StoreCollection extends ResourceCollection
             'data' => StoreResource::collection($stores),
             'per_page' => $paginator->perPage(),
             'total_page' => $paginator->lastPage(),
-            'path' => $paginator->path(),
             'current_page' => $paginator->currentPage(),
             'total' => $paginator->total(),
         ];
