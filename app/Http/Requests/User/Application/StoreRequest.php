@@ -31,4 +31,17 @@ class StoreRequest extends FormRequest
             'note' => ['nullable', 'string', 'max:' . config('validate.text_max_length')],
         ];
     }
+
+    /**
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'note.max' => trans('validation.COM.014'),
+            'interview_approaches_id.required' => trans('validation.COM.010', ['attribute' => trans('validation.attributes.interview_approaches_id')]),
+            'date.required' => trans('validation.COM.010', ['attribute' => trans('validation.attributes.date')]),
+            'hours.required' => trans('validation.COM.010', ['attribute' => trans('validation.attributes.hours')]),
+        ];
+    }
 }

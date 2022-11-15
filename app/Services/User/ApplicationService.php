@@ -6,13 +6,17 @@ use App\Exceptions\InputException;
 use App\Helpers\DateTimeHelper;
 use App\Models\Application;
 use App\Models\MInterviewApproach;
+use App\Models\Notification;
 use App\Services\Service;
 use App\Services\User\Job\JobService;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
+use Exception;
 
 class ApplicationService extends Service
 {
@@ -322,7 +326,7 @@ class ApplicationService extends Service
         $data = $this->saveMakeData($data);
 
         if ($date == $dateApplication && $hours == $hoursApplication) {
-            return $application->update($data);
+            return $this->userUpdateApplication($application, $data);
         }
 
         $applications = Application::query()
@@ -368,7 +372,42 @@ class ApplicationService extends Service
             }
         }
 
-        return $application->update($data);
+        return $this->userUpdateApplication($application, $data);
+    }
+
+    /**
+     * @param $application
+     * @param $data
+     * @return bool
+     * @throws InputException
+     */
+    public function userUpdateApplication($application, $data)
+    {
+        $user = $this->user;
+        $nameUser = $user->first_name . $user->last_name;
+
+        try {
+            DB::beginTransaction();
+
+            $application->update($data);
+            Notification::query()->create([
+                'user_id' => $application->user_id,
+                'notice_type_id' => Notification::TYPE_UPDATE_INTERVIEW_APPLY,
+                'noti_object_ids' => [
+                    'store_id' => $application->store_id,
+                    'application_id' => $application->id,
+                ],
+                'title' => trans('notification.N015.title', ['user_name' => $nameUser]),
+                'content' => trans('notification.N015.content', ['user_name' => $nameUser]),
+            ]);
+
+            DB::commit();
+            return true;
+        } catch (Exception $exception) {
+            DB::rollBack();
+            Log::error($exception->getMessage(), [$exception]);
+            throw new InputException($exception);
+        }
     }
 
     /**

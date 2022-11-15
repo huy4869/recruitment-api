@@ -126,6 +126,8 @@ class ApplicationController extends BaseController
             DB::beginTransaction();
 
             $data = $this->jobPostingService->withUser($user)->store($inputs, $jobPosting);
+            $this->applicationUserHistoryService->withUser($user)->storeNotifications($data);
+            $this->applicationUserHistoryService->storeChat($data);
             $this->applicationUserHistoryService->storeApplicationWorkHistories($data);
             $this->applicationUserHistoryService->storeApplicationLearningHistories($data);
             $this->applicationUserHistoryService->storeApplicationLicensesQualificationHistories($data);
@@ -133,11 +135,11 @@ class ApplicationController extends BaseController
 
             DB::commit();
 
-            return $this->sendSuccessResponse($data, trans('response.INF.008'));
+            return $this->sendSuccessResponse($data, trans('validation.INF.018'));
         } catch (Exception $exception) {
             DB::rollBack();
             Log::error($exception->getMessage(), [$exception]);
-            return $this->sendErrorResponse(trans('response.EXC.001'));
+            return $this->sendErrorResponse($exception);
         }
     }
 
@@ -172,6 +174,6 @@ class ApplicationController extends BaseController
         $inputs = $request->only(['date', 'hours', 'interview_approaches_id', 'note']);
         $this->applicationService->withUser($user)->updateApplication($id, $inputs);
 
-        return $this->sendSuccessResponse([], trans('response.INF.008'));
+        return $this->sendSuccessResponse([], trans('validation.INF.019'));
     }
 }
