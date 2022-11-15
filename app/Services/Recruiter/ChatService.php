@@ -10,6 +10,8 @@ use App\Models\Notification;
 use App\Models\Store;
 use App\Models\User;
 use App\Services\Service;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Translation\Translator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Exception;
@@ -137,6 +139,10 @@ class ChatService extends Service
             $data = [];
 
             foreach ($items as $item) {
+                if (is_null($item['content'])) {
+                    continue;
+                }
+
                 $data[] = [
                     'store_name' => $item['store']['name'],
                     'store_banner' => FileHelper::getFullUrl($item['store']['storeBanner']['url'] ?? null),
@@ -148,10 +154,29 @@ class ChatService extends Service
                 ];
             }
 
-            $result[Carbon::parse($key)->format(config('date.month_day'))] = $data;
-        }
+            if (empty($data)) {
+                continue;
+            }
+
+            $result[$this->checkDate($key)] = $data;
+        }//end foreach
 
         return $result;
+    }
+
+    /**
+     * @param $dateTime
+     * @return array|Application|Translator|string|null
+     */
+    public function checkDate($dateTime)
+    {
+        $now = Carbon::now()->format(config('date.fe_date_format'));
+        $date = DateTimeHelper::formatDate($dateTime);
+        if ($date == $now) {
+            return trans('common.today');
+        }
+
+        return Carbon::parse($dateTime)->format(config('date.month_day'));
     }
 
     /**
