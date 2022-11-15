@@ -138,6 +138,11 @@ class MasterDataService extends Service
             'driver' => self::DRIVER_CUSTOM,
             'target' => 'getMasterDataSocialLinks',
         ],
+
+        'm_notice_types' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMasterDataName',
+        ],
     ];
 
     /**

@@ -159,15 +159,15 @@ class MasterDataSeeder extends Seeder
         DB::table('m_job_statuses')->insert($dataJobStatus);
 
         $dataNoticeTypes = [
-            ['name' => 'interview_coming', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'interview_scheduled', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'new_message', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'interview_changed', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'interview_pending', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'delete_user', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'delete_recruiter', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'delete_store', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'matching_favorite', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '面接が来る', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '面接予定', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '新しいメッセージ', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'インタビューが変わった', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '面接待ち', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'ユーザーを削除', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '採用担当者を削除', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'ストアを削除', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'マッチングのお気に入り', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_notice_types')->insert($dataNoticeTypes);
 

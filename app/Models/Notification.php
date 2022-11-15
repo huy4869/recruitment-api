@@ -47,4 +47,9 @@ class Notification extends Model
     protected $casts = [
         'noti_object_ids' => 'array',
     ];
+
+    public function noticeType()
+    {
+        return $this->belongsTo(MNoticeType::class, 'notice_type_id');
+    }
 }
