@@ -15,6 +15,7 @@ class NotificationTableService extends TableService
     {
         return Notification::query()->where('user_id', $this->user->id)
             ->orderBy('created_at', 'desc')
+            ->with('noticeType')
             ->selectRaw($this->getSelectRaw());
     }
 
@@ -26,6 +27,7 @@ class NotificationTableService extends TableService
     protected function getSelectRaw()
     {
         return 'notifications.user_id,
+            notifications.notice_type_id,
             notifications.noti_object_ids,
             notifications.title,
             notifications.content,

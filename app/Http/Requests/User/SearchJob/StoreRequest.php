@@ -39,7 +39,7 @@ class StoreRequest extends FormRequest
             'province_id' => 'nullable|array',
             'province_id.*' => 'integer|exists:m_provinces,id',
             'province_city_id' => 'nullable|array',
-            'province_city_id.*' => 'integer|exists:m_province_cities,id',
+            'province_city_id.*' => 'integer|exists:m_provinces_cities,id',
             'order_by_ids' => 'nullable|array',
             'order_by_ids.*' => 'integer|in:' . implode(',', $orderByIds),
             'text' => 'nullable|string',

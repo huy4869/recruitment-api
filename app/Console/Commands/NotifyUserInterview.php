@@ -74,6 +74,7 @@ class NotifyUserInterview extends Command
                             'notice_type_id' => Notification::TYPE_INTERVIEW_COMING,
                             'noti_object_ids' => json_encode([
                                 'store_id' => $application->store_id,
+                                'job_id' => $application->job_posting_id,
                                 'application_id' => $application->id,
                             ]),
                             'title' => trans('notification.interview.title'),

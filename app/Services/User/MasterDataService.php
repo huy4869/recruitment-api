@@ -7,6 +7,7 @@ use App\Models\MInterviewApproach;
 use App\Models\MJobFeature;
 use App\Models\MJobFeatureCategory;
 use App\Models\MJobType;
+use App\Models\MNoticeType;
 use App\Models\MProvince;
 use App\Models\MProvinceCity;
 use App\Models\MProvinceDistrict;
@@ -149,6 +150,11 @@ class MasterDataService extends Service
         'm_social_links' => [
             'driver' => self::DRIVER_CUSTOM,
             'target' => 'getMasterDataSocialLinks',
+        ],
+
+        'm_notice_types' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMasterDataName',
         ],
     ];
 
