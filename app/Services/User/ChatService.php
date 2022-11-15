@@ -65,6 +65,10 @@ class ChatService extends Service
             $data = [];
 
             foreach ($items as $item) {
+                if (is_null($item['content'])) {
+                    continue;
+                }
+
                 $data[] = [
                     'store_name' => $item['store']['name'],
                     'store_banner' => FileHelper::getFullUrl($item['store']['storeBanner']['url'] ?? null),
@@ -73,12 +77,15 @@ class ChatService extends Service
                     'content' => $item['content'],
                     'is_from_user' => $item['is_from_user'],
                     'be_readed' => $item['be_readed'],
-                    'is_content' => !empty($item['content']),
                 ];
             }
 
+            if (empty($data)) {
+                continue;
+            }
+
             $result[$this->checkDate($key)] = $data;
-        }
+        }//end foreach
 
         return $result;
     }
