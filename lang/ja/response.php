@@ -19,7 +19,7 @@ return [
         'user' => 'ユーザー',
         'user_work_history' => '実務経験',
     ],
-    'reset_password' => 'パスワードのリセットが成功しました。 新しいパスワードで再度ログインできます。',
+    'reset_password' => 'パスワード再発行に成功しました。',
     'send_mail_success' => 'メールを送信しました。',
     'INF_004' => [
         'cancel_applied' => '応募のキャンセル成功しました。',

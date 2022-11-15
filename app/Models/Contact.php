@@ -29,6 +29,7 @@ class Contact extends Model
         'name',
         'tel',
         'content',
+        'be_read'
     ];
 
     /**

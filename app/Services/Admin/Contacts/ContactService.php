@@ -41,6 +41,10 @@ class ContactService extends Service
         $contact = Contact::query()->where('id', '=', $id)->first();
 
         if ($contact) {
+            if ($contact->be_read == Contact::NOT_READ) {
+                $contact->update(['be_read' => Contact::BE_READ]);
+            }
+
             return $contact;
         }
 

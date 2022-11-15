@@ -35,6 +35,7 @@ class UploadImageRequest extends FormRequest
     {
         return [
             'image.max' => trans('validation.ERR.003'),
+            'image.image' => trans('validation.ERR.005'),
             'image.mimetypes' => trans('validation.ERR.005'),
         ];
     }
