@@ -167,6 +167,7 @@ class MasterDataSeeder extends Seeder
             ['name' => 'delete_user', 'created_at' => $time, 'updated_at' => $time],
             ['name' => 'delete_recruiter', 'created_at' => $time, 'updated_at' => $time],
             ['name' => 'delete_store', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => 'matching_favorite', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_notice_types')->insert($dataNoticeTypes);
 

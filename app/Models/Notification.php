@@ -23,6 +23,7 @@ class Notification extends Model
     public const TYPE_DELETE_USER = 6;
     public const TYPE_DELETE_RECRUITER = 7;
     public const TYPE_DELETE_STORE = 8;
+    public const TYPE_MATCHING_FAVORITE = 9;
 
     /**
      * The attributes that are mass assignable.
