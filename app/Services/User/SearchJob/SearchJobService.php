@@ -8,6 +8,9 @@ use App\Services\Service;
 
 class SearchJobService extends Service
 {
+    const ORDER_BY_CREATED_AT = 1;
+    const ORDER_BY_UPDATED_AT = 2;
+
     /**
      * @param $search
      * @param $orders
@@ -32,10 +35,18 @@ class SearchJobService extends Service
 
         if ($orders) {
             foreach ($orders as $order) {
-                $searchData = array_merge($searchData, [
-                    $order['key'] => json_decode($order['data'])
-                ]);
+                if ($order['key'] == 'created_at') {
+                    $orderByIds[] = self::ORDER_BY_CREATED_AT;
+                }
+
+                if ($order['key'] == 'updated_at') {
+                    $orderByIds[] = self::ORDER_BY_UPDATED_AT;
+                }
             }
+
+            $searchData = array_merge($searchData, [
+                'order_by_ids' => $orderByIds
+            ]);
         }
 
         $storeData = [
