@@ -187,7 +187,7 @@ class JobController extends Controller
 
                 if ($filters) {
                     foreach ($filters as $filter) {
-                        if ($filter['data'] == 'list_type') {
+                        if ($filter['key'] == 'list_type') {
                             $allowStoreSearchCond = false;
                             break;
                         }
