@@ -183,14 +183,27 @@ class JobController extends Controller
             $jobs = JobTableService::getInstance()->withUser($user)->data($search, $orders, $filters, $perPage);
 
             if ($user) {
-                SearchJobService::getInstance()->withUser($user)->store($search, $orders, $filters);
+                $allowStoreSearchCond = $search || $orders || $filters;
+
+                if ($filters) {
+                    foreach ($filters as $filter) {
+                        if ($filter['data'] == 'list_type') {
+                            $allowStoreSearchCond = false;
+                            break;
+                        }
+                    }
+                }
+
+                if ($allowStoreSearchCond) {
+                    SearchJobService::getInstance()->withUser($user)->store($search, $orders, $filters);
+                }
             }
 
             DB::commit();
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
-        }
+        }//end try
 
         return $this->sendSuccessResponse(new JobCollection($jobs));
     }
