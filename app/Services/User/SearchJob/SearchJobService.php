@@ -9,14 +9,38 @@ use App\Services\Service;
 class SearchJobService extends Service
 {
     /**
-     * @param $data
+     * @param $search
+     * @param $orders
+     * @param $filters
      * @return mixed
      */
-    public function store($data)
+    public function store($search, $orders, $filters)
     {
+        $searchData = [];
+
+        if ($search) {
+            $searchData = array_merge($searchData, ['text' => $search]);
+        }
+
+        if ($filters) {
+            foreach ($filters as $filter) {
+                $searchData = array_merge($searchData, [
+                    $filter['key'] => json_decode($filter['data'])
+                ]);
+            }
+        }
+
+        if ($orders) {
+            foreach ($orders as $order) {
+                $searchData = array_merge($searchData, [
+                    $order['key'] => json_decode($order['data'])
+                ]);
+            }
+        }
+
         $storeData = [
             'user_id' => $this->user->id,
-            'content' => $data,
+            'content' => $searchData,
         ];
 
         return SearchJob::create($storeData);

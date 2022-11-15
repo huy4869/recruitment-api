@@ -10,9 +10,12 @@ use App\Http\Resources\User\Job\JobCollection;
 use App\Http\Resources\User\Job\JobPostingResource;
 use App\Services\User\Job\JobTableService;
 use App\Services\User\Job\JobService;
+use App\Services\User\SearchJob\SearchJobService;
 use App\Services\User\UserJobDesiredMatchService;
+use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 
 class JobController extends Controller
 {
@@ -167,12 +170,27 @@ class JobController extends Controller
 
     /**
      * @return JsonResponse
+     * @throws Exception
      */
     public function list(Request $request)
     {
         $user = $this->guard()->user();
         [$search, $orders, $filters, $perPage] = $this->convertRequest($request);
-        $jobs = JobTableService::getInstance()->withUser($user)->data($search, $orders, $filters, $perPage);
+
+        try {
+            DB::beginTransaction();
+
+            $jobs = JobTableService::getInstance()->withUser($user)->data($search, $orders, $filters, $perPage);
+
+            if ($user) {
+                SearchJobService::getInstance()->withUser($user)->store($search, $orders, $filters);
+            }
+
+            DB::commit();
+        } catch (Exception $e) {
+            DB::rollBack();
+            throw $e;
+        }
 
         return $this->sendSuccessResponse(new JobCollection($jobs));
     }

@@ -27,28 +27,6 @@ class SearchJobController extends Controller
     }
 
     /**
-     * @param StoreRequest $request
-     * @return JsonResponse
-     */
-    public function store(StoreRequest $request)
-    {
-        $user = $this->guard()->user();
-        $inputs = $request->only([
-            'order_by_ids',
-            'work_type_ids',
-            'job_type_ids',
-            'feature_ids',
-            'experience_ids',
-            'province_id',
-            'province_city_id',
-            'text',
-        ]);
-        $result = SearchJobService::getInstance()->withUser($user)->store($inputs);
-
-        return $this->sendSuccessResponse($result);
-    }
-
-    /**
      * @return JsonResponse
      * @throws InputException
      */
