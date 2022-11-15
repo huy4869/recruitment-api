@@ -255,11 +255,11 @@ class DateTimeHelper
         $hour = $time->diffInHours($now);
 
         if ($minute < config('date.less_than_hour')) {
-            $date = $minute . '分前';
+            $date = ($minute != config('date.zero_minute')) ? $minute . trans('common.minute') : config('date.one_minute') . trans('common.minute');
         } elseif ($hour >= config('date.more_than_hour')  && $hour < config('date.less_than_date')) {
-            $date = $time->format('H:i');
+            $date = $hour . trans('common.hour');
         } else {
-            $date = DateTimeHelper::formatDateTimeJa($dataTime);
+            $date = $time->format(config('date.hour'));
         }
 
         return $date;
@@ -277,9 +277,9 @@ class DateTimeHelper
         $hour = $time->diffInHours($now);
 
         if ($minute < config('date.less_than_hour')) {
-            $date = $minute . '分前';
+            $date = ($minute != config('date.zero_minute')) ? $minute . trans('common.minute') : config('date.one_minute') . trans('common.minute');
         } elseif ($hour >= config('date.more_than_hour')  && $hour < config('date.less_than_date')) {
-            $date = $dataTime->format(config('date.hour'));
+            $date = $hour . trans('common.hour');
         } else {
             $date = $dataTime->format(config('date.month_day'));
         }

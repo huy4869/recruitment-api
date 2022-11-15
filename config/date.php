@@ -26,7 +26,8 @@ return [
     'less_than_hour' => 60,
     'less_than_date' => 24,
     'more_than_hour' => 1,
-    'zero_hour' => 0,
+    'zero_minute' => 0,
+    'one_minute' => 1,
 
     'age' => [
         1 => '20代以上',

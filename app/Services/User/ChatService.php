@@ -9,6 +9,8 @@ use App\Models\Chat;
 use App\Models\Notification;
 use App\Models\Store;
 use App\Services\Service;
+use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\Translation\Translator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -71,13 +73,29 @@ class ChatService extends Service
                     'content' => $item['content'],
                     'is_from_user' => $item['is_from_user'],
                     'be_readed' => $item['be_readed'],
+                    'is_content' => !empty($item['content']),
                 ];
             }
 
-            $result[Carbon::parse($key)->format(config('date.month_day'))] = $data;
+            $result[$this->checkDate($key)] = $data;
         }
 
         return $result;
+    }
+
+    /**
+     * @param $dateTime
+     * @return array|Application|Translator|string|null
+     */
+    public function checkDate($dateTime)
+    {
+        $now = Carbon::now()->format(config('date.fe_date_format'));
+        $date = DateTimeHelper::formatDate($dateTime);
+        if ($date == $now) {
+            return trans('common.today');
+        }
+
+        return Carbon::parse($dateTime)->format(config('date.month_day'));
     }
 
     /**
@@ -131,7 +149,7 @@ class ChatService extends Service
                     'user_id' => $this->user->id,
                 ],
                 'title' => sprintf('%s%s', $this->user->fullName, trans('notification.new_message.N002.title')),
-                'content' => sprintf('%s%s', $this->user->fullName, trans('notification.new_message.N002.content')),
+                'content' => trans('notification.new_message.N002.content'),
             ]);
 
             DB::commit();
