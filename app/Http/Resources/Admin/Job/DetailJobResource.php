@@ -53,7 +53,7 @@ class DetailJobResource extends JsonResource
                 'district_name' => @$this->province->name,
                 'province_id' => @$this->province->provinceDistrict->id,
                 'province_name' => @$this->province->provinceDistrict->name,
-                'city' => $this['city'],
+                'building' => $this['building'],
                 'address' => $this['address'],
             ],
             'stations' => $this->stations,

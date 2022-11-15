@@ -23,6 +23,7 @@ class JobTableService extends TableService
      */
     protected $filterables = [
         'province_id' => 'filterTypes',
+        'province_city_id' => 'filterTypes',
         'job_type_ids' => 'filterTypes',
         'work_type_ids' => 'filterTypes',
         'job_status_id' => 'filterTypes',
@@ -134,7 +135,7 @@ class JobTableService extends TableService
             job_postings.postal_code,
             job_postings.province_id,
             job_postings.province_city_id,
-            job_postings.city,
+            job_postings.building,
             job_postings.address,
             job_postings.name,
             job_postings.description,

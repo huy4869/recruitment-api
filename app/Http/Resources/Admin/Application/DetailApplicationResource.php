@@ -36,8 +36,8 @@ class DetailApplicationResource extends JsonResource
                     'province_district' => $user->province->provinceDistrict->name,
                     'province' => $user->province->name,
                     'province_city' => $user->provinceCity->name,
-                    'city' =>  $user->city,
                     'address' =>  $user->address,
+                    'building' =>  $user->building,
                 ]
             ],
             'job_name' => $this->jobPosting->name,

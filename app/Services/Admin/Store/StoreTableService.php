@@ -11,6 +11,7 @@ class StoreTableService extends TableService
     const FIRST_ARRAY = 0;
     protected $filterables = [
         'province_id' => 'filterTypes',
+        'province_city_id' => 'filterTypes',
         'specialize_ids' => 'filterTypes',
         'store_name' => 'filterTypes',
         'recruiter_name' => 'filterTypes',
@@ -46,8 +47,8 @@ class StoreTableService extends TableService
                 });
             }
 
-            if ($filterItem['key'] == 'province_id') {
-                $query->where('province_id', $filterItem['data']);
+            if ($filterItem['key'] == 'province_id' || $filterItem['key'] == 'province_city_id') {
+                $query->where($filterItem['key'], $filterItem['data']);
             }
 
             if ($filterItem['key'] == 'store_name') {
@@ -87,7 +88,7 @@ class StoreTableService extends TableService
             province_city_id,
             recruiter_name,
             postal_code,
-            city,
+            building,
             address,
             specialize_ids';
     }
