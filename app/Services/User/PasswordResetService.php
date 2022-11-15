@@ -97,7 +97,7 @@ class PasswordResetService extends Service
             throw new InputException(trans('validation.ERR.048'));
         }
 
-        if (!$passwordReset->updated_at < $date) {
+        if ($passwordReset->updated_at < $date) {
             throw new InputException(trans('validation.ERR.047'));
         }
 
