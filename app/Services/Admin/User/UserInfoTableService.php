@@ -18,6 +18,7 @@ class UserInfoTableService extends TableService
      */
     protected $filterables = [
         'province_id' => 'filterTypes',
+        'province_city_id' => 'filterTypes',
         'work_type_id' => 'filterTypes',
         'job_type_ids' => 'filterTypes',
         'job_experience_id' => 'filterTypes',

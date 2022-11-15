@@ -121,7 +121,7 @@ class JobController extends Controller
             'postal_code',
             'province_id',
             'province_city_id',
-            'city',
+            'building',
             'address',
             'station_ids',
             'welfare_treatment_description',
