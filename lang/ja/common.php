@@ -8,6 +8,8 @@ return [
     'instagram' => 'Instagram',
     'capital_stock' => '万円',
     'employee_quantity' => '名',
+    'minute' => '分前',
+    'hour' => '時間前',
     'year' => '年',
     'month' => '月',
     'today' => '今日',
