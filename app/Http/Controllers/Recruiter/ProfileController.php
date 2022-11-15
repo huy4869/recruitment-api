@@ -31,6 +31,7 @@ class ProfileController extends Controller
             'tel',
             'postal_code',
             'province_id',
+            'province_city_id',
             'address',
             'building',
             'alias_name',

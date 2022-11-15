@@ -42,6 +42,7 @@ class ProfileService extends Service
             'facebook' => $data['facebook'],
             'instagram' => $data['instagram'],
             'twitter' => $data['twitter'],
+            'province_city_id' => $data['province_city_id'],
         ]);
     }
 }
