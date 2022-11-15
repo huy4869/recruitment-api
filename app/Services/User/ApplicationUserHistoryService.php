@@ -6,15 +6,68 @@ use App\Models\ApplicationUser;
 use App\Models\ApplicationUserLearningHistory;
 use App\Models\ApplicationUserLicensesQualification;
 use App\Models\ApplicationUserWorkHistory;
+use App\Models\Chat;
 use App\Models\Image;
+use App\Models\Notification;
 use App\Models\User;
 use App\Models\UserLearningHistory;
 use App\Models\UserLicensesQualification;
 use App\Models\UserWorkHistory;
 use App\Services\Service;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 
 class ApplicationUserHistoryService extends Service
 {
+
+    /**
+     * Store notification user application
+     *
+     * @param $application
+     * @return Builder|Model
+     */
+    public function storeNotifications($application)
+    {
+         $user = $this->user;
+         $nameUser = $user->first_name . $user->last_name;
+
+         return Notification::query()->create([
+            'user_id' => $user->id,
+            'notice_type_id' => Notification::TYPE_INTERVIEW_APPLY,
+            'noti_object_ids' => [
+                'store_id' => $application->store_id,
+                'application_id' => $application->id,
+            ],
+            'title' => trans('notification.N001.title', ['user_name' => $nameUser]),
+            'content' => trans('notification.N001.content', ['user_name' => $nameUser]),
+        ]);
+    }
+
+    /**
+     * Store user chat
+     *
+     * @param $application
+     * @return bool|Builder|Model
+     */
+    public function storeChat($application)
+    {
+        $chat = Chat::query()
+            ->where('user_id', '=', $application->user_id)
+            ->where('store_id', '=', $application->store_id)
+            ->exists();
+
+        if (!$chat) {
+            return Chat::query()->create([
+                'user_id' => $application->user_id,
+                'store_id' => $application->store_id,
+                'is_from_user' => Chat::FROM_USER['TRUE'],
+                'be_readed' => Chat::BE_READED,
+                'content' => NULL,
+            ]);
+        }
+
+        return true;
+    }
 
     /**
      * Store application work histories
