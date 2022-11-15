@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Recruiter;
 
+use App\Rules\CheckPhoneNumber;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -38,14 +39,10 @@ class UpdateProfileRequest extends FormRequest
             ],
             'capital_stock' => ['nullable', 'numeric', 'min:1'],
             'manager_name' => ['nullable', 'string', 'max:' . $lengthText],
-            'tel' => [
-                'required',
-                'numeric',
-                'regex:/(0)[0-9]/',
-                'digits_between:' . config('validate.phone_min_length') . ',' . config('validate.phone_max_length')
-            ],
+            'tel' => ['required', 'string', new CheckPhoneNumber()],
             'postal_code' => ['nullable', 'numeric', 'digits:' . config('validate.zip_code_max_length')],
             'province_id' => ['required', 'numeric', 'exists:m_provinces,id'],
+            'province_city_id' => ['required', 'numeric', 'exists:m_provinces_cities,id'],
             'address' => ['required', 'string', 'max:' . config('validate.string_max_length')],
             'building' => ['nullable', 'string', 'max:' . config('validate.string_max_length')],
             'line' => ['nullable', 'string', 'max:' . $lengthText],
