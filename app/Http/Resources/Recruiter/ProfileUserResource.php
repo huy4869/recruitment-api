@@ -27,22 +27,23 @@ class ProfileUserResource extends JsonResource
             'alias_name' => $this['alias_name'],
             'age' => $this['age'],
             'user_address' => [
+                'full_address' => $this['full_address'],
                 'postal_code' => $this['postal_code'],
-                'district_name' => $this['district_name'],
                 'province_name' => $this['province'],
+                'province_city_name' => $this['province_city_name'],
                 'address' => $this['address'],
                 'building' => $this['building'],
             ],
             'tel' => $this['tel'],
             'email' => $this['email'],
-            'last_login_at' => DateTimeHelper::formatTimeChat($this['last_login_at']),
+            'last_login_at' => DateTimeHelper::checkDateLoginAt($this['last_login_at']),
             'facebook' => $this['facebook'],
             'twitter' => $this['twitter'],
             'instagram' => $this['instagram'],
             'line' => $this['line'],
             'birthday' => DateTimeHelper::formatDateJa($this['birthday']),
             'gender' => $this['gender'],
-            'user_word_histories' => $this['user_word_histories'],
+            'user_work_histories' => $this['user_work_histories'],
             'pr' => [
                 'favorite_skill' => $this['favorite_skill'],
                 'experience_knowledge' => $this['experience_knowledge'],
@@ -52,6 +53,7 @@ class ProfileUserResource extends JsonResource
             'user_licenses_qualifications' => $this['user_licenses_qualifications'],
             'motivation' => [
                 'motivation' => $this['motivation'],
+                'noteworthy' => $this['noteworthy']
             ],
         ];
     }

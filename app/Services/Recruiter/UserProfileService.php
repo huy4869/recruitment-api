@@ -24,9 +24,15 @@ class UserProfileService extends Service
     public function detail($user_id)
     {
         $user = User::query()->with([
-            'userLearningHistories',
-            'userLicensesQualifications',
-            'userWordHistories',
+            'userLearningHistories' => function ($query) {
+                $query->orderByRaw('enrollment_period_start ASC, enrollment_period_end ASC');
+            },
+            'userLicensesQualifications' => function ($query) {
+                $query->orderByRaw('new_issuance_date ASC, created_at ASC');
+            },
+            'userWordHistories' => function ($query) {
+                $query->orderByRaw('period_end is not null, period_start DESC, period_end DESC');
+            },
             'avatarBanner',
             'avatarDetails'
             ])
@@ -63,21 +69,17 @@ class UserProfileService extends Service
      */
     public static function addFormatUserProfileJsonData($user, $masterData)
     {
-        $userWordHistories = [];
-        foreach ($user->userWordHistories as $wordHistory) {
-            $userWordHistories[] = [
-                'store_name' => $wordHistory->store_name,
-                'company_name' => $wordHistory->company_name,
-                'business_content' => $wordHistory->business_content,
-                'experience_accumulation' => $wordHistory->experience_accumulation,
-                'work_time' => sprintf(
-                    '%s ~ %s',
-                    DateTimeHelper::formatMonthYear($wordHistory->period_start),
-                    DateTimeHelper::formatMonthYear($wordHistory->period_end)
-                ),
-                'job_types' => $wordHistory->jobType->name,
-                'positionOffice' => JobHelper::getTypeName($wordHistory->position_office_ids, $masterData['masterPositionOffice']),
-                'work_types' => $wordHistory->workType->name,
+        $userWorkHistories = [];
+        foreach ($user->userWordHistories as $workHistory) {
+            $userWorkHistories[] = [
+                'store_name' => $workHistory->store_name,
+                'company_name' => $workHistory->company_name,
+                'business_content' => $workHistory->business_content,
+                'experience_accumulation' => $workHistory->experience_accumulation,
+                'work_time' => DateTimeHelper::formatDateStartEnd($workHistory->period_start, $workHistory->period_end),
+                'job_type' => $workHistory->jobType->name,
+                'positionOffices' => JobHelper::getTypeName($workHistory->position_office_ids, $masterData['masterPositionOffice']),
+                'work_type' => $workHistory->workType->name,
             ];
         }
 
@@ -101,14 +103,16 @@ class UserProfileService extends Service
                 'new_issuance_date' => DateTimeHelper::formatMonthYear($userLicensesQualification->new_issuance_date),
             ];
         }
+        $fullAddress = sprintf('〒 %s %s%s%s%s', $user->postal_code, $user->province->name, $user->provinceCity->name ?? null, $user->address, $user->building);
 
         return array_merge($user->toArray(), [
             'avatar_banner' => FileHelper::getFullUrl($user->avatarBanner->url ?? null),
             'avatar_details' => $user->avatarDetails ?: null,
             'province' => $user->province->name,
-            'district_name' => $user->province->provinceDistrict->name,
+            'province_city_name' => $user->provinceCity->name ?? null,
+            'full_address' => $fullAddress,
             'gender' => $user->gender->name ?? null,
-            'user_word_histories' => $userWordHistories,
+            'user_work_histories' => $userWorkHistories,
             'favorite_skill' => $user->favorite_skill,
             'experience_knowledge' => $user->experience_knowledge,
             'self_pr' => $user->self_pr,

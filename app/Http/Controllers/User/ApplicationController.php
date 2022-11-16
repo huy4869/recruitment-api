@@ -104,7 +104,7 @@ class ApplicationController extends BaseController
         $user = $this->guard()->user();
         $result = $this->applicationService->withUser($user)->cancelApplied($id);
 
-        return $this->sendSuccessResponse($result, trans('response.INF_004.cancel_applied'));
+        return $this->sendSuccessResponse($result, trans('validation.INF.004'));
     }
 
 

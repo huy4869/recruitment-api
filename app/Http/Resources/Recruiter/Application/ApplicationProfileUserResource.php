@@ -28,22 +28,23 @@ class ApplicationProfileUserResource extends JsonResource
             'alias_name' => @$this['application_user']['alias_name'],
             'age' => @$this['application_user']['age'],
             'user_address' => [
+                'full_address' => $this['full_address'],
                 'postal_code' => @$this['application_user']['postal_code'],
-                'district_name' => $this['district_name'],
                 'province_name' => $this['province'],
+                'province_city_name' => $this['province_city_name'],
                 'address' => @$this['application_user']['address'],
                 'building' => @$this['application_user']['building'],
             ],
             'tel' => @$this['application_user']['tel'],
             'email' => @$this['application_user']['email'],
-            'last_login_at' => DateTimeHelper::formatTimeChat($this['last_login_at']),
+            'last_login_at' => DateTimeHelper::checkDateLoginAt($this['last_login_at']),
             'facebook' => @$this['application_user']['facebook'],
             'twitter' => @$this['application_user']['twitter'],
             'instagram' => @$this['application_user']['instagram'],
             'line' => @$this['application_user']['line'],
             'birthday' => DateTimeHelper::formatDateJa(@$this['application_user']['birthday']),
             'gender' => $this['gender'] ,
-            'user_word_histories' => $this['applicationUserWorkHistories'],
+            'user_work_histories' => $this['applicationUserWorkHistories'],
             'pr' => [
                 'favorite_skill' => @$this['application_user']['favorite_skill'],
                 'experience_knowledge' => @$this['application_user']['experience_knowledge'],
@@ -53,6 +54,7 @@ class ApplicationProfileUserResource extends JsonResource
             'user_licenses_qualifications' => $this['applicationLicensesQualifications'],
             'motivation' => [
                 'motivation' => @$this['application_user']['motivation'],
+                'noteworthy' => @$this['application_user']['noteworthy'],
             ],
         ];
     }

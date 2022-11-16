@@ -287,6 +287,33 @@ class DateTimeHelper
         return $date;
     }
 
+    public static function checkDateLoginAt($dataTime)
+    {
+        if (!$dataTime) {
+            return null;
+        }
+
+        $time = new Carbon($dataTime);
+        $now = now();
+        $minute = $time->diffInMinutes($now);
+        $hour = $time->diffInHours($now);
+        $week = $time->diffInDays($now);
+        $dayOfWeek = config('date.day_of_week_ja.' . $time->dayOfWeek);
+        $formatDate = $time->format(config('date.fe_date_ja_format'));
+        $formatTime = $time->format(config('date.hour'));
+
+        if ($minute < config('date.less_than_hour')) {
+            $date = ($minute != config('date.zero_minute')) ? $minute . trans('common.minute') : config('date.one_minute') . trans('common.minute');
+        } elseif ($hour >= config('date.more_than_hour')  && $hour < config('date.less_than_date')) {
+            $date = $hour . trans('common.hour');
+        } elseif ($week < config('date.week')) {
+            $date = $time->diffInDays($now) . trans('common.before_day');
+        } else {
+            $date = sprintf('%s (%s) %s', $formatDate, $dayOfWeek, $formatTime);
+        }
+
+        return $date;
+    }
     /**
      * Format date time for notification
      *
@@ -360,5 +387,14 @@ class DateTimeHelper
         }
 
         return sprintf('%s:%s', substr("0{$hour}", -2), $minute);
+    }
+
+    public static function formatDateStartEnd($dateStart, $dateEnd)
+    {
+        if ($dateEnd) {
+            return sprintf('%s ~ %s', self::formatMonthYear($dateStart), self::formatMonthYear($dateEnd));
+        }
+
+        return sprintf('%s ~ %s', self::formatMonthYear($dateStart), trans('common.now'));
     }
 }
