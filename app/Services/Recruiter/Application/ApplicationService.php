@@ -23,9 +23,15 @@ class ApplicationService extends Service
         $application = Application::with([
             'user',
             'applicationUser',
-            'applicationUserWorkHistories',
-            'applicationUserLearningHistories',
-            'applicationUserLicensesQualifications'
+            'applicationUserWorkHistories' => function ($query) {
+                $query->orderByRaw('period_end is not null, period_start DESC, period_end DESC');
+            },
+            'applicationUserLearningHistories' => function ($query) {
+                $query->orderByRaw('enrollment_period_start ASC, enrollment_period_end ASC');
+            },
+            'applicationUserLicensesQualifications' => function ($query) {
+                $query->orderByRaw('new_issuance_date ASC, created_at ASC');
+            },
         ])->where('id', $applicationId)
         ->first();
 
@@ -54,14 +60,10 @@ class ApplicationService extends Service
                 'company_name' => $workHistory->company_name,
                 'business_content' => $workHistory->business_content,
                 'experience_accumulation' => $workHistory->experience_accumulation,
-                'work_time' => sprintf(
-                    '%s ~ %s',
-                    DateTimeHelper::formatMonthYear($workHistory->period_start),
-                    DateTimeHelper::formatMonthYear($workHistory->period_end)
-                ),
+                'work_time' => DateTimeHelper::formatDateStartEnd($workHistory->period_start, $workHistory->period_end),
                 'job_types' => $workHistory->jobType->name,
-                'positionOffice' => JobHelper::getTypeName($workHistory->position_office_ids, $masterData['masterPositionOffice']),
-                'work_types' => $workHistory->workType->name,
+                'positionOffices' => JobHelper::getTypeName($workHistory->position_office_ids, $masterData['masterPositionOffice']),
+                'work_type' => $workHistory->workType->name,
             ];
         }
 
@@ -85,13 +87,21 @@ class ApplicationService extends Service
                 'new_issuance_date' => DateTimeHelper::formatMonthYear($applicationLicensesQualification->new_issuance_date),
             ];
         }
+        $fullAddress = sprintf(
+            '〒 %s %s%s%s%s',
+            @$application->applicationUser->postal_code,
+            @$application->applicationUser->province->name,
+            @$application->applicationUser->provinceCity->name,
+            @$application->applicationUser->address,
+            @$application->applicationUser->building,
+        );
 
         return array_merge($application->toArray(), [
             'avatar_banner' => FileHelper::getFullUrl($application->applicationUser->avatarBanner->url ?? null),
             'avatar_details' => $application->applicationUser->avatarDetails,
             'last_login_at' => $application->user->last_login_at,
             'province' => $application->applicationUser->province->name ?? null,
-            'district_name' => $application->applicationUser->province->provinceDistrict->name ?? null,
+            'province_city_name' => $application->applicationUser->provinceCity->name ?? null,
             'gender' => $application->applicationUser->gender->name ?? null,
             'applicationUserWorkHistories' => $applicationUserWorkHistories,
             'favorite_skill' => $application->favorite_skill,
@@ -99,6 +109,7 @@ class ApplicationService extends Service
             'self_pr' => $application->self_pr,
             'applicationLearningHistories' => $applicationLearningHistories,
             'applicationLicensesQualifications' => $applicationLicensesQualifications,
+            'full_address' => $fullAddress,
         ]);
     }
 
