@@ -118,4 +118,11 @@ class StoreController extends Controller
 
         return $this->sendSuccessResponse($data, trans('response.INF.001'));
     }
+
+    public function delete($id)
+    {
+        $data = $this->storeService->withUser($this->guard()->user())->delete($id);
+
+        return $this->sendSuccessResponse($data, trans('response.INF.005'));
+    }
 }

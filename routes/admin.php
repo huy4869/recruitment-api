@@ -49,6 +49,7 @@ Route::group(['as' => 'stores.', 'prefix' => 'stores', 'middleware' => 'admin'],
     Route::get('/{id}', 'StoreController@detail');
     Route::post('/', 'StoreController@store');
     Route::post('/update/{id}', 'StoreController@update');
+    Route::delete('/{id}', 'StoreController@delete');
 });
 
 Route::group(['as' => 'jobs.', 'prefix' => 'jobs', 'middleware' => 'admin'], function () {

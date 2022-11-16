@@ -6,8 +6,11 @@ use App\Exceptions\InputException;
 use App\Helpers\CommonHelper;
 use App\Helpers\FileHelper;
 use App\Helpers\JobHelper;
+use App\Models\Application;
 use App\Models\Image;
+use App\Models\Notification;
 use App\Models\Store;
+use App\Models\UserJobDesiredMatch;
 use App\Services\Common\FileService;
 use App\Services\Service;
 use Exception;
@@ -107,7 +110,76 @@ class StoreService extends Service
         } catch (Exception $e) {
             DB::rollBack();
             Log::error($e->getMessage(), [$e]);
-            throw new Exception($e->getMessage());
+            throw new Exception(trans('response.EXC.001'));
         }
+    }
+
+    public function delete($id)
+    {
+        $store = Store::find($id);
+
+        if (!$store) {
+            throw new InputException(trans('response.not_found'));
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $store->contacts()?->delete();
+            $store->images()?->delete();
+
+            $jobHasApplicationRejectAccept = $store->jobs()?->whereHas('applications', function ($query) {
+                $query->whereNotIn('interview_status_id', [Application::STATUS_REJECTED, Application::STATUS_ACCEPTED]);
+            })->with([
+                'store',
+                'applications'
+            ])->get();
+
+            $store->applications()?->whereIn('interview_status_id', [
+                Application::STATUS_APPLYING,
+                Application::STATUS_WAITING_INTERVIEW,
+                Application::STATUS_WAITING_RESULT
+            ])->update([
+                'interview_status_id' => Application::STATUS_REJECTED
+            ]);
+
+            $store->jobImages()?->delete();
+
+            if ($store->jobs()) {
+                UserJobDesiredMatch::whereIn('job_id', $store->jobs()->pluck('id')->toArray())->delete();
+            }
+
+            $store->jobs()?->delete();
+            $store->delete();
+
+            if ($jobHasApplicationRejectAccept->count()) {
+                foreach ($jobHasApplicationRejectAccept as $job) {
+                    foreach ($job->applications as $application) {
+                        Notification::create([
+                            'user_id' => $application->user_id,
+                            'notice_type_id' => Notification::TYPE_DELETE_STORE,
+                            'noti_object_ids' => json_encode([
+                                'job_posting_id' => $application->job_posting_id,
+                                'application_id' => $application->id,
+                                'user_id' => $this->user->id,
+                            ]),
+                            'title' => trans('notification.N012.title'),
+                            'content' => trans('notification.N012.content', [
+                                'store_name' => $job->store->name,
+                                'job_name' => $job->name,
+                            ]),
+                            'created_at' => now(),
+                        ]);
+                    }
+                }//end foreach
+            }//end if
+
+            DB::commit();
+            return true;
+        } catch (Exception $e) {
+            DB::rollBack();
+            Log::error($e->getMessage(), [$e]);
+            throw new Exception(trans('response.EXC.001'));
+        }//end try
     }
 }
