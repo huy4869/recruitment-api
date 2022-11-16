@@ -62,7 +62,7 @@ class SearchJobHelper
         }
 
         if (isset($content['feature_ids'])) {
-            $content['feature_ids'] = JobHelper::getFeatureCategoryName(
+            $content['feature_ids'] = SearchJobHelper::getFeatureName(
                 $content['feature_ids'],
                 $masterData['masterJobFeatures'],
             );
@@ -113,6 +113,26 @@ class SearchJobHelper
             $result[] = [
                 'id' => $provinceCity['id'],
                 'name' => $provinceCity['name']
+            ];
+        }
+
+        return $result;
+    }
+
+    public static function getFeature($typeIds, $masterDataType)
+    {
+        $result = [];
+
+        if (!$typeIds || !$masterDataType) {
+            return $result;
+        }
+
+        foreach ($typeIds as $id) {
+            $feature = $masterDataType[(int)$id - 1];
+
+            $result[] = [
+                'id' => $feature['id'],
+                'name' => $feature['name'],
             ];
         }
 
