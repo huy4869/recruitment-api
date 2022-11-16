@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Recruiter;
 
+use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Recruiter\User\FavoriteRequest;
 use App\Http\Resources\Recruiter\User\UserCollection;
 use App\Http\Resources\Recruiter\User\UserResource;
+use App\Models\FavoriteUser;
 use App\Services\Recruiter\User\UserService;
 use App\Services\Recruiter\User\UserTableService;
 use Illuminate\Http\JsonResponse;
@@ -52,5 +55,39 @@ class UserController extends Controller
         $users = UserService::getInstance()->withUser($recruiter)->getSuggestUsers();
 
         return $this->sendSuccessResponse(UserResource::collection($users));
+    }
+
+    /**
+     * @param FavoriteRequest $request
+     * @return JsonResponse
+     * @throws InputException
+     */
+    public function addOrRemoveFavoriteUser(FavoriteRequest $request)
+    {
+        $recruiter = $this->guard()->user();
+        $inputs = $request->only([
+            'user_id',
+            'action_type'
+        ]);
+
+        if ($request->action_type == FavoriteUser::FAVORITE_USER) {
+            $result = UserService::getInstance()->withUser($recruiter)->favoriteUser($inputs);
+        }
+
+        if ($request->action_type == FavoriteUser::UNFAVORITE_USER) {
+            $result = UserService::getInstance()->withUser($recruiter)->unfavoriteUser($inputs);
+        }
+
+        if ($result) {
+            if ($request->action_type == FavoriteUser::FAVORITE_USER) {
+                $msg = trans('validation.INF.021');
+            } else {
+                $msg = trans('validation.INF.022');
+            }
+
+            return $this->sendSuccessResponse($result, $msg);
+        }
+
+        throw new InputException(trans('response.not_found'));
     }
 }
