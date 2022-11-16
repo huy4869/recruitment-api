@@ -38,7 +38,7 @@ class UserInfoResource extends JsonResource
             ],
             'tel' => $this->tel,
             'email' => $this->email,
-            'last_login_at' => DateTimeHelper::parseToDiffForHumansJa($this->last_login_at),
+            'last_login_at' => DateTimeHelper::checkDateLoginAt($this->last_login_at),
             'job_types' => $this->job_types,
             'salary' => [
                 'id' => @$desiredConditionUser->salaryType->id,

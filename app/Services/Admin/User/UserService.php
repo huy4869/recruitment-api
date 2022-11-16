@@ -278,9 +278,15 @@ class UserService extends Service
     {
         $user = User::query()
             ->with([
-                'userLearningHistories',
-                'userLicensesQualifications',
-                'userWordHistories',
+                'userLearningHistories' => function ($query) {
+                    $query->orderByRaw('enrollment_period_start ASC, enrollment_period_end ASC');
+                },
+                'userLicensesQualifications' => function ($query) {
+                    $query->orderByRaw('new_issuance_date ASC, created_at ASC');
+                },
+                'userWordHistories' => function ($query) {
+                    $query->orderByRaw('period_end is not null, period_start DESC, period_end DESC');
+                },
                 'avatarBanner',
                 'avatarDetails'
             ])
@@ -308,10 +314,7 @@ class UserService extends Service
                 'business_content' => $workHistory->business_content,
                 'experience_accumulation' => $workHistory->experience_accumulation,
                 'date_time' => [
-                    'work_time' => [
-                        'period_start' => DateTimeHelper::formatMonthYear($workHistory->period_start),
-                        'period_end' => DateTimeHelper::formatMonthYear($workHistory->period_end),
-                    ],
+                    'work_time' => DateTimeHelper::formatDateStartEnd($workHistory->period_start, $workHistory->period_end),
                     'period_start' => [
                         'month' => substr($workHistory->period_start, 4),
                         'year' => substr($workHistory->period_start, 0, 4),
@@ -322,7 +325,7 @@ class UserService extends Service
                     ]
                 ],
                 'job_type' => $workHistory->jobType->name,
-                'positionOffice' => JobHelper::getTypeName($workHistory->position_office_ids, $masterData['masterPositionOffice']),
+                'positionOffices' => JobHelper::getTypeName($workHistory->position_office_ids, $masterData['masterPositionOffice']),
                 'work_type' => $workHistory->workType->name,
             ];
         }//end foreach
@@ -333,11 +336,12 @@ class UserService extends Service
                 'id' => $learningHistory->id,
                 'school_name' => $learningHistory->school_name,
                 'date_time' => [
-                    'time_start_end' => [
-                        'enrollment_period_start' => DateTimeHelper::formatMonthYear($learningHistory->enrollment_period_start),
-                        'enrollment_period_end' => DateTimeHelper::formatMonthYear($learningHistory->enrollment_period_end),
-                        'learn_status' => $learningHistory->learningStatus->name,
-                    ],
+                    'time_start_end' => sprintf(
+                        '%s ~ %s(%s)',
+                        DateTimeHelper::formatMonthYear($learningHistory->enrollment_period_start),
+                        DateTimeHelper::formatMonthYear($learningHistory->enrollment_period_end),
+                        $learningHistory->learningStatus->name,
+                    ),
                     'enrollment_period_start' => [
                         'month' => substr($learningHistory->enrollment_period_start, 4),
                         'year' => substr($learningHistory->enrollment_period_start, 0, 4),

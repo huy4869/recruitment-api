@@ -37,7 +37,7 @@ class DetailUserInfoResource extends JsonResource
             ],
             'tel' => $this['tel'],
             'email' => $this['email'],
-            'last_login_at' => DateTimeHelper::formatTimeChat($this['last_login_at']),
+            'last_login_at' => DateTimeHelper::checkDateLoginAt($this['last_login_at']),
             'facebook' => $this['facebook'],
             'twitter' => $this['twitter'],
             'instagram' => $this['instagram'],

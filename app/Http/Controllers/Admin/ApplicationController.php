@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Application\UpdateRequest;
+use App\Http\Resources\Admin\Application\ApplicationProfileUserResource;
 use App\Http\Resources\Admin\Application\DetailApplicationResource;
 use App\Services\Admin\Application\ApplicationService;
 use Illuminate\Http\JsonResponse;
@@ -54,5 +55,12 @@ class ApplicationController extends Controller
         $application = ApplicationTableService::getInstance()->data($search, $orders, $filters, $perPage);
 
         return $this->sendSuccessResponse(new ApplicationCollection($application));
+    }
+
+    public function profileUser($id)
+    {
+        $data = ApplicationService::getInstance()->profileUser($id);
+
+        return $this->sendSuccessResponse($data);
     }
 }
