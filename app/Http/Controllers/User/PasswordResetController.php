@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Exceptions\InputException;
+use App\Helpers\ResponseHelper;
 use App\Services\User\PasswordResetService;
 use Illuminate\Http\JsonResponse;
 use App\Http\Requests\Common\ForgotPassword\CheckTokenResetPasswordRequest;
@@ -21,7 +22,21 @@ class PasswordResetController extends BaseController
     {
         $data = PasswordResetService::getInstance()->sendMail($request->get('email'));
 
-        return $this->sendSuccessResponse($data, trans('response.send_mail_success'));
+        if ($data) {
+            return $this->sendSuccessResponse($data, trans('response.send_mail_success'));
+        }
+
+        return ResponseHelper::sendResponse(
+            ResponseHelper::STATUS_CODE_VALIDATE_ERROR,
+            trans('response.invalid'),
+            [
+                'email' => [
+                    trans('validation.COM.006', [
+                        'attribute' => trans('validation.attributes.email')
+                    ])
+                ]
+            ]
+        );
     }
 
     /**

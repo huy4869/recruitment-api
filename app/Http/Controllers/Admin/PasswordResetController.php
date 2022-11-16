@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\InputException;
+use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Common\ForgotPassword\CheckTokenResetPasswordRequest;
 use App\Http\Requests\Common\ForgotPassword\ResetPasswordRequest;
@@ -25,7 +26,21 @@ class PasswordResetController extends Controller
     {
         $data = PasswordResetService::getInstance()->sendMail($request->get('email'));
 
-        return $this->sendSuccessResponse($data, trans('validation.INF.007'));
+        if ($data) {
+            return $this->sendSuccessResponse($data, trans('response.send_mail_success'));
+        }
+
+        return ResponseHelper::sendResponse(
+            ResponseHelper::STATUS_CODE_VALIDATE_ERROR,
+            trans('response.invalid'),
+            [
+                'email' => [
+                    trans('validation.COM.006', [
+                        'attribute' => trans('validation.attributes.email')
+                    ])
+                ]
+            ]
+        );
     }
 
     /**
