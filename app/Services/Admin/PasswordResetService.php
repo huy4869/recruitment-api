@@ -29,9 +29,7 @@ class PasswordResetService extends Service
         $user = User::query()->where('email', $email)->roleAdmin()->first();
 
         if (!$user) {
-            throw new InputException(trans('validation.COM.006', [
-                'attribute' => trans('validation.attributes.email')
-            ]));
+            return false;
         }
 
         $token = Str::random(config('password_reset.token.length'));

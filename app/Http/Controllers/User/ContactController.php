@@ -23,9 +23,7 @@ class ContactController extends Controller
         $inputs = $request->only(['email', 'name', 'tel', 'content']);
         $data = ContactService::getInstance()->withUser($user)->store($inputs);
 
-        return $this->sendSuccessResponse(new ContactResource($data), trans('response.created', [
-            'object' => trans('validation.attributes.content')
-        ]));
+        return $this->sendSuccessResponse(new ContactResource($data), trans('validation.INF.008'));
     }
 
     /**

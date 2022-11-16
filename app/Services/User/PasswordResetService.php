@@ -3,11 +3,13 @@
 namespace App\Services\User;
 
 use App\Exceptions\InputException;
+use App\Helpers\ResponseHelper;
 use App\Helpers\UrlHelper;
 use App\Jobs\User\JobPasswordReset;
 use App\Models\PasswordReset;
 use App\Models\User;
 use App\Services\Service;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -27,9 +29,7 @@ class PasswordResetService extends Service
         $user = User::query()->where('email', $email)->roleUser()->first();
 
         if (!$user) {
-            throw new InputException(trans('validation.COM.006', [
-                'attribute' => trans('validation.attributes.email')
-            ]));
+            return false;
         }
 
         $token = Str::random(config('password_reset.token.length'));
