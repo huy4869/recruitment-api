@@ -4,6 +4,7 @@ namespace App\Http\Requests\User;
 
 use App\Models\MJobType;
 use App\Models\MWorkType;
+use App\Services\User\DesiredConditionService;
 use App\Services\User\WorkHistoryService;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -30,9 +31,11 @@ class DesiredConditionRequest extends FormRequest
         $jobTypeIds = WorkHistoryService::getInstance()->getTypeIds(MJobType::query());
         $workTypeIds = WorkHistoryService::getInstance()->getTypeIds(MWorkType::query());
         $dayIds = array_keys(config('date.day_of_week_ja_fe'));
+        $provinceIds = DesiredConditionService::province();
 
         return [
-            'province_id' => ['nullable', 'numeric', 'exists:m_provinces,id'],
+            'province_ids' => ['nullable', 'array'],
+            'province_ids.*' => ['integer', 'in:' . implode(',', $provinceIds)],
             'work_type_ids' => ['nullable', 'array'],
             'work_type_ids.*' => ['integer', 'in:' . implode(',', $workTypeIds)],
             'age_id' => ['nullable', 'numeric', 'in:' . implode(',', $ageType)],

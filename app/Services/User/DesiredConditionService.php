@@ -7,6 +7,7 @@ use App\Models\DesiredConditionUser;
 use App\Models\MJobExperience;
 use App\Models\MJobFeature;
 use App\Models\MJobType;
+use App\Models\MProvince;
 use App\Models\MWorkType;
 use App\Services\Service;
 use Illuminate\Database\Eloquent\Builder;
@@ -40,6 +41,7 @@ class DesiredConditionService extends Service
             ->first();
 
         if ($userWorkHistory) {
+            $userWorkHistory['list_province'] = $this->getDataStringObject($userWorkHistory['province_ids'] ?? [], MProvince::query());
             $userWorkHistory['work_type_string'] = $this->getDataStringObject($userWorkHistory['work_type_ids'] ?? [], MWorkType::query());
             $userWorkHistory['job_type_string'] = $this->getDataStringObject($userWorkHistory['job_type_ids'] ?? [], MJobType::query());
             $userWorkHistory['job_experience_strings'] = $this->getDataStringObject($userWorkHistory['job_experience_ids'] ?? [], MJobExperience::query());
@@ -63,6 +65,16 @@ class DesiredConditionService extends Service
         $dataObject = $object->whereIn('id', $data)->get()->pluck('name')->toArray();
 
         return count($dataObject) == 1 ? $dataObject[0] : implode(', ', $dataObject);
+    }
+
+    /**
+     * Get provinceIds
+     *
+     * @return array
+     */
+    public static function province()
+    {
+        return MProvince::query()->get()->pluck('id')->toArray();
     }
 
     /**
@@ -91,7 +103,7 @@ class DesiredConditionService extends Service
     {
         return [
             'user_id' => $this->user->id,
-            'province_id' => $data['province_id'],
+            'province_ids' => $data['province_ids'],
             'work_type_ids' => $data['work_type_ids'],
             'age' => $data['age_id'],
             'salary_type_id' => $data['salary_type_id'],

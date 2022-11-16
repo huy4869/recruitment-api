@@ -228,6 +228,8 @@ return [
         'email' => 'メールアドレス',
         'type' => '注文オプション',
         'province_id' => '都道府県',
+        'province_ids' => '都道府県',
+        'province_ids.*' => '都道府県',
         'province_city_id' => '市区町村',
         'address' => '番地',
         'content' => 'お問い合わせ内容',
