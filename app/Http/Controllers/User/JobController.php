@@ -183,7 +183,7 @@ class JobController extends Controller
             $jobs = JobTableService::getInstance()->withUser($user)->data($search, $orders, $filters, $perPage);
 
             if ($user) {
-                $allowStoreSearchCond = $search || $orders || $filters;
+                $allowStoreSearchCond = $search || $filters;
 
                 if ($filters) {
                     foreach ($filters as $filter) {
@@ -195,7 +195,7 @@ class JobController extends Controller
                 }
 
                 if ($allowStoreSearchCond) {
-                    SearchJobService::getInstance()->withUser($user)->store($search, $orders, $filters);
+                    SearchJobService::getInstance()->withUser($user)->store($search, $filters);
                 }
             }
 

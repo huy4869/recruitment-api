@@ -13,6 +13,8 @@ use Illuminate\Support\Facades\DB;
 class JobTableService extends TableService
 {
     const FIRST_ARRAY = 0;
+    const ORDER_BY_CREATED_AT = 1;
+    const ORDER_BY_UPDATED_AT = 2;
 
     /**
      * @var array
@@ -31,7 +33,8 @@ class JobTableService extends TableService
         'feature_ids' => 'filterTypes',
         'province_id' => 'filterProvinces',
         'province_city_id' => 'filterProvinces',
-        'list_type' => 'filterListType'
+        'list_type' => 'filterListType',
+        'order_by_id' => 'filterOrderBy',
     ];
 
     /**
@@ -139,6 +142,23 @@ class JobTableService extends TableService
             default:
                 return $query;
         }
+    }
+
+    protected function filterOrderBy($query, $filter)
+    {
+        if (!count($filter)) {
+            return $query;
+        }
+
+        if ($filter['data'] == self::ORDER_BY_CREATED_AT) {
+            return $query->orderBy('created_at', 'desc');
+        }
+
+        if ($filter['data'] == self::ORDER_BY_UPDATED_AT) {
+            return $query->orderBy('updated_at', 'desc');
+        }
+
+        return $query;
     }
 
     /**

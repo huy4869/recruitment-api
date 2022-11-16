@@ -13,16 +13,15 @@ class SearchJobService extends Service
 
     /**
      * @param $search
-     * @param $orders
      * @param $filters
      * @return mixed
      */
-    public function store($search, $orders, $filters)
+    public function store($search, $filters)
     {
         $searchData = [];
 
         if ($search) {
-            $searchData = array_merge($searchData, ['text' => $search]);
+            $searchData = array_merge($searchData, ['search' => $search]);
         }
 
         if ($filters) {
@@ -31,22 +30,6 @@ class SearchJobService extends Service
                     $filter['key'] => json_decode($filter['data'])
                 ]);
             }
-        }
-
-        if ($orders) {
-            foreach ($orders as $order) {
-                if ($order['key'] == 'created_at') {
-                    $orderByIds[] = self::ORDER_BY_CREATED_AT;
-                }
-
-                if ($order['key'] == 'updated_at') {
-                    $orderByIds[] = self::ORDER_BY_UPDATED_AT;
-                }
-            }
-
-            $searchData = array_merge($searchData, [
-                'order_by_ids' => $orderByIds
-            ]);
         }
 
         $storeData = [

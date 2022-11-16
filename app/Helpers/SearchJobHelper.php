@@ -62,7 +62,7 @@ class SearchJobHelper
         }
 
         if (isset($content['feature_ids'])) {
-            $content['feature_ids'] = SearchJobHelper::getFeatureName(
+            $content['feature_ids'] = SearchJobHelper::getFeature(
                 $content['feature_ids'],
                 $masterData['masterJobFeatures'],
             );
@@ -82,11 +82,8 @@ class SearchJobHelper
             );
         }
 
-        if (isset($content['order_by_ids'])) {
-            $content['order_by_ids'] = JobHelper::getTypeName(
-                $content['order_by_ids'],
-                config('order_by.job_posting')
-            );
+        if (isset($content['order_by_id'])) {
+            $content['order_by_id'] = config('order_by.job_posting.' . $content['order_by_id']);
         }
 
         $searchJob->content = $content;
