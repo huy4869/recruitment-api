@@ -300,7 +300,7 @@ class DateTimeHelper
             return null;
         }
 
-        if ($dateTime->isToday()) {
+        if ($dateTime >= now()->subDays()) {
             return Carbon::createFromFormat($format, $dateTime)->diffForHumans();
         }
 

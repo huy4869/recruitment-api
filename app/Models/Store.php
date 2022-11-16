@@ -115,11 +115,13 @@ class Store extends Model
     public function jobImages()
     {
         return $this->HasManyThrough(
-            Image::class,
-            JobPosting::class,
-            'id',
-            'imageable_id',
-        )->where('imageable_type', JobPosting::class);
+        Image::class,
+        JobPosting::class,
+        'store_id',
+        'imageable_id',
+        'id',
+        'id'
+    )->where('imageable_type', JobPosting::class);
     }
 
     public function getFullNameAddressAttribute()

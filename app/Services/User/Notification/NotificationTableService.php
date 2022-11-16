@@ -26,7 +26,8 @@ class NotificationTableService extends TableService
      */
     protected function getSelectRaw()
     {
-        return 'notifications.user_id,
+        return 'notifications.id,
+            notifications.user_id,
             notifications.notice_type_id,
             notifications.noti_object_ids,
             notifications.title,
