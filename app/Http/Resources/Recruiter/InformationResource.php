@@ -40,7 +40,7 @@ class InformationResource extends JsonResource
                 'building' => $this->building,
                 'full_address' => $this->fullNameAddress,
             ],
-            'representative_name' =>$this->alias_name,
+            'alias_name' =>$this->alias_name,
             'employee_quantity' => $employeeQuantity,
             'date' => [
                 'founded_year' => $founded_year,
