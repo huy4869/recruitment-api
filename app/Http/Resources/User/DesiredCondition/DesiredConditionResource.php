@@ -39,8 +39,8 @@ class DesiredConditionResource extends JsonResource
 
         return [
             'id' => $data['id'],
-            'province_id' => $data['province_id'],
-            'province' => @$data['province']['name'],
+            'province_ids' => $data['province_ids'],
+            'list_province' => $data['list_province'],
             'salary_type_id' => $data['salary_type_id'],
             'salary_min' => $salaryMin,
             'salary_max' => $salaryMax,

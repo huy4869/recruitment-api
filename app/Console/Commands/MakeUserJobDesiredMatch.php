@@ -43,7 +43,7 @@ class makeUserJobDesiredMatch extends Command
     {
         $this->line('_________START__________');
         $matches = [
-            'province_id',
+            'province_ids',
             'work_type_ids',
             'age',
             'salary',
@@ -87,8 +87,8 @@ class makeUserJobDesiredMatch extends Command
 
                 foreach ($matches as $match) {
                     switch ($match) {
-                        case 'province_id':
-                            $matchResult = $this->compareProvince($matchResult, $desire->province_id, $jobPosting->province_id);
+                        case 'province_ids':
+                            $matchResult = $this->compareProvince($matchResult, $desire->province_ids, $jobPosting->province_id);
                             break;
                         case 'work_type_ids':
                             $matchResult = $this->compareWorkType($matchResult, $desire->work_type_ids, $jobPosting->work_type_ids);
@@ -170,7 +170,7 @@ class makeUserJobDesiredMatch extends Command
     }
 
     public function compareProvince($matchResult, $province_d, $province_j) {
-        if ($province_d && $province_j && $province_d == $province_j) {
+        if ($province_d && $province_j && in_array($province_j, $province_d)) {
             $matchResult['detail'][] = [
                 'model_class' => MProvince::class,
                 'single_attr' => '',

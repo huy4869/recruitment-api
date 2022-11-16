@@ -22,7 +22,7 @@ class DesiredConditionUser extends Model
      */
     protected $fillable = [
         'user_id',
-        'province_id',
+        'province_ids',
         'work_type_ids',
         'age',
         'salary_type_id',
@@ -37,6 +37,7 @@ class DesiredConditionUser extends Model
     ];
 
     protected $casts = [
+        'province_ids' => 'array',
         'work_type_ids' => 'array',
         'job_type_ids' => 'array',
         'job_experience_ids' => 'array',

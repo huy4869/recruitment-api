@@ -65,7 +65,7 @@ class DesiredConditionController extends BaseController
     private function makeDataInputs($request)
     {
         return $request->only([
-            'province_id',
+            'province_ids',
             'work_type_ids',
             'age_id',
             'salary_type_id',
