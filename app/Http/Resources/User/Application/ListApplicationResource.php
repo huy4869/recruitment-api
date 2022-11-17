@@ -39,10 +39,10 @@ class ListApplicationResource extends JsonResource
         return [
             'id' => $data->id,
             'job_id' => $data->job_posting_id,
-            'job_name' => $data->jobPosting->name,
+            'job_name' => @$data->jobPosting->name,
             'job_banner' => FileHelper::getFullUrl(@$data->jobPosting->bannerImage->url),
             'store_id' => $data->store_id,
-            'store_name' => $data->store->name,
+            'store_name' => @$data->store->name,
             'interview_status_id' => $data->interview_status_id,
             'interview_status_name' => @$data->interviews->name,
             'interview_date' => DateTimeHelper::formatDateDayOfWeekJa($data['date']) . $data->hours,

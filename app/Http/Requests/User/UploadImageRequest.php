@@ -24,7 +24,7 @@ class UploadImageRequest extends FormRequest
     public function rules()
     {
         return [
-            'image' => ['required', 'image', 'mimes:jpg,jpeg,png,svg', 'mimetypes:image/jpeg,image/png,image/jpg,image/svg', 'max:' . config('upload.size_max')],
+            'image' => ['required', 'mimes:jpg,jpeg,png,svg', 'max:' . config('upload.size_max')],
         ];
     }
 
@@ -35,8 +35,7 @@ class UploadImageRequest extends FormRequest
     {
         return [
             'image.max' => trans('validation.ERR.003'),
-            'image.image' => trans('validation.ERR.005'),
-            'image.mimetypes' => trans('validation.ERR.005'),
+            'image.mimes' => trans('validation.ERR.005'),
         ];
     }
 }

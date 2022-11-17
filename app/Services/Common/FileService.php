@@ -10,11 +10,13 @@ use Illuminate\Contracts\Filesystem\Filesystem;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 use Intervention\Image\Facades\Image;
 
 class FileService extends Service
 {
     public const COUNT_IMAGE = 1;
+    public const FILE_EXTENSION = 'svg';
 
     /**
      * @var string
@@ -43,15 +45,27 @@ class FileService extends Service
      * @param UploadedFile $file
      * @param $type
      * @return array
-     * @throws InputException
+     * @throws InputException|ValidationException
      */
     public function uploadImage(UploadedFile $file, $type)
     {
+        $fileExtension = $file->getClientOriginalExtension();
+
+        if (!in_array($fileExtension, config('upload.image_ext'))) {
+            throw ValidationException::withMessages([
+                'image' => trans('validation.custom.image.mimes')
+            ]);
+        }//end if
+
         $this->diskName = config('upload.disk');
 
-        $fileName = FileHelper::constructFileName();
-
-        [$fullPath, $thumbPath] = $this->resizeImage($file, $type, $fileName);
+        if ($fileExtension == self::FILE_EXTENSION) {
+            $fileName = FileHelper::constructFileName(self::FILE_EXTENSION);
+            [$fullPath, $thumbPath] = $this->uploadFileSvg($file, $fileName);
+        } else {
+            $fileName = FileHelper::constructFileName();
+            [$fullPath, $thumbPath] = $this->resizeImage($file, $type, $fileName);
+        }
 
         $image = Images::query()->create([
             'imageable_id' => $this->user->id ?? null,
@@ -141,6 +155,24 @@ class FileService extends Service
         $thumbnailUrl = $this->storage()->url($image->thumb);
 
         return ['url' => $imageUrl, 'thumb' => $thumbnailUrl];
+    }
+
+    /**
+     * Upload file svg
+     *
+     * @param $image
+     * @param $fileName
+     * @return array
+     */
+    protected function uploadFileSvg($image, $fileName)
+    {
+        $fullPath = FileHelper::pathUrl($fileName, config('upload.path_origin_image'));
+        $thumbPath = FileHelper::pathUrl($fileName, config('upload.path_thumbnail'));
+
+        $this->storage()->put($fullPath, $image->getContent());
+        $this->storage()->put($thumbPath, $image->getContent());
+
+        return [$fullPath, $thumbPath];
     }
 
     /**
