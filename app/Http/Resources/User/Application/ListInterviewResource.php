@@ -24,9 +24,9 @@ class ListInterviewResource extends JsonResource
                 $approach = config('application.interview_approach_online');
                 break;
             case Application::STATUS_INTERVIEW_DIRECT:
-                $postalCode = @$this->jobPosting->postal_code;
-                $province = @$this->jobPosting->province->name;
-                $provinceCity = @$this->jobPosting->provinceCity->name;
+                $postalCode = @$this->jobPostingAcceptTrashed->postal_code;
+                $province = @$this->jobPostingAcceptTrashed->province->name;
+                $provinceCity = @$this->jobPostingAcceptTrashed->provinceCity->name;
                 $address = $this->address;
                 $building = $this->building;
                 $approach = sprintf(
@@ -39,17 +39,17 @@ class ListInterviewResource extends JsonResource
                 );
                 break;
             case Application::STATUS_INTERVIEW_PHONE:
-                $approach = $this->store->owner->tel;
+                $approach = $this->storeAcceptTrashed->owner->tel;
                 break;
         }//end switch
 
         return [
             'id' => $this->id,
-            'job_id' => @$this->jobPosting->id,
-            'job_banner' => FileHelper::getFullUrl(@$this->jobPosting->bannerImage->url),
-            'job_name' => @$this->jobPosting->name,
-            'store_name' => @$this->store->name,
-            'interview_date' => DateTimeHelper::formatDateDayOfWeekTimeJa($this->date),
+            'job_id' => @$this->jobPostingAcceptTrashed->id,
+            'job_banner' => FileHelper::getFullUrl(@$this->jobPostingAcceptTrashed->bannerImageAcceptTrashed->url),
+            'job_name' => @$this->jobPostingAcceptTrashed->name,
+            'store_name' => @$this->storeAcceptTrashed->name,
+            'interview_date' => DateTimeHelper::formatDateDayOfWeekJa($this->date) . $this->hours,
             'interview_date_status' => $this->date_status,
             'interview_approach' => [
                 'id' => $this->interview_approach_id,

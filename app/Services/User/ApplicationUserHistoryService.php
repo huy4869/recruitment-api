@@ -24,15 +24,16 @@ class ApplicationUserHistoryService extends Service
      * Store notification user application
      *
      * @param $application
+     * @param $jobPosting
      * @return Builder|Model
      */
-    public function storeNotifications($application)
+    public function storeNotifications($application, $jobPosting)
     {
          $user = $this->user;
          $nameUser = $user->first_name . $user->last_name;
 
          return Notification::query()->create([
-            'user_id' => $user->id,
+            'user_id' => @$jobPosting->store->owner->id,
             'notice_type_id' => Notification::TYPE_INTERVIEW_APPLY,
             'noti_object_ids' => [
                 'store_id' => $application->store_id,
