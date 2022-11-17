@@ -70,12 +70,17 @@ class FileHelper
     /**
      * Get File Webp Name
      *
+     * @param null $fileExtension
      * @return string
      */
-    public static function constructFileName()
+    public static function constructFileName($fileExtension = null)
     {
         $fileName = md5(StringHelper::uniqueCode(15) . Carbon::now() . StringHelper::uniqueCode(25));
-        $fileExtension = config('upload.webp_ext');
+
+        if (!$fileExtension) {
+            $fileExtension = config('upload.webp_ext');
+        }
+
         return Str::lower("{$fileName}.{$fileExtension}");
     }
 
