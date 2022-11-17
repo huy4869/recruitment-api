@@ -24,9 +24,9 @@ class ListInterviewResource extends JsonResource
                 $approach = config('application.interview_approach_online');
                 break;
             case Application::STATUS_INTERVIEW_DIRECT:
-                $postalCode = $this->jobPosting->postal_code;
-                $province = $this->jobPosting->province->name;
-                $provinceCity = $this->jobPosting->provinceCity->name;
+                $postalCode = @$this->jobPosting->postal_code;
+                $province = @$this->jobPosting->province->name;
+                $provinceCity = @$this->jobPosting->provinceCity->name;
                 $address = $this->address;
                 $building = $this->building;
                 $approach = sprintf(
@@ -45,10 +45,10 @@ class ListInterviewResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'job_id' => $this->jobPosting->id,
-            'job_banner' => FileHelper::getFullUrl($this->jobPosting->bannerImage->url ?? null),
-            'job_name' => $this->jobPosting->name,
-            'store_name' => $this->store->name,
+            'job_id' => @$this->jobPosting->id,
+            'job_banner' => FileHelper::getFullUrl(@$this->jobPosting->bannerImage->url),
+            'job_name' => @$this->jobPosting->name,
+            'store_name' => @$this->store->name,
             'interview_date' => DateTimeHelper::formatDateDayOfWeekTimeJa($this->date),
             'interview_date_status' => $this->date_status,
             'interview_approach' => [
