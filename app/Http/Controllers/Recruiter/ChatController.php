@@ -22,13 +22,13 @@ class ChatController extends Controller
     }
 
     /**
-     * @param $store_id
+     * @param $storeId
      * @return JsonResponse
      * @throws InputException
      */
-    public function getChatListOfStore($store_id)
+    public function getChatListOfStore($storeId = null)
     {
-        $data = $this->chatService->withUser($this->guard()->user())->getChatListOfStore($store_id);
+        $data = $this->chatService->withUser($this->guard()->user())->getChatListOfStore($storeId);
 
         return $this->sendSuccessResponse(ChatListResourse::collection($data));
     }

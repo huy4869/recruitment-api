@@ -13,6 +13,7 @@ use App\Services\Service;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\Translation\Translator;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 use Exception;
 use Illuminate\Support\Facades\Log;
@@ -71,24 +72,32 @@ class ChatService extends Service
     /**
      * list chat
      *
-     * @param $store_id
-     * @return mixed
+     * @param $storeId
+     * @return Collection
      * @throws InputException
      */
-    public function getChatListOfStore($store_id)
+    public function getChatListOfStore($storeId = null)
     {
-        $store = Store::query()
-            ->where([
-                ['id', $store_id],
-                ['user_id', $this->user->id]
-            ])
+        $stores = $this->user->stores()
             ->with('chats', function ($query) {
                 $query->orderByDesc('created_at');
-            })
-            ->first();
+            });
 
-        if ($store) {
-             return $store->chats->unique('user_id');
+        if ($storeId) {
+            $stores->where('id', $storeId);
+        }
+
+        if ($stores->count()) {
+            $collectionStoreChat = collect();
+
+            $stores->each(function ($store) use ($collectionStoreChat) {
+                if ($store->chats->count()) {
+                    $storeChat = $store->chats->unique('user_id')->first();
+                    $collectionStoreChat->push($storeChat);
+                }
+            });
+
+            return $collectionStoreChat;
         }
 
         throw new InputException(trans('response.not_found'));
