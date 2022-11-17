@@ -88,6 +88,8 @@ class StoreService extends Service
             $store->jobs()?->delete();
             $store->delete();
 
+            $userNotifyData = [];
+
             if ($jobHasApplicationNotReject->count()) {
                 foreach ($jobHasApplicationNotReject as $job) {
                     foreach ($job->applications as $application) {
