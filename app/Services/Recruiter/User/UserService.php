@@ -2,11 +2,15 @@
 
 namespace App\Services\Recruiter\User;
 
+use App\Exceptions\InputException;
 use App\Helpers\CommonHelper;
 use App\Helpers\JobHelper;
 use App\Helpers\UserHelper;
+use App\Models\FavoriteUser;
+use App\Models\Notification;
 use App\Models\User;
 use App\Services\Service;
+use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -32,7 +36,7 @@ class UserService extends Service
             ->take(config('paginate.user.new_amount'))
             ->get();
 
-        $recruiterFavoriteUser = $recruiter->favoriteUser->favorite_ids;
+        $recruiterFavoriteUser = $recruiter->favoriteUser->favorite_ids ?? [];
 
         return self::getUserInfoForListUser($recruiterFavoriteUser, $userNewList);
     }
@@ -77,12 +81,141 @@ class UserService extends Service
             ])
             ->get();
 
-        $recruiterFavoriteUser = $recruiter->favoriteUser->favorite_ids;
+        $recruiterFavoriteUser = $recruiter->favoriteUser->favorite_ids ?? [];
         $userSuggestListFullInfo = self::getUserInfoForListUser($recruiterFavoriteUser, $userSuggestList);
 
         return collect($userIds)->map(function ($id) use ($userSuggestListFullInfo) {
             return $userSuggestListFullInfo[$id];
         });
+    }
+
+    /**
+     * @param $data
+     * @return bool
+     * @throws InputException
+     * @throws Exception
+     */
+    public function favoriteUser($data)
+    {
+        $user = User::query()->where('id', $data['user_id'])->roleUser()->first();
+
+        if ($user) {
+            $recruiter = $this->user;
+            $favoriteUser = FavoriteUser::query()->where('user_id', $recruiter->id)->first();
+
+            try {
+                DB::beginTransaction();
+
+                if ($favoriteUser) {
+                    if (in_array($user->id, $favoriteUser->favorite_ids)) {
+                        throw new InputException(trans('response.invalid'));
+                    }
+
+                    $newFavoriteUserArray = array_merge($favoriteUser->favorite_ids, [$user->id]);
+
+                    $favoriteUser->update([
+                        'favorite_ids' => $newFavoriteUserArray,
+                    ]);
+                } else {
+                    FavoriteUser::create([
+                        'user_id' => $recruiter->id,
+                        'favorite_ids' => [
+                            (int)$data['user_id']
+                        ],
+                    ]);
+                }
+
+                $recruiterJobIds = $recruiter->jobsOwned()->pluck('job_postings.id')->toArray();
+                $userFavoriteJobs = $user->favoriteJobs()
+                    ->whereIn('job_posting_id', $recruiterJobIds)
+                    ->with([
+                        'jobPosting',
+                        'jobPosting.store'
+                    ])
+                    ->get();
+
+                $userNotifyData = [];
+
+                foreach ($userFavoriteJobs as $favoriteJob) {
+                    $userNotifyData[] = ([
+                        'user_id' => $user->id,
+                        'notice_type_id' => Notification::TYPE_SAME_FAVORITE,
+                        'noti_object_ids' => json_encode([
+                            'user_id' => $recruiter->id,
+                            'job_id' => $favoriteJob->jobPosting->id,
+                            'store_id' => $favoriteJob->jobPosting->store->id,
+                        ]),
+                        'title' => trans('notification.N010.title', [
+                            'store_name' => $favoriteJob->jobPosting->store->name,
+                        ]),
+                        'content' => trans('notification.N010.content', [
+                            'store_name' => $favoriteJob->jobPosting->store->name,
+                        ]),
+                        'created_at' => now(),
+                    ]);
+                }
+
+                if (count($userNotifyData)) {
+                    Notification::insert($userNotifyData);
+                }
+
+                DB::commit();
+                return true;
+            } catch (Exception $e) {
+                DB::rollBack();
+                throw $e;
+            }
+        }
+
+        throw new InputException(trans('response.invalid'));
+    }
+
+    /**
+     * @param $data
+     * @return bool
+     * @throws InputException
+     */
+    public function unfavoriteUser($data)
+    {
+        $user = User::query()->where('id', $data['user_id'])->roleUser()->first();
+
+        if ($user) {
+            $recruiter = $this->user;
+            $favoriteUser = FavoriteUser::query()->where('user_id', $recruiter->id)->first();
+
+            try {
+                DB::beginTransaction();
+
+                if ($favoriteUser) {
+                    $favoriteUserArray = $favoriteUser->favorite_ids;
+                    $keyUnfavorite = array_search($user->id, $favoriteUserArray);
+
+                    if ($keyUnfavorite === false) {
+                        throw new InputException(trans('response.invalid'));
+                    }
+
+                    unset($favoriteUserArray[$keyUnfavorite]);
+
+                    foreach ($favoriteUserArray as $item) {
+                        $newFavoriteUserArray[] = $item;
+                    }
+
+                    $favoriteUser->update([
+                        'favorite_ids' => $newFavoriteUserArray,
+                    ]);
+                } else {
+                    throw new InputException(trans('response.invalid'));
+                }
+
+                DB::commit();
+                return true;
+            } catch (Exception $e) {
+                DB::rollBack();
+                throw $e;
+            }
+        }
+
+        throw new InputException(trans('response.invalid'));
     }
 
     /**
@@ -99,22 +232,32 @@ class UserService extends Service
 
         foreach ($userList as $user) {
             $userDesiredCondition = $user->desiredConditionUser;
-            $user->job_types = JobHelper::getTypeName(
-                $userDesiredCondition->job_type_ids,
-                $jobMasterData['masterJobTypes']
-            );
-            $user->job_experiences = JobHelper::getTypeName(
-                $userDesiredCondition->job_experience_ids,
-                $jobMasterData['masterJobExperiences']
-            );
-            $user->job_features = JobHelper::getFeatureCategoryName(
-                $userDesiredCondition->job_feature_ids,
-                $jobMasterData['masterJobFeatures']
-            );
-            $user->work_types = JobHelper::getTypeName(
-                $userDesiredCondition->work_type_ids,
-                $jobMasterData['masterWorkTypes']
-            );
+            if (isset($userDesiredCondition->job_type_ids)) {
+                $user->job_types = JobHelper::getTypeName(
+                    $userDesiredCondition->job_type_ids,
+                    $jobMasterData['masterJobTypes']
+                );
+            }
+            if (isset($userDesiredCondition->job_experience_ids)) {
+                $user->job_experiences = JobHelper::getTypeName(
+                    $userDesiredCondition->job_experience_ids,
+                    $jobMasterData['masterJobExperiences']
+                );
+            }
+
+            if (isset($userDesiredCondition->job_feature_ids)) {
+                $user->job_features = JobHelper::getFeatureCategoryName(
+                    $userDesiredCondition->job_feature_ids,
+                    $jobMasterData['masterJobFeatures']
+                );
+            }
+
+            if (isset($userDesiredCondition->work_type_ids)) {
+                $user->work_types = JobHelper::getTypeName(
+                    $userDesiredCondition->work_type_ids,
+                    $jobMasterData['masterWorkTypes']
+                );
+            }
             $user->favorite = !!in_array($user->id, $recruiterFavoriteUser);
 
             $userArr[$user->id] = $user;

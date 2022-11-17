@@ -35,6 +35,7 @@ Route::group(['as' => 'users.', 'prefix' => 'users', 'middleware' => 'recruiter'
     Route::get('/new', 'UserController@newUsers')->name('newUsers');
     Route::get('/suggest', 'UserController@suggestUsers')->name('suggestUsers');
     Route::get('/detail/{id}', 'UserProfileController@detail')->name('detail');
+    Route::post('/favorite', 'UserController@addOrRemoveFavoriteUser')->name('addOrRemoveFavoriteUser');
 });
 
 Route::group(['as' => 'profile.', 'prefix' => 'profile', 'middleware' => 'recruiter'], function () {

@@ -11,6 +11,9 @@ class FavoriteUser extends Model
 {
     use HasFactory, SoftDeletes;
 
+    const UNFAVORITE_USER = 0;
+    const FAVORITE_USER = 1;
+
     /**
      * @var string
      */

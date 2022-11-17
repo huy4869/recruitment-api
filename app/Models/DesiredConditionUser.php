@@ -64,6 +64,14 @@ class DesiredConditionUser extends Model
     /**
      * @return BelongsTo
      */
+    public function provinceCity()
+    {
+        return $this->belongsTo(MProvinceCity::class, 'province_city_id');
+    }
+
+    /**
+     * @return BelongsTo
+     */
     public function salaryType()
     {
         return $this->belongsTo(MSalaryType::class, 'salary_type_id');

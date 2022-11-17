@@ -6,6 +6,7 @@ use App\Models\Scopes\User as ScopesUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
@@ -262,6 +263,14 @@ class User extends Authenticatable
     public function stores()
     {
         return $this->hasMany(Store::class, 'user_id', 'id');
+    }
+
+    /**
+     * @return HasManyThrough
+     */
+    public function jobsOwned()
+    {
+        return $this->hasManyThrough(JobPosting::class, Store::class);
     }
 
     public function getFullNameAddressAttribute()

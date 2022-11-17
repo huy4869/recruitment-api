@@ -26,6 +26,7 @@ class Notification extends Model
     public const TYPE_MATCHING_FAVORITE = 9;
     public const TYPE_INTERVIEW_APPLY= 10;
     public const TYPE_UPDATE_INTERVIEW_APPLY= 11;
+    public const TYPE_SAME_FAVORITE = 12;
 
     /**
      * The attributes that are mass assignable.

@@ -37,6 +37,6 @@ class FavoriteJob extends Model
      */
     public function jobPosting()
     {
-        return $this->belongsTo(JobPosting::class, 'job_posting_id');
+        return $this->belongsTo(JobPosting::class, 'job_posting_id')->released();
     }
 }
