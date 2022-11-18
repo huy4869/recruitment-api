@@ -2,17 +2,32 @@
 
 namespace App\Helpers;
 
+use App\Models\User;
+
 class UrlHelper
 {
     /**
      * User url
      *
      * @param string $path
+     * @param $user
      * @return string
      */
-    public static function userUrl(string $path = '')
+    public static function userUrl(string $path = '', $user)
     {
-        $basePath = rtrim(config('app.user_url'), '/');
+        switch ($user->role_id) {
+            case User::ROLE_USER:
+                $userPath = config('app.user_url');
+                break;
+            case User::ROLE_RECRUITER:
+                $userPath = config('app.rec_url');
+                break;
+            case User::ROLE_SUB_ADMIN || User::ROLE_ADMIN:
+                $userPath = config('app.admin_url');
+                break;
+        }
+
+        $basePath = rtrim($userPath, '/');
         if (!$path) {
             return $basePath;
         }
@@ -35,11 +50,12 @@ class UrlHelper
      * Reset Password Link
      *
      * @param string $token
+     * @param $user
      * @return string
      */
-    public static function resetPasswordLink(string $token)
+    public static function resetPasswordLink(string $token, $user)
     {
         $path = config('password_reset.path.reset_password') . '?token=' . UrlHelper::urlEncode($token);
-        return UrlHelper::userUrl($path);
+        return UrlHelper::userUrl($path, $user);
     }
 }
