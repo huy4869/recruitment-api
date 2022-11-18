@@ -17,7 +17,6 @@ class JobTableService extends TableService
      * @var array
      */
     protected $searchables = [
-        'name' => 'job_postings.name'
     ];
 
     /**
@@ -36,6 +35,8 @@ class JobTableService extends TableService
         'salary_min' => 'filterTypes',
         'salary_max' => 'filterTypes',
         'gender_ids' => 'filterTypes',
+        'job_name' => 'filterJobName',
+        'store_name' => 'filterStoreName',
     ];
 
     /**
@@ -44,6 +45,26 @@ class JobTableService extends TableService
     protected $orderables = [
         'updated_at' => 'job_postings.updated_at'
     ];
+
+    /**
+     * @param $query
+     * @param $filter
+     * @return mixed
+     */
+    protected function filterJobName($query, $filter)
+    {
+        return $query->where('job_postings.name', $filter['data']);
+    }
+
+    /**
+     * @param $query
+     * @param $filter
+     * @return mixed
+     */
+    protected function filterStoreName($query, $filter)
+    {
+        return $query->where('stores.name', $filter['data']);
+    }
 
     /**
      * @param $query
@@ -73,6 +94,11 @@ class JobTableService extends TableService
         $rangeMaxKey = [
             'salary_max',
             'age_max',
+        ];
+
+        $provinceKey = [
+            'province_id',
+            'province_city_id',
         ];
 
         foreach ($filters as $filterItem) {
@@ -112,6 +138,14 @@ class JobTableService extends TableService
                 $query->where($filterItem['key'], '>=', $filterItem['data']);
             } elseif (in_array($filterItem['key'], $rangeMaxKey)) {
                 $query->where($filterItem['key'], '<=', $filterItem['data']);
+            } elseif (in_array($filterItem['key'], $provinceKey)) {
+                $types = json_decode($filterItem['data']);
+                $query->where($filterItem['key'], $types[self::FIRST_ARRAY]);
+                unset($types[self::FIRST_ARRAY]);
+
+                foreach ($types as $type) {
+                    $query->orWhere($filterItem['key'], $type);
+                }
             } else {
                 $query->where($filterItem['key'], $filterItem['data']);
             }//end if
@@ -129,6 +163,7 @@ class JobTableService extends TableService
         $recruiterStoreIds = $recruiter->stores->pluck('id')->toArray();
 
         return JobPosting::query()->whereIn('store_id', $recruiterStoreIds)
+            ->join('stores', 'store_id', '=', 'stores.id')
             ->with([
                 'store',
                 'status',
@@ -167,6 +202,7 @@ class JobTableService extends TableService
             job_postings.gender_ids,
             job_postings.feature_ids,
             job_postings.experience_ids,
-            job_postings.updated_at';
+            job_postings.updated_at,
+            stores.name as store_name';
     }
 }
