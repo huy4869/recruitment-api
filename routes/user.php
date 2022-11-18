@@ -121,6 +121,7 @@ Route::group(['as' => 'learning-history.', 'prefix' => 'learning-history', 'midd
 
 Route::group(['as' => 'notifications.', 'prefix' => 'notifications', 'middleware' => 'user'], function () {
     Route::get('/', 'NotificationController@list')->name('list');
+    Route::post('/read/{id}', 'NotificationController@updateBeReadNotification')->name('updateBeReadNotification');
 });
 
 Route::group(['as' => 'search-jobs.', 'prefix' => 'search-jobs', 'middleware' => 'user'], function () {

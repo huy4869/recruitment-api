@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\User\Notification\NotificationCollection;
+use App\Services\User\Notification\NotificationService;
 use App\Services\User\Notification\NotificationTableService;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
@@ -21,5 +23,18 @@ class NotificationController extends Controller
             ->data($search, $orders, $filters, $perPage);
 
         return $this->sendSuccessResponse(new NotificationCollection($notifications));
+    }
+
+    /**
+     * @param $id
+     * @return JsonResponse
+     * @throws InputException
+     */
+    public function updateBeReadNotification($id)
+    {
+        $user = $this->guard()->user();
+        $result = NotificationService::getInstance()->withUser($user)->updateBeReadNotification($id);
+
+        return $this->sendSuccessResponse($result);
     }
 }
