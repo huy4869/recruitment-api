@@ -17,9 +17,19 @@ class RecruiterUnique implements Rule
      */
     public function passes($attribute, $value)
     {
-        $q = DB::table(User::query()->getQuery()->from)->where($attribute, $value)->whereIn('role_id', [User::ROLE_USER, User::ROLE_RECRUITER]);
+        $q = User::query()->where($attribute, $value)
+            ->whereIn('role_id', [User::ROLE_USER, User::ROLE_RECRUITER, User::ROLE_ADMIN])
+            ->withTrashed()->get();
 
-        return !$q->count();
+        foreach ($q as $result) {
+            if ($result && ($result->role_id == User::ROLE_RECRUITER
+                || ($result->role_id == User::ROLE_USER && !isset($result->deleted_at))
+                || ($result->role_id == User::ROLE_ADMIN && !isset($result->deleted_at)))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

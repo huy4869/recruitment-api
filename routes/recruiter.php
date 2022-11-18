@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::post('/upload-image', 'UploadImageController@upload')->name('uploadImage')->middleware('recruiter');
-
+Route::get('/zipcode', 'ZipcodeController@index')->name('getZipcode');
 Route::get('/master-data', 'MasterDataController@show')->name('masterData')->middleware('recruiter');
 
 Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {

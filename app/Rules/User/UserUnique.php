@@ -4,7 +4,6 @@ namespace App\Rules\User;
 
 use App\Models\User;
 use Illuminate\Contracts\Validation\Rule;
-use Illuminate\Support\Facades\DB;
 
 class UserUnique implements Rule
 {
@@ -17,9 +16,19 @@ class UserUnique implements Rule
      */
     public function passes($attribute, $value)
     {
-        $q = DB::table('users')->where($attribute, $value)->get();
+        $users = User::query()->where($attribute, $value)->withTrashed()->get();
 
-        return !$q->count();
+        foreach ($users as $user) {
+            if ($user->role_id == User::ROLE_USER
+                || ($user->role_id == User::ROLE_RECRUITER && !isset($user->deleted_at))
+                || ($user->role_id == User::ROLE_SUB_ADMIN && !isset($user->deleted_at))
+                || ($user->role_id == User::ROLE_ADMIN && !isset($user->deleted_at))
+            ) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

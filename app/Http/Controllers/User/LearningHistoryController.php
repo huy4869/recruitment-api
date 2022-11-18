@@ -52,7 +52,7 @@ class LearningHistoryController extends BaseController
         $data = $this->learningHistoryService->withUser($user)->store($inputs);
 
         if ($data) {
-            return $this->sendSuccessResponse($data, trans('response.INF.006'));
+            return $this->sendSuccessResponse($data, trans('validation.INF.006'));
         }
 
         throw new InputException(trans('response.ERR.006'));
