@@ -29,6 +29,12 @@ class User extends Authenticatable
     public const ROLE_SUB_ADMIN = 3;
     public const ROLE_ADMIN = 4;
 
+    public const SKILL_CUT = 1;
+    public const SKILL_EYEBROW = 2;
+    public const SKILL_PERM = 3;
+    public const SKILL_PLOW = 4;
+    public const SKILL_SHAMPOO = 5;
+
     // Gender
     public const GENDER_FEMALE = 1;
     // male
@@ -71,6 +77,7 @@ class User extends Authenticatable
         'favorite_skill',
         'experience_knowledge',
         'self_pr',
+        'skills',
         'home_page_recruiter',
         'motivation',
         'recent_jobs',
@@ -89,6 +96,7 @@ class User extends Authenticatable
      */
     protected $casts = [
         'recent_jobs' => 'array',
+        'skills' => 'array',
     ];
 
     /**

@@ -95,11 +95,11 @@ class UserController extends BaseController
     public function updatePr(UpdateInformationPrRequest $request)
     {
         $user = $this->guard()->user();
-        $inputs = $request->only(['favorite_skill', 'experience_knowledge', 'self_pr']);
+        $inputs = $request->only(['favorite_skill', 'experience_knowledge', 'self_pr', 'skills']);
         $data = $this->userService->withUser($user)->updateInformationPr($inputs);
 
         if ($data) {
-            return $this->sendSuccessResponse([], trans('response.update_success'));
+            return $this->sendSuccessResponse([], trans('validation.INF.001'));
         }
 
         throw new InputException(trans('validation.ERR.011'));
@@ -131,7 +131,7 @@ class UserController extends BaseController
         $data = $this->userService->withUser($user)->updateMotivation($inputs);
 
         if ($data) {
-            return $this->sendSuccessResponse([], trans('response.update_success'));
+            return $this->sendSuccessResponse([], trans('validation.INF.001'));
         }
 
         throw new InputException(trans('response.ERR.006'));
