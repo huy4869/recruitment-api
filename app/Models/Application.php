@@ -62,7 +62,7 @@ class Application extends Model
     /**
      * @return mixed
      */
-    public function jobPostingTrashed()
+    public function jobPostingAcceptTrashed()
     {
         return $this->belongsTo(JobPosting::class, 'job_posting_id')->withTrashed();
     }
@@ -73,6 +73,14 @@ class Application extends Model
     public function store()
     {
         return $this->belongsTo(Store::class, 'store_id');
+    }
+
+    /**
+     * @return mixed
+     */
+    public function storeAcceptTrashed()
+    {
+        return $this->belongsTo(Store::class, 'store_id')->withTrashed();
     }
 
     /**

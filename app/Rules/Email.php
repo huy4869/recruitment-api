@@ -25,7 +25,7 @@ class Email implements Rule
      */
     public function passes($attribute, $value)
     {
-        if (preg_match('/^([a-z0-9+-]+)(.[a-z0-9+-]+)*@([a-z0-9-]+.)+[a-z]{2,6}$/ix', $value)) {
+        if (preg_match('/^([a-z0-9+-]+)(.[a-z0-9+-]+)*@([a-z0-9-]+.)+[a-z0-9-]+$/ix', $value)) {
             return true;
         }
 

@@ -125,6 +125,14 @@ class JobPosting extends Model
     }
 
     /**
+     * @return MorphOne
+     */
+    public function bannerImageAcceptTrashed()
+    {
+        return $this->morphOne(Image::class, 'imageable')->where('type', 'job_banner')->withTrashed();
+    }
+
+    /**
      * @return MorphMany
      */
     public function detailImages()

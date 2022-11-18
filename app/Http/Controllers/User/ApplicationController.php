@@ -126,7 +126,7 @@ class ApplicationController extends BaseController
             DB::beginTransaction();
 
             $data = $this->jobPostingService->withUser($user)->store($inputs, $jobPosting);
-            $this->applicationUserHistoryService->withUser($user)->storeNotifications($data);
+            $this->applicationUserHistoryService->withUser($user)->storeNotifications($data, $jobPosting);
             $this->applicationUserHistoryService->storeChat($data);
             $this->applicationUserHistoryService->storeApplicationWorkHistories($data);
             $this->applicationUserHistoryService->storeApplicationLearningHistories($data);

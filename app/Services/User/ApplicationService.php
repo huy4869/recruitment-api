@@ -28,7 +28,7 @@ class ApplicationService extends Service
     public function list()
     {
         return  Application::query()
-            ->with(['jobPosting', 'store', 'store.owner', 'interviews', 'jobPosting.bannerImage'])
+            ->with(['jobPostingAcceptTrashed', 'storeAcceptTrashed', 'storeAcceptTrashed.owner', 'interviews', 'jobPostingAcceptTrashed.bannerImageAcceptTrashed'])
             ->where('user_id', $this->user->id)
             ->orderBy('created_at', 'DESC')
             ->get();
@@ -97,11 +97,11 @@ class ApplicationService extends Service
                 $query->whereNot('id', Application::STATUS_CANCELED);
             })
             ->with([
-                'store',
-                'store.owner',
-                'jobPosting',
-                'jobPosting.province',
-                'jobPosting.provinceCity',
+                'storeAcceptTrashed',
+                'storeAcceptTrashed.owner',
+                'jobPostingAcceptTrashed',
+                'jobPostingAcceptTrashed.province',
+                'jobPostingAcceptTrashed.provinceCity',
                 'interviewApproach'
             ])
             ->orderBy('created_at', 'desc')
@@ -391,7 +391,7 @@ class ApplicationService extends Service
 
             $application->update($data);
             Notification::query()->create([
-                'user_id' => $application->user_id,
+                'user_id' => @$application->store->owner->id,
                 'notice_type_id' => Notification::TYPE_UPDATE_INTERVIEW_APPLY,
                 'noti_object_ids' => [
                     'store_id' => $application->store_id,
