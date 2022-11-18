@@ -30,7 +30,7 @@ class LocationService extends Service
         $list = [];
         $provinceAccordingJobTypes = [];
         $applications = Application::query()
-            ->with('jobPosting', 'jobPosting.province', 'jobPosting.province.provinceCities')
+            ->with('jobPostingTrashed', 'jobPostingTrashed.province', 'jobPostingTrashed.province.provinceCities')
             ->get();
 
         $mJobTypes = MJobType::query()->get();
@@ -60,13 +60,13 @@ class LocationService extends Service
         }
 
         foreach ($applications as $application) {
-            if ($application->jobPosting->province->district_id == MProvinceDistrict::HOKKAIDO) {
-                $locationId = 'city_' . $application->jobPosting->province_city_id;
+            if ($application->jobPostingTrashed->province->district_id == MProvinceDistrict::HOKKAIDO) {
+                $locationId = 'city_' . $application->jobPostingTrashed->province_city_id;
             } else {
-                $locationId = $application->jobPosting->province_id;
+                $locationId = $application->jobPostingTrashed->province_id;
             }
 
-            foreach ($application->jobPosting->job_type_ids as $jobTypeId) {
+            foreach ($application->jobPostingTrashed->job_type_ids as $jobTypeId) {
                 if ($locationId) {
                     if (!isset($defaultJobTypeIds[$jobTypeId])) {
                         if (!isset($provinceAccordingJobTypes[MJobType::OTHER][$locationId])) {

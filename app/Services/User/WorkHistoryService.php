@@ -34,7 +34,7 @@ class WorkHistoryService extends Service
         $userWorkHistories = UserWorkHistory::query()
             ->with(['jobType', 'workType'])
             ->where('user_id', $user->id)
-            ->orderByRaw('period_end is not null, period_start DESC, period_end DESC')
+            ->orderByRaw('period_end is not null, period_end DESC, period_start DESC')
             ->get()
             ->toArray();
 

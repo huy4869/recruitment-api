@@ -60,6 +60,14 @@ class Application extends Model
     }
 
     /**
+     * @return mixed
+     */
+    public function jobPostingTrashed()
+    {
+        return $this->belongsTo(JobPosting::class, 'job_posting_id')->withTrashed();
+    }
+
+    /**
      * @return BelongsTo
      */
     public function store()
