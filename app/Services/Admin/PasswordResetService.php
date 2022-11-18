@@ -33,7 +33,7 @@ class PasswordResetService extends Service
         }
 
         $token = Str::random(config('password_reset.token.length'));
-        $url = UrlHelper::resetPasswordLink($token);
+        $url = UrlHelper::resetPasswordLink($token, $user);
 
         $infoSendMail = [
             'email' => $user->email,

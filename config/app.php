@@ -62,6 +62,8 @@ return [
 
     'user_url' => env('APP_USER_URL', 'http://localhost'),
 
+    'rec_url' => env('APP_REC_URL', 'http://localhost'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone
