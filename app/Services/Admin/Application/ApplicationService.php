@@ -3,8 +3,11 @@
 namespace App\Services\Admin\Application;
 
 use App\Exceptions\InputException;
+use App\Helpers\DateTimeHelper;
+use App\Helpers\FileHelper;
+use App\Helpers\JobHelper;
+use App\Helpers\UserHelper;
 use App\Models\Application;
-use App\Models\MInterviewStatus;
 use App\Models\Notification;
 use App\Services\Service;
 use Exception;
@@ -99,5 +102,142 @@ class ApplicationService extends Service
             DB::rollBack();
             throw $e;
         }//end try
+    }
+
+    public function profileUser($applicationId)
+    {
+        $application = Application::with([
+            'user',
+            'applicationUser',
+            'applicationUser.avatarDetails',
+            'applicationUser.avatarBanner',
+            'applicationUserWorkHistories' => function ($query) {
+                $query->orderByRaw('period_end is not null, period_start DESC, period_end DESC');
+            },
+            'applicationUserLearningHistories' => function ($query) {
+                $query->orderByRaw('enrollment_period_start ASC, enrollment_period_end ASC');
+            },
+            'applicationUserLicensesQualifications' => function ($query) {
+                $query->orderByRaw('new_issuance_date ASC, created_at ASC');
+            },
+        ])
+            ->where('id', $applicationId)
+            ->first();
+
+        if ($application) {
+            $masterData = UserHelper::getMasterDataWithUser();
+
+            return self::addFormatUserProfileJsonData($application, $masterData);
+        }
+
+        throw new InputException(trans('response.not_found'));
+    }
+
+    /**
+     * format data
+     *
+     * @param $application
+     * @param $masterData
+     * @return array
+     */
+    public static function addFormatUserProfileJsonData($application, $masterData)
+    {
+        $applicationUserWorkHistories = [];
+
+        foreach ($application->applicationUserWorkHistories as $workHistory) {
+            $applicationUserWorkHistories[] = [
+                'store_name' => $workHistory->store_name,
+                'company_name' => $workHistory->company_name,
+                'business_content' => $workHistory->business_content,
+                'experience_accumulation' => $workHistory->experience_accumulation,
+                'work_time' => DateTimeHelper::formatDateStartEnd($workHistory->period_start, $workHistory->period_end),
+                'job_types' => $workHistory->jobType->name,
+                'positionOffices' => JobHelper::getTypeName($workHistory->position_office_ids, $masterData['masterPositionOffice']),
+                'work_type' => $workHistory->workType->name,
+            ];
+        }
+
+        $applicationLearningHistories = [];
+
+        foreach ($application->applicationUserLearningHistories as $learningHistory) {
+            $applicationLearningHistories[] = [
+                'school_name' => $learningHistory->school_name,
+                'time_start_end' => sprintf(
+                    '%s ~ %s(%s)',
+                    DateTimeHelper::formatMonthYear($learningHistory->enrollment_period_start),
+                    DateTimeHelper::formatMonthYear($learningHistory->enrollment_period_end),
+                    $learningHistory->learningStatus->name,
+                ),
+            ];
+        }
+
+        $applicationLicensesQualifications = [];
+
+        foreach ($application->applicationUserLicensesQualifications as $applicationLicensesQualification) {
+            $applicationLicensesQualifications[] = [
+                'name' => $applicationLicensesQualification->name,
+                'new_issuance_date' => DateTimeHelper::formatMonthYear($applicationLicensesQualification->new_issuance_date),
+            ];
+        }
+
+        $url = [];
+
+        foreach ($application->applicationUser->avatarDetails as $avatar) {
+            $url[] = (object)['url' => FileHelper::getFullUrl($avatar->url)];
+        }
+
+        $fullAddress = sprintf(
+            '〒 %s %s%s%s%s',
+            @$application->applicationUser->postal_code,
+            @$application->applicationUser->province->name,
+            @$application->applicationUser->provinceCity->name,
+            @$application->applicationUser->address,
+            @$application->applicationUser->building,
+        );
+        $applicationUser = $application->applicationUser;
+
+        return [
+            'id' => $application->user_id,
+            'avatar_banner' => FileHelper::getFullUrl($application->applicationUser->avatarBanner->url ?? null),
+            'avatar_details' => $url,
+            'first_name' => $applicationUser->first_name,
+            'last_name' => $applicationUser->last_name,
+            'furi_first_name' => $applicationUser->furi_first_name,
+            'furi_last_name' => $applicationUser->furi_last_name,
+            'alias_name' => $applicationUser->alias_name,
+            'age' => $applicationUser->age,
+            'user_address' => [
+                'full_address' => $fullAddress,
+                'postal_code' => $applicationUser->postal_code,
+                'province_id' => $applicationUser->province_id,
+                'province_name' => @$applicationUser->province->name,
+                'province_city_id' => $applicationUser->province_city_id,
+                'province_city_name' => @$applicationUser->provinceCity->name,
+                'address' => $applicationUser->address,
+                'building' => $applicationUser->building,
+            ],
+            'tel' => $applicationUser->tel,
+            'email' => $applicationUser->email,
+            'last_login_at' => DateTimeHelper::checkDateLoginAt($application->user->last_login_at),
+            'facebook' => $application->facebook,
+            'twitter' => $application->twitter,
+            'instagram' => $application->instagram,
+            'line' => $application->line,
+            'birthday' => DateTimeHelper::formatDateJa($applicationUser->birthday),
+            'gender_id' => $applicationUser->gender_id ?? null,
+            'gender' => $applicationUser->gender->name ?? null,
+            'user_work_histories' => $applicationUserWorkHistories,
+            'pr' => [
+                'favorite_skill' => $applicationUser->favorite_skill,
+                'experience_knowledge' => $applicationUser->experience_knowledge,
+                'self_pr' => $applicationUser->self_pr,
+            ],
+            'user_learning_histories' => $applicationLearningHistories,
+            'user_licenses_qualifications' => $applicationLicensesQualifications,
+            'motivation' => [
+                'motivation' => $applicationUser->motivation,
+                'noteworthy' => $applicationUser->noteworthy,
+            ],
+        ];
     }
 }

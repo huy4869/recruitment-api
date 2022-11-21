@@ -62,6 +62,7 @@ Route::group(['as' => 'jobs.', 'prefix' => 'jobs', 'middleware' => 'admin'], fun
 Route::group(['as' => 'applications.', 'prefix' => 'applications', 'middleware' => 'admin'], function () {
     Route::get('/', 'ApplicationController@list')->name('list');
     Route::get('/{id}', 'ApplicationController@detail')->name('detail');
+    Route::get('/user/{id}/profile', 'ApplicationController@profileUser');
     Route::post('/{id}', 'ApplicationController@update')->name('update');
 });
 
