@@ -156,6 +156,11 @@ class MasterDataService extends Service
             'driver' => self::DRIVER_CUSTOM,
             'target' => 'getMasterDataName',
         ],
+
+        'm_skill_types' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMasterDataSkills',
+        ],
     ];
 
     /**
@@ -763,5 +768,16 @@ class MasterDataService extends Service
     public function getMasterDataSocialLinks()
     {
         return config('social.link');
+    }
+
+    /**
+     * @return Repository|Application|mixed
+     */
+    public function getMasterDataSkills()
+    {
+        return [
+            'types' => config('user.skill_types'),
+            'level_of_types' => config('user.level_of_types'),
+        ];
     }
 }

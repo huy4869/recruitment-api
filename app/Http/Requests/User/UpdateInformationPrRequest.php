@@ -4,6 +4,7 @@ namespace App\Http\Requests\User;
 
 use App\Models\User;
 use App\Rules\FuriUserNameRule;
+use App\Rules\LevelSkillRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateInformationPrRequest extends FormRequest
@@ -29,6 +30,7 @@ class UpdateInformationPrRequest extends FormRequest
             'favorite_skill' => ['nullable', 'string', 'max:' . config('validate.text_max_length_information_pr')],
             'experience_knowledge' => ['nullable', 'string', 'max:' . config('validate.text_max_length_information_pr')],
             'self_pr' => ['nullable', 'string', 'max:' . config('validate.text_max_length_information_pr')],
+            'skills' => ['nullable', 'array', new LevelSkillRule()],
         ];
     }
 }
