@@ -92,8 +92,11 @@ class ChatService extends Service
 
             $stores->each(function ($store) use ($collectionStoreChat) {
                 if ($store->chats->count()) {
-                    $storeChat = $store->chats->unique('user_id')->first();
-                    $collectionStoreChat->push($storeChat);
+                    $storeChat = $store->chats->unique('user_id');
+
+                    foreach ($storeChat as $chat) {
+                        $collectionStoreChat->push($chat);
+                    }
                 }
             });
 
