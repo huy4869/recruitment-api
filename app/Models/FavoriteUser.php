@@ -24,13 +24,6 @@ class FavoriteUser extends Model
      */
     protected $fillable = [
         'user_id',
-        'favorite_ids',
-    ];
-
-    /**
-     * @var string[]
-     */
-    protected $casts = [
-        'favorite_ids' => 'array',
+        'favorite_user_id',
     ];
 }

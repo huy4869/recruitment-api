@@ -36,7 +36,7 @@ class UserService extends Service
             ->take(config('paginate.user.new_amount'))
             ->get();
 
-        $recruiterFavoriteUser = $recruiter->favoriteUser->favorite_ids ?? [];
+        $recruiterFavoriteUser = $recruiter->favoriteUsers()->pluck('favorite_user_id')->toArray();
 
         return self::getUserInfoForListUser($recruiterFavoriteUser, $userNewList);
     }
@@ -81,7 +81,7 @@ class UserService extends Service
             ])
             ->get();
 
-        $recruiterFavoriteUser = $recruiter->favoriteUser->favorite_ids ?? [];
+        $recruiterFavoriteUser = $recruiter->favoriteUsers()->pluck('favorite_user_id')->toArray();
         $userSuggestListFullInfo = self::getUserInfoForListUser($recruiterFavoriteUser, $userSuggestList);
 
         return collect($userIds)->map(function ($id) use ($userSuggestListFullInfo) {
@@ -101,29 +101,19 @@ class UserService extends Service
 
         if ($user) {
             $recruiter = $this->user;
-            $favoriteUser = FavoriteUser::query()->where('user_id', $recruiter->id)->first();
+            $favoriteUser = $recruiter->favoriteUsers()->where('favorite_user_id', $user->id)->first();
+
+            if ($favoriteUser) {
+                return false;
+            }
 
             try {
                 DB::beginTransaction();
 
-                if ($favoriteUser) {
-                    if (in_array($user->id, $favoriteUser->favorite_ids)) {
-                        throw new InputException(trans('response.invalid'));
-                    }
-
-                    $newFavoriteUserArray = array_merge($favoriteUser->favorite_ids, [$user->id]);
-
-                    $favoriteUser->update([
-                        'favorite_ids' => $newFavoriteUserArray,
-                    ]);
-                } else {
-                    FavoriteUser::create([
-                        'user_id' => $recruiter->id,
-                        'favorite_ids' => [
-                            (int)$data['user_id']
-                        ],
-                    ]);
-                }
+                FavoriteUser::create([
+                    'user_id' => $recruiter->id,
+                    'favorite_user_id' => $user->id
+                ]);
 
                 $recruiterJobIds = $recruiter->jobsOwned()->pluck('job_postings.id')->toArray();
                 $userFavoriteJobs = $user->favoriteJobs()
@@ -181,38 +171,8 @@ class UserService extends Service
 
         if ($user) {
             $recruiter = $this->user;
-            $favoriteUser = FavoriteUser::query()->where('user_id', $recruiter->id)->first();
 
-            try {
-                DB::beginTransaction();
-
-                if ($favoriteUser) {
-                    $favoriteUserArray = $favoriteUser->favorite_ids;
-                    $keyUnfavorite = array_search($user->id, $favoriteUserArray);
-
-                    if ($keyUnfavorite === false) {
-                        throw new InputException(trans('response.invalid'));
-                    }
-
-                    unset($favoriteUserArray[$keyUnfavorite]);
-
-                    foreach ($favoriteUserArray as $item) {
-                        $newFavoriteUserArray[] = $item;
-                    }
-
-                    $favoriteUser->update([
-                        'favorite_ids' => $newFavoriteUserArray,
-                    ]);
-                } else {
-                    throw new InputException(trans('response.invalid'));
-                }
-
-                DB::commit();
-                return true;
-            } catch (Exception $e) {
-                DB::rollBack();
-                throw $e;
-            }
+            return $recruiter->favoriteUsers()->where('favorite_user_id', $user->id)->delete();
         }
 
         throw new InputException(trans('response.invalid'));
