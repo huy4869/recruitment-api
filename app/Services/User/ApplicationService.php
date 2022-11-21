@@ -71,10 +71,8 @@ class ApplicationService extends Service
         self::addInterviewActionDateInfo($userInterviews);
 
         if ($all) {
-            $userInterviews->shift(config('application.waiting_interview_nearest_amount'));
-
             return [
-                'interviews' => $userInterviews->all(),
+                'interviews' => $userInterviews,
                 'view_all' => false,
             ];
         }
