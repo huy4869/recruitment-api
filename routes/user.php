@@ -45,8 +45,8 @@ Route::group(['as' => 'applications.', 'prefix' => 'applications', 'middleware' 
     Route::get('/applied', 'ApplicationController@listApplied')->name('listApplied');
     Route::post('/cancel/{id}', 'ApplicationController@cancelApplied')->name('cancelApplied');
     Route::post('/cancel', 'ApplicationController@cancelApplied')->name('cancelApplied');
-    Route::get('/{application}', 'ApplicationController@detail')->name('detail');
-    Route::post('/{application}', 'ApplicationController@update')->name('update');
+    Route::get('/{id}', 'ApplicationController@detail')->name('detail');
+    Route::post('/{id}', 'ApplicationController@update')->name('update');
 });
 
 Route::group(['as' => 'profile.', 'prefix' => 'profile', 'middleware' => 'user'], function () {
@@ -82,13 +82,13 @@ Route::group(['as' => 'job.', 'prefix' => 'job'], function () {
 Route::group(['as' => 'work-history.', 'prefix' => 'work-history', 'middleware' => 'user'], function () {
     Route::get('/', 'WorkHistoryController@list')->name('list');
     Route::post('/', 'WorkHistoryController@store')->name('store');
-    Route::get('/{workHistory}', 'WorkHistoryController@detail')->name('detail');
-    Route::post('/{workHistory}', 'WorkHistoryController@update')->name('update');
-    Route::post('/{workHistory}/delete', 'WorkHistoryController@delete')->name('delete');
+    Route::get('/{id}', 'WorkHistoryController@detail')->name('detail');
+    Route::post('/{id}', 'WorkHistoryController@update')->name('update');
+    Route::post('/{id}/delete', 'WorkHistoryController@delete')->name('delete');
 });
 
 Route::group(['as' => 'feedback.', 'prefix' => 'feedback', 'middleware' => 'user'], function () {
-    Route::post('/{jobPosting}', 'FeedbackController@store')->name('store');
+    Route::post('/{job_id}', 'FeedbackController@store')->name('store');
 });
 
 Route::group(['as' => 'chat.', 'prefix' => 'chat', 'middleware' => 'user'], function () {
@@ -106,17 +106,17 @@ Route::group(['as' => 'desired-condition.', 'prefix' => 'desired-condition', 'mi
 Route::group(['as' => 'licenses-qualifications.', 'prefix' => 'licenses-qualifications', 'middleware' => 'user'], function () {
     Route::get('/', 'LicensesQualificationController@list')->name('list');
     Route::post('/', 'LicensesQualificationController@store')->name('store');
-    Route::get('/{licensesQualification}', 'LicensesQualificationController@detail')->name('detail');
-    Route::post('/{licensesQualification}', 'LicensesQualificationController@update')->name('update');
-    Route::post('/{licensesQualification}/delete', 'LicensesQualificationController@delete')->name('delete');
+    Route::get('/{id}', 'LicensesQualificationController@detail')->name('detail');
+    Route::post('/{id}', 'LicensesQualificationController@update')->name('update');
+    Route::post('/{id}/delete', 'LicensesQualificationController@delete')->name('delete');
 });
 
 Route::group(['as' => 'learning-history.', 'prefix' => 'learning-history', 'middleware' => 'user'], function () {
     Route::get('/', 'LearningHistoryController@list')->name('list');
     Route::post('/', 'LearningHistoryController@store')->name('store');
-    Route::get('/{learningHistory}', 'LearningHistoryController@detail')->name('detail');
-    Route::post('/{learningHistory}', 'LearningHistoryController@update')->name('update');
-    Route::post('/{learningHistory}/delete', 'LearningHistoryController@delete')->name('delete');
+    Route::get('/{id}', 'LearningHistoryController@detail')->name('detail');
+    Route::post('/{id}', 'LearningHistoryController@update')->name('update');
+    Route::post('/{id}/delete', 'LearningHistoryController@delete')->name('delete');
 });
 
 Route::group(['as' => 'notifications.', 'prefix' => 'notifications', 'middleware' => 'user'], function () {
