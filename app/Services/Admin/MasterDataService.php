@@ -485,11 +485,16 @@ class MasterDataService extends Service
         $result = [];
 
         foreach ($stations as $station) {
-            $result[] = [
-                'id' =>  $station->id,
-                'province_name' => $station->province_name,
-                'railway_name' => $station->railway_name,
-                'station_name' => $station->station_name,
+            if (!isset($result[$station->province_name]) || !isset($result[$station->province_name][$station->railway_name])) {
+                $result[$station->province_name][$station->railway_name][] = [
+                    'id' => $station->id,
+                    'station_name' => $station->station_name
+                ];
+            }
+
+            $result[$station->province_name][$station->railway_name][] = [
+                'id' => $station->id,
+                'station_name' => $station->station_name
             ];
         }
 
