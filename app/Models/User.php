@@ -258,11 +258,11 @@ class User extends Authenticatable
     }
 
     /**
-     * @return BelongsTo
+     * @return HasMany
      */
-    public function favoriteUser()
+    public function favoriteUsers()
     {
-        return $this->belongsTo(FavoriteUser::class, 'id', 'user_id');
+        return $this->hasMany(FavoriteUser::class);
     }
 
     /**
