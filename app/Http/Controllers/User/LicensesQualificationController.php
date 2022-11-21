@@ -51,10 +51,10 @@ class LicensesQualificationController extends BaseController
         $data = $this->licensesQualificationService->withUser($user)->store($inputs);
 
         if ($data) {
-            return $this->sendSuccessResponse($data, trans('response.INF.006'));
+            return $this->sendSuccessResponse($data, trans('validation.INF.006'));
         }
 
-        throw new InputException(trans('response.ERR.006'));
+        throw new InputException(trans('validation.ERR.006'));
     }
 
     /**
@@ -90,7 +90,7 @@ class LicensesQualificationController extends BaseController
             return $this->sendSuccessResponse($data, trans('validation.INF.001'));
         }
 
-        throw new InputException(trans('response.ERR.006'));
+        throw new InputException(trans('validation.ERR.007'));
     }
 
     /**
@@ -106,9 +106,9 @@ class LicensesQualificationController extends BaseController
         $data = $this->licensesQualificationService->withUser($user)->delete($id);
 
         if ($data) {
-            return $this->sendSuccessResponse($data, trans('response.INF.005'));
+            return $this->sendSuccessResponse($data, trans('validation.INF.005'));
         }
 
-        throw new InputException(trans('response.ERR.008'));
+        throw new InputException(trans('validation.ERR.008'));
     }
 }

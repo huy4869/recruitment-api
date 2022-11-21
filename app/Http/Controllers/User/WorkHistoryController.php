@@ -96,7 +96,7 @@ class WorkHistoryController extends BaseController
         $user = $this->guard()->user();
         $this->workHistoryService->withUser($user)->delete($id);
 
-        return $this->sendSuccessResponse([], trans('response.INF.005'));
+        return $this->sendSuccessResponse([], trans('validation.INF.005'));
     }
 
     /**
