@@ -28,10 +28,10 @@ Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {
 
 Route::group(['as' => 'users.', 'prefix' => 'users', 'middleware' => 'admin'], function () {
     Route::get('/', 'UserController@list')->name('list');
-    Route::delete('/delete/{user}', 'UserController@destroy')->name('destroy');
+    Route::delete('/delete/{id}', 'UserController@destroy')->name('destroy');
     Route::get('/list-user', 'UserController@listInfoUser');
     Route::get('/{id}', 'UserController@detail')->name('detail');
-    Route::post('/update-pr/{user_id}', 'UserController@updatePr');
+    Route::post('/update-pr/{id}', 'UserController@updatePr');
     Route::post('/update-user/{id}', 'UserController@updateUser');
     Route::get('/{id}/detail', 'UserController@detailUser');
     Route::post('/', 'UserController@store')->name('store');
