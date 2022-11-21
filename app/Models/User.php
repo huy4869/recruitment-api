@@ -281,6 +281,14 @@ class User extends Authenticatable
         return $this->hasManyThrough(JobPosting::class, Store::class);
     }
 
+    /**
+     * @return HasManyThrough
+     */
+    public function applicationOwned()
+    {
+        return $this->hasManyThrough(Application::class, Store::class);
+    }
+
     public function getFullNameAddressAttribute()
     {
         $provinceName = $this->province->name ?? '';
@@ -341,5 +349,10 @@ class User extends Authenticatable
     public function applicationUserWorkHistories()
     {
         return $this->hasMany(ApplicationUserWorkHistory::class);
+    }
+
+    public function favoriteByRecruiters()
+    {
+        return $this->hasMany(FavoriteUser::class, 'favorite_user_id', 'id');
     }
 }
