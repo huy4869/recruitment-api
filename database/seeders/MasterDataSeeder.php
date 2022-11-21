@@ -172,6 +172,7 @@ class MasterDataSeeder extends Seeder
             ['name' => 'ユーザーが更新した面接スケジュール', 'created_at' => $time, 'updated_at' => $time],
             ['name' => 'ユーザーが更新した面接スケジュール', 'created_at' => $time, 'updated_at' => $time],
             ['name' => '同じお気に入り', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '管理者を削除', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_notice_types')->insert($dataNoticeTypes);
 

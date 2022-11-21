@@ -3,25 +3,27 @@
 namespace App\Services\Admin\User;
 
 use App\Exceptions\InputException;
-use App\Helpers\JobHelper;
-use App\Helpers\UserHelper;
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
+use App\Helpers\JobHelper;
+use App\Helpers\UserHelper;
+use App\Jobs\Admin\User\JobDestroy;
 use App\Jobs\Admin\User\JobStore;
 use App\Jobs\Admin\User\JobUpdate;
-use App\Models\MRole;
-use App\Models\Store;
 use App\Models\Application;
+use App\Models\MRole;
 use App\Models\Notification;
+use App\Models\Store;
 use App\Models\User;
+use App\Models\UserJobDesiredMatch;
 use App\Services\Common\FileService;
 use App\Services\Service;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class UserService extends Service
 {
@@ -61,9 +63,9 @@ class UserService extends Service
 
             if ($data['role_id'] == User::ROLE_RECRUITER && isset($data['store_ids'])) {
                 Store::query()->whereIn('id', $data['store_ids'])
-                ->update([
-                    'user_id' => $newUser->id,
-                ]);
+                    ->update([
+                        'user_id' => $newUser->id,
+                    ]);
             }
 
             dispatch(new JobStore($data))->onQueue(config('queue.email_queue'));
@@ -108,9 +110,9 @@ class UserService extends Service
 
             if ($user->role_id == User::ROLE_RECRUITER && isset($data['store_ids'])) {
                 Store::query()->whereIn('id', $data['store_ids'])
-                ->update([
-                    'user_id' => $user->id,
-                ]);
+                    ->update([
+                        'user_id' => $user->id,
+                    ]);
             }
 
             if (!Hash::check($newUserPassword, $oldUserPassword)) {
@@ -118,7 +120,7 @@ class UserService extends Service
                     'user' => $user,
                     'update_data' => $data
                 ]))
-                ->onQueue(config('queue.email_queue'));
+                    ->onQueue(config('queue.email_queue'));
             }
 
             DB::commit();
@@ -155,123 +157,159 @@ class UserService extends Service
     {
         $admin = $this->user;
 
-        $user = User::query()->where('id', $id)->with([
-            'stores',
-            'stores.jobs',
-            'stores.jobs.applications',
-            'applications.jobPosting',
-            'applications.jobPosting.store.owner',
-        ])
-        ->first();
+        $user = User::query()->where('id', $id)
+            ->with([
+                'stores',
+                'stores.jobs',
+                'stores.jobs.applications',
+                'applications.jobPosting',
+                'applications.jobPosting.store.owner',
+            ])->first();
 
         if (!$user || (
-            $admin->role_id == User::ROLE_SUB_ADMIN
-            && $user->role_id == User::ROLE_SUB_ADMIN
-        )) {
+                $admin->role_id == User::ROLE_SUB_ADMIN
+                && $user->role_id == User::ROLE_SUB_ADMIN
+            )) {
             throw new InputException(trans('response.not_found'));
         }
 
         try {
             DB::beginTransaction();
 
-            $userNotifyData = [];
-
             switch ($user->role_id) {
-                case User::ROLE_USER:
-                    foreach ($user->applications as $application) {
-                        $recruiter = $application->jobPosting->store->owner;
-
-                        $userNotifyData[] = [
-                            'user_id' => $recruiter->id,
-                            'notice_type_id' => Notification::TYPE_DELETE_USER,
-                            'noti_object_ids' => json_encode([
-                                'job_posting_id' => $application->job_posting_id,
-                                'application_id' => $application->id,
-                                'user_id' => $admin->id,
-                            ]),
-                            'title' => trans('notification.N014.title'),
-                            'content' => trans('notification.N014.content', [
-                                'user_name' => sprintf('%s %s', $user->first_name, $user->last_name),
-                                'job_title' => $application->jobPosting->name,
-                            ]),
-                            'created_at' => now(),
-                        ];
-                    }
+                case User::ROLE_SUB_ADMIN:
+                    $result = self::destroySubAdmin($user);
                     break;
-
                 case User::ROLE_RECRUITER:
-                    foreach ($user->stores as $store) {
-                        foreach ($store->jobs as $job) {
-                            foreach ($job->applications as $application) {
-                                $userNotifyData[] = [
-                                    'user_id' => $application->user->id,
-                                    'notice_type_id' => Notification::TYPE_DELETE_RECRUITER,
-                                    'noti_object_ids' => json_encode([
-                                        'job_posting_id' => $job->id,
-                                        'application_id' => $application->id,
-                                        'user_id' => $admin->id,
-                                    ]),
-                                    'title' => trans('notification.N013.title'),
-                                    'content' => trans('notification.N013.content', [
-                                        'recruiter_name' => sprintf('%s %s', $user->first_name, $user->last_name),
-                                        'job_title' => $application->jobPosting->name,
-                                    ]),
-                                    'created_at' => now(),
-                                ];
-                            }
-                        }
-                    }
+                    $result = self::destroyRecruiter($admin, $user);
                     break;
+                case User::ROLE_USER:
+                    $result = self::destroyUser($admin, $user);
+                    break;
+                default:
+                    return false;
             }
 
-            Notification::insert($userNotifyData);
-
-            $user->applicationUserLearningHistories()?->delete();
-            $user->applicationUserLicensesQualifications()?->delete();
-            $user->applicationUserWorkHistories()?->delete();
-
-            foreach ($user->applicationUser as $item) {
-                $item->images()?->delete();
-            }
-
-            $user->applications()?->update([
-                'interview_status_id' => Application::STATUS_REJECTED,
-            ]);
-
-            $user->chats()?->delete();
-            $user->contacts()?->delete();
-            $user->desiredConditionUser()?->delete();
-            $user->favoriteJobs()?->delete();
-            $user->favoriteUser()?->delete();
-            $user->feedbacks()?->delete();
-            $user->images()?->delete();
-            $user->notifications()?->delete();
-            $user->recruiterOffTimes()?->delete();
-            $user->searchJobs()?->delete();
-
-            foreach ($user->stores as $store) {
-                foreach ($store->jobs() as $job) {
-                    $job->applications()->update([
-                        'interview_status_id' => Application::STATUS_REJECTED,
-                    ]);
-                }
-
-                $store->jobs()?->delete();
-            }
-
-            $user->stores()?->delete();
-            $user->userJobDesiredMatches()?->delete();
-            $user->userLearningHistories()?->delete();
-            $user->userLicensesQualifications()?->delete();
-            $user->userWordHistories()?->delete();
-            $user->delete();
+            dispatch(new JobDestroy($user))->onQueue(config('queue.email_queue'));
 
             DB::commit();
-            return true;
+            return $result;
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
-        }//end try
+        }
+    }
+
+    /**
+     * @param $admin
+     * @param $user
+     * @return bool
+     * @throws Exception
+     */
+    public function destroyUser($admin, $user)
+    {
+        $userNotifyData = [];
+
+        foreach ($user->applications as $application) {
+            $recruiter = $application->jobPosting->store->owner;
+
+            $userNotifyData[] = [
+                'user_id' => $recruiter->id,
+                'notice_type_id' => Notification::TYPE_DELETE_USER,
+                'noti_object_ids' => json_encode([
+                    'job_posting_id' => $application->job_posting_id,
+                    'application_id' => $application->id,
+                    'user_id' => $admin->id,
+                ]),
+                'title' => trans('notification.N014.title'),
+                'content' => trans('notification.N014.content', [
+                    'user_name' => sprintf('%s %s', $user->first_name, $user->last_name),
+                    'job_title' => $application->jobPosting->name,
+                ]),
+                'created_at' => now(),
+            ];
+        }
+
+        $user->applicationUserLearningHistories()?->delete();
+        $user->applicationUserLicensesQualifications()?->delete();
+        $user->applicationUserWorkHistories()?->delete();
+        $user->contacts()?->delete();
+        $user->desiredConditionUser()?->delete();
+        $user->favoriteJobs()?->delete();
+        $user->favoriteByRecruiters()?->delete();
+        $user->feedbacks()?->delete();
+        $user->images()?->delete();
+        $user->notifications()?->delete();
+        $user->searchJobs()?->delete();
+        $user->userJobDesiredMatches()?->delete();
+        $user->userLearningHistories()?->delete();
+        $user->userLicensesQualifications()?->delete();
+        $user->userWordHistories()?->delete();
+        $user->delete();
+
+        Notification::insert($userNotifyData);
+
+        return true;
+    }
+
+    /**
+     * @param $admin
+     * @param $recruiter
+     * @return bool
+     * @throws Exception
+     */
+    public function destroyRecruiter($admin, $recruiter)
+    {
+        $userNotifyData = [];
+
+        foreach ($recruiter->stores as $store) {
+            foreach ($store->jobs as $job) {
+                foreach ($job->applications as $application) {
+                    $userNotifyData[] = [
+                        'user_id' => $application->user->id,
+                        'notice_type_id' => Notification::TYPE_DELETE_RECRUITER,
+                        'noti_object_ids' => json_encode([
+                            'job_posting_id' => $job->id,
+                            'application_id' => $application->id,
+                            'user_id' => $admin->id,
+                        ]),
+                        'title' => trans('notification.N013.title'),
+                        'content' => trans('notification.N013.content', [
+                            'recruiter_name' => sprintf('%s %s', $recruiter->first_name, $recruiter->last_name),
+                            'job_title' => $application->jobPosting->name,
+                        ]),
+                        'created_at' => now(),
+                    ];
+                }
+            }
+        }
+
+        $recruiter->recruiterOffTimes()?->delete();
+        $recruiter->favoriteUsers()?->delete();
+        $recruiter->images()?->delete();
+        $recruiter->contacts()?->delete();
+        $recruiter->notifications()?->delete();
+        $recruiter->applicationOwned()?->update([
+            'interview_status_id' => Application::STATUS_REJECTED,
+        ]);
+        $jobOwnedIds = $recruiter->jobsOwned()->pluck('job_postings.id')->toArray();
+        UserJobDesiredMatch::query()->whereIn('job_id', $jobOwnedIds)->delete();
+        $recruiter->jobsOwned()?->delete();
+        $recruiter->stores()?->delete();
+        $recruiter->delete();
+
+        Notification::insert($userNotifyData);
+
+        return true;
+    }
+
+    /**
+     * @param $subAdmin
+     * @return mixed
+     */
+    public function destroySubAdmin($subAdmin)
+    {
+        return $subAdmin->delete();
     }
 
     public function detailInfoUser($user_id)
