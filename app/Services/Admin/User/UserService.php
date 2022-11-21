@@ -54,6 +54,8 @@ class UserService extends Service
             unset($data['store_id']);
         }
 
+        $data['password'] = Hash::make($data['password']);
+
         try {
             DB::beginTransaction();
 

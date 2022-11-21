@@ -2,7 +2,6 @@
 
 namespace App\Rules\Admin;
 
-use App\Exceptions\InputException;
 use App\Models\User;
 use Illuminate\Contracts\Validation\Rule;
 
@@ -26,8 +25,8 @@ class EmailUnique implements Rule
     /**
      * Determine if the validation rule passes.
      *
-     * @param  string  $attribute
-     * @param  mixed  $value
+     * @param string $attribute
+     * @param mixed $value
      * @return bool
      */
     public function passes($attribute, $value)
@@ -37,7 +36,7 @@ class EmailUnique implements Rule
                 $whereRole = [User::ROLE_USER, User::ROLE_SUB_ADMIN, User::ROLE_ADMIN, User::ROLE_RECRUITER];
                 break;
             case User::ROLE_RECRUITER:
-                $whereRole = [User::ROLE_USER, User::ROLE_RECRUITER];
+                $whereRole = [User::ROLE_USER, User::ROLE_RECRUITER, User::ROLE_ADMIN];
                 break;
             case User::ROLE_SUB_ADMIN:
                 $whereRole = [User::ROLE_USER, User::ROLE_SUB_ADMIN, User::ROLE_ADMIN];
@@ -46,9 +45,42 @@ class EmailUnique implements Rule
                 return true;
         }
 
-        $users = User::where($attribute, $value)->whereIn('role_id', $whereRole)->get();
+        $users = User::query()->where($attribute, $value)->whereIn('role_id', $whereRole)->withTrashed()->get();
+        $result = true;
 
-        return !$users->count();
+        foreach ($users as $user) {
+            if ($user) {
+                if ($this->role_id == User::ROLE_RECRUITER &&
+                    ($user->role_id == User::ROLE_RECRUITER
+                        || ($user->role_id == User::ROLE_USER && !isset($user->deleted_at))
+                        || ($user->role_id == User::ROLE_ADMIN && !isset($user->deleted_at))
+                    )) {
+                    $result = false;
+                    break;
+                }
+
+                if ($this->role_id == User::ROLE_USER &&
+                    ($user->role_id == User::ROLE_USER
+                        || ($user->role_id == User::ROLE_RECRUITER && !isset($user->deleted_at))
+                        || ($user->role_id == User::ROLE_SUB_ADMIN && !isset($user->deleted_at))
+                        || ($user->role_id == User::ROLE_ADMIN && !isset($user->deleted_at))
+                    )) {
+                    $result = false;
+                    break;
+                }
+
+                if ($this->role_id == User::ROLE_SUB_ADMIN &&
+                    ($user->role_id == User::ROLE_SUB_ADMIN
+                        || ($user->role_id == User::ROLE_USER && !isset($user->deleted_at))
+                        || ($user->role_id == User::ROLE_ADMIN && !isset($user->deleted_at))
+                    )) {
+                    $result = false;
+                    break;
+                }
+            }
+        }
+
+        return $result;
     }
 
     /**
