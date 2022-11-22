@@ -20,7 +20,8 @@ class NotificationResource extends JsonResource
         return [
             'id' => $this->id,
             'user_id' => $this->user_id,
-            'notice_type_id' => $this->user_id,
+            'notice_type_id' => $this->notice_type_id,
+            'notice_type_name' => $this->noticeType->name ?? null,
             'noti_object_ids' => $this->noti_object_ids,
             'title' => $this->title,
             'content' => $this->content,
