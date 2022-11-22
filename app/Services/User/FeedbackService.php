@@ -12,21 +12,27 @@ class FeedbackService extends Service
     /**
      * Create feedback
      *
-     * @param JobPosting $jobPosting
+     * @param $jobId
      * @param $data
      * @return mixed
      * @throws InputException
      */
-    public function store(JobPosting $jobPosting, $data)
+    public function store($jobId, $data)
     {
-        $data['feedback_type_ids'] = collect($data['feedback_type_ids'])->unique()->toArray();
+        $jobPosting = JobPosting::query()->where('id', $jobId)->released()->first();
 
-        $data = array_merge($data, [
-            'job_posting_id' => $jobPosting->id,
-            'user_id' => $this->user->id,
-            'type' => $this->user->role_id,
-        ]);
+        if ($jobPosting) {
+            $data['feedback_type_ids'] = collect($data['feedback_type_ids'])->unique()->toArray();
 
-        return FeedbackJob::create($data);
+            $data = array_merge($data, [
+                'job_posting_id' => $jobPosting->id,
+                'user_id' => $this->user->id,
+                'type' => $this->user->role_id,
+            ]);
+
+            return FeedbackJob::create($data);
+        }
+
+        throw new InputException(trans('response.not_found'));
     }
 }
