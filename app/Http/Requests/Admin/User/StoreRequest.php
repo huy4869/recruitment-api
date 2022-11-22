@@ -34,16 +34,16 @@ class StoreRequest extends FormRequest
 
         return [
             'role_id' => 'required|integer|in:' . implode(',', $userRoleIds),
-            'first_name' => 'nullable|string|max:' . config('validate.string_max_length'),
-            'last_name' => 'nullable|string|max:' . config('validate.string_max_length'),
+            'first_name' => 'required|string|max:' . config('validate.string_max_length'),
+            'last_name' => 'required|string|max:' . config('validate.string_max_length'),
             'furi_first_name' => [
-                'nullable',
+                'required',
                 'string',
                 new FuriUserNameRule(trans('validation.user_first_name')),
                 'max:' . config('validate.string_max_length')
             ],
             'furi_last_name' => [
-                'nullable',
+                'required',
                 'string',
                 new FuriUserNameRule(trans('validation.user_last_name')),
                 'max:' . config('validate.string_max_length')
@@ -67,9 +67,6 @@ class StoreRequest extends FormRequest
                 'required',
                 'same:password'
             ],
-            //handle jobs and applications when adding stores
-            'store_ids' => 'nullable|array',
-            'store_ids.*' => 'integer|exists:stores,id,user_id,NULL'
         ];
     }
 
