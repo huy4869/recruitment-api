@@ -183,11 +183,26 @@ class JobController extends Controller
             $jobs = JobTableService::getInstance()->withUser($user)->data($search, $orders, $filters, $perPage);
 
             if ($user) {
+                $allowKeyFilter = [
+                    'work_type_ids',
+                    'job_type_ids',
+                    'experience_ids',
+                    'feature_ids',
+                    'order_by_id',
+                    'province_id',
+                    'province_city_id'
+                ];
+
                 $allowStoreSearchCond = $search || $filters;
 
                 if ($filters) {
                     foreach ($filters as $filter) {
-                        if ($filter['key'] == 'list_type') {
+                        if (
+                            !isset($filter['key'])
+                            || !isset($filter['data'])
+                            || !count($filter['data'])
+                            || !in_array($filter['key'], $allowKeyFilter)
+                        ) {
                             $allowStoreSearchCond = false;
                             break;
                         }
