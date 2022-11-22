@@ -46,7 +46,21 @@ class AuthController extends BaseController
         ]);
         $data = AuthService::getInstance()->register($inputs);
 
-        return $this->sendSuccessResponse($data, trans('auth.register_success'));
+        if ($data) {
+            return $this->sendSuccessResponse($data, trans('auth.register_success'));
+        }
+
+        return ResponseHelper::sendResponse(
+            ResponseHelper::STATUS_CODE_VALIDATE_ERROR,
+            trans('response.invalid'),
+            [
+                'email' => [
+                    trans('validation.COM.006', [
+                        'attribute' => trans('validation.attributes.email')
+                    ])
+                ]
+            ]
+        );
     }
 
     /**
@@ -80,7 +94,17 @@ class AuthController extends BaseController
             throw new InputException(trans('auth.throttle', ['seconds' => self::DECAY_SECONDS]));
         }
 
-        return $this->sendFailedLoginResponse();
+        return ResponseHelper::sendResponse(
+            ResponseHelper::STATUS_CODE_VALIDATE_ERROR,
+            trans('response.invalid'),
+            [
+                'email' => [
+                    trans('validation.COM.006', [
+                        'attribute' => trans('validation.attributes.email')
+                    ])
+                ]
+            ]
+        );
     }
 
     /**
