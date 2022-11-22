@@ -74,7 +74,6 @@ class UserController extends Controller
             'furi_last_name',
             'email',
             'password',
-            'store_ids',
         ]);
         $data = UserService::getInstance()->store($inputs);
 
@@ -96,7 +95,6 @@ class UserController extends Controller
             'furi_first_name',
             'furi_last_name',
             'password',
-            'store_ids',
         ]);
         $data = UserService::getInstance()->withUser($admin)->update($id, $inputs);
 

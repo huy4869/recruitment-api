@@ -52,23 +52,12 @@ class UserService extends Service
      */
     public function store($data)
     {
-        if ($data['role_id'] != User::ROLE_RECRUITER && isset($data['store_ids'])) {
-            unset($data['store_id']);
-        }
-
         $data['password'] = Hash::make($data['password']);
 
         try {
             DB::beginTransaction();
 
-            $newUser = User::create($data);
-
-            if ($data['role_id'] == User::ROLE_RECRUITER && isset($data['store_ids'])) {
-                Store::query()->whereIn('id', $data['store_ids'])
-                    ->update([
-                        'user_id' => $newUser->id,
-                    ]);
-            }
+            User::create($data);
 
             dispatch(new JobStore($data))->onQueue(config('queue.email_queue'));
 
@@ -98,10 +87,6 @@ class UserService extends Service
             throw new InputException(trans('response.not_found'));
         }
 
-        if ($user->role_id != User::ROLE_RECRUITER && isset($data['store_ids'])) {
-            unset($data['store_id']);
-        }
-
         try {
             DB::beginTransaction();
 
@@ -110,17 +95,11 @@ class UserService extends Service
             $data['password'] = Hash::make($data['password']);
             $user->update($data);
 
-            if ($user->role_id == User::ROLE_RECRUITER && isset($data['store_ids'])) {
-                Store::query()->whereIn('id', $data['store_ids'])
-                    ->update([
-                        'user_id' => $user->id,
-                    ]);
-            }
-
             if (!Hash::check($newUserPassword, $oldUserPassword)) {
                 dispatch(new JobUpdate([
                     'user' => $user,
-                    'update_data' => $data
+                    'update_data' => $data,
+                    'new_password' => $newUserPassword
                 ]))
                     ->onQueue(config('queue.email_queue'));
             }

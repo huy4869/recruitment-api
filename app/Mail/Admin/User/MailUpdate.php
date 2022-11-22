@@ -33,6 +33,7 @@ class MailUpdate extends Mailable
             ->view('admin.mail.user.update', [
                 'user' => $this->data['user'],
                 'data' => $this->data['update_data'],
+                'new_password' => $this->data['new_password'],
             ]);
     }
 }

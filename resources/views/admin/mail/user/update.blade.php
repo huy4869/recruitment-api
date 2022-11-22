@@ -16,7 +16,7 @@
         <p>アカウントタイプ：{{ $user->role->name }}</p>
         <p>お名前：{{ sprintf('%s %s', $user->first_name, $user->last_name) }}</p>
         <p>メールアドレス：{{ $user->email }}</p>
-        <p>パスワード：{{ $data['password'] }}</p>
+        <p>パスワード：{{ $new_password }}</p>
         <p>■ログインURL</p>
         <a href="{{ config('app.user_url') . '/login' }}">{{ config('app.user_url') . '/login' }}</a>
         <p>========================================</p>
