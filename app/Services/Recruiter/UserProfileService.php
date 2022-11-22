@@ -103,19 +103,14 @@ class UserProfileService extends Service
                 'new_issuance_date' => DateTimeHelper::formatMonthYear($userLicensesQualification->new_issuance_date),
             ];
         }
-        $fullAddress = sprintf('〒 %s %s%s%s%s', $user->postal_code, $user->province->name, $user->provinceCity->name ?? null, $user->address, $user->building);
 
         return array_merge($user->toArray(), [
             'avatar_banner' => FileHelper::getFullUrl($user->avatarBanner->url ?? null),
-            'avatar_details' => $user->avatarDetails ?: null,
-            'province' => $user->province->name,
+            'avatar_details' => $user->avatarDetails,
+            'province_name' => $user->province->name ?? null,
             'province_city_name' => $user->provinceCity->name ?? null,
-            'full_address' => $fullAddress,
             'gender' => $user->gender->name ?? null,
             'user_work_histories' => $userWorkHistories,
-            'favorite_skill' => $user->favorite_skill,
-            'experience_knowledge' => $user->experience_knowledge,
-            'self_pr' => $user->self_pr,
             'user_learning_histories' => $learningHistories,
             'user_licenses_qualifications' => $licensesQualifications,
             'motivation' => $user->motivation,
