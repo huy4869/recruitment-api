@@ -183,9 +183,6 @@ class ApplicationService extends Service
             throw new InputException(trans('response.not_found'));
         }
 
-        $data['note'] = $data['approach'];
-        unset($data['approach']);
-
         try {
             DB::beginTransaction();
 

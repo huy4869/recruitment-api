@@ -40,6 +40,8 @@ class Application extends Model
         'note',
         'hours',
         'update_times',
+        'checked_at',
+        'owner_memo',
     ];
 
     /**

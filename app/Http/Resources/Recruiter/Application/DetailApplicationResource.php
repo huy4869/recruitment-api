@@ -33,9 +33,8 @@ class DetailApplicationResource extends JsonResource
                 'email' => $user->email,
                 'postal_code' => $user->postal_code,
                 'address' => [
-                    'province_district' => $user->province->provinceDistrict->name,
-                    'province' => $user->province->name,
-                    'province_city' => @$user->provinceCity->name,
+                    'province_name' => $user->province->name ?? null,
+                    'province_city_name' => $user->provinceCity->name ?? null,
                     'address' =>  $user->address,
                     'building' =>  $user->building,
                 ]
@@ -50,6 +49,7 @@ class DetailApplicationResource extends JsonResource
             'can_change_status' => $this->interview_status_id != Application::STATUS_REJECTED,
             'interview_date' => DateTimeHelper::formatDateDayOfWeekTimeJa($this->date),
             'note' => $this->note,
+            'owner_memo' => $this->owner_memo,
         ];
     }
 }

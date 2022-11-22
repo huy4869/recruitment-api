@@ -39,7 +39,7 @@ class ApplicationController extends Controller
         $admin = $this->guard()->user();
         $inputs = $request->only([
             'interview_status_id',
-            'note',
+            'owner_memo',
         ]);
         $result = ApplicationService::getInstance()->withUser($admin)->update($id, $inputs);
 

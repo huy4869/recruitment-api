@@ -59,7 +59,7 @@ class ApplicationController extends Controller
         $recruiter = $this->guard()->user();
         $inputs = $request->only([
             'interview_status_id',
-            'approach',
+            'owner_memo',
         ]);
         $result = ApplicationService::getInstance()->withUser($recruiter)->update($id, $inputs);
 
