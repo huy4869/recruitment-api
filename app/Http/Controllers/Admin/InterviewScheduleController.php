@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Application\DetailUserApplicationRequest;
 use App\Http\Requests\Admin\ListInterviewScheduleRequest;
 use App\Http\Requests\Admin\UpdateApplicationRequest;
 use App\Http\Requests\Admin\UpdateOrCreateInterviewScheduleRequest;
@@ -52,7 +53,7 @@ class InterviewScheduleController extends Controller
      */
     public function updateApplication($applicationId, UpdateApplicationRequest $request)
     {
-        $inputs = $request->only(['user_id', 'date', 'hours', 'interview_approaches_id', 'note']);
+        $inputs = $request->only(['date', 'hours', 'interview_approaches_id', 'note']);
         $this->interviewScheduleService->updateApplication($applicationId, $inputs);
 
         return $this->sendSuccessResponse([], trans('response.INF.008'));
@@ -71,5 +72,20 @@ class InterviewScheduleController extends Controller
         $this->interviewScheduleService->updateOrCreateInterviewSchedule($userId, $request->all());
 
         return $this->sendSuccessResponse([], trans('validation.INF.016'));
+    }
+
+
+    /**
+     * Detail application
+     *
+     * @param $id
+     * @return JsonResponse
+     * @throws InputException
+     */
+    public function getInterviewScheduleApplication($id)
+    {
+        $data = $this->interviewScheduleService->detailUserApplication($id);
+
+        return $this->sendSuccessResponse($data);
     }
 }

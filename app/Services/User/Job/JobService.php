@@ -709,25 +709,16 @@ class JobService extends Service
     public function detailJobUserApplication($id, $application = null)
     {
         $jobPosting = $this->checkJobPosting($id);
-        $stores = $jobPosting->store->owner->stores;
-        $applications = collect();
-        $now = now()->format('Y-m-d');
+        $storeIds = $jobPosting->store->owner->stores->pluck('id')->toArray();
+        $now = now()->format('Y-m-d 00:00:00');
 
-        foreach ($stores as $store) {
-            $applications = $applications->merge($store->applications);
-        }
-
-        $recruiterApplicationOther = $applications->filter(function ($application) use ($jobPosting, $now) {
-            return $application->job_posting_id != $jobPosting->id && $application->date >= $now
-                && in_array($application->interview_status_id, [
-                    MInterviewStatus::STATUS_APPLYING,
-                    MInterviewStatus::STATUS_WAITING_INTERVIEW
-                ]);
-        });
-
-        $applicationsTime = $jobPosting->applications
-            ->where('user_id', '!=', $this->user->id)
-            ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW]);
+        $recruiterInterviewApplications = Application::query()
+            ->whereIn('store_id', $storeIds)
+            ->where('job_posting_id', '!=', $jobPosting->id)
+            ->where('date', '>=', $now)
+            ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW])
+            ->get();
+        $applicationsTime = $jobPosting->applications;
         $userApplicationsTime = Application::query()
             ->where('user_id', $this->user->id)
             ->where('job_posting_id', '!=', $jobPosting->id)
@@ -741,7 +732,7 @@ class JobService extends Service
         return $this->resultDate(
             self::resultApplication($applicationsTime),
             self::resultApplication($userApplicationsTime),
-            self::resultApplication($recruiterApplicationOther),
+            self::resultApplication($recruiterInterviewApplications),
             self::resultRecruiterOffTimes([$monthNow, $monthDay], $recruiterOffTimes),
             $application
         );
@@ -907,33 +898,26 @@ class JobService extends Service
             throw new InputException(trans('validation.ERR.036'));
         }
 
-        $stores = $jobPosting->store->owner->stores;
-        $recruiterApplications = collect();
+        $storeIds = $application->store->owner->stores->pluck('id')->toArray();
+        $recruiterInterviewApplications = Application::query()
+            ->whereIn('store_id', $storeIds)
+            ->where('date', '=', $date . ' 00:00:00')
+            ->where('hours', '=', $hours)
+            ->where('id', '!=', $application->id)
+            ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW])
+            ->exists();
 
-        foreach ($stores as $store) {
-            $recruiterApplications = $recruiterApplications->merge($store->applications);
-        }
-
-        foreach ($recruiterApplications as $recruiterApplication) {
-            if (explode(' ', $recruiterApplication->date)[0] == $date
-                && $recruiterApplication->hours == $hours
-                && in_array($recruiterApplication->interview_status_id, [
-                    MInterviewStatus::STATUS_APPLYING,
-                    MInterviewStatus::STATUS_WAITING_INTERVIEW
-                ])) {
-                throw new InputException(trans('validation.ERR.036'));
-            }
+        if ($recruiterInterviewApplications) {
+            throw new InputException(trans('validation.ERR.036'));
         }
 
         $month = Carbon::parse($data['date'])->firstOfMonth()->format('Y-m-d');
         $recruiterOffTimes = $jobPosting->store->owner->recruiterOffTimes->off_times ?? [];
-        $recruiterOffTimes = self::resultRecruiterOffTimes([$month], $recruiterOffTimes);
+        $recruiterOffTimes = $recruiterOffTimes[$month];
         $dataHours = preg_grep('/' . $date . '/i', $recruiterOffTimes);
 
-        foreach ($dataHours as $dataHour) {
-            if ($hours == explode(' ', $dataHour)[1]) {
-                throw new InputException(trans('validation.ERR.036'));
-            }
+        if (isset($dataHours[$date . ' ' . $hours])) {
+            throw new InputException(trans('validation.ERR.036'));
         }
 
         return $jobPosting;
@@ -1009,7 +993,10 @@ class JobService extends Service
     {
         $jobPosting = JobPosting::query()
             ->released()
-            ->with(['applications', 'store.owner.recruiterOffTimes', 'store.owner.stores.applications'])
+            ->with(['applications' => function($query) {
+                $query->where('user_id', '!=', $this->user->id)
+                    ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW]);
+            }, 'store.owner.recruiterOffTimes', 'store.owner.stores.applications'])
             ->where('id', '=', $jobPostingId)
             ->first();
 

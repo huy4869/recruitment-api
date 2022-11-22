@@ -341,23 +341,17 @@ class ApplicationService extends Service
             throw new InputException(trans('validation.ERR.036'));
         }
 
-        $stores = $application->store->owner->stores;
-        $recruiterApplications = collect();
+        $storeIds = $application->store->owner->stores->pluck('id')->toArray();
+        $recruiterInterviewApplications = Application::query()
+            ->whereIn('store_id', $storeIds)
+            ->where('date', '=', $date . ' 00:00:00')
+            ->where('hours', '=', $hours)
+            ->where('id', '!=', $application->id)
+            ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW])
+            ->exists();
 
-        foreach ($stores as $store) {
-            $recruiterApplications = $recruiterApplications->merge($store->applications);
-        }
-
-        foreach ($recruiterApplications as $recruiterApplication) {
-            if (explode(' ', $recruiterApplication->date)[0] == $date
-                && $recruiterApplication->hours == $hours
-                && $recruiterApplication->id != $application->job_posting_id
-                && in_array($recruiterApplication->interview_status_id, [
-                   MInterviewStatus::STATUS_APPLYING,
-                    MInterviewStatus::STATUS_WAITING_INTERVIEW
-                ])) {
-                throw new InputException(trans('validation.ERR.036'));
-            }
+        if ($recruiterInterviewApplications) {
+            throw new InputException(trans('validation.ERR.036'));
         }
 
         $month = Carbon::parse($data['date'])->firstOfMonth()->format('Y-m-d');

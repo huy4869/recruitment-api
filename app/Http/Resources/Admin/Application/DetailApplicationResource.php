@@ -39,6 +39,7 @@ class DetailApplicationResource extends JsonResource
                     'building' =>  $user->building,
                 ]
             ],
+            'application_id' => $this->id,
             'job_name' => $this->jobPosting->name,
             'store_name' => $this->store->name,
             'created_at' => DateTimeHelper::formatDateDayOfWeekTimeJa($this->created_at),
@@ -46,7 +47,10 @@ class DetailApplicationResource extends JsonResource
                 'id' => $this->interviews->id,
                 'name' => $this->interviews->name,
             ],
-            'interview_date' => DateTimeHelper::formatDateDayOfWeekTimeJa($this->date),
+            'interview_date' => DateTimeHelper::formatDateDayOfWeekJa($this->date) . $this->hours,
+            'date' => @explode(' ', $this->date)[0],
+            'interview_approach_id' => $this->interview_approach_id,
+            'hours' => $this->hours,
             'note' => $this->note,
             'owner_memo' => $this->owner_memo,
         ];

@@ -24,10 +24,9 @@ class UpdateApplicationRequest extends FormRequest
     public function rules()
     {
         return [
-            'user_id' => ['required', 'numeric'],
             'date' => ['required', 'date'],
-            'hours' => ['required', 'string'],
-            'interview_approaches_id' => ['required', 'numeric'],
+            'hours' => ['required', 'string', 'in:' . implode(',', config('date.time'))],
+            'interview_approaches_id' => ['required', 'numeric', 'exists:m_interview_approaches,id'],
             'note' => ['nullable', 'string', 'max:' . config('validate.text_max_length')],
         ];
     }

@@ -27,6 +27,10 @@ class UpdateRequest extends FormRequest
         return [
             'interview_status_id' => 'required|integer|exists:m_interviews_status,id',
             'owner_memo' => 'nullable|string|max:' . config('validate.approach_text_max_length'),
+            'date' => ['nullable', 'date'],
+            'hours' => ['nullable', 'string', 'in:' . implode(',', config('date.time'))],
+            'interview_approach_id' => ['nullable', 'numeric', 'exists:m_interview_approaches,id'],
+            'note' => ['nullable', 'string', 'max:' . config('validate.text_max_length')],
         ];
     }
 }
