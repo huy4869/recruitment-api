@@ -67,7 +67,7 @@ class CreateRequest extends FormRequest
             'station_ids' => 'nullable|array',
             'stations_ids.*' => 'integer|exists:m_stations,id',
             'welfare_treatment_description' => 'required|max:' . config('validate.text_max_length'),
-            'feature_ids' => 'required|array',
+            'feature_ids' => 'nullable|array',
             'feature_ids.*' => 'integer|exists:m_job_features,id',
         ];
     }
