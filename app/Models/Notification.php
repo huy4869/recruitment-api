@@ -16,19 +16,18 @@ class Notification extends Model
     public const STATUS_READ = 1;
 
     public const TYPE_INTERVIEW_COMING = 1;
-    public const TYPE_INTERVIEW_SCHEDULE = 2;
+    public const TYPE_CANCEL_APPLY = 2;
     public const TYPE_NEW_MESSAGE = 3;
     public const TYPE_INTERVIEW_CHANGED = 4;
-    public const TYPE_INTERVIEW_PENDING = 5;
+    public const TYPE_DELETE_JOB = 5;
     public const TYPE_DELETE_USER = 6;
     public const TYPE_DELETE_RECRUITER = 7;
     public const TYPE_DELETE_STORE = 8;
     public const TYPE_MATCHING_FAVORITE = 9;
     public const TYPE_INTERVIEW_APPLY= 10;
     public const TYPE_UPDATE_INTERVIEW_APPLY= 11;
-    public const TYPE_SAME_FAVORITE = 12;
-    public const TYPE_DELETE_ADMIN = 13;
-
+    public const TYPE_ADMIN_CHANGE_INTERVIEW_STATUS = 12;
+    public const TYPE_WAIT_INTERVIEW_LIMIT_DATE = 13;
     /**
      * The attributes that are mass assignable.
      *

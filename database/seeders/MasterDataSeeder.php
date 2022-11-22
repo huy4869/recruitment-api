@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\MJobType;
 use App\Models\MWorkType;
+use App\Models\Notification;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
@@ -159,20 +160,19 @@ class MasterDataSeeder extends Seeder
         DB::table('m_job_statuses')->insert($dataJobStatus);
 
         $dataNoticeTypes = [
-            ['name' => '面接が来る', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => '面接予定', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => '新しいメッセージ', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'インタビューが変わった', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => '面接待ち', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'ユーザーを削除', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => '採用担当者を削除', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'ストアを削除', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'マッチングのお気に入り', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'ユーザー新規申し込み', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'ユーザーが更新した面接スケジュール', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => 'ユーザーが更新した面接スケジュール', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => '同じお気に入り', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => '管理者を削除', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => Notification::TYPE_INTERVIEW_COMING, 'name' => '毎朝の9時に通知', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => Notification::TYPE_CANCEL_APPLY, 'name' => '面接キャンセル', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => Notification::TYPE_NEW_MESSAGE, 'name' => 'チャット送信', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => Notification::TYPE_INTERVIEW_CHANGED, 'name' => '美容室オーナがステータス変更', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => Notification::TYPE_DELETE_JOB, 'name' => '求人を削除する', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => Notification::TYPE_DELETE_USER, 'name' => '求職者を削除する', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => Notification::TYPE_DELETE_RECRUITER, 'name' => '美容室オーナを削除する', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => Notification::TYPE_DELETE_STORE, 'name' => '店舗を削除する', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => Notification::TYPE_MATCHING_FAVORITE, 'name' => 'お互いにお気に入りになった場合', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => Notification::TYPE_INTERVIEW_APPLY, 'name' => '面接予定登録', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => Notification::TYPE_UPDATE_INTERVIEW_APPLY, 'name' => '面接予定更新', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => Notification::TYPE_ADMIN_CHANGE_INTERVIEW_STATUS, 'name' => '管理者がステータス変更', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => Notification::TYPE_WAIT_INTERVIEW_LIMIT_DATE, 'name' => '「結果待ち」のステータスが1か月を保持する場合の通知', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_notice_types')->insert($dataNoticeTypes);
 

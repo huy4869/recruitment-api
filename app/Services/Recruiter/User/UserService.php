@@ -129,7 +129,7 @@ class UserService extends Service
                 foreach ($userFavoriteJobs as $favoriteJob) {
                     $userNotifyData[] = ([
                         'user_id' => $user->id,
-                        'notice_type_id' => Notification::TYPE_SAME_FAVORITE,
+                        'notice_type_id' => Notification::TYPE_MATCHING_FAVORITE,
                         'noti_object_ids' => json_encode([
                             'user_id' => $recruiter->id,
                             'job_id' => $favoriteJob->jobPosting->id,
