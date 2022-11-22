@@ -24,7 +24,7 @@ class DetailApplicationResource extends JsonResource
                 'id' => $user->id,
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
-                'avatar_banner' => FileHelper::getFullUrl($user->avatarBanner->url),
+                'avatar_banner' => FileHelper::getFullUrl(@$user->avatarBanner->url),
                 'avatar_detail' => DetailAvatarResource::collection($user->avatarDetails),
                 'birthday' => DateTimeHelper::formatDateJa($user->birthday),
                 'age' => $user->age,
@@ -35,7 +35,7 @@ class DetailApplicationResource extends JsonResource
                 'address' => [
                     'province_district' => $user->province->provinceDistrict->name,
                     'province' => $user->province->name,
-                    'province_city' => $user->provinceCity->name,
+                    'province_city' => @$user->provinceCity->name,
                     'address' =>  $user->address,
                     'building' =>  $user->building,
                 ]

@@ -148,7 +148,6 @@ class ApplicationTableService extends TableService
             applications.interview_status_id,
             applications.created_at,
             applications.user_id,
-            applications.checked_at,
             applications.updated_at,
             application_users.first_name,
             application_users.last_name,

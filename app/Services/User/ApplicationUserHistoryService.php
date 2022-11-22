@@ -182,6 +182,7 @@ class ApplicationUserHistoryService extends Service
             'twitter' => $user->twitter,
             'postal_code' => $user->postal_code,
             'province_id' => $user->province_id,
+            'province_city_id' => $user->province_city_id,
             'building' => $user->building,
             'address' => $user->address,
             'favorite_skill' => $user->favorite_skill,
@@ -189,6 +190,7 @@ class ApplicationUserHistoryService extends Service
             'self_pr' => $user->self_pr,
             'motivation' => $user->motivation,
             'noteworthy' => $user->noteworthy,
+            'skills' => $user->skills,
         ];
 
         $applicationUser = ApplicationUser::query()->create($dataApplicationUser);
