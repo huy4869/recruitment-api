@@ -35,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
             $min_field = $parameters[0];
             $data = $validator->getData();
             $min_value = $data[$min_field];
-            return $value > $min_value;
+            return $value >= $min_value;
         });
 
         Validator::replacer('greater_than_field', function ($message, $attribute, $rule, $parameters) {

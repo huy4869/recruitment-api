@@ -29,8 +29,9 @@ class JobService extends Service
      */
     public function create($data)
     {
-        if (count($data['job_thumbnails']) > self::MAX_DETAIL_IMAGE
-            || count($data['station_ids']) > self::MAX_STATIONS
+        if (
+            (isset($data['job_thumbnails']) && count($data['job_thumbnails']) > self::MAX_DETAIL_IMAGE)
+            || (isset($data['station_ids']) && count($data['station_ids']) > self::MAX_STATIONS)
         ) {
             throw new InputException(trans('response.invalid'));
         }
