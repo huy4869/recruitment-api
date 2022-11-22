@@ -15,11 +15,10 @@ class InformationResource extends JsonResource
      */
     public function toArray($request)
     {
-        $capitalStock = $this->capital_stock/config('common.capital_stock') . trans('common.capital_stock');
         $month = substr($this->founded_year, 4);
         $year = substr($this->founded_year, 0, 4);
         $founded_year = $year . trans('common.year') . $month . trans('common.month');
-        $employeeQuantity = $this->employee_quantity . trans('common.employee_quantity');
+
         $storeName = [];
         foreach ($this->stores as $store) {
             $storeName[] = $store->name;
@@ -38,16 +37,15 @@ class InformationResource extends JsonResource
                 'province_city_name' => $this->provinceCity->name ?? null,
                 'address' => $this->address,
                 'building' => $this->building,
-                'full_address' => $this->fullNameAddress,
             ],
             'alias_name' =>$this->alias_name,
-            'employee_quantity' => $employeeQuantity,
+            'employee_quantity' => $this->employee_quantity,
             'date' => [
-                'founded_year' => $founded_year,
+                'founded_year' => $this->founded_year ? $founded_year : null,
                 'year' => $year,
                 'month' => $month,
             ],
-            'capital_stock' => $capitalStock,
+            'capital_stock' => $this->capital_stock,
             'manager_name' => $this->manager_name,
             'line_id' => $this->line,
             'facebook' => $this->facebook,

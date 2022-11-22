@@ -11,6 +11,4 @@ return [
         'recent_jobs_limit' => 17,
         'recommend' => 5,
     ],
-    'capital_stock' => 1000
-
 ];
