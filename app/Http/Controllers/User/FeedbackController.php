@@ -14,16 +14,15 @@ class FeedbackController extends Controller
     /**
      * Create feedback
      *
-     * @param JobPosting $jobPosting
+     * @param $jobId
      * @param FeedbackRequest $request
      * @return JsonResponse
-     * @throws InputException
      */
-    public function store(JobPosting $jobPosting, FeedbackRequest $request)
+    public function store($jobId, FeedbackRequest $request)
     {
         $user = $this->guard()->user();
         $inputs = $request->only(['feedback_type_ids', 'content']);
-        $data = FeedbackService::getInstance()->withUser($user)->store($jobPosting, $inputs);
+        $data = FeedbackService::getInstance()->withUser($user)->store($jobId, $inputs);
 
         return $this->sendSuccessResponse($data, trans('validation.INF.008'));
     }
