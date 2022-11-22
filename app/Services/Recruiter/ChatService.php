@@ -156,8 +156,8 @@ class ChatService extends Service
                 }
 
                 $data[] = [
-                    'store_name' => $item['store']['name'],
-                    'store_banner' => FileHelper::getFullUrl($item['store']['storeBanner']['url'] ?? null),
+                    'full_name' => $item['user']['full_name'],
+                    'avatar' => FileHelper::getFullUrl($item['user']['avatarBanner']['url'] ?? null),
                     'send_time' => DateTimeHelper::formatTimeChat($item['created_at']),
                     'initial_time' => DateTimeHelper::formatDateTimeJa($item['created_at']),
                     'content' => $item['content'],
