@@ -24,6 +24,7 @@ class ApplicationService extends Service
      */
     public function getDetail($id)
     {
+        $admin = $this->user;
         $application = Application::query()
             ->where('id', $id)
             ->with([
@@ -41,8 +42,12 @@ class ApplicationService extends Service
             ->first();
 
         if ($application) {
-            $application->update([
-                'checked_at' => now()
+
+            $beReadApplications = $admin->be_read_applications;
+            $beReadApplications = array_unique(array_merge($beReadApplications, [$id]));
+
+            $admin->update([
+                'be_read_applications' => $beReadApplications
             ]);
 
             return $application;

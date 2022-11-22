@@ -4,7 +4,10 @@ namespace App\Http\Resources\Recruiter\Application;
 
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
+use App\Services\Recruiter\Application\ApplicationService;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Auth;
+use function Illuminate\Events\queueable;
 
 class ApplicationResource extends JsonResource
 {
@@ -35,7 +38,7 @@ class ApplicationResource extends JsonResource
                 'furi_last_name' => $this->furi_last_name,
                 'age' => $this->age,
             ],
-            'be_read' => $this->checked_at && $this->checked_at >= $this->updated_at,
+            'be_read' => in_array($this->id, Auth::user()->be_read_applications ?? []),
             'created_at' => DateTimeHelper::formatDateDayOfWeekJa($this->created_at),
         ];
     }

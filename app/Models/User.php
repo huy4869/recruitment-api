@@ -86,7 +86,8 @@ class User extends Authenticatable
         'founded_year',
         'capital_stock',
         'noteworthy',
-        'last_login_at'
+        'last_login_at',
+        'be_read_applications',
     ];
 
     /**
@@ -97,6 +98,7 @@ class User extends Authenticatable
     protected $casts = [
         'recent_jobs' => 'array',
         'skills' => 'array',
+        'be_read_applications' => 'array',
     ];
 
     /**

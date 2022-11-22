@@ -22,7 +22,8 @@ class ApplicationController extends Controller
      */
     public function detail($id)
     {
-        $application = ApplicationService::getInstance()->getDetail($id);
+        $admin = $this->guard()->user();
+        $application = ApplicationService::getInstance()->withUser($admin)->getDetail($id);
 
         return $this->sendSuccessResponse(new DetailApplicationResource($application));
     }

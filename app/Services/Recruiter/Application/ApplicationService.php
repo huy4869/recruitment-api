@@ -144,8 +144,11 @@ class ApplicationService extends Service
             throw new InputException(trans('response.not_found'));
         }
 
-        $application->update([
-            'checked_at' => now()
+        $beReadApplications = $recruiter->be_read_applications;
+        $beReadApplications = array_unique(array_merge($beReadApplications, [$id]));
+
+        $recruiter->update([
+            'be_read_applications' => $beReadApplications
         ]);
 
         return $application;
