@@ -23,7 +23,7 @@ class InformationPrResource extends JsonResource
             'favorite_skill' => $data->favorite_skill,
             'experience_knowledge' => $data->experience_knowledge,
             'self_pr' => $data->self_pr,
-            'skills' => $data->skills ?? config('user.default_skills'),
+            'skills' => $data->skills,
         ];
     }
 }
