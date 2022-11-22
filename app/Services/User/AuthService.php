@@ -23,9 +23,7 @@ class AuthService extends Service
         $user = User::query()->where('email', '=', $data['email'])->roleUser()->first();
 
         if (!$user) {
-            throw new InputException(trans('validation.exists', [
-                'attribute' => trans('validation.attributes.email')
-            ]));
+            return [];
         }
 
         if (!Hash::check($data['password'], $user->password)) {
@@ -59,8 +57,9 @@ class AuthService extends Service
             'password' => Hash::make($data['password']),
             'role_id' => User::ROLE_USER,
         ]);
+
         if (!$newUser) {
-            throw new InputException(trans('auth.register_fail'));
+            return [];
         }
 
         return $newUser;
