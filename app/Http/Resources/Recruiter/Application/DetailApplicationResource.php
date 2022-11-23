@@ -4,7 +4,7 @@ namespace App\Http\Resources\Recruiter\Application;
 
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
-use App\Models\Application;
+use App\Models\MInterviewStatus;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class DetailApplicationResource extends JsonResource
@@ -46,7 +46,7 @@ class DetailApplicationResource extends JsonResource
                 'id' => $this->interviews->id,
                 'name' => $this->interviews->name,
             ],
-            'can_change_status' => $this->interview_status_id != Application::STATUS_REJECTED,
+            'can_change_status' => $this->interview_status_id != MInterviewStatus::STATUS_REJECTED,
             'interview_date' => DateTimeHelper::formatDateDayOfWeekTimeJa($this->date),
             'note' => $this->note,
             'owner_memo' => $this->owner_memo,

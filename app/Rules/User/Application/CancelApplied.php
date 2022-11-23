@@ -3,6 +3,7 @@
 namespace App\Rules\User\Application;
 
 use App\Models\Application;
+use App\Models\MInterviewStatus;
 use Illuminate\Contracts\Validation\Rule;
 
 class CancelApplied implements Rule
@@ -33,9 +34,9 @@ class CancelApplied implements Rule
             return false;
         }
 
-        if ($application->interview_status_id != Application::STATUS_APPLYING
-        && $application->interview_status_id != Application::STATUS_WAITING_INTERVIEW
-        && $application->interview_status_id != Application::STATUS_WAITING_RESULT
+        if ($application->interview_status_id != MInterviewStatus::STATUS_APPLYING
+        && $application->interview_status_id != MInterviewStatus::STATUS_WAITING_INTERVIEW
+        && $application->interview_status_id != MInterviewStatus::STATUS_WAITING_RESULT
         ) {
             return false;
         }

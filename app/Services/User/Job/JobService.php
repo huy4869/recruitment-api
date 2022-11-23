@@ -11,6 +11,7 @@ use App\Models\FavoriteJob;
 use App\Models\Gender;
 use App\Models\JobPosting;
 use App\Models\MInterviewApproach;
+use App\Models\MInterviewStatus;
 use App\Models\MJobExperience;
 use App\Models\MJobFeature;
 use App\Models\MJobType;
@@ -45,7 +46,7 @@ class JobService extends Service
                         if ($user) {
                             $query->where('job_status_id', JobPosting::STATUS_END)
                                 ->whereHas('applications', function ($query) use ($user) {
-                                    $query->whereNotIn('interview_status_id', [Application::STATUS_APPLYING, Application::STATUS_CANCELED])
+                                    $query->whereNotIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_CANCELED])
                                         ->where('user_id', $user->id);
                                 });
                         }
@@ -715,19 +716,19 @@ class JobService extends Service
         $recruiterApplicationOther = $applications->filter(function ($application) use ($jobPosting, $now) {
             return $application->job_posting_id != $jobPosting->id && $application->date >= $now
                 && in_array($application->interview_status_id, [
-                    Application::STATUS_APPLYING,
-                    Application::STATUS_WAITING_INTERVIEW
+                    MInterviewStatus::STATUS_APPLYING,
+                    MInterviewStatus::STATUS_WAITING_INTERVIEW
                 ]);
         });
 
         $applicationsTime = $jobPosting->applications
             ->where('user_id', '!=', $this->user->id)
-            ->whereIn('interview_status_id', [Application::STATUS_APPLYING, Application::STATUS_WAITING_INTERVIEW]);
+            ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW]);
         $userApplicationsTime = Application::query()
             ->where('user_id', $this->user->id)
             ->where('job_posting_id', '!=', $jobPosting->id)
             ->whereDate('date', '>=', now())
-            ->whereIn('interview_status_id', [Application::STATUS_APPLYING, Application::STATUS_WAITING_INTERVIEW])
+            ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW])
             ->get();
         $recruiterOffTimes = $jobPosting->store->owner->recruiterOffTimes->off_times ?? [];
         $monthNow = now()->firstOfMonth()->format('Y-m-d');
@@ -891,7 +892,7 @@ class JobService extends Service
         }
 
         $applications = Application::query()
-            ->whereIn('interview_status_id', [Application::STATUS_APPLYING, Application::STATUS_WAITING_INTERVIEW])
+            ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW])
             ->whereDate('date', $date)
             ->where('hours', '=', $hours)
             ->get()
@@ -913,8 +914,8 @@ class JobService extends Service
             if (explode(' ', $recruiterApplication->date)[0] == $date
                 && $recruiterApplication->hours == $hours
                 && in_array($recruiterApplication->interview_status_id, [
-                    Application::STATUS_APPLYING,
-                    Application::STATUS_WAITING_INTERVIEW
+                    MInterviewStatus::STATUS_APPLYING,
+                    MInterviewStatus::STATUS_WAITING_INTERVIEW
                 ])) {
                 throw new InputException(trans('validation.ERR.036'));
             }
@@ -967,7 +968,7 @@ class JobService extends Service
             'user_id' => $this->user->id,
             'job_posting_id' => $jobPosting->id,
             'store_id' => $jobPosting->store_id,
-            'interview_status_id' => Application::STATUS_APPLYING,
+            'interview_status_id' => MInterviewStatus::STATUS_APPLYING,
             'interview_approach_id' => $interviewApproaches->id,
             'date' => $data['date'],
             'hours' => $data['hours'],

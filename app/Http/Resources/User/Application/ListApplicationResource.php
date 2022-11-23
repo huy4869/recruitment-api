@@ -5,6 +5,8 @@ namespace App\Http\Resources\User\Application;
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
 use App\Models\Application;
+use App\Models\MInterviewApproach;
+use App\Models\MInterviewStatus;
 use App\Services\User\ApplicationService;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
@@ -22,19 +24,19 @@ class ListApplicationResource extends JsonResource
     {
         $data = $this->resource;
         $interviewApproaches = ApplicationService::interviewApproach();
-        $isDirectInterview = $data->interview_approach_id == Application::STATUS_INTERVIEW_DIRECT;
+        $isDirectInterview = $data->interview_approach_id == MInterviewApproach::STATUS_INTERVIEW_DIRECT;
 
         if ($isDirectInterview) {
             $dataApproach = @$data->storeAcceptTrashed->address;
-        } elseif ($data->interview_approach_id == Application::STATUS_INTERVIEW_ONLINE) {
+        } elseif ($data->interview_approach_id == MInterviewApproach::STATUS_INTERVIEW_ONLINE) {
             $dataApproach = config('application.interview_approach_online');
         } else {
             $dataApproach = @$data->storeAcceptTrashed->owner->tel;
         }
 
-        $applyOrInterview = in_array($data->interview_status_id, [Application::STATUS_INTERVIEW_ONLINE, Application::STATUS_WAITING_INTERVIEW]);
-        $allowEdit =  $data->interview_status_id == Application::STATUS_APPLYING;
-        $allowCancel =  !in_array($data->interview_status_id, [Application::STATUS_ACCEPTED, Application::STATUS_CANCELED, Application::STATUS_REJECTED]);
+        $applyOrInterview = in_array($data->interview_status_id, [MInterviewApproach::STATUS_INTERVIEW_ONLINE, MInterviewStatus::STATUS_WAITING_INTERVIEW]);
+        $allowEdit =  $data->interview_status_id == MInterviewStatus::STATUS_APPLYING;
+        $allowCancel =  !in_array($data->interview_status_id, [MInterviewStatus::STATUS_ACCEPTED, MInterviewStatus::STATUS_CANCELED, MInterviewStatus::STATUS_REJECTED]);
 
         return [
             'id' => $data->id,

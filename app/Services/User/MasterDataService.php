@@ -750,9 +750,9 @@ class MasterDataService extends Service
         foreach ($dataInterViewApproaches as $dataInterViewApproach) {
             $id = $dataInterViewApproach->id;
 
-            if ($id == MInterviewApproach::ONLINE_INTERVIEW) {
+            if ($id == MInterviewApproach::STATUS_INTERVIEW_ONLINE) {
                 $output = '（2営業日以内にZoomURLをメールにて送付いたします）';
-            } elseif ($id == MInterviewApproach::IN_PERSON) {
+            } elseif ($id == MInterviewApproach::STATUS_INTERVIEW_DIRECT) {
                 $output = '（東京都港区虎ノ門１－２－３)';
             } else {
                 $output = '';

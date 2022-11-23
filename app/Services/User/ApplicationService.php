@@ -6,6 +6,7 @@ use App\Exceptions\InputException;
 use App\Helpers\DateTimeHelper;
 use App\Models\Application;
 use App\Models\MInterviewApproach;
+use App\Models\MInterviewStatus;
 use App\Models\Notification;
 use App\Services\Service;
 use App\Services\User\Job\JobService;
@@ -53,7 +54,7 @@ class ApplicationService extends Service
     {
         $userInterviews = $this->user->applications()
             ->whereHas('interviews', function ($query) {
-                $query->where('id', Application::STATUS_WAITING_INTERVIEW);
+                $query->where('id', MInterviewStatus::STATUS_WAITING_INTERVIEW);
             })
             ->with([
                 'store',
@@ -92,7 +93,7 @@ class ApplicationService extends Service
     {
         $userInterviews = $this->user->applications()
             ->whereHas('interviews', function ($query) {
-                $query->whereNot('id', Application::STATUS_CANCELED);
+                $query->whereNot('id', MInterviewStatus::STATUS_CANCELED);
             })
             ->with([
                 'storeAcceptTrashed',
@@ -131,9 +132,9 @@ class ApplicationService extends Service
     public function cancelApplied($id)
     {
         $statusCanCancel = [
-            Application::STATUS_APPLYING,
-            Application::STATUS_WAITING_INTERVIEW,
-            Application::STATUS_WAITING_RESULT,
+            MInterviewStatus::STATUS_APPLYING,
+            MInterviewStatus::STATUS_WAITING_INTERVIEW,
+            MInterviewStatus::STATUS_WAITING_RESULT,
         ];
 
         $application = Application::query()
@@ -147,7 +148,7 @@ class ApplicationService extends Service
         }
 
         return $application->update([
-            'interview_status_id' => Application::STATUS_CANCELED
+            'interview_status_id' => MInterviewStatus::STATUS_CANCELED
         ]);
     }
 
@@ -158,13 +159,13 @@ class ApplicationService extends Service
     public static function addInterviewActionDateInfo($userInterviews)
     {
         $statusCanCancel = [
-            Application::STATUS_APPLYING,
-            Application::STATUS_WAITING_INTERVIEW,
-            Application::STATUS_WAITING_RESULT,
+            MInterviewStatus::STATUS_APPLYING,
+            MInterviewStatus::STATUS_WAITING_INTERVIEW,
+            MInterviewStatus::STATUS_WAITING_RESULT,
         ];
 
         $statusCanChangeInterview = [
-            Application::STATUS_APPLYING
+            MInterviewStatus::STATUS_APPLYING
         ];
 
         $today = now();
@@ -309,7 +310,7 @@ class ApplicationService extends Service
         $dateApplication = explode(' ', $application->date)[0];
         $hoursApplication = $application->hours;
 
-        if ($application->interview_status_id != Application::STATUS_APPLYING) {
+        if ($application->interview_status_id != MInterviewStatus::STATUS_APPLYING) {
             throw new InputException(trans('response.not_found'));
         }
 
@@ -328,7 +329,7 @@ class ApplicationService extends Service
         }
 
         $applications = Application::query()
-            ->whereIn('interview_status_id', [Application::STATUS_APPLYING, Application::STATUS_WAITING_INTERVIEW])
+            ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW])
             ->where('id', '!=', $applicationId)
             ->whereDate('date', $date)
             ->where('hours', '=', $hours)
@@ -352,8 +353,8 @@ class ApplicationService extends Service
                 && $recruiterApplication->hours == $hours
                 && $recruiterApplication->id != $application->job_posting_id
                 && in_array($recruiterApplication->interview_status_id, [
-                   Application::STATUS_APPLYING,
-                    Application::STATUS_WAITING_INTERVIEW
+                   MInterviewStatus::STATUS_APPLYING,
+                    MInterviewStatus::STATUS_WAITING_INTERVIEW
                 ])) {
                 throw new InputException(trans('validation.ERR.036'));
             }

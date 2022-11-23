@@ -20,10 +20,10 @@ class ListInterviewResource extends JsonResource
     public function toArray($request)
     {
         switch ($this->interview_approach_id) {
-            case Application::STATUS_INTERVIEW_ONLINE:
+            case MInterviewApproach::STATUS_INTERVIEW_ONLINE:
                 $approach = config('application.interview_approach_online');
                 break;
-            case Application::STATUS_INTERVIEW_DIRECT:
+            case MInterviewApproach::STATUS_INTERVIEW_DIRECT:
                 $postalCode = @$this->jobPostingAcceptTrashed->postal_code;
                 $province = @$this->jobPostingAcceptTrashed->province->name;
                 $provinceCity = @$this->jobPostingAcceptTrashed->provinceCity->name;
@@ -38,7 +38,7 @@ class ListInterviewResource extends JsonResource
                     $building,
                 );
                 break;
-            case Application::STATUS_INTERVIEW_PHONE:
+            case MInterviewApproach::STATUS_INTERVIEW_PHONE:
                 $approach = $this->storeAcceptTrashed->owner->tel;
                 break;
         }//end switch

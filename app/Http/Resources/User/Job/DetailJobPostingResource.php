@@ -6,6 +6,7 @@ use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
 use App\Helpers\JobHelper;
 use App\Models\Application;
+use App\Models\MInterviewApproach;
 use App\Services\User\Job\JobService;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -23,10 +24,10 @@ class DetailJobPostingResource extends JsonResource
 
         if (count($application)) {
             switch ($application['interview_approach_id']) {
-                case Application::STATUS_INTERVIEW_ONLINE:
+                case MInterviewApproach::STATUS_INTERVIEW_ONLINE:
                     $approach = config('application.interview_approach_online');
                     break;
-                case Application::STATUS_INTERVIEW_DIRECT:
+                case MInterviewApproach::STATUS_INTERVIEW_DIRECT:
                     $postalCode = $this['postal_code'];
                     $province = $this['province'];
                     $provinceCity = $this['province_city']['name'];
@@ -41,7 +42,7 @@ class DetailJobPostingResource extends JsonResource
                         $building,
                     );
                     break;
-                case Application::STATUS_INTERVIEW_PHONE:
+                case MInterviewApproach::STATUS_INTERVIEW_PHONE:
                     $approach = $this['store']['owner']['tel'];
                     break;
             }//end switch
