@@ -5,11 +5,15 @@ namespace App\Services\Admin\Job;
 use App\Exceptions\InputException;
 use App\Helpers\FileHelper;
 use App\Helpers\JobHelper;
+use App\Models\Application;
 use App\Models\Image;
 use App\Models\JobPosting;
+use App\Models\MInterviewStatus;
 use App\Models\MJobStatus;
 use App\Models\MSalaryType;
+use App\Models\Notification;
 use App\Models\Store;
+use App\Models\UserJobDesiredMatch;
 use App\Services\Common\FileService;
 use App\Services\Service;
 use Exception;
@@ -20,6 +24,8 @@ use Illuminate\Support\Facades\Log;
 
 class JobService extends Service
 {
+    const QUANTITY_CHUNK = 500;
+
     /**
      * @param $data
      * @return Builder|Model
@@ -144,6 +150,35 @@ class JobService extends Service
 
         try {
             DB::beginTransaction();
+
+            if ($data['job_status_id'] == JobPosting::STATUS_END) {
+                $applications = Application::query()
+                    ->where('job_posting_id', '=', $job->id)
+                    ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW, MInterviewStatus::STATUS_WAITING_RESULT]);
+                UserJobDesiredMatch::query()->where('job_id', '=', $job->id)->delete();
+                $notifications = [];
+
+                foreach ($applications->get() as $application) {
+                    $notifications[] = [
+                        'user_id' => $application->user_id,
+                        'notice_type_id' => Notification::TYPE_DELETE_JOB,
+                        'noti_object_ids' => json_encode([
+                            'store_id' => $application->store_id,
+                            'application_id' => $application->id,
+                            'user_id' => $this->user->id,
+                        ]),
+                        'title' => trans('notification.N011.title'),
+                        'content' => trans('notification.N011.content', ['job_id' => $job->name]),
+                        'created_at' => now(),
+                        'updated_at' => now(),
+                    ];
+                }
+
+                $applications->update(['interview_status_id' => MInterviewStatus::STATUS_REJECTED]);
+                collect($data)->chunk(self::QUANTITY_CHUNK)->each(function ($notifications) {
+                    Notification::query()->insert($notifications->toArray());
+                });
+            }
 
             FileService::getInstance()->updateImageable($job, $dataImage, [
                 Image::JOB_BANNER,
