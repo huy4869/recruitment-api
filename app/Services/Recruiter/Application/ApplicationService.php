@@ -177,8 +177,8 @@ class ApplicationService extends Service
             ->first();
 
         if (!$application || (
-            $application->interview_status_id == Application::STATUS_REJECTED
-            && $data['interview_status_id'] != Application::STATUS_REJECTED
+            $application->interview_status_id == MInterviewStatus::STATUS_REJECTED
+            && $data['interview_status_id'] != MInterviewStatus::STATUS_REJECTED
         )) {
             throw new InputException(trans('response.not_found'));
         }

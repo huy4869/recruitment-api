@@ -11,6 +11,7 @@ use App\Jobs\Admin\User\JobDestroy;
 use App\Jobs\Admin\User\JobStore;
 use App\Jobs\Admin\User\JobUpdate;
 use App\Models\Application;
+use App\Models\MInterviewStatus;
 use App\Models\MRole;
 use App\Models\Notification;
 use App\Models\Store;
@@ -271,7 +272,7 @@ class UserService extends Service
         $recruiter->contacts()?->delete();
         $recruiter->notifications()?->delete();
         $recruiter->applicationOwned()?->update([
-            'interview_status_id' => Application::STATUS_REJECTED,
+            'interview_status_id' => MInterviewStatus::STATUS_REJECTED,
         ]);
         $jobOwnedIds = $recruiter->jobsOwned()->pluck('job_postings.id')->toArray();
         UserJobDesiredMatch::query()->whereIn('job_id', $jobOwnedIds)->delete();

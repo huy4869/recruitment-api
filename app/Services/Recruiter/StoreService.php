@@ -9,6 +9,7 @@ use App\Helpers\JobHelper;
 use App\Models\Application;
 use App\Models\Image;
 use App\Models\JobPosting;
+use App\Models\MInterviewStatus;
 use App\Models\MJobType;
 use App\Models\Notification;
 use App\Models\Store;
@@ -70,18 +71,18 @@ class StoreService extends Service
             $store->images()?->delete();
 
             $jobHasApplicationNotReject = $store->jobs()?->whereHas('applications', function ($query) {
-                $query->whereNot('interview_status_id', Application::STATUS_REJECTED);
+                $query->whereNot('interview_status_id', MInterviewStatus::STATUS_REJECTED);
             })->with([
                 'store',
                 'applications'
             ])->get();
 
             $store->applications()?->whereIn('interview_status_id', [
-                Application::STATUS_APPLYING,
-                Application::STATUS_WAITING_INTERVIEW,
-                Application::STATUS_WAITING_RESULT
+                MInterviewStatus::STATUS_APPLYING,
+                MInterviewStatus::STATUS_WAITING_INTERVIEW,
+                MInterviewStatus::STATUS_WAITING_RESULT
             ])->update([
-                'interview_status_id' => Application::STATUS_REJECTED
+                'interview_status_id' => MInterviewStatus::STATUS_REJECTED
             ]);
 
             $store->jobImages()?->delete();

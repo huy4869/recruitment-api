@@ -6,6 +6,7 @@ use App\Exceptions\InputException;
 use App\Helpers\DateTimeHelper;
 use App\Models\Application;
 use App\Models\MInterviewApproach;
+use App\Models\MInterviewStatus;
 use App\Models\RecruiterOffTime;
 use App\Models\Store;
 use App\Models\User;
@@ -54,7 +55,7 @@ class InterviewScheduleService extends Service
             ->with(['applications' => function ($query) use ($startDate, $endDate) {
                 $query->whereDate('date', '>=', $startDate)
                     ->whereDate('date', '<=', $endDate)
-                    ->whereIn('interview_status_id', [Application::STATUS_APPLYING, Application::STATUS_WAITING_INTERVIEW]);
+                    ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW]);
             }, 'applications.applicationUser'])
             ->where('user_id', '=', $recId)->get();
         $applications = collect();
@@ -262,7 +263,7 @@ class InterviewScheduleService extends Service
         $dateApplication = explode(' ', $application->date)[0];
         $hoursApplication = $application->hours;
 
-        if ($application->interview_status_id != Application::STATUS_APPLYING) {
+        if ($application->interview_status_id != MInterviewStatus::STATUS_APPLYING) {
             throw new InputException(trans('response.not_found'));
         }
 
@@ -281,7 +282,7 @@ class InterviewScheduleService extends Service
         }
 
         $applications = Application::query()
-            ->whereIn('interview_status_id', [Application::STATUS_APPLYING, Application::STATUS_WAITING_INTERVIEW])
+            ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW])
             ->where('id', '!=', $applicationId)
             ->whereDate('date', $date)
             ->where('hours', '=', $hours)
@@ -305,8 +306,8 @@ class InterviewScheduleService extends Service
                 && $recruiterApplication->hours == $hours
                 && $recruiterApplication->id != $application->job_posting_id
                 && in_array($recruiterApplication->interview_status_id, [
-                    Application::STATUS_APPLYING,
-                    Application::STATUS_WAITING_INTERVIEW
+                    MInterviewStatus::STATUS_APPLYING,
+                    MInterviewStatus::STATUS_WAITING_INTERVIEW
                 ])) {
                 throw new InputException(trans('validation.ERR.036'));
             }
@@ -395,7 +396,7 @@ class InterviewScheduleService extends Service
             ->with(['applications' => function ($query) use ($date, $hours) {
                 $query->whereDate('date', $date)
                     ->where('hours', '=', $hours)
-                    ->whereIn('interview_status_id', [Application::STATUS_APPLYING, Application::STATUS_WAITING_INTERVIEW]);
+                    ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW]);
             }, 'applications.user'])
             ->where('user_id', '=', $recId)->get();
 

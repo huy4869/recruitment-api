@@ -4,6 +4,7 @@ namespace App\Services\Recruiter;
 
 use App\Helpers\DateTimeHelper;
 use App\Models\Application;
+use App\Models\MInterviewStatus;
 use App\Models\RecruiterOffTime;
 use App\Models\Store;
 use App\Services\Service;
@@ -51,7 +52,7 @@ class InterviewScheduleService extends Service
             ->with(['applications' => function ($query) use ($startDate, $endDate) {
                 $query->whereDate('date', '>=', $startDate)
                     ->whereDate('date', '<=', $endDate)
-                    ->whereIn('interview_status_id', [Application::STATUS_APPLYING, Application::STATUS_WAITING_INTERVIEW]);
+                    ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW]);
             }, 'applications.applicationUser'])
             ->where('user_id', '=', $this->user->id)->get();
         $applications = collect();
@@ -227,7 +228,7 @@ class InterviewScheduleService extends Service
             ->with(['applications' => function ($query) use ($date, $hours) {
                 $query->whereDate('date', $date)
                     ->where('hours', '=', $hours)
-                    ->whereIn('interview_status_id', [Application::STATUS_APPLYING, Application::STATUS_WAITING_INTERVIEW]);
+                    ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW]);
             }, 'applications.user'])
             ->where('user_id', '=', $this->user->id)->get();
 

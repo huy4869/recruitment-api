@@ -9,9 +9,9 @@ class MInterviewApproach extends Model
 {
     use HasFactory;
 
-    public const ONLINE_INTERVIEW = 1;
-    public const IN_PERSON = 2;
-    public const PHONE_INTERVIEW = 3;
+    public const STATUS_INTERVIEW_ONLINE = 1;
+    public const STATUS_INTERVIEW_DIRECT = 2;
+    public const STATUS_INTERVIEW_PHONE = 3;
 
     /**
      * @var string
