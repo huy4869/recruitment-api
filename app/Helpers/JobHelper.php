@@ -290,4 +290,22 @@ class JobHelper
     {
         return number_format($number, 0, '.', ',');
     }
+
+    public static function getWorkingDays($dayIds, $masterDataDays)
+    {
+        $result = [];
+
+        if (!$dayIds || !$masterDataDays) {
+            return $result;
+        }
+
+        foreach ($dayIds as $id) {
+            $result[] = [
+                'id' => $id,
+                'name' => $masterDataDays[$id],
+            ];
+        }
+
+        return $result;
+    }
 }

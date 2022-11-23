@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Recruiter\Job;
 
 use App\Helpers\DateTimeHelper;
+use App\Helpers\FileHelper;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class DetailJobResource extends JsonResource
@@ -18,11 +19,13 @@ class DetailJobResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
+            'store_id' => $this->store->id,
             'store_name' => $this->store->name,
             'pick_up_point' => $this->pick_up_point,
-            'banner_image' => $this->bannerImage->url,
+            'banner_image' => FileHelper::getFullUrl(@$this->bannerImage->url),
             'detail_images' => DetailImageResource::collection($this->detailImages),
             'job_types' => $this->job_types,
+            'feature_ids' => $this->feature_ids,
             'feature_types' => $this->feature_types,
             'experience_types' => $this->expericence_types,
             'description' => $this->description,
@@ -30,7 +33,8 @@ class DetailJobResource extends JsonResource
             'salary' => [
                 'min' => $this->salary_min,
                 'max' => $this->salary_max,
-                'type' => $this->salaryType->name,
+                'type_id' => $this->salaryType->id,
+                'type_name' => $this->salaryType->name,
             ],
             'work_time' => [
                 'start' => $this->start_work_time,
