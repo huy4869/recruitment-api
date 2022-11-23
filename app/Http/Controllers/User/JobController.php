@@ -200,7 +200,6 @@ class JobController extends Controller
                         if (
                             !isset($filter['key'])
                             || !isset($filter['data'])
-                            || !count($filter['data'])
                             || !in_array($filter['key'], $allowKeyFilter)
                         ) {
                             $allowStoreSearchCond = false;
