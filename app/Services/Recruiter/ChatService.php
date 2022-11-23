@@ -29,7 +29,7 @@ class ChatService extends Service
      */
     public function store($data)
     {
-        $user = User::roleUser()->where('id', $data['user_id']);
+        $user = User::roleUser()->where('id', $data['user_id'])->first();
         $store = Store::query()->where([['id', $data['store_id']], ['user_id', $this->user->id]])->first();
 
         if (!$store || !$user) {
@@ -79,9 +79,13 @@ class ChatService extends Service
     public function getChatListOfStore($storeId = null)
     {
         $stores = $this->user->stores()
-            ->with('chats', function ($query) {
-                $query->orderByDesc('created_at');
-            });
+            ->with([
+                'chats' => function ($query) {
+                    $query->orderByDesc('created_at');
+                },
+                'chats.userTrashed',
+                'chats.userTrashed.avatarBanner'
+            ]);
 
         if ($storeId) {
             $stores->where('id', $storeId);
@@ -128,7 +132,7 @@ class ChatService extends Service
     {
         $rec = $this->user->id;
 
-        $detailChats = Chat::query()->with('user')
+        $detailChats = Chat::query()->with('userTrashed')
             ->whereHas('store', function ($q) use ($store_id, $rec) {
                 $q->where([
                     ['id', $store_id],
@@ -156,8 +160,9 @@ class ChatService extends Service
                 }
 
                 $data[] = [
-                    'full_name' => $item['user']['full_name'],
-                    'avatar' => FileHelper::getFullUrl($item['user']['avatarBanner']['url'] ?? null),
+                    'first_name' => $item['userTrashed']['first_name'],
+                    'last_name' => $item['userTrashed']['last_name'],
+                    'avatar' => FileHelper::getFullUrl($item['userTrashed']['avatarBanner']['url'] ?? null),
                     'send_time' => DateTimeHelper::formatTimeChat($item['created_at']),
                     'initial_time' => DateTimeHelper::formatDateTimeJa($item['created_at']),
                     'content' => $item['content'],

@@ -27,14 +27,15 @@ class ChatListResourse extends JsonResource
         return [
             'user_id' => $this->user_id,
             'store_id' => $this->store_id,
-            'first_name' => @$this->user->first_name,
-            'last_name' => @$this->user->last_name,
-            'avatar' => FileHelper::getFullUrl($this->user->avatarBanner->url ?? null),
+            'first_name' => $this->userTrashed->first_name,
+            'last_name' => $this->userTrashed->last_name,
+            'avatar' => FileHelper::getFullUrl($this->userTrashed->avatarBanner->url ?? null),
             'send_time' => $date,
             'initial_time' => DateTimeHelper::formatDateTimeJa($this->created_at),
             'is_from_user' => $this->is_from_user,
             'content' => $this->content,
             'be_read' => $beRead,
+            'be_deleted' => !!$this->userTrashed->deleted_at,
         ];
     }
 }
