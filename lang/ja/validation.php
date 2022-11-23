@@ -263,7 +263,7 @@ return [
         'job_experience_ids.*.id' => '就業経験',
         'job_feature_ids' => '特徴',
         'job_feature_ids.*.id' => '特徴',
-        'home_page_rescuiter' => 'ホームページ',
+        'home_page_recruiter' => 'ホームページ',
         'alias_name' => '代表者名',
         'employee_quantity' => '従業員数',
         'year' => '年',
