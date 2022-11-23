@@ -26,12 +26,13 @@ class ChatResource extends JsonResource
         return [
             'user_id' => $this->user_id,
             'store_id' => $this->store_id,
-            'store_name' => $this->store->name,
-            'store_banner' => FileHelper::getFullUrl($this->store->storeBanner->url ?? null),
+            'store_name' => $this->storeTrashed->name,
+            'store_banner' => FileHelper::getFullUrl($this->storeTrashed->storeBanner->url ?? null),
             'send_time' => $date,
             'initial_time' => DateTimeHelper::formatDateTimeJa($this->created_at),
             'content' => $this->content,
             'be_readed' => $beRead,
+            'be_deleted' => !!$this->storeTrashed->deleted_at,
         ];
     }
 }

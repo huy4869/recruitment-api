@@ -26,8 +26,8 @@ class ChatService extends Service
         $user = $this->user;
 
         return Chat::with([
-            'store',
-            'store.storeBanner'
+            'storeTrashed',
+            'storeTrashed.storeBanner'
             ])
             ->where('user_id', $user->id)
             ->orderByDesc('created_at')
@@ -45,8 +45,8 @@ class ChatService extends Service
     {
         $user = $this->user;
         $detailChats = Chat::with([
-                'store',
-                'store.storeBanner',
+                'storeTrashed',
+                'storeTrashed.storeBanner',
                 'user'
             ])
             ->where([
@@ -70,8 +70,8 @@ class ChatService extends Service
                 }
 
                 $data[] = [
-                    'store_name' => $item['store']['name'],
-                    'store_banner' => FileHelper::getFullUrl($item['store']['storeBanner']['url'] ?? null),
+                    'store_name' => $item['storeTrashed']['name'],
+                    'store_banner' => FileHelper::getFullUrl($item['storeTrashed']['storeBanner']['url'] ?? null),
                     'send_time' => DateTimeHelper::formatTimeChat($item['created_at']),
                     'initial_time' => DateTimeHelper::formatDateTimeJa($item['created_at']),
                     'content' => $item['content'],

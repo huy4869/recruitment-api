@@ -49,4 +49,9 @@ class Chat extends Model
     {
         return $this->belongsTo(Store::class, 'store_id');
     }
+
+    public function storeTrashed()
+    {
+        return $this->belongsTo(Store::class, 'store_id')->withTrashed();
+    }
 }
