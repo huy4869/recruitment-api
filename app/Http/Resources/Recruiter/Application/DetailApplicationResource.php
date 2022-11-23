@@ -22,6 +22,7 @@ class DetailApplicationResource extends JsonResource
         return [
             'user' => [
                 'id' => $user->id,
+                'user_id' => $this->user_id,
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
                 'avatar_banner' => FileHelper::getFullUrl(@$user->avatarBanner->url),
@@ -47,7 +48,7 @@ class DetailApplicationResource extends JsonResource
                 'name' => $this->interviews->name,
             ],
             'can_change_status' => $this->interview_status_id != MInterviewStatus::STATUS_REJECTED,
-            'interview_date' => DateTimeHelper::formatDateDayOfWeekTimeJa($this->date),
+            'interview_date' => DateTimeHelper::formatDateDayOfWeekJa($this->date) . $this->hours,
             'note' => $this->note,
             'owner_memo' => $this->owner_memo,
         ];
