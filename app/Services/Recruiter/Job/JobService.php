@@ -311,6 +311,10 @@ class JobService extends Service
             $job->station_ids,
             $jobMasterData['masterStations']
         );
+        $job->working_days = JobHelper::getWorkingDays(
+            $job->working_days,
+            config('date.day_of_week_ja_fe')
+        );
 
         return $job;
     }
