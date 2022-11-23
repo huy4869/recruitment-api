@@ -20,9 +20,9 @@ class StoreResource extends JsonResource
             'recruiter_name' => $this->recruiter_name,
             'tel' => $this->tel,
             'address' => [
-                'district' => $this->province->provinceDistrict->name,
-                'province' => $this->province->name,
-                'province_city' => $this->provinceCity->name,
+                'postal_code' => $this->postal_code,
+                'province' => $this->province->name ?? null,
+                'province_city' => $this->provinceCity->name ??null,
                 'address' => $this->address,
                 'building' => $this->building,
             ],

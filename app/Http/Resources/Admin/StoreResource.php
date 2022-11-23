@@ -14,13 +14,14 @@ class StoreResource extends JsonResource
      */
     public function toArray($request)
     {
+
         return [
             'id' => $this->id,
             'name' => $this->name,
             'recruiter_name' => $this->recruiter_name,
             'tel' => $this->tel,
             'address' => [
-                'district' => $this->province->provinceDistrict->name,
+                'postal_code' => $this->postal_code,
                 'province' => $this->province->name,
                 'province_city' => $this->provinceCity->name,
                 'address' => $this->address,

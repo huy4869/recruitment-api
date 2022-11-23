@@ -27,9 +27,8 @@ class ProfileUserResource extends JsonResource
             'alias_name' => $this['alias_name'],
             'age' => $this['age'],
             'user_address' => [
-                'full_address' => $this['full_address'],
                 'postal_code' => $this['postal_code'],
-                'province_name' => $this['province'],
+                'province_name' => $this['province_name'],
                 'province_city_name' => $this['province_city_name'],
                 'address' => $this['address'],
                 'building' => $this['building'],
