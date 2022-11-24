@@ -25,7 +25,7 @@ class ProfileService extends Service
     {
         return $this->user->update([
             'company_name' => $data['company_name'],
-            'home_page_rescuiter' => $data['home_page_rescuiter'],
+            'home_page_recruiter' => $data['home_page_recruiter'],
             'tel' => $data['tel'],
             'postal_code' => $data['postal_code'],
             'province_id' => $data['province_id'],

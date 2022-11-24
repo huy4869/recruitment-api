@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Recruiter;
 
 use App\Rules\CheckPhoneNumber;
+use App\Rules\WithOutFullSize;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -29,7 +30,7 @@ class UpdateProfileRequest extends FormRequest
 
         return [
             'company_name' => ['nullable', 'string', 'max:' . $lengthText],
-            'home_page_rescuiter' => ['nullable', 'string', 'max:' . $lengthText],
+            'home_page_recruiter' => ['nullable', new WithOutFullSize(), 'string', 'max:' . $lengthText],
             'alias_name' => ['nullable', 'string', 'max:' . $lengthText],
             'employee_quantity' => ['nullable', 'string', 'max:' . $lengthText],
             'founded_year' => [
@@ -45,10 +46,10 @@ class UpdateProfileRequest extends FormRequest
             'province_city_id' => ['required', 'numeric', 'exists:m_provinces_cities,id'],
             'address' => ['required', 'string', 'max:' . config('validate.string_max_length')],
             'building' => ['nullable', 'string', 'max:' . config('validate.string_max_length')],
-            'line' => ['nullable', 'string', 'max:' . $lengthText],
-            'facebook' => ['nullable', 'string', 'max:' . $lengthText],
-            'instagram' => ['nullable', 'string', 'max:' . $lengthText],
-            'twitter' => ['nullable', 'string', 'max:' . $lengthText],
+            'line' => ['nullable', 'string', new WithOutFullSize(), 'max:' . $lengthText],
+            'facebook' => ['nullable', 'string', new WithOutFullSize(), 'max:' . $lengthText],
+            'instagram' => ['nullable', 'string', new WithOutFullSize(), 'max:' . $lengthText],
+            'twitter' => ['nullable', 'string', new WithOutFullSize(), 'max:' . $lengthText],
         ];
     }
 

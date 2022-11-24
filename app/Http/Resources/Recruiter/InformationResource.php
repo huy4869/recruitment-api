@@ -27,7 +27,7 @@ class InformationResource extends JsonResource
         return [
             'store_name' => $storeName,
             'company_name' => $this->company_name,
-            'home_page_rescuiter' => $this->home_page_recruiter,
+            'home_page_recruiter' => $this->home_page_recruiter,
             'tel' => $this->tel,
             'address_information' => [
                 'postal_code' => $this->postal_code,

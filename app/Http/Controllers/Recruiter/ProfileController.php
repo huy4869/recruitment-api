@@ -27,7 +27,7 @@ class ProfileController extends Controller
     {
         $input = $request->only([
             'company_name',
-            'home_page_rescuiter',
+            'home_page_recruiter',
             'tel',
             'postal_code',
             'province_id',
