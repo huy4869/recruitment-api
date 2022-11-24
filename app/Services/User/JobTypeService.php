@@ -15,21 +15,24 @@ class JobTypeService extends Service
      */
     public function amountJobInJobTypes()
     {
-        $jobTypes =  MJobType::query()->where('is_default', '=', MJobType::IS_DEFAULT)->get()->pluck('id')->toArray();
+        $jobTypes =  MJobType::query()->where('is_default', '=', MJobType::IS_DEFAULT)->get()->pluck('name', 'id')->toArray();
+        unset($jobTypes[MJobType::OTHER]);
         $jobPostings = JobPosting::query()->released()->get()->pluck('job_type_ids')->toArray();
         $data = [];
 
         $jobPostings = array_count_values(array_merge(...$jobPostings));
-        foreach ($jobTypes as $jobType) {
+        foreach ($jobTypes as $key => $jobType) {
             $data[] = [
-                'id' => $jobType,
-                'amount' => $jobPostings[$jobType] ?? 0,
+                'id' => $key,
+                'name' => $jobType,
+                'amount' => $jobPostings[$key] ?? 0,
             ];
-            unset($jobPostings[$jobType]);
+            unset($jobPostings[$key]);
         }
 
         return array_merge($data, [[
-           'id' => 'other',
+           'id' => MJobType::OTHER,
+           'name' => 'その他',
            'amount' => array_sum($jobPostings),
         ]]);
     }
