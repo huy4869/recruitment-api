@@ -577,9 +577,9 @@ class JobService extends Service
                 'job_posting_id' => $jobPostingId
             ]);
 
-            if (in_array($user->id, $userFavoriteByRec->favorite_ids ?? [])) {
+            if (in_array($user->id, $userFavoriteByRec->pluck('favorite_user_id')->toArray())) {
                 Notification::query()->create([
-                    'user_id' => $userFavoriteByRec->user_id,
+                    'user_id' => $userFavoriteByRec->first()->user_id,
                     'notice_type_id' => Notification::TYPE_MATCHING_FAVORITE,
                     'noti_object_ids' => [
                         'store_id' => null,
@@ -603,7 +603,7 @@ class JobService extends Service
             DB::rollBack();
             Log::error($e->getMessage(), [$e]);
 
-            throw new InputException(trans('response.EXC.001'));
+            throw new InputException($e);
         }//end try
     }
 
@@ -618,11 +618,15 @@ class JobService extends Service
             ->with([
                 'store',
                 'store.owner',
-                'store.owner.favoriteUser'
+                'store.owner.favoriteUsers'
             ])
             ->first();
 
-        return @$jobPosting->store->owner->favoriteUser;
+        if ($jobPosting) {
+            return $jobPosting->store->owner->favoriteUsers;
+        }
+
+        throw new InputException(trans('response.not_found'));
     }
 
 
