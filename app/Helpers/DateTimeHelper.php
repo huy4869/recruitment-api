@@ -255,7 +255,7 @@ class DateTimeHelper
         $hour = $time->diffInHours($now);
 
         if ($minute < config('date.less_than_hour')) {
-            $date = ($minute != config('date.zero_minute')) ? $minute . trans('common.minute') : config('date.one_minute') . trans('common.minute');
+            $date = ($minute != config('date.zero_minute')) ? $minute . trans('common.minute') : '';
         } elseif ($hour >= config('date.more_than_hour')  && $hour < config('date.less_than_date')) {
             $date = $hour . trans('common.hour');
         } else {
@@ -277,7 +277,7 @@ class DateTimeHelper
         $hour = $time->diffInHours($now);
 
         if ($minute < config('date.less_than_hour')) {
-            $date = ($minute != config('date.zero_minute')) ? $minute . trans('common.minute') : config('date.one_minute') . trans('common.minute');
+            $date = ($minute != config('date.zero_minute')) ? $minute . trans('common.minute') : '';
         } elseif ($hour >= config('date.more_than_hour')  && $hour < config('date.less_than_date')) {
             $date = $hour . trans('common.hour');
         } else {
