@@ -115,7 +115,8 @@ class LocationService extends Service
             ->join('m_provinces', 'm_provinces_cities.province_id', '=', 'm_provinces.id')
             ->leftJoin('job_postings', function ($join) {
                 $join->on('job_postings.province_id', '=', 'm_provinces.id')
-                    ->where('job_postings.job_status_id', '=', JobPosting::STATUS_RELEASE);
+                    ->where('job_postings.job_status_id', '=', JobPosting::STATUS_RELEASE)
+                    ->whereNull('deleted_at');
             })
             ->groupBy('m_provinces.id')
             ->get();
