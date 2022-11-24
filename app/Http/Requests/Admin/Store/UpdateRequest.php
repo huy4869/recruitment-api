@@ -34,7 +34,7 @@ class UpdateRequest extends FormRequest
             'tel' => ['required', 'string', new CheckPhoneNumber()],
             'postal_code' => ['nullable', 'numeric', 'digits:' . config('validate.zip_code_max_length')],
             'province_id' => ['required', 'numeric', 'exists:m_provinces,id'],
-            'province_city_id' => ['required', 'numeric', 'exists:m_provinces,id'],
+            'province_city_id' => ['required', 'numeric', 'exists:m_provinces_cities,id'],
             'address' => ['required', 'string'],
             'building' => ['nullable', 'string', 'max:' . $lengthText],
             'manager_name' => ['nullable', 'string', 'max:' . $lengthText],
