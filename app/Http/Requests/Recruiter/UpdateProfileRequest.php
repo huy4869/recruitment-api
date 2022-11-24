@@ -38,7 +38,7 @@ class UpdateProfileRequest extends FormRequest
                 'date_format:' . config('date.fe_date_work_history_format'),
                 'before_or_equal:' . Carbon::now()->format(config('date.fe_date_work_history_format')),
             ],
-            'capital_stock' => ['nullable', 'numeric', 'min:1'],
+            'capital_stock' => ['nullable', 'string', 'max:' . $lengthText],
             'manager_name' => ['nullable', 'string', 'max:' . $lengthText],
             'tel' => ['required', 'string', new CheckPhoneNumber()],
             'postal_code' => ['nullable', 'numeric', 'digits:' . config('validate.zip_code_max_length')],
