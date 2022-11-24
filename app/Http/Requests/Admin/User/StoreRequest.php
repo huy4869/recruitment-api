@@ -2,12 +2,10 @@
 
 namespace App\Http\Requests\Admin\User;
 
-use App\Models\User;
 use App\Rules\Admin\EmailUnique;
 use App\Rules\Email;
 use App\Rules\FuriUserNameRule;
 use App\Rules\Password;
-use App\Rules\User\UserUnique;
 use App\Services\Admin\User\UserService;
 use Illuminate\Foundation\Http\FormRequest;
 

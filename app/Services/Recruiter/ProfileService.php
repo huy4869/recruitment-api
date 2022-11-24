@@ -23,8 +23,6 @@ class ProfileService extends Service
      */
     public function updateInformation($data)
     {
-        $capitalStock = $data['capital_stock'] * config('common.capital_stock');
-
         return $this->user->update([
             'company_name' => $data['company_name'],
             'home_page_rescuiter' => $data['home_page_rescuiter'],
@@ -36,7 +34,7 @@ class ProfileService extends Service
             'alias_name' => $data['alias_name'],
             'employee_quantity' => $data['employee_quantity'],
             'founded_year' => str_replace('/', '', $data['founded_year']),
-            'capital_stock' => $capitalStock,
+            'capital_stock' => $data['capital_stock'],
             'manager_name' => $data['manager_name'],
             'line' => $data['line'],
             'facebook' => $data['facebook'],
