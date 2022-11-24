@@ -42,6 +42,11 @@ class Chat extends Model
         return $this->belongsTo(User::class, 'user_id');
     }
 
+    public function userTrashed()
+    {
+        return $this->belongsTo(User::class, 'user_id')->withTrashed();
+    }
+
     /**
      * @return BelongsTo
      */
