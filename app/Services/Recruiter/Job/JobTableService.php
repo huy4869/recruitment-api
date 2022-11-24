@@ -37,6 +37,7 @@ class JobTableService extends TableService
         'gender_ids' => 'filterTypes',
         'job_name' => 'filterJobName',
         'store_name' => 'filterStoreName',
+        'store_id' => 'filterTypes',
     ];
 
     /**
@@ -202,7 +203,9 @@ class JobTableService extends TableService
             job_postings.gender_ids,
             job_postings.feature_ids,
             job_postings.experience_ids,
+            job_postings.created_at,
             job_postings.updated_at,
+            job_postings.released_at,
             stores.name as store_name';
     }
 }
