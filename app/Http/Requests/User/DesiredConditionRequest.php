@@ -4,6 +4,7 @@ namespace App\Http\Requests\User;
 
 use App\Models\MJobType;
 use App\Models\MWorkType;
+use App\Rules\User\CheckSalaryRule;
 use App\Services\User\DesiredConditionService;
 use App\Services\User\WorkHistoryService;
 use Illuminate\Foundation\Http\FormRequest;
@@ -40,8 +41,8 @@ class DesiredConditionRequest extends FormRequest
             'work_type_ids.*' => ['integer', 'in:' . implode(',', $workTypeIds)],
             'age_id' => ['nullable', 'numeric', 'in:' . implode(',', $ageType)],
             'salary_type_id' => ['nullable', 'numeric', 'exists:m_salary_types,id'],
-            'salary_min' => ['nullable', 'numeric', 'between:1,' . config('validate.salary_max')],
-            'salary_max' => ['nullable', 'required_with:salary_min', 'numeric', 'gt:salary_min', 'between:1,' . config('validate.salary_max')],
+            'salary_min' => ['nullable', 'numeric', 'between:0,' . config('validate.salary_max_value')],
+            'salary_max' => ['nullable', 'numeric', 'between:0,' . config('validate.salary_max_value'), new CheckSalaryRule()],
             'job_type_ids' => ['nullable', 'array'],
             'job_type_ids.*' => ['integer', 'in:' . implode(',', $jobTypeIds)],
             'job_experience_ids' => ['nullable', 'array'],
@@ -65,7 +66,6 @@ class DesiredConditionRequest extends FormRequest
             'salary_min.numeric' => trans('validation.COM.004', ['attribute' => trans('validation.attributes.salary_min')]),
             'salary_max.between' => trans('validation.COM.017', ['attribute' => trans('validation.attributes.salary_max')]),
             'salary_max.numeric' => trans('validation.COM.004', ['attribute' => trans('validation.attributes.salary_max')]),
-            'salary_max.gt' => trans('validation.ERR.044'),
             'start_working_time.required_with' => trans('validation.COM.022'),
             'end_working_time.required_with' => trans('validation.COM.023'),
             'end_working_time.after_or_equal' => trans('validation.COM.021'),

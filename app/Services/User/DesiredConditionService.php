@@ -64,7 +64,7 @@ class DesiredConditionService extends Service
     {
         $dataObject = $object->whereIn('id', $data)->get()->pluck('name')->toArray();
 
-        return count($dataObject) == 1 ? $dataObject[0] : implode(', ', $dataObject);
+        return count($dataObject) == 1 ? $dataObject[0] : implode('、', $dataObject);
     }
 
     /**

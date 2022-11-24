@@ -17,7 +17,6 @@ class DesiredConditionResource extends JsonResource
     public function toArray($request)
     {
         $data = $this->resource;
-        $expectedSalary = '';
         $startHoursWorking = '';
         $salaryMin = @$data['salary_min'];
         $salaryMax = @$data['salary_max'];
@@ -25,16 +24,22 @@ class DesiredConditionResource extends JsonResource
         $startWorkingMinutes = substr($data['start_working_time'], 2);
         $endWorkingHours = substr($data['end_working_time'], 0, 2);
         $endWorkingMinutes = substr($data['end_working_time'], 2);
-        $salaryTypeName = @$data['salary_type']['name'];
+        $salaryTypeName = @$data['salaryType']['name'];
 
-        if ($salaryMin && $salaryMax) {
-            $expectedSalary = sprintf('%s ~ %s%s', $salaryMin, $salaryMax, $salaryTypeName);
+        if ($salaryMin && !$salaryMax) {
+            $expectedSalary = sprintf('%s～%s', $salaryMin, $salaryTypeName);
+        } elseif (!$salaryMin && $salaryMax) {
+            $expectedSalary = sprintf('～%s%s', $salaryMax, $salaryTypeName);
+        } elseif ($salaryMin && $salaryMax) {
+            $expectedSalary = sprintf('%s～%s%s', $salaryMin, $salaryMax, $salaryTypeName);
+        } else {
+            $expectedSalary = '';
         }
 
         if ($data['start_working_time'] && $data['end_working_time']) {
             $startWorkingTimes = $startWorkingHours . ':' . $startWorkingMinutes;
             $endWorkingTimes = $endWorkingHours . ':' . $endWorkingMinutes;
-            $startHoursWorking = $startWorkingTimes . ' ~ ' . $endWorkingTimes;
+            $startHoursWorking = $startWorkingTimes . '～' . $endWorkingTimes;
         }
 
         return [
