@@ -69,8 +69,9 @@ class JobController extends Controller
      */
     public function update($id, CreateRequest $request)
     {
+        $admin = $this->guard()->user();
         $inputs = self::makeRequestData($request);
-        $job = JobService::getInstance()->update($id, $inputs);
+        $job = JobService::getInstance()->withUser($admin)->update($id, $inputs);
 
         switch ($job->job_status_id) {
             case JobPosting::STATUS_DRAFT:
