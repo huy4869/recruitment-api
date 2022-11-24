@@ -77,8 +77,10 @@ class DetailJobPostingResource extends JsonResource
             'genders' =>  $this['genders'],
             'postal_code' => $this['postal_code'],
             'address' => [
+                'province_id' => $this['province_id'],
                 'province' => $this['province'],
-                'district' => $this['district'],
+                'province_city_id' => $this['province_city_id'],
+                'province_city' => $this['province_city'],
                 'address' => $this['address'],
                 'building' => $this['building'],
             ],
