@@ -2,9 +2,8 @@
 
 namespace App\Http\Requests\User;
 
+use App\Rules\CheckPhoneNumber;
 use App\Rules\Email;
-use App\Rules\PhoneFirstChar;
-use App\Rules\PhoneJapan;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ContactRequest extends FormRequest
@@ -26,6 +25,12 @@ class ContactRequest extends FormRequest
      */
     public function rules()
     {
+        if (auth()->user()) {
+            return [
+                'content' => 'required|string|max:' . config('validate.text_max_length')
+            ];
+        }
+
         return [
             'email' => [
                 'required',
@@ -36,8 +41,7 @@ class ContactRequest extends FormRequest
             'name' => 'required|string|max:' . config('validate.string_max_length'),
             'tel' => [
                 'required',
-                new PhoneFirstChar(),
-                new PhoneJapan(),
+                new CheckPhoneNumber(),
                 'min:' . config('validate.phone_min_length'),
                 'max:' . config('validate.phone_max_length'),
             ],

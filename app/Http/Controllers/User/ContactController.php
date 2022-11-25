@@ -20,7 +20,8 @@ class ContactController extends Controller
     public function store(ContactRequest $request)
     {
         $user = $this->guard()->user() ?? null;
-        $inputs = $request->only(['email', 'name', 'tel', 'content']);
+        $inputs = $request->only($user ? ['content'] : ['email', 'name', 'tel', 'content']);
+
         $data = ContactService::getInstance()->withUser($user)->store($inputs);
 
         return $this->sendSuccessResponse(new ContactResource($data), trans('validation.INF.008'));
