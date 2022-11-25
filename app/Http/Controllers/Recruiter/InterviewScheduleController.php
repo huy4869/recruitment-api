@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Recruiter;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Recruiter\InterviewScheduleDateRequest;
 use App\Http\Requests\Recruiter\InterviewScheduleRequest;
 use App\Http\Requests\Recruiter\ListInterviewScheduleRequest;
 use App\Services\Recruiter\InterviewScheduleService;
@@ -53,5 +54,17 @@ class InterviewScheduleController extends Controller
         $this->interviewScheduleService->withUser($recruiter)->updateOrCreateInterviewSchedule($request->all());
 
         return $this->sendSuccessResponse([], trans('validation.INF.016'));
+    }
+
+    /**
+     * @param InterviewScheduleDateRequest $request
+     * @return JsonResponse
+     */
+    public function updateOrCreateInterviewScheduleDate(InterviewScheduleDateRequest $request)
+    {
+        $recruiter = $this->guard()->user();
+        $data = $this->interviewScheduleService->withUser($recruiter)->updateOrCreateInterviewScheduleDate($request->get('date'));
+
+        return $this->sendSuccessResponse($data, trans('validation.INF.016'));
     }
 }
