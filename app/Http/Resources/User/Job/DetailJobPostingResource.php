@@ -94,7 +94,7 @@ class DetailJobPostingResource extends JsonResource
                     'id' => $application['interviews']['id'],
                     'name' => $application['interviews']['name'],
                 ],
-                'date' => DateTimeHelper::formatDateDayOfWeekTimeJa($application['date']),
+                'date' => DateTimeHelper::formatDateDayOfWeekJa($application['date']) . $application['hours'],
                 'interview_approaches' => [
                     'id' => $application['interview_approach_id'],
                     'method' => $application['interview_approach']['name'],
