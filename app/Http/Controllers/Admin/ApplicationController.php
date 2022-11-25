@@ -40,6 +40,10 @@ class ApplicationController extends Controller
         $inputs = $request->only([
             'interview_status_id',
             'owner_memo',
+            'date',
+            'hours',
+            'interview_approach_id',
+            'note',
         ]);
         $result = ApplicationService::getInstance()->withUser($admin)->update($id, $inputs);
 
