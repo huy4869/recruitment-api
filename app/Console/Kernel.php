@@ -9,6 +9,7 @@ class Kernel extends ConsoleKernel
 {
     public const NOTIFY_USER_INTERVIEW = 'notify_user:interview';
     public const MAKE_USER_JOB_DESIRED_MATCH = 'command:make_user_job_desired_match';
+    public const NOTIFY_WAIT_INTERVIEW_LIMIT_DATE = 'command:wait_interview_limit_date';
 
     /**
      * Define the application's command schedule.
@@ -20,6 +21,8 @@ class Kernel extends ConsoleKernel
     {
          $schedule->command(self::NOTIFY_USER_INTERVIEW)
              ->dailyAt(config('schedule.notify_user_interview'));
+         $schedule->command(self::NOTIFY_WAIT_INTERVIEW_LIMIT_DATE)
+             ->dailyAt(config('schedule.notify_rec_wait_interview_limit_date'));
 
          $schedule->command(self::MAKE_USER_JOB_DESIRED_MATCH)->everyFifteenMinutes();
     }
