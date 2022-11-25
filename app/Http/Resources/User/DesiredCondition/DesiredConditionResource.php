@@ -27,11 +27,11 @@ class DesiredConditionResource extends JsonResource
         $salaryTypeName = @$data['salaryType']['name'];
 
         if ($salaryMin && !$salaryMax) {
-            $expectedSalary = sprintf('%s～%s', $salaryMin, $salaryTypeName);
+            $expectedSalary = sprintf('%s ～ %s', $salaryMin, $salaryTypeName);
         } elseif (!$salaryMin && $salaryMax) {
-            $expectedSalary = sprintf('～%s%s', $salaryMax, $salaryTypeName);
+            $expectedSalary = sprintf('～ %s%s', $salaryMax, $salaryTypeName);
         } elseif ($salaryMin && $salaryMax) {
-            $expectedSalary = sprintf('%s～%s%s', $salaryMin, $salaryMax, $salaryTypeName);
+            $expectedSalary = sprintf('%s ～ %s%s', $salaryMin, $salaryMax, $salaryTypeName);
         } else {
             $expectedSalary = '';
         }
@@ -39,7 +39,7 @@ class DesiredConditionResource extends JsonResource
         if ($data['start_working_time'] && $data['end_working_time']) {
             $startWorkingTimes = $startWorkingHours . ':' . $startWorkingMinutes;
             $endWorkingTimes = $endWorkingHours . ':' . $endWorkingMinutes;
-            $startHoursWorking = $startWorkingTimes . '～' . $endWorkingTimes;
+            $startHoursWorking = $startWorkingTimes . ' ～ ' . $endWorkingTimes;
         }
 
         return [

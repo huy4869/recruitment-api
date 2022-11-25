@@ -25,7 +25,7 @@ class LearningHistoryResource extends JsonResource
         $enrollmentPeriodYearEnd = substr($data->enrollment_period_end, 0, 4);
         $enrollmentPeriodMonthEnd = substr($data->enrollment_period_end, 4);
         $enrollmentPeriodEnd = DateTimeHelper::formatNameDateHalfJa($enrollmentPeriodYearEnd, $enrollmentPeriodMonthEnd);
-        $EnrollmentPeriod = sprintf('%s～%s（%s）', $enrollmentPeriodStart, $enrollmentPeriodEnd, $learningStatusName);
+        $EnrollmentPeriod = sprintf('%s ～ %s（%s）', $enrollmentPeriodStart, $enrollmentPeriodEnd, $learningStatusName);
 
         return [
             'id' => $data->id,

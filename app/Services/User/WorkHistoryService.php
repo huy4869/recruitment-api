@@ -58,7 +58,7 @@ class WorkHistoryService extends Service
             return isset($values[$x]) ? $values[$x] : '';
         }, $keys);
 
-        return count($arrayValue) == 1 ? $arrayValue[0] : implode(', ', $arrayValue);
+        return count($arrayValue) == 1 ? $arrayValue[0] : implode('、', $arrayValue);
     }
 
     /**

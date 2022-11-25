@@ -88,7 +88,7 @@ class UserProfileService extends Service
             $learningHistories[] = [
                 'school_name' => $learningHistory->school_name,
                 'time_start_end' => sprintf(
-                    '%s ~ %s(%s)',
+                    '%s ～ %s(%s)',
                     DateTimeHelper::formatMonthYear($learningHistory->enrollment_period_start),
                     DateTimeHelper::formatMonthYear($learningHistory->enrollment_period_end),
                     $learningHistory->learningStatus->name,
