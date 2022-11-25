@@ -30,7 +30,6 @@ class ContactRequest extends FormRequest
             'email' => [
                 'required',
                 'string',
-                'email',
                 new Email(),
                 'max:' . config('validate.string_max_length')
             ],

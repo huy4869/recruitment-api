@@ -27,7 +27,7 @@ class RegisterRequest extends FormRequest
     public function rules()
     {
         return [
-            'email' => ['required', 'string', 'email', new Email(), 'max:' . config('validate.email_max_length'), new UserUnique()],
+            'email' => ['required', 'string', new Email(), 'max:' . config('validate.email_max_length'), new UserUnique()],
             'password' => ['required', new Password(), 'min:' . config('validate.password_min_length'), 'max:' . config('validate.password_max_length')],
             'password_confirmation' => ['required', 'same:password'],
 
