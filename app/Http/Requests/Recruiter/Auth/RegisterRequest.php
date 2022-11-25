@@ -30,7 +30,6 @@ class RegisterRequest extends FormRequest
             'email' => [
                 'required',
                 'string',
-                'email',
                 new Email(),
                 'max:' . config('validate.email_max_length'),
                 new RecruiterUnique(),

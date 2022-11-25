@@ -40,7 +40,6 @@ class UserUpdateRequest extends FormRequest
             'age' => ['nullable', 'numeric'],
             'gender_id' => ['required', 'in:' . implode(',', $gender)],
             'tel' => ['required', 'string', new CheckPhoneNumber()],
-            'email' => ['required', 'email', 'string', 'max:' . config('validate.email_max_length')],
             'line' => ['nullable', 'string', 'max:' . $stringMaxLength],
             'facebook' => ['nullable', 'string', 'max:' . $stringMaxLength],
             'instagram' => ['nullable', 'string', 'max:' . $stringMaxLength],

@@ -33,7 +33,6 @@ class ContactRequest extends FormRequest
             'email' => [
                 'nullable',
                 'string',
-                'email',
                 new Email(),
                 'max:' . config('validate.string_max_length')
             ],
