@@ -7,6 +7,7 @@ use App\Helpers\FileHelper;
 use App\Helpers\JobHelper;
 use App\Models\Image;
 use App\Models\JobPosting;
+use App\Models\MInterviewStatus;
 use App\Models\MJobStatus;
 use App\Models\MJobType;
 use App\Models\MSalaryType;
@@ -74,8 +75,9 @@ class JobService extends Service
      */
     public function update($id, $data)
     {
-        if (count($data['job_thumbnails']) > self::MAX_DETAIL_IMAGE
-            || count($data['station_ids']) > self::MAX_STATIONS
+        if (
+            (isset($data['job_thumbnails']) && count($data['job_thumbnails']) > self::MAX_DETAIL_IMAGE)
+            || (isset($data['station_ids']) && count($data['station_ids']) > self::MAX_STATIONS)
         ) {
             throw new InputException(trans('response.invalid'));
         }
@@ -127,13 +129,16 @@ class JobService extends Service
         try {
             DB::beginTransaction();
 
-            $job->applications()->delete();
-            $job->applicationUserWorkHistory()->delete();
-            $job->applicationUserLearningHistory()->delete();
-            $job->favoriteJobs()->delete();
-            $job->feedbacks()->delete();
-            $job->userJobDesiredMatch()->delete();
-            $job->images()->delete();
+            $job->applications()?->whereIn('interview_status_id', [
+                MInterviewStatus::STATUS_APPLYING,
+                MInterviewStatus::STATUS_WAITING_INTERVIEW,
+                MInterviewStatus::STATUS_WAITING_RESULT
+            ])->update([
+                'interview_status_id' => MInterviewStatus::STATUS_REJECTED
+            ]);
+            $job->feedbacks()?->delete();
+            $job->userJobDesiredMatch()?->delete();
+            $job->images()?->delete();
             $job->delete();
 
             DB::commit();

@@ -251,18 +251,18 @@ class JobService extends Service
         $userId = $this->user->id;
         $favoriteJob = FavoriteJob::where('favorite_jobs.user_id', $this->user->id)
             ->with([
-                'jobPosting',
-                'jobPosting.applications' => function ($query) use ($userId) {
+                'jobPostingTrashed',
+                'jobPostingTrashed.applications' => function ($query) use ($userId) {
                     $query->where('user_id', $userId)
                         ->orWhere('user_id', '=', null);
                 },
-                'jobPosting.applications.interviews',
-                'jobPosting.store',
-                'jobPosting.provinceCity',
-                'jobPosting.province',
-                'jobPosting.province.provinceDistrict',
-                'jobPosting.salaryType',
-                'jobPosting.bannerImage'
+                'jobPostingTrashed.applications.interviews',
+                'jobPostingTrashed.store',
+                'jobPostingTrashed.provinceCity',
+                'jobPostingTrashed.province',
+                'jobPostingTrashed.province.provinceDistrict',
+                'jobPostingTrashed.salaryType',
+                'jobPostingTrashed.bannerImage'
             ])
             ->orderByDesc('id')
             ->paginate($perPage);
@@ -295,7 +295,7 @@ class JobService extends Service
      */
     public static function addFormatFavoriteJsonData($favoriteJob, $masterData)
     {
-        $jobPosting = $favoriteJob->jobPosting;
+        $jobPosting = $favoriteJob->jobPostingTrashed;
         $workTypes = JobHelper::getTypeName($jobPosting->work_type_ids, $masterData['masterWorkTypes']);
         $jobTypes = JobHelper::getTypeName($jobPosting->job_type_ids, $masterData['masterJobTypes']);
 
