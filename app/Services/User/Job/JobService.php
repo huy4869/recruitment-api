@@ -880,7 +880,7 @@ class JobService extends Service
         $application = Application::query()
             ->where('user_id', '=', $user->id)
             ->where('job_posting_id', '=', $jobPosting->id)
-            ->exists();
+            ->first();
 
         if ($application) {
             throw new InputException(trans('response.not_found'));
