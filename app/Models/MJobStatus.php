@@ -12,7 +12,7 @@ class MJobStatus extends Model
     /**
      * @var string
      */
-    protected $table = 'm_job_feature_categories';
+    protected $table = 'm_job_statuses';
 
     /**
      * @var string[]
