@@ -880,7 +880,7 @@ class JobService extends Service
         $application = Application::query()
             ->where('user_id', '=', $user->id)
             ->where('job_posting_id', '=', $jobPosting->id)
-            ->first();
+            ->exists();
 
         if ($application) {
             throw new InputException(trans('response.not_found'));
@@ -898,12 +898,11 @@ class JobService extends Service
             throw new InputException(trans('validation.ERR.036'));
         }
 
-        $storeIds = $application->store->owner->stores->pluck('id')->toArray();
+        $storeIds = $jobPosting->store->owner->stores->pluck('id')->toArray();
         $recruiterInterviewApplications = Application::query()
             ->whereIn('store_id', $storeIds)
             ->where('date', '=', $date . ' 00:00:00')
             ->where('hours', '=', $hours)
-            ->where('id', '!=', $application->id)
             ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW])
             ->exists();
 
@@ -913,11 +912,13 @@ class JobService extends Service
 
         $month = Carbon::parse($data['date'])->firstOfMonth()->format('Y-m-d');
         $recruiterOffTimes = $jobPosting->store->owner->recruiterOffTimes->off_times ?? [];
-        $recruiterOffTimes = $recruiterOffTimes[$month];
-        $dataHours = preg_grep('/' . $date . '/i', $recruiterOffTimes);
 
-        if (isset($dataHours[$date . ' ' . $hours])) {
-            throw new InputException(trans('validation.ERR.036'));
+        if (isset($recruiterOffTimes[$month])) {
+            $dataHours = preg_grep('/' . $date . '/i', $recruiterOffTimes[$month]);
+
+            if (isset($dataHours[$date . ' ' . $hours])) {
+                throw new InputException(trans('validation.ERR.036'));
+            }
         }
 
         return $jobPosting;
