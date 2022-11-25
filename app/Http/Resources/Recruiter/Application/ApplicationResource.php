@@ -19,6 +19,8 @@ class ApplicationResource extends JsonResource
      */
     public function toArray($request)
     {
+        $user = $this->applicationUser;
+
         return [
             'id' => $this->id,
             'interview' => [
@@ -31,12 +33,12 @@ class ApplicationResource extends JsonResource
             ],
             'user' => [
                 'id' => $this->user_id,
-                'avatar_banner' => FileHelper::getFullUrl(@$this->applicationUser->avatarBanner->url),
-                'first_name' => $this->first_name,
-                'last_name' => $this->last_name,
-                'furi_first_name' => $this->furi_first_name,
-                'furi_last_name' => $this->furi_last_name,
-                'age' => $this->age,
+                'avatar_banner' => FileHelper::getFullUrl(@$user->applicationUser->avatarBanner->url),
+                'first_name' => $user->first_name,
+                'last_name' => $user->last_name,
+                'furi_first_name' => $user->furi_first_name,
+                'furi_last_name' => $user->furi_last_name,
+                'age' => $user->age,
             ],
             'be_read' => in_array($this->id, Auth::user()->be_read_applications ?? []),
             'created_at' => DateTimeHelper::formatDateDayOfWeekJa($this->created_at),
