@@ -392,9 +392,9 @@ class DateTimeHelper
     public static function formatDateStartEnd($dateStart, $dateEnd)
     {
         if ($dateEnd) {
-            return sprintf('%s ~ %s', self::formatMonthYear($dateStart), self::formatMonthYear($dateEnd));
+            return sprintf('%s ～ %s', self::formatMonthYear($dateStart), self::formatMonthYear($dateEnd));
         }
 
-        return sprintf('%s ~ %s', self::formatMonthYear($dateStart), trans('common.now'));
+        return sprintf('%s ～ %s', self::formatMonthYear($dateStart), trans('common.now'));
     }
 }
