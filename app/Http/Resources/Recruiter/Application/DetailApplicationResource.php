@@ -29,7 +29,7 @@ class DetailApplicationResource extends JsonResource
                 'avatar_detail' => DetailAvatarResource::collection($user->avatarDetails),
                 'birthday' => DateTimeHelper::formatDateJa($user->birthday),
                 'age' => $user->age,
-                'gender' => $user->gender->name,
+                'gender' => @$user->gender->name,
                 'tel' => $user->tel,
                 'email' => $user->email,
                 'postal_code' => $user->postal_code,

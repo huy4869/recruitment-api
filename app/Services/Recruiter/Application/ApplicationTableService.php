@@ -129,6 +129,7 @@ class ApplicationTableService extends TableService
             ->join('job_postings', 'job_posting_id', '=', 'job_postings.id')
             ->with([
                 'interviews',
+                'applicationUser',
                 'applicationUser.avatarBanner'
             ])
             ->whereIn('job_posting_id', $jobIds)
