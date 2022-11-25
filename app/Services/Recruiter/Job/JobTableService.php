@@ -141,11 +141,11 @@ class JobTableService extends TableService
                 $query->where($filterItem['key'], '<=', $filterItem['data']);
             } elseif (in_array($filterItem['key'], $provinceKey)) {
                 $types = json_decode($filterItem['data']);
-                $query->where($filterItem['key'], $types[self::FIRST_ARRAY]);
+                $query->where('job_postings.' . $filterItem['key'], $types[self::FIRST_ARRAY]);
                 unset($types[self::FIRST_ARRAY]);
 
                 foreach ($types as $type) {
-                    $query->orWhere($filterItem['key'], $type);
+                    $query->orWhere('job_postings.' . $filterItem['key'], $type);
                 }
             } else {
                 $query->where($filterItem['key'], $filterItem['data']);

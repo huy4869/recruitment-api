@@ -9,6 +9,7 @@ use App\Models\MWorkType;
 use App\Models\User;
 use App\Services\TableService;
 use App\Services\User\Job\JobService;
+use Illuminate\Support\Facades\DB;
 
 class UserTableService extends TableService
 {
@@ -28,6 +29,7 @@ class UserTableService extends TableService
         'salary_max' => 'filterTypes',
         'province_id' => 'filterTypes',
         'province_city_id' => 'filterTypes',
+        'list_type' => 'filterListType'
     ];
 
     /**
@@ -106,6 +108,26 @@ class UserTableService extends TableService
                 }//end if
             }//end foreach
         });
+
+        return $query;
+    }
+
+    protected function filterListType($query, $filter)
+    {
+        if (isset($filter['data'])) {
+            $mode = $filter['data'];
+
+            if ($mode == 'recommend_users') {
+                $jobOwnedIds = auth()->user()->jobsOwned()->pluck('job_postings.id')->toArray();
+
+                $query->select('users.*', DB::raw('sum(suitability_point) as point'))
+                    ->leftJoin('user_job_desired_matches', 'users.id', '=', 'user_id')
+                    ->whereIn('user_job_desired_matches.job_id', $jobOwnedIds)
+                    ->groupBy('user_id')
+                    ->orderBy('point', 'DESC')
+                    ->orderBy('last_login_at', 'DESC');
+            }
+        }
 
         return $query;
     }
