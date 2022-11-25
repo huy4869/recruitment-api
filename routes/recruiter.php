@@ -84,6 +84,7 @@ Route::group(['as' => 'chats.', 'prefix' => 'chats', 'middleware' => 'recruiter'
 Route::group(['as' => 'interview-schedule.', 'prefix' => 'interview-schedule', 'middleware' => 'recruiter'], function () {
     Route::get('/', 'InterviewScheduleController@getInterviewSchedule')->name('getInterviewSchedule');
     Route::post('/', 'InterviewScheduleController@updateOrCreateInterviewSchedule')->name('updateOrCreateInterviewSchedule');
+    Route::post('/update-date', 'InterviewScheduleController@updateOrCreateInterviewScheduleDate')->name('updateOrCreateInterviewScheduleDate');
 });
 
 Route::group(['as' => 'notifications.', 'prefix' => 'notifications', 'middleware' => 'recruiter'], function () {

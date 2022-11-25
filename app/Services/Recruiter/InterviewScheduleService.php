@@ -274,4 +274,79 @@ class InterviewScheduleService extends Service
 
         return $recruiterOffTime->update(['off_times' => $dataOffTimes]);
     }
+
+    /**
+     * update
+     *
+     * @param $date
+     * @return mixed
+     */
+    public function updateOrCreateInterviewScheduleDate($date)
+    {
+        $storeIds = $this->user->stores->pluck('id')->toArray();
+        $firstMonth = Carbon::parse($date)->firstOfMonth()->format('Y-m-d');
+
+        $hours = Application::query()
+            ->whereIn('store_id', $storeIds)
+            ->whereDate('date', $date . ' 00:00:00')
+            ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW])
+            ->get()->pluck('hours')->toArray();
+
+        $recruiterOffTimes = $this->user->recruiterOffTimes->off_times;
+        $defaultHours = config('date.time');
+
+        if ($date == now()->format('Y-m-d')) {
+            $currentHour = DateTimeHelper::getTime();
+
+            foreach ($defaultHours as $key => $hour) {
+                if ($currentHour > $hour) {
+                    unset($defaultHours[$key]);
+                }
+            }
+        }
+
+        $defaultHours = array_diff($defaultHours, $hours);
+
+        if (isset($recruiterOffTimes[$firstMonth])) {
+            $dateHoursRecs = preg_grep('/' . $date . '/i', $recruiterOffTimes[$firstMonth]);
+
+            if (!$dateHoursRecs) {
+                foreach ($defaultHours as $hour) {
+                    $dateTime = $date . ' ' . $hour;
+                    $recruiterOffTimes[$firstMonth][$dateTime] = $dateTime;
+                }
+            } else {
+                $hoursRecOffTimes = [];
+                foreach ($dateHoursRecs as $dateHour) {
+                    $hoursRecOffTimes[] = explode(' ', $dateHour)[1];
+                }
+
+                $defaultHours = array_diff($defaultHours, $hoursRecOffTimes);
+
+                if ($defaultHours) {
+                    foreach ($defaultHours as $hour) {
+                        $dateTime = $date . ' ' . $hour;
+                        $recruiterOffTimes[$firstMonth][$dateTime] = $dateTime;
+                    }
+                } else {
+                    foreach ($dateHoursRecs as $dateHoursRec) {
+                        unset($recruiterOffTimes[$firstMonth][$dateHoursRec]);
+                    }
+                }
+            }
+        } else {
+            $dateTimes = [];
+
+            foreach ($defaultHours as $hour) {
+                $dateTime = $date . ' ' . $hour;
+                $dateTimes[$dateTime] = $dateTime;
+            }
+
+            $recruiterOffTimes = array_merge([
+                $firstMonth => $dateTimes
+            ], $recruiterOffTimes);
+        }
+
+        return $this->user->recruiterOffTimes->update(['off_times' => $recruiterOffTimes]);
+    }
 }
