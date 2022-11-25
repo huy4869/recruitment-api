@@ -183,6 +183,8 @@ class ApplicationService extends Service
             throw new InputException(trans('response.not_found'));
         }
 
+        $data['update_times'] = now();
+
         try {
             DB::beginTransaction();
 

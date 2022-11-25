@@ -447,7 +447,6 @@ class ApplicationService extends Service
             'date' => $data['date'],
             'hours' => $data['hours'],
             'note' => $data['note'],
-            'update_times' => now(),
         ];
     }
 }
