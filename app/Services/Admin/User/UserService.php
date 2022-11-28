@@ -344,9 +344,9 @@ class UserService extends Service
                         'year' => substr($workHistory->period_end, 0, 4),
                     ]
                 ],
-                'job_type' => $workHistory->jobType->name,
+                'job_type' => @$workHistory->jobType->name,
                 'positionOffices' => JobHelper::getTypeName($workHistory->position_office_ids, $masterData['masterPositionOffice']),
-                'work_type' => $workHistory->workType->name,
+                'work_type' => @$workHistory->workType->name,
             ];
         }//end foreach
 

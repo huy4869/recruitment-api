@@ -284,9 +284,9 @@ class ApplicationService extends Service
                 'business_content' => $workHistory->business_content,
                 'experience_accumulation' => $workHistory->experience_accumulation,
                 'work_time' => DateTimeHelper::formatDateStartEnd($workHistory->period_start, $workHistory->period_end),
-                'job_types' => $workHistory->jobType->name,
+                'job_types' => @$workHistory->jobType->name,
                 'positionOffices' => JobHelper::getTypeName($workHistory->position_office_ids, $masterData['masterPositionOffice']),
-                'work_type' => $workHistory->workType->name,
+                'work_type' => @$workHistory->workType->name,
             ];
         }
 
@@ -340,7 +340,6 @@ class ApplicationService extends Service
             'alias_name' => $applicationUser->alias_name,
             'age' => $applicationUser->age,
             'user_address' => [
-                'full_address' => $fullAddress,
                 'postal_code' => $applicationUser->postal_code,
                 'province_id' => $applicationUser->province_id,
                 'province_name' => @$applicationUser->province->name,
@@ -364,6 +363,7 @@ class ApplicationService extends Service
                 'favorite_skill' => $applicationUser->favorite_skill,
                 'experience_knowledge' => $applicationUser->experience_knowledge,
                 'self_pr' => $applicationUser->self_pr,
+                'skills' => UserHelper::getSkillUser($applicationUser->skills),
             ],
             'user_learning_histories' => $applicationLearningHistories,
             'user_licenses_qualifications' => $applicationLicensesQualifications,

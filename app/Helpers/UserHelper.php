@@ -91,4 +91,20 @@ class UserHelper
             'masterPositionOffice' => $masterPositionOffice,
         ];
     }
+
+    public static function getSkillUser($skills)
+    {
+        $skillUser = [];
+        $dataSkill = config('user.skill_types');
+
+        foreach ($skills as $skill) {
+            $skillUser[] = [
+                'type' => $skill['type'],
+                'name' => $dataSkill[$skill['type']]['name'],
+                'level' => $skill['level'],
+            ];
+        }
+
+        return $skillUser;
+    }
 }

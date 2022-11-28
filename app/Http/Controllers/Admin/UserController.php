@@ -163,7 +163,8 @@ class UserController extends Controller
         $input = $request->only([
             'favorite_skill',
             'experience_knowledge',
-            'self_pr'
+            'self_pr',
+            'skills',
         ]);
 
         $data = UserService::getInstance()->updatePr($input, $userId);

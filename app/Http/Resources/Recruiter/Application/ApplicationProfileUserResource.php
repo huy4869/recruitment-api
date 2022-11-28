@@ -4,6 +4,7 @@ namespace App\Http\Resources\Recruiter\Application;
 
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
+use App\Helpers\UserHelper;
 use App\Http\Resources\Recruiter\MultipleImageResoure;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -28,7 +29,6 @@ class ApplicationProfileUserResource extends JsonResource
             'alias_name' => @$this['application_user']['alias_name'],
             'age' => @$this['application_user']['age'],
             'user_address' => [
-                'full_address' => $this['full_address'],
                 'postal_code' => @$this['application_user']['postal_code'],
                 'province_name' => $this['province'],
                 'province_city_name' => $this['province_city_name'],
@@ -49,6 +49,7 @@ class ApplicationProfileUserResource extends JsonResource
                 'favorite_skill' => @$this['application_user']['favorite_skill'],
                 'experience_knowledge' => @$this['application_user']['experience_knowledge'],
                 'self_pr' => @$this['application_user']['self_pr'],
+                'skills' => UserHelper::getSkillUser(@$this['application_user']['skills']),
             ],
             'user_learning_histories' => $this['applicationLearningHistories'],
             'user_licenses_qualifications' => $this['applicationLicensesQualifications'],

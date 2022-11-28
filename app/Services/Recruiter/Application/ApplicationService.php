@@ -98,7 +98,7 @@ class ApplicationService extends Service
 
         return array_merge($application->toArray(), [
             'avatar_banner' => FileHelper::getFullUrl($application->applicationUser->avatarBanner->url ?? null),
-            'avatar_details' => $application->applicationUser->avatarDetails,
+            'avatar_details' => $application->applicationUser->avatarDetails ?? [],
             'last_login_at' => $application->user->last_login_at,
             'province' => $application->applicationUser->province->name ?? null,
             'province_city_name' => $application->applicationUser->provinceCity->name ?? null,

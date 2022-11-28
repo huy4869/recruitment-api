@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\User;
 
+use App\Helpers\UserHelper;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -23,7 +24,7 @@ class InformationPrResource extends JsonResource
             'favorite_skill' => $data->favorite_skill,
             'experience_knowledge' => $data->experience_knowledge,
             'self_pr' => $data->self_pr,
-            'skills' => $data->skills,
+            'skills' => UserHelper::getSkillUser($data->skills),
         ];
     }
 }
