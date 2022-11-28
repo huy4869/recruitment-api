@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin;
 
+use App\Rules\LevelSkillRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdatePrRequest extends FormRequest
@@ -29,6 +30,7 @@ class UpdatePrRequest extends FormRequest
             'favorite_skill' => ['nullable', 'string', 'max:' . $textMaxLength],
             'experience_knowledge' => ['nullable', 'string', 'max:' . $textMaxLength],
             'self_pr' => ['nullable', 'string', 'max:' . $textMaxLength],
+            'skills' => ['nullable', 'array', new LevelSkillRule()],
         ];
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Recruiter;
 
 use App\Helpers\DateTimeHelper;
+use App\Helpers\UserHelper;
 use App\Http\Resources\Recruiter\Job\DetailImageResource;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -47,6 +48,7 @@ class ProfileUserResource extends JsonResource
                 'favorite_skill' => $this['favorite_skill'],
                 'experience_knowledge' => $this['experience_knowledge'],
                 'self_pr' => $this['self_pr'],
+                'skills' => UserHelper::getSkillUser($this['skills']),
             ],
             'user_learning_histories' => $this['user_learning_histories'],
             'user_licenses_qualifications' => $this['user_licenses_qualifications'],

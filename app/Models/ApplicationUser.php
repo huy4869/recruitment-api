@@ -48,6 +48,11 @@ class ApplicationUser extends Model
         'self_pr',
         'motivation',
         'noteworthy',
+        'skills',
+    ];
+
+    protected $casts = [
+        'skills' => 'array',
     ];
 
     public function user()
