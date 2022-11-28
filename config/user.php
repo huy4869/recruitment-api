@@ -54,10 +54,10 @@ return [
         ]
     ],
     'default_skills' => [
-        ['skill' => '1', 'level' => '1'],
-        ['skill' => '2', 'level' => '1'],
-        ['skill' => '3', 'level' => '1'],
-        ['skill' => '4', 'level' => '1'],
-        ['skill' => '5', 'level' => '1'],
+        ['type' => '1', 'name' => 'カット', 'level' => '1'],
+        ['type' => '2', 'name' => 'まゆ毛', 'level' => '1'],
+        ['type' => '3', 'name' => 'パーマ', 'level' => '1'],
+        ['type' => '4', 'name' => 'プロー', 'level' => '1'],
+        ['type' => '5', 'name' => 'シャンプー', 'level' => '1'],
     ]
 ];

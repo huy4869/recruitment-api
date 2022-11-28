@@ -99,6 +99,10 @@ class UserHelper
         $skillUser = [];
         $dataSkill = config('user.skill_types');
 
+        if (!$skills) {
+            return config('user.default_skills');
+        }
+
         foreach ($skills as $skill) {
             $skillUser[] = [
                 'type' => $skill['type'],
