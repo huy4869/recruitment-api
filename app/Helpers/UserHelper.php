@@ -53,7 +53,7 @@ class UserHelper
 
         $object = $data->sortByDesc('updated_at')->first();
 
-        return $object->updated_at ? $object->updated_at->format('Y/m/d') : null;
+        return $object->updated_at ? $object->updated_at->format(config('date.fe_date_format')) : null;
     }
 
     /**
@@ -120,6 +120,8 @@ class UserHelper
             $provinceIds,
             $masterData
         );
+
+        $provinceNameArray = [];
 
         foreach ($provinces as $province) {
             $provinceNameArray[] = $province['name'];
