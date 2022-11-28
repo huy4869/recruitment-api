@@ -206,7 +206,7 @@ class UserService extends Service
             }
 
             if (isset($userDesiredCondition->job_feature_ids)) {
-                $user->job_features = JobHelper::getFeatureCategoryName(
+                $user->job_features = UserHelper::getFeature(
                     $userDesiredCondition->job_feature_ids,
                     $jobMasterData['masterJobFeatures']
                 );
@@ -218,6 +218,14 @@ class UserService extends Service
                     $jobMasterData['masterWorkTypes']
                 );
             }
+
+            if (isset($userDesiredCondition->province_ids)) {
+                $user->provinces = UserHelper::getListProvinceNames(
+                    $userDesiredCondition->province_ids,
+                    $jobMasterData['masterProvinces']
+                );
+            }
+
             $user->favorite = !!in_array($user->id, $recruiterFavoriteUser);
 
             $userArr[$user->id] = $user;
