@@ -28,7 +28,6 @@ class UserTableService extends TableService
         'salary_min' => 'filterTypes',
         'salary_max' => 'filterTypes',
         'province_id' => 'filterTypes',
-        'province_city_id' => 'filterTypes',
         'list_type' => 'filterListType'
     ];
 
@@ -51,11 +50,6 @@ class UserTableService extends TableService
                 'job_type_ids',
                 'job_experience_ids',
                 'job_feature_ids',
-            ];
-
-            $provinceKey = [
-                'province_id',
-                'province_city_id',
             ];
 
             foreach ($filters as $filterItem) {
@@ -95,14 +89,16 @@ class UserTableService extends TableService
                     $query->where('salary_min', '>=', $filterItem['data']);
                 } elseif ($filterItem['key'] == 'salary_max') {
                     $query->where('salary_max', '<=', $filterItem['data']);
-                } elseif (in_array($filterItem['key'], $provinceKey)) {
-                    $types = json_decode($filterItem['data']);
-                    $query->where($filterItem['key'], $types[self::FIRST_ARRAY]);
-                    unset($types[self::FIRST_ARRAY]);
+                } elseif ($filterItem['key'] == 'province_id') {
+                    $query->where(function ($query) use ($filterItem) {
+                        $types = json_decode($filterItem['data']);
+                        $query->whereJsonContains('province_ids', $types[self::FIRST_ARRAY]);
+                        unset($types[self::FIRST_ARRAY]);
 
-                    foreach ($types as $type) {
-                        $query->orWhere($filterItem['key'], $type);
-                    }
+                        foreach ($types as $type) {
+                            $query->orWhereJsonContains('province_ids', $type);
+                        }//end foreach
+                    });
                 } else {
                     $query->where($filterItem['key'], $filterItem['data']);
                 }//end if

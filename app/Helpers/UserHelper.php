@@ -65,12 +65,14 @@ class UserHelper
         $masterJobTypes = JobService::getMasterDataJobPostingTypes();
         $masterJobExperiences = JobService::getMasterDataJobExperiences();
         $masterJobFeatures = JobService::getMasterDataJobFeatures();
+        $masterProvinces = JobService::getMasterDataProvinces();
 
         return [
             'masterWorkTypes' => $masterWorkTypes,
             'masterJobTypes' => $masterJobTypes,
             'masterJobExperiences' => $masterJobExperiences,
             'masterJobFeatures' => $masterJobFeatures,
+            'masterProvinces' => $masterProvinces,
         ];
     }
 
@@ -106,5 +108,39 @@ class UserHelper
         }
 
         return $skillUser;
+    }
+
+    public static function getListProvinceNames($provinceIds, $masterData)
+    {
+        $provinces = JobHelper::getTypeName(
+            $provinceIds,
+            $masterData
+        );
+
+        foreach ($provinces as $province) {
+            $provinceNameArray[] = $province['name'];
+        }
+
+        return implode('、', $provinceNameArray);
+    }
+
+    public static function getFeature($typeIds, $masterDataType)
+    {
+        $result = [];
+
+        if (!$typeIds || !$masterDataType) {
+            return $result;
+        }
+
+        foreach ($typeIds as $id) {
+            $feature = $masterDataType[(int)$id - 1];
+
+            $result[] = [
+                'id' => $feature['id'],
+                'name' => $feature['name'],
+            ];
+        }
+
+        return $result;
     }
 }

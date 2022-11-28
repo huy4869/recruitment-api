@@ -18,7 +18,7 @@ class UserResource extends JsonResource
      */
     public function toArray($request)
     {
-        $desiredConditionUser = $this->desiredConditionUser;
+        $desiredConditionUser = @$this->desiredConditionUser;
 
         return [
             'id' => $this->id,
@@ -49,10 +49,8 @@ class UserResource extends JsonResource
                 'salary_max' => @$desiredConditionUser->salary_max,
             ],
             'address' => [
-                'province_id' => @$desiredConditionUser->province->id,
-                'province_name' => @$desiredConditionUser->province->name,
-                'province_city_id' => @$desiredConditionUser->provinceCity->id,
-                'province_city_name' => @$desiredConditionUser->provinceCity->name,
+                'province_id' => @$desiredConditionUser->province_ids,
+                'province_name' => $this->provinces,
             ],
             'job_experiences' => @$this->job_experiences,
             'work_types' => @$this->work_types,
