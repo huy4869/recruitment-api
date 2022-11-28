@@ -54,8 +54,9 @@ class ApplicationService extends Service
     {
         $userInterviews = $this->user->applications()
             ->whereHas('interviews', function ($query) {
-                $query->where('id', MInterviewStatus::STATUS_WAITING_INTERVIEW);
+                $query->whereIn('id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW]);
             })
+            ->where(DB::raw("CONCAT(DATE_FORMAT(date,'%Y/%m/%d'),' ',hours)"), '>=', DateTimeHelper::formatDateTime(now()))
             ->with([
                 'store',
                 'store.owner',
@@ -65,6 +66,7 @@ class ApplicationService extends Service
                 'interviewApproach'
             ])
             ->orderBy('date', 'asc')
+            ->orderBy('hours', 'asc')
             ->get();
 
         $amountInterviews = $userInterviews->count();
@@ -168,24 +170,25 @@ class ApplicationService extends Service
             MInterviewStatus::STATUS_APPLYING
         ];
 
-        $today = now();
-        $tomorrow = now()->addDays();
-        $dayAfterTomorrow = now()->addDays(2);
-        $dayAfterThreeDays = now()->addDays(3);
+        $today = now()->format(config('date.fe_date_format'));
+        $tomorrow = now()->addDays()->format(config('date.fe_date_format'));
+        $dayAfterTomorrow = now()->addDays(2)->format(config('date.fe_date_format'));
 
         foreach ($userInterviews as $interview) {
             $interviewStatus = $interview->interview_status_id;
-            $interviewDate = Carbon::parse($interview->date);
+            $interviewDate = Carbon::parse($interview->date)->format(config('date.fe_date_format'));
 
-            if ($today <= $interviewDate && $interviewDate < $tomorrow) {
+            if ($today == $interviewDate) {
                 $interview->date_status = trans('common.today');
+                continue;
             }
 
-            if ($tomorrow <= $interviewDate && $interviewDate < $dayAfterTomorrow) {
+            if ($tomorrow == $interviewDate) {
                 $interview->date_status = trans('common.tomorrow');
+                continue;
             }
 
-            if ($dayAfterTomorrow <= $interviewDate && $interviewDate < $dayAfterThreeDays) {
+            if ($dayAfterTomorrow == $interviewDate) {
                 $interview->date_status = trans('common.day_after_tomorrow');
             }
 
