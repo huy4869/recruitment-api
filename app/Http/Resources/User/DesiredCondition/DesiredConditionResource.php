@@ -51,7 +51,7 @@ class DesiredConditionResource extends JsonResource
             'salary_max' => $salaryMax,
             'expected_salary' => $expectedSalary,
             'age_id' => $data['age'],
-            'age_name' => @config('date.age')[$data['age']],
+            'age_name' => @config('user.age')[$data['age']],
             'work_type_ids' => $data['work_type_ids'],
             'job_type_ids' => $data['job_type_ids'],
             'job_experience_ids' => $data['job_experience_ids'],
