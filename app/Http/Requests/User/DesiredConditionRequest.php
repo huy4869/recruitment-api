@@ -28,7 +28,7 @@ class DesiredConditionRequest extends FormRequest
      */
     public function rules()
     {
-        $ageType = array_keys(config('date.age'));
+        $ageType = array_keys(config('user.age'));
         $jobTypeIds = WorkHistoryService::getInstance()->getTypeIds(MJobType::query());
         $workTypeIds = WorkHistoryService::getInstance()->getTypeIds(MWorkType::query());
         $dayIds = array_keys(config('date.day_of_week_ja_fe'));
