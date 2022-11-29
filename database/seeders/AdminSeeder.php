@@ -28,7 +28,6 @@ class AdminSeeder extends Seeder
             'tel' => '0987654321',
             'email' => 'superadmin@gmail.com',
             'birthday' => '1969-10-25',
-            'age' => '50',
             'gender_id' => 1,
             'line' => 'https://line.com/superadmin',
             'facebook' => 'https://facebook.com/superadmin',

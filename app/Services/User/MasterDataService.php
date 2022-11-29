@@ -562,13 +562,13 @@ class MasterDataService extends Service
      */
     protected function getMasterAge()
     {
-        $dataAge = config('date.age');
+        $dataAge = config('user.age');
         $result = [];
 
         foreach ($dataAge as $key => $age) {
             $result[] = [
                 'id' => $key,
-                'name' => $age
+                'name' => sprintf('%u代以上', $age)
             ];
         }
         return $result;

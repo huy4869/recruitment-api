@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Helpers\UserHelper;
 use App\Models\Scopes\User as ScopesUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -61,7 +62,6 @@ class User extends Authenticatable
         'furi_last_name',
         'alias_name',
         'birthday',
-        'age',
         'gender_id',
         'tel',
         'email_verified_at',
@@ -111,7 +111,11 @@ class User extends Authenticatable
         'remember_token',
     ];
 
-    protected $appends = ['full_name', 'full_name_furi'];
+    protected $appends = [
+        'full_name',
+        'full_name_furi',
+        'age',
+    ];
 
     public function getFullNameAttribute()
     {
@@ -121,6 +125,13 @@ class User extends Authenticatable
     public function getFullNameFuriAttribute()
     {
         return $this->furi_first_name . $this->furi_last_name;
+    }
+
+    public function getAgeAttribute()
+    {
+        if ($this->birthday) {
+            return now()->diffInYears($this->birthday);
+        }
     }
 
     /**

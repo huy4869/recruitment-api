@@ -142,7 +142,6 @@ class UserController extends Controller
             'gender_id',
             'tel',
             'line',
-            'age',
             'facebook',
             'instagram',
             'twitter',
