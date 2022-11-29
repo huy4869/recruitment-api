@@ -78,7 +78,7 @@ class UserProfileService extends Service
                 'experience_accumulation' => $workHistory->experience_accumulation,
                 'work_time' => DateTimeHelper::formatDateStartEnd($workHistory->period_start, $workHistory->period_end),
                 'job_type' => @$workHistory->jobType->name,
-                'positionOffices' => JobHelper::getTypeName($workHistory->position_office_ids, $masterData['masterPositionOffice']),
+                'positionOffices' => @JobHelper::getTypeName($workHistory->position_office_ids, $masterData['masterPositionOffice']),
                 'work_type' => @$workHistory->workType->name,
             ];
         }

@@ -45,67 +45,86 @@ class UserTableService extends TableService
         }
 
         $query->whereHas('desiredConditionUser', function ($query) use ($filters) {
-            $jsonKey = [
-                'work_type_ids',
-                'job_type_ids',
-                'job_experience_ids',
-                'job_feature_ids',
-            ];
-
             foreach ($filters as $filterItem) {
                 if (!isset($filterItem['key']) || !isset($filterItem['data'])) {
                     throw new InputException(trans('response.invalid'));
                 }
 
-                if (in_array($filterItem['key'], $jsonKey)) {
-                    $query->where(function ($query) use ($filterItem) {
-                        $types = json_decode($filterItem['data']);
-                        $query->whereJsonContains($filterItem['key'], $types[self::FIRST_ARRAY]);
-                        unset($types[self::FIRST_ARRAY]);
+                switch ($filterItem['key']) {
+                    case 'work_type_ids':
+                    case 'job_type_ids':
+                    case 'job_experience_ids':
+                    case 'job_feature_ids':
+                        self::filterJsonTypes($query, $filterItem);
+                        break;
+                    case 'salary_min':
+                        $query->where('salary_min', '>=', $filterItem['data']);
+                        break;
+                    case 'salary_max':
+                        $query->where('salary_max', '<=', $filterItem['data']);
+                        break;
+                    case 'province_id':
+                        $query->where(function ($query) use ($filterItem) {
+                            $types = json_decode($filterItem['data']);
+                            $query->whereJsonContains('province_ids', $types[self::FIRST_ARRAY]);
+                            unset($types[self::FIRST_ARRAY]);
 
-                        foreach ($types as $type) {
-                            $query->orWhereJsonContains($filterItem['key'], $type);
+                            foreach ($types as $type) {
+                                $query->orWhereJsonContains('province_ids', $type);
+                            }//end foreach
+                        });
 
-                            if ($filterItem['key'] == 'job_type_ids' && $type == MJobType::OTHER) {
-                                $otherJobTypeIds = JobService::getOtherJobTypeIds();
+                        break;
+                    case 'age':
+                        $ageValues = config('user.age');
 
-                                //other job types query
-                                foreach ($otherJobTypeIds as $jobType) {
-                                    $query->orWhereJsonContains('job_type_ids', $jobType);
-                                }
-                            }
+                        if (isset($ageValues[$filterItem['data']])) {
+                            $searchingDateOfBirth = now()->subYears($ageValues[$filterItem['data']]);
 
-                            if ($filterItem['key'] == 'work_type_ids' && $type == MWorkType::OTHER) {
-                                $otherWorkTypeIds = JobService::getOtherWorkTypeIds();
+                            $query->whereDate('birthday', '<=', $searchingDateOfBirth);
 
-                                //other work types query
-                                foreach ($otherWorkTypeIds as $workType) {
-                                    $query->orWhereJsonContains('work_type_ids', $workType);
-                                }
-                            }
-                        }//end foreach
-                    });
-                } elseif ($filterItem['key'] == 'salary_min') {
-                    $query->where('salary_min', '>=', $filterItem['data']);
-                } elseif ($filterItem['key'] == 'salary_max') {
-                    $query->where('salary_max', '<=', $filterItem['data']);
-                } elseif ($filterItem['key'] == 'province_id') {
-                    $query->where(function ($query) use ($filterItem) {
-                        $types = json_decode($filterItem['data']);
-                        $query->whereJsonContains('province_ids', $types[self::FIRST_ARRAY]);
-                        unset($types[self::FIRST_ARRAY]);
+                            break;
+                        }
 
-                        foreach ($types as $type) {
-                            $query->orWhereJsonContains('province_ids', $type);
-                        }//end foreach
-                    });
-                } else {
-                    $query->where($filterItem['key'], $filterItem['data']);
-                }//end if
-            }//end foreach
+                        break;
+                    default:
+                        $query->where($filterItem['key'], $filterItem['data']);
+                }
+            }
         });
 
         return $query;
+    }
+
+    protected function filterJsonTypes($query, $filterItem)
+    {
+        return $query->where(function ($query) use ($filterItem) {
+            $types = json_decode($filterItem['data']);
+            $query->whereJsonContains($filterItem['key'], $types[self::FIRST_ARRAY]);
+            unset($types[self::FIRST_ARRAY]);
+
+            foreach ($types as $type) {
+                $query->orWhereJsonContains($filterItem['key'], $type);
+
+                if ($filterItem['key'] == 'job_type_ids' && $type == MJobType::OTHER) {
+                    $otherJobTypeIds = JobService::getOtherJobTypeIds();
+
+                    //other job types query
+                    foreach ($otherJobTypeIds as $jobType) {
+                        $query->orWhereJsonContains('job_type_ids', $jobType);
+                    }
+                }
+
+                if ($filterItem['key'] == 'work_type_ids' && $type == MWorkType::OTHER) {
+                    $otherWorkTypeIds = JobService::getOtherWorkTypeIds();
+
+                    //other work types query
+                    foreach ($otherWorkTypeIds as $workType) {
+                        $query->orWhereJsonContains('work_type_ids', $workType);
+                    }
+                }
+            }//end foreach
+        });
     }
 
     protected function filterListType($query, $filter)
@@ -160,7 +179,7 @@ class UserTableService extends TableService
             users.furi_last_name,
             users.alias_name,
             users.province_id,
-            users.age,
+            users.birthday,
             users.tel,
             users.email,
             users.last_login_at,

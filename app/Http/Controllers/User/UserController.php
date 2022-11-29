@@ -38,7 +38,6 @@ class UserController extends BaseController
             'furi_first_name',
             'furi_last_name',
             'birthday',
-            'age',
             'gender_id',
             'tel',
             'email',

@@ -37,7 +37,6 @@ class UserInfoUpdateRequest extends FormRequest
             'furi_first_name' => ['required', 'string', 'max:' . $stringMaxLength, new FuriUserNameRule(trans('validation.user_first_name'))],
             'furi_last_name' => ['required', 'string', 'max:' . $stringMaxLength, new FuriUserNameRule(trans('validation.user_last_name'))],
             'birthday' => ['required', 'date', 'before:today'],
-            'age' => ['nullable', 'numeric'],
             'gender_id' => ['required', 'exists:m_genders,id'],
             'tel' => ['required', 'string', new CheckPhoneNumber()],
             'line' => ['nullable', 'string', 'max:' . $stringMaxLength],
