@@ -102,6 +102,12 @@ class UserInfoTableService extends TableService
                     $query->where('salary_min', '>=', $filterItem['data']);
                 } elseif ($filterItem['key'] == 'salary_max') {
                     $query->where('salary_max', '<=', $filterItem['data']);
+                } elseif ($filterItem['key'] == 'age') {
+                    $ageValues = config('user.age');
+
+                    if (isset($ageValues[$filterItem['data']])) {
+                        $query->where('age', '>=', $ageValues[$filterItem['data']]);
+                    }
                 } else {
                     $query->where($filterItem['key'], $filterItem['data']);
                 }//end if
@@ -143,7 +149,6 @@ class UserInfoTableService extends TableService
             users.alias_name,
             users.province_id,
             users.province_city_id,
-            users.age,
             users.tel,
             users.email,
             users.last_login_at,
