@@ -70,7 +70,6 @@ class UserService extends Service
             'furi_first_name' => $data['furi_first_name'],
             'furi_last_name' => $data['furi_last_name'],
             'birthday' => $data['birthday'],
-            'age' => $data['age'],
             'gender_id' => $data['gender_id'],
             'tel' => $data['tel'],
             'line' => $data['line'],
