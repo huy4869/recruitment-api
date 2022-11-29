@@ -79,10 +79,7 @@ class UserTableService extends TableService
                         $ageValues = config('user.age');
 
                         if (isset($ageValues[$filterItem['data']])) {
-                            $searchingDateOfBirth = now()->subYears($ageValues[$filterItem['data']]);
-
-                            $query->whereDate('birthday', '<=', $searchingDateOfBirth);
-
+                            $query->where('age', '>=', $ageValues[$filterItem['data']]);
                             break;
                         }
 
