@@ -41,7 +41,7 @@ class DesiredConditionResource extends JsonResource
             $endWorkingTimes = $endWorkingHours . ':' . $endWorkingMinutes;
             $startHoursWorking = $startWorkingTimes . ' ～ ' . $endWorkingTimes;
         }
-        $age = $data['age'] ? @config('user.age')[$data['age']] . '代以上' : null;
+        $age = @config('user.age')[$data['age']] ? @config('user.age')[$data['age']] . '代以上' : null;
 
         return [
             'id' => $data['id'],
