@@ -41,6 +41,7 @@ class DesiredConditionResource extends JsonResource
             $endWorkingTimes = $endWorkingHours . ':' . $endWorkingMinutes;
             $startHoursWorking = $startWorkingTimes . ' ～ ' . $endWorkingTimes;
         }
+        $age = $data['age'] ? @config('user.age')[$data['age']] . '代以上' : null;
 
         return [
             'id' => $data['id'],
@@ -51,7 +52,7 @@ class DesiredConditionResource extends JsonResource
             'salary_max' => $salaryMax,
             'expected_salary' => $expectedSalary,
             'age_id' => $data['age'],
-            'age_name' => @config('user.age')[$data['age']],
+            'age_name' => $age,
             'work_type_ids' => $data['work_type_ids'],
             'job_type_ids' => $data['job_type_ids'],
             'job_experience_ids' => $data['job_experience_ids'],
