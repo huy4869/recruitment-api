@@ -389,7 +389,6 @@ class JobService extends Service
                 $dataStatus[] = [
                     'id' => $job->id,
                     'name' => $job->name,
-                    'is_selected' => $idStatus == $job->id,
                 ];
             }
         } else {
@@ -397,7 +396,6 @@ class JobService extends Service
             $dataStatus[] = [
                 'id' => $job->id,
                 'name' => $job->name,
-                'is_selected' => $idStatus == $job->id,
             ];
         }
 
