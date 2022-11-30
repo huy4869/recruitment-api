@@ -29,7 +29,22 @@ class JobController extends Controller
         $result = JobService::getInstance()->withUser($recruiter)->create($inputs);
 
         if ($result) {
-            return $this->sendSuccessResponse($result, trans('validation.INF.010'));
+            switch ($request->job_status_id) {
+                case JobPosting::STATUS_DRAFT:
+                    $msg = trans('validation.INF.009');
+                    break;
+                case JobPosting::STATUS_RELEASE:
+                    $msg = trans('validation.INF.010');
+                    break;
+                case JobPosting::STATUS_END:
+                    $msg = trans('validation.INF.012');
+                    break;
+                default:
+                    $msg = trans('response.INF.006');
+                    break;
+            }
+
+            return $this->sendSuccessResponse($result, $msg);
         }
 
         return $this->sendSuccessResponse($result, trans('validation.INF.009'));
