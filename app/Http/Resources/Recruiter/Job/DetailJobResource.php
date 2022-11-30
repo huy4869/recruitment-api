@@ -4,6 +4,8 @@ namespace App\Http\Resources\Recruiter\Job;
 
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
+use App\Models\JobPosting;
+use App\Services\Recruiter\Job\JobService;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class DetailJobResource extends JsonResource
@@ -24,6 +26,7 @@ class DetailJobResource extends JsonResource
             'pick_up_point' => $this->pick_up_point,
             'banner_image' => FileHelper::getFullUrl(@$this->bannerImage->url),
             'detail_images' => DetailImageResource::collection($this->detailImages),
+            'statuses' => JobService::getStatusJob($this->job_status_id),
             'job_types' => $this->job_types,
             'feature_ids' => $this->feature_ids,
             'feature_types' => $this->feature_types,

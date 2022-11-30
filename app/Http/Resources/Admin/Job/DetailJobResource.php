@@ -19,9 +19,6 @@ class DetailJobResource extends JsonResource
      */
     public function toArray($request)
     {
-        $idStatusJob = $this->job_status_id;
-        $dataStatus = JobService::getStatusJob($idStatusJob);
-
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -29,9 +26,7 @@ class DetailJobResource extends JsonResource
             'pick_up_point' => $this->pick_up_point,
             'banner_image' => FileHelper::getFullUrl(@$this->bannerImage->url),
             'detail_images' => DetailImageResource::collection($this->detailImages),
-            'job_status_id' => $idStatusJob,
-            'job_status_name' => $this->status->name ?? null,
-            'data_status' => $dataStatus,
+            'statuses' => JobService::getStatusJob($this->job_status_id),
             'job_types' => $this->job_types,
             'feature_types' => $this->feature_types,
             'experience_types' => $this->expericence_types,
