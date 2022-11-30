@@ -27,7 +27,6 @@ class CreateRequest extends FormRequest
     public function rules()
     {
         $storeIds = JobService::getStoreIdsAccordingToAdmin();
-        $jobStatusIds = JobService::getJobStatusIdsNotEnd();
         $stringMaxLength = config('validate.string_max_length');
         $textMaxLength = config('validate.text_max_length');
         $dayIds = array_keys(config('date.day_of_week_ja_fe'));
@@ -35,7 +34,7 @@ class CreateRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:' . $stringMaxLength],
             'store_id' => ['required', 'integer', 'in:' . implode(',', $storeIds)],
-            'job_status_id' => ['required', 'integer', 'in:' . implode(',', $jobStatusIds)],
+            'job_status_id' => ['required', 'integer', 'exists:m_job_statuses,id'],
             'pick_up_point' => ['nullable', 'string', 'max:' . $textMaxLength],
             'job_banner' => ['required', 'string', 'url'],
             'job_thumbnails' => ['required', 'array', 'max:' . config('validate.max_image_detail')],
@@ -49,13 +48,13 @@ class CreateRequest extends FormRequest
             'salary_min' => ['required', 'integer', 'max:' . config('validate.salary_max_value')],
             'salary_max' => ['required', 'integer', 'greater_than_field:salary_min', 'max:' . config('validate.salary_max_value')],
             'salary_description' => ['nullable', 'string', 'max:' . $stringMaxLength],
-            'start_work_time' => ['required', 'date_format:Hi'],
-            'end_work_time' => ['required', 'after_or_equal:start_work_time', 'date_format:Hi'],
+            'start_work_time' => 'required|string|max:' . config('validate.work_time_max_length'),
+            'end_work_time' => 'required|string|greater_than_field:start_work_time|max:' . config('validate.work_time_max_length'),
             'shifts' => ['nullable', 'max:' . $textMaxLength],
             'age_min' => ['nullable', 'integer', 'min:' . config('validate.age.min'), 'max:' . config('validate.age.max')],
             'age_max' => ['nullable', 'integer', 'greater_than_field:age_min', 'max:' . config('validate.age.max')],
             'gender_ids' => ['nullable', 'array'],
-            'gender_ids.*' => 'integer|exists:m_genders',
+            'gender_ids.*' => 'integer|exists:m_genders,id',
             'experience_ids' => ['nullable', 'array'],
             'experience_ids.*' => 'integer|exists:m_job_experiences,id',
             'postal_code' => ['required', 'numeric', 'digits:' . config('validate.zip_code_max_length')],
