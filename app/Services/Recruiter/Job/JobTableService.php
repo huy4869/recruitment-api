@@ -54,7 +54,7 @@ class JobTableService extends TableService
      */
     protected function filterJobName($query, $filter)
     {
-        return $query->where('job_postings.name', $filter['data']);
+        return $query->where('job_postings.name', 'like', '%' . $filter['data'] . '%');
     }
 
     /**
@@ -64,7 +64,7 @@ class JobTableService extends TableService
      */
     protected function filterStoreName($query, $filter)
     {
-        return $query->where('stores.name', $filter['data']);
+        return $query->where('stores.name', 'like', '%' . $filter['data'] . '%');
     }
 
     /**
@@ -100,6 +100,11 @@ class JobTableService extends TableService
         $provinceKey = [
             'province_id',
             'province_city_id',
+        ];
+
+        $skipKey = [
+            'store_name',
+            'job_name',
         ];
 
         foreach ($filters as $filterItem) {
@@ -148,7 +153,9 @@ class JobTableService extends TableService
                     $query->orWhere('job_postings.' . $filterItem['key'], $type);
                 }
             } else {
-                $query->where($filterItem['key'], $filterItem['data']);
+                if (!in_array($filterItem['key'], $skipKey)) {
+                    $query->where($filterItem['key'], $filterItem['data']);
+                }
             }//end if
         }//end foreach
 
