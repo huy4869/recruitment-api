@@ -89,8 +89,27 @@ class JobService extends Service
         $recruiter = $this->user;
         $job = JobPosting::query()->where('id', $id)->with(['store'])->first();
 
+        if ($job->job_status_id == JobPosting::STATUS_END) {
+            throw new InputException(trans('validation.ERR.999'));
+        }
+
         if ($job->store->user_id != $recruiter->id) {
             throw new InputException(trans('response.not_found'));
+        }
+
+        if ($data['job_status_id'] == JobPosting::STATUS_DRAFT && $job->job_status_id == JobPosting::STATUS_RELEASE) {
+            $applications = Application::query()
+                ->where('job_posting_id', '=', $job->id)
+                ->whereIn('interview_status_id', [
+                    MInterviewStatus::STATUS_APPLYING,
+                    MInterviewStatus::STATUS_WAITING_INTERVIEW,
+                    MInterviewStatus::STATUS_WAITING_RESULT
+                ])
+                ->get();
+
+            if (count($applications)) {
+                throw new InputException(trans('validation.ERR.050'));
+            }
         }
 
         $dataImage = $this->makeSaveDataImage($data);
@@ -129,10 +148,10 @@ class JobService extends Service
                 }
 
                 $applications->update(['interview_status_id' => MInterviewStatus::STATUS_REJECTED]);
-                collect($data)->chunk(self::QUANTITY_CHUNK)->each(function ($notifications) {
+                collect($notifications)->chunk(self::QUANTITY_CHUNK)->each(function ($notifications) {
                     Notification::query()->insert($notifications->toArray());
                 });
-            }
+            }//end if
 
             $job->update($data);
 
@@ -356,5 +375,32 @@ class JobService extends Service
         );
 
         return $job;
+    }
+
+    public static function getStatusJob($idStatus)
+    {
+        $jobStatus = MJobStatus::query();
+
+        if (in_array($idStatus, [JobPosting::STATUS_DRAFT, JobPosting::STATUS_RELEASE])) {
+            $dataJob = $jobStatus->get();
+            $dataStatus = [];
+
+            foreach ($dataJob as $job) {
+                $dataStatus[] = [
+                    'id' => $job->id,
+                    'name' => $job->name,
+                    'is_selected' => $idStatus == $job->id,
+                ];
+            }
+        } else {
+            $job = $jobStatus->where('id', JobPosting::STATUS_END)->first();
+            $dataStatus[] = [
+                'id' => $job->id,
+                'name' => $job->name,
+                'is_selected' => $idStatus == $job->id,
+            ];
+        }
+
+        return $dataStatus;
     }
 }
