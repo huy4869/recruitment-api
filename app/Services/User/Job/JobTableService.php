@@ -17,13 +17,6 @@ class JobTableService extends TableService
     const ORDER_BY_UPDATED_AT = 2;
 
     /**
-     * @var array
-     */
-    protected $searchables = [
-        'job_postings.name',
-    ];
-
-    /**
      * @var string[]
      */
     protected $filterables = [
@@ -35,6 +28,7 @@ class JobTableService extends TableService
         'province_city_id' => 'filterProvinces',
         'list_type' => 'filterListType',
         'order_by_id' => 'filterOrderBy',
+        'search' => 'search',
     ];
 
     /**
@@ -45,6 +39,44 @@ class JobTableService extends TableService
         'updated_at' => 'job_postings.updated_at'
     ];
 
+    /**
+     * @param $query
+     * @param $filter
+     * @return mixed
+     */
+    protected function search($query, $filter)
+    {
+        $searchs = [
+            'name',
+            'postal_code',
+            'address',
+            'building',
+            'pick_up_point',
+            'description',
+            'welfare_treatment_description',
+            'salary_description',
+            'shifts',
+            'holiday_description',
+        ];
+
+        $arr = config('date.day_of_week_ja_fe');
+        $searchWithin = '%' . trim($filter['data']) . '%';
+        $dataSearch = $filter['data'];
+
+        $query->where(function ($query) use ($arr, $searchWithin, $searchs, $dataSearch) {
+            if (array_search($dataSearch, $arr)) {
+                $query->whereJsonContains('working_days', array_search($dataSearch, $arr));
+            }
+
+            foreach ($searchs as $search) {
+                $query->orWhere($search, 'LIKE', '%' . $dataSearch . '%');
+            }
+
+            $query->orwhere(DB::raw("concat(salary_min,' ～ ',salary_max)"), 'LIKE', $searchWithin)
+                ->orWhere(DB::raw("concat(start_work_time,' ～ ',end_work_time)"), 'LIKE', $searchWithin)
+                ->orWhere(DB::raw("concat(age_min,' ～ ',age_max)"), 'LIKE', $searchWithin);
+        });
+    }
     /**
      * @param $query
      * @param $filter
