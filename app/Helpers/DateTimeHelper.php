@@ -397,4 +397,14 @@ class DateTimeHelper
 
         return sprintf('%s ～ %s', self::formatMonthYear($dateStart), trans('common.now'));
     }
+
+    public static function getHoursMinute($time)
+    {
+        $timeHoursMinute = Carbon::parse($time);
+
+        return [
+            'hours' => $timeHoursMinute->format(config('date.time_hours.hours')),
+            'minute' => $timeHoursMinute->format(config('date.time_hours.minute')),
+        ];
+    }
 }

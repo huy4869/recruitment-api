@@ -39,8 +39,8 @@ class JobResource extends JsonResource
                 'max' => $this->salary_max,
             ],
             'work_time' => [
-                'start' => JobHelper::makeWorkTimeFormat($this->start_work_time),
-                'end' => JobHelper::makeWorkTimeFormat($this->end_work_time),
+                'start' => $this->start_work_time,
+                'end' => $this->end_work_time,
             ],
             'is_favorite' => $this->is_favorite,
             'is_new' => JobHelper::isNew($this->released_at),

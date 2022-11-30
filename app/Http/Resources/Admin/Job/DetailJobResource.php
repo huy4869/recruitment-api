@@ -37,10 +37,12 @@ class DetailJobResource extends JsonResource
                 'max' => $this->salary_max,
                 'type' => $this->salaryType->name,
             ],
+            'working_days' => $this->working_days,
             'work_time' => [
-                'working_days' => $this->working_days,
                 'start' => $this->start_work_time,
+                'start_time' => DateTimeHelper::getHoursMinute($this->start_work_time),
                 'end' => $this->end_work_time,
+                'end_time' => DateTimeHelper::getHoursMinute($this->end_work_time),
             ],
             'age' => [
                 'min' => $this->age_min,

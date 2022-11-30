@@ -4,7 +4,6 @@ namespace App\Http\Resources\Recruiter\Job;
 
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
-use App\Models\JobPosting;
 use App\Services\Recruiter\Job\JobService;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -41,7 +40,9 @@ class DetailJobResource extends JsonResource
             ],
             'work_time' => [
                 'start' => $this->start_work_time,
+                'start_time' => DateTimeHelper::getHoursMinute($this->start_work_time),
                 'end' => $this->end_work_time,
+                'end_time' => DateTimeHelper::getHoursMinute($this->end_work_time),
             ],
             'age' => [
                 'min' => $this->age_min,
