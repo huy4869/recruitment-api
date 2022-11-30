@@ -46,8 +46,7 @@ class ApplicationService extends Service
             ->first();
 
         if ($application) {
-
-            $beReadApplications = $admin->be_read_applications;
+            $beReadApplications = $admin->be_read_applications ?? [];
             $beReadApplications = array_unique(array_merge($beReadApplications, [$id]));
 
             $admin->update([
