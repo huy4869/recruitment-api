@@ -66,8 +66,8 @@ class DetailJobPostingResource extends JsonResource
                 'type' => $this['salary_type'],
             ],
             'work_time' => [
-                'start' => JobHelper::makeWorkTimeFormat($this['start_work_time']),
-                'end' => JobHelper::makeWorkTimeFormat($this['end_work_time']),
+                'start' => $this['start_work_time'],
+                'end' => $this['end_work_time'],
                 'shifts' => $this['shifts'],
             ],
             'age' => [
