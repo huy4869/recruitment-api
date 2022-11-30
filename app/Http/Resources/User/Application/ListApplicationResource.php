@@ -40,7 +40,7 @@ class ListApplicationResource extends JsonResource
 
         return [
             'id' => $data->id,
-            'job_id' => $data->job_posting_id,
+            'job_id' => @$data->jobPostingAcceptTrashed->id,
             'job_name' => @$data->jobPostingAcceptTrashed->name,
             'job_banner' => FileHelper::getFullUrl(@$data->jobPostingAcceptTrashed->bannerImageAcceptTrashed->url),
             'store_id' => $data->store_id,
