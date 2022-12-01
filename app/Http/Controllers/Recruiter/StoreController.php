@@ -129,6 +129,6 @@ class StoreController extends BaseController
 
         $data = $this->storeService->withUser($rec)->update($input, $id);
 
-        return $this->sendSuccessResponse($data, trans('response.INF.010'));
+        return $this->sendSuccessResponse($data, trans('response.INF.001'));
     }
 }
