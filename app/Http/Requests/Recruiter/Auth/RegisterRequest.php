@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Recruiter\Auth;
 
 use App\Rules\Email;
+use App\Rules\FuriUserNameRule;
 use App\Rules\Password;
 use App\Rules\Recruiter\RecruiterUnique;
 use Illuminate\Foundation\Http\FormRequest;
@@ -26,7 +27,13 @@ class RegisterRequest extends FormRequest
      */
     public function rules()
     {
+        $stringMaxLength = config('validate.string_max_length');
+
         return [
+            'first_name' => ['required', 'string', 'max:' . $stringMaxLength],
+            'last_name' => ['required', 'string', 'max:' . $stringMaxLength],
+            'furi_first_name' => ['required', 'string', 'max:' . $stringMaxLength, new FuriUserNameRule(trans('validation.user_first_name'))],
+            'furi_last_name' => ['required', 'string', 'max:' . $stringMaxLength, new FuriUserNameRule(trans('validation.user_last_name'))],
             'email' => [
                 'required',
                 'string',
