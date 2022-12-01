@@ -177,6 +177,8 @@ class ApplicationService extends Service
         foreach ($userInterviews as $interview) {
             $interviewStatus = $interview->interview_status_id;
             $interviewDate = Carbon::parse($interview->date)->format(config('date.fe_date_format'));
+            $interview->can_cancel = !!in_array($interviewStatus, $statusCanCancel);
+            $interview->can_change_interview = !!in_array($interviewStatus, $statusCanChangeInterview);
 
             if ($today == $interviewDate) {
                 $interview->date_status = trans('common.today');
@@ -191,9 +193,6 @@ class ApplicationService extends Service
             if ($dayAfterTomorrow == $interviewDate) {
                 $interview->date_status = trans('common.day_after_tomorrow');
             }
-
-            $interview->can_cancel = !!in_array($interviewStatus, $statusCanCancel);
-            $interview->can_change_interview = !!in_array($interviewStatus, $statusCanChangeInterview);
         }
 
         return $userInterviews;
