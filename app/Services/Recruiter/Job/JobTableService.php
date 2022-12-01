@@ -87,13 +87,10 @@ class JobTableService extends TableService
             'gender_ids',
         ];
 
-        $rangeMinKey = [
+        $rangeKey = [
             'salary_min',
-            'age_min',
-        ];
-
-        $rangeMaxKey = [
             'salary_max',
+            'age_min',
             'age_max',
         ];
 
@@ -140,10 +137,25 @@ class JobTableService extends TableService
                         }
                     }//end foreach
                 });
-            } elseif (in_array($filterItem['key'], $rangeMinKey)) {
-                $query->where($filterItem['key'], '>=', $filterItem['data']);
-            } elseif (in_array($filterItem['key'], $rangeMaxKey)) {
-                $query->where($filterItem['key'], '<=', $filterItem['data']);
+            } elseif (in_array($filterItem['key'], $rangeKey)) {
+                preg_match('/([^_]+)_(min|max)/', $filterItem['key'], $matches);
+                $keyMin = $matches[1] . '_min';
+                $keyMax = $matches[1] . '_max';
+
+                $query->where( function ($query) use ($keyMin, $filterItem) {
+                    $query->whereNull($keyMin)
+                        ->orWhere( function ($query) use ($keyMin, $filterItem) {
+                            $query->whereNotNull($keyMin)
+                                ->where($keyMin, '<=', $filterItem['data']);
+                        });
+                })
+                ->where( function ($query) use ($keyMax, $filterItem) {
+                    $query->whereNull($keyMax)
+                        ->orWhere( function ($query) use ($keyMax, $filterItem) {
+                            $query->whereNotNull($keyMax)
+                                ->where($keyMax, '>=', $filterItem['data']);
+                        });
+                });
             } elseif (in_array($filterItem['key'], $provinceKey)) {
                 $types = json_decode($filterItem['data']);
                 $query->where('job_postings.' . $filterItem['key'], $types[self::FIRST_ARRAY]);
