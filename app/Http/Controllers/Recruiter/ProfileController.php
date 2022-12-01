@@ -26,6 +26,10 @@ class ProfileController extends Controller
     public function update(UpdateProfileRequest $request)
     {
         $input = $request->only([
+            'first_name',
+            'last_name',
+            'furi_first_name',
+            'furi_last_name',
             'company_name',
             'home_page_recruiter',
             'tel',

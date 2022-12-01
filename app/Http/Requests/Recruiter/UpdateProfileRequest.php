@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Recruiter;
 
 use App\Rules\CheckPhoneNumber;
+use App\Rules\FuriUserNameRule;
 use App\Rules\WithOutFullSize;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
@@ -27,8 +28,13 @@ class UpdateProfileRequest extends FormRequest
     public function rules()
     {
         $lengthText = config('validate.max_length_text');
+        $stringMaxLength = config('validate.string_max_length');
 
         return [
+            'first_name' => ['required', 'string', 'max:' . $stringMaxLength],
+            'last_name' => ['required', 'string', 'max:' . $stringMaxLength],
+            'furi_first_name' => ['required', 'string', 'max:' . $stringMaxLength, new FuriUserNameRule(trans('validation.user_first_name'))],
+            'furi_last_name' => ['required', 'string', 'max:' . $stringMaxLength, new FuriUserNameRule(trans('validation.user_last_name'))],
             'company_name' => ['nullable', 'string', 'max:' . $lengthText],
             'home_page_recruiter' => ['nullable', new WithOutFullSize(), 'string', 'max:' . $lengthText],
             'alias_name' => ['nullable', 'string', 'max:' . $lengthText],
