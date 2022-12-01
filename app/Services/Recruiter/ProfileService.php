@@ -24,6 +24,10 @@ class ProfileService extends Service
     public function updateInformation($data)
     {
         return $this->user->update([
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'furi_first_name' => $data['furi_first_name'],
+            'furi_last_name' => $data['furi_last_name'],
             'company_name' => $data['company_name'],
             'home_page_recruiter' => $data['home_page_recruiter'],
             'tel' => $data['tel'],
