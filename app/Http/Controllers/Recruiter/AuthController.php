@@ -83,6 +83,10 @@ class AuthController extends BaseController
     public function register(RegisterRequest $request)
     {
         $input = $request->only([
+            'first_name',
+            'last_name',
+            'furi_first_name',
+            'furi_last_name',
             'email',
             'password',
             'password_confirmation'

@@ -298,6 +298,8 @@ return [
         'school_name' => '学校名',
         'date' => '日にち',
         'job_thumbnails' => 'サブ画像',
+        'furi_first_name' => 'セイ',
+        'furi_last_name' => 'メイ',
     ],
 
     'COM' => [

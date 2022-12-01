@@ -53,6 +53,10 @@ class AuthService extends Service
     public function register(array $data)
     {
         $newUser = User::query()->create([
+            'first_name' => $data['first_name'],
+            'last_name' => $data['last_name'],
+            'furi_first_name' => $data['furi_first_name'],
+            'furi_last_name' => $data['furi_last_name'],
             'email' => Str::lower($data['email']),
             'password' => Hash::make($data['password']),
             'role_id' => User::ROLE_USER,
