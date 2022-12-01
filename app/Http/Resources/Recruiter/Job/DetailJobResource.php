@@ -39,6 +39,7 @@ class DetailJobResource extends JsonResource
                 'max' => $this->salary_max,
                 'type_id' => $this->salaryType->id,
                 'type_name' => $this->salaryType->name,
+                'description' =>  $this->salary_description,
             ],
             'work_time' => [
                 'start' => $this->start_work_time,
