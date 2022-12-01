@@ -59,7 +59,7 @@ class CreateRequest extends FormRequest
             'experience_ids.*' => 'integer|exists:m_job_experiences,id',
             'postal_code' => ['required', 'numeric', 'digits:' . config('validate.zip_code_max_length')],
             'province_id' => 'required|numeric|exists:m_provinces,id',
-            'province_city_id' => ['required', 'numeric', 'exists:m_provinces_cities,id,province_id' . $this->province_id],
+            'province_city_id' => ['required', 'numeric', 'exists:m_provinces_cities,id,province_id,' . $this->province_id],
             'working_days' => ['nullable', 'array'],
             'working_days.*' => ['nullable', 'integer', 'in:' . implode(',', $dayIds)],
             'address' => ['required', 'max:' . $stringMaxLength],

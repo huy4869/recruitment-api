@@ -55,12 +55,12 @@ class JobService extends Service
         try {
             DB::beginTransaction();
 
-            FileService::getInstance()->updateImageable(new JobPosting, $dataImage, [
+            $job = JobPosting::create($data);
+
+            FileService::getInstance()->updateImageable($job, $dataImage, [
                 Image::JOB_BANNER,
                 Image::JOB_DETAIL
             ]);
-
-            JobPosting::create($data);
 
             DB::commit();
             return true;
