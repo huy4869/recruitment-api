@@ -27,6 +27,7 @@ class ChatListResourse extends JsonResource
         return [
             'user_id' => $this->user_id,
             'store_id' => $this->store_id,
+            'store_name' => $this->store->name,
             'first_name' => $this->userTrashed->first_name,
             'last_name' => $this->userTrashed->last_name,
             'avatar' => FileHelper::getFullUrl($this->userTrashed->avatarBanner->url ?? null),
