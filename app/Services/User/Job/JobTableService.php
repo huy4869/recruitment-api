@@ -192,7 +192,14 @@ class JobTableService extends TableService
      */
     public function makeNewQuery()
     {
+        $applicationIds = [];
+
+        if ($this->user) {
+            $applicationIds = JobService::getIdJobApplicationCancelOrReject($this->user);
+        }
+
         return JobPosting::query()->released()
+            ->whereNotIn('id', $applicationIds)
             ->with(
                 'store',
                 'salaryType',

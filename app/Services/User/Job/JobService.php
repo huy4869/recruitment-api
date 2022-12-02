@@ -111,8 +111,11 @@ class JobService extends Service
      */
     public function getRecentJobs($ids)
     {
+        $applicationIds = [];
+
         if ($this->user) {
             $jobIds = $this->user->recent_jobs ?? [];
+            $applicationIds = self::getIdJobApplication($this->user);
         } else {
             $jobIds = array_map('intval', explode(',', $ids));
         }
@@ -123,6 +126,7 @@ class JobService extends Service
 
         $jobList = JobPosting::query()->released()
             ->whereIn('id', $jobIds)
+            ->whereNotIn('id', $applicationIds)
             ->with([
                 'store',
                 'province',
@@ -189,16 +193,23 @@ class JobService extends Service
             $job->id,
         );
 
+        $applicationIds = [];
+
+        if ($this->user) {
+            $applicationIds = self::getIdJobApplication($this->user);
+        }
+
         $jobIds = DB::table(DB::raw($querySuggestJobs))
-        ->select('id', 'released_at', DB::raw($jobAlias . 'provinceRatio as total'))
-        ->where('job_status_id', JobPosting::STATUS_RELEASE)
-        ->where('deleted_at', NULL)
-        ->orderByRaw('total DESC')
-        ->orderByRaw('released_at DESC')
-        ->limit(config('common.job_posting.suggest_amount'))
-        ->get()
-        ->pluck('id')
-        ->toArray();
+            ->select('id', 'released_at', DB::raw($jobAlias . 'provinceRatio as total'))
+            ->where('job_status_id', JobPosting::STATUS_RELEASE)
+            ->where('deleted_at', null)
+            ->whereNotIn('id', $applicationIds)
+            ->orderByRaw('total DESC')
+            ->orderByRaw('released_at DESC')
+            ->limit(config('common.job_posting.suggest_amount'))
+            ->get()
+            ->pluck('id')
+            ->toArray();
 
         $jobList = JobPosting::query()->released()
             ->whereIn('id', $jobIds)
@@ -225,6 +236,16 @@ class JobService extends Service
         return collect($jobIds)->map(function ($id) use ($jobArr, $masterData, $userAction) {
             return JobHelper::addFormatJobJsonData($jobArr[$id], $masterData, $userAction);
         })->toArray();
+    }
+
+    public static function getIdJobApplication($user)
+    {
+        return $user->applications()->pluck('job_posting_id')->toArray();
+    }
+
+    public static function getIdJobApplicationCancelOrReject($user)
+    {
+        return $user->applications()->whereIn('interview_status_id', [MInterviewStatus::STATUS_CANCELED, MInterviewStatus::STATUS_REJECTED])->pluck('job_posting_id')->toArray();
     }
 
     /**
@@ -314,12 +335,19 @@ class JobService extends Service
     {
         $jobs = JobPosting::query()->released();
         $jobCount = $jobs->new()->count();
+        $applicationIds = [];
+
+        if ($this->user) {
+            $applicationIds = self::getIdJobApplication($this->user);
+        }
+
         $jobList = $jobs->with([
                 'store',
                 'province',
                 'province.provinceDistrict',
                 'salaryType',
             ])
+            ->whereNotIn('id', $applicationIds)
             ->orderBy('released_at', 'desc')
             ->take(config('common.job_posting.newest_amount'))
             ->get();
@@ -357,6 +385,12 @@ class JobService extends Service
      */
     public function getListMostViewJobPostings()
     {
+        $applicationIds = [];
+
+        if ($this->user) {
+            $applicationIds = self::getIdJobApplication($this->user);
+        }
+
         $jobList = JobPosting::query()->released()
             ->with([
                 'store',
@@ -364,6 +398,7 @@ class JobService extends Service
                 'province.provinceDistrict',
                 'salaryType',
             ])
+            ->whereNotIn('id', $applicationIds)
             ->orderby('views', 'desc')
             ->orderBy('released_at', 'desc')
             ->take(config('common.job_posting.most_view_amount'))
