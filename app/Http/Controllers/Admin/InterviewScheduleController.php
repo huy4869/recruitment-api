@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
-use App\Http\Requests\Admin\Application\DetailUserApplicationRequest;
 use App\Http\Requests\Admin\ListInterviewScheduleRequest;
 use App\Http\Requests\Admin\UpdateApplicationRequest;
 use App\Http\Requests\Admin\UpdateOrCreateInterviewScheduleRequest;
