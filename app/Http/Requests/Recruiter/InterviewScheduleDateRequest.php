@@ -28,4 +28,14 @@ class InterviewScheduleDateRequest extends FormRequest
             'date' => ['required', 'date', 'after_or_equal:today'],
         ];
     }
+
+    /**
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'date.after_or_equal' => trans('validation.ERR.038'),
+        ];
+    }
 }

@@ -218,7 +218,7 @@ class InterviewScheduleService extends Service
             foreach (config('date.time') as $key => $time) {
                 if (($key < $checkTime || time() > $endTime) && $hours == $time) {
                     throw ValidationException::withMessages([
-                        'hours' => trans('validation.ERR.037')
+                        'hours' => trans('validation.ERR.038')
                     ]);
                 }
             }
@@ -235,7 +235,7 @@ class InterviewScheduleService extends Service
         foreach ($stores as $store) {
             if ($store->applications->count()) {
                 throw ValidationException::withMessages([
-                    'hours' => trans('validation.ERR.037')
+                    'hours' => trans('validation.ERR.038')
                 ]);
             }
         }
