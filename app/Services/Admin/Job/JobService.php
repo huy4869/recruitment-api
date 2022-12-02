@@ -152,9 +152,8 @@ class JobService extends Service
             $applications = Application::query()
                 ->where('job_posting_id', '=', $job->id)
                 ->whereIn('interview_status_id', [
-                    MInterviewStatus::STATUS_APPLYING,
-                    MInterviewStatus::STATUS_WAITING_INTERVIEW,
-                    MInterviewStatus::STATUS_WAITING_RESULT
+                    MInterviewStatus::STATUS_ACCEPTED,
+                    MInterviewStatus::STATUS_REJECTED
                 ])
                 ->get();
 
