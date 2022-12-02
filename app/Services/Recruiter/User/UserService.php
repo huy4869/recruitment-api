@@ -42,51 +42,26 @@ class UserService extends Service
     }
 
     /**
-     * @return Collection
+     * @return array
      */
     public function getSuggestUsers()
     {
         $recruiter = $this->user;
-        $queryJob = sprintf('job_id IN (
-                SELECT id
-                FROM job_postings
-                WHERE store_id IN (
-                    SELECT id
-                    FROM stores
-                    WHERE user_id = %u
-                )
-            )', $recruiter->id);
-
-        $userIds = DB::table('user_job_desired_matches')
-            ->select('user_id', 'users.last_login_at', DB::raw('sum(suitability_point) as point'))
-            ->join('users', 'user_id', '=', 'users.id')
-            ->whereRaw($queryJob)
-            ->groupBy('user_id')
-            ->orderByRaw('point DESC')
-            ->orderByRaw('last_login_at DESC')
-            ->take(config('paginate.user.suggest_amount'))
-            ->pluck('user_id')
-            ->toArray();
+        $jobOwnedIds = $recruiter->jobsOwned()->pluck('job_postings.id')->toArray();
 
         $userSuggestList = User::query()->roleUser()
-            ->whereIn('id', $userIds)
-            ->with([
-                'avatarBanner',
-                'province',
-                'province.provinceDistrict',
-                'desiredConditionUser',
-                'desiredConditionUser.salaryType',
-                'desiredConditionUser.province',
-                'desiredConditionUser.province.provinceDistrict',
-            ])
+            ->select('users.*', DB::raw('sum(suitability_point) as point'))
+            ->leftJoin('user_job_desired_matches', 'users.id', '=', 'user_id')
+            ->whereIn('job_id', $jobOwnedIds)
+            ->groupBy('user_id')
+            ->orderBy('point', 'DESC')
+            ->orderBy('last_login_at', 'DESC')
+            ->orderBy('users.created_at', 'DESC')
             ->get();
 
         $recruiterFavoriteUser = $recruiter->favoriteUsers()->pluck('favorite_user_id')->toArray();
-        $userSuggestListFullInfo = self::getUserInfoForListUser($recruiterFavoriteUser, $userSuggestList);
 
-        return collect($userIds)->map(function ($id) use ($userSuggestListFullInfo) {
-            return $userSuggestListFullInfo[$id];
-        });
+        return self::getUserInfoForListUser($recruiterFavoriteUser, $userSuggestList);
     }
 
     /**

@@ -158,8 +158,7 @@ class UserTableService extends TableService
                 'desiredConditionUser.province',
                 'desiredConditionUser.province.provinceDistrict',
             ])
-            ->selectRaw($this->getSelectRaw())
-            ->orderBy('users.created_at', 'desc');
+            ->selectRaw($this->getSelectRaw());
     }
 
     /**
