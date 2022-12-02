@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests\Admin\Job;
 
+use App\Models\JobPosting;
 use App\Models\MJobType;
 use App\Models\MWorkType;
+use App\Rules\CheckHoursRule;
 use App\Services\Admin\Job\JobService;
 use Illuminate\Foundation\Http\FormRequest;
 
@@ -30,6 +32,7 @@ class CreateRequest extends FormRequest
         $stringMaxLength = config('validate.string_max_length');
         $textMaxLength = config('validate.text_max_length');
         $dayIds = array_keys(config('date.day_of_week_ja_fe'));
+        $rangeHoursType = [JobPosting::FULL_DAY, JobPosting::HALF_DAY];
 
         return [
             'name' => ['required', 'string', 'max:' . $stringMaxLength],
@@ -48,8 +51,20 @@ class CreateRequest extends FormRequest
             'salary_min' => ['required', 'integer', 'max:' . config('validate.salary_max_value')],
             'salary_max' => ['required', 'integer', 'greater_than_field:salary_min', 'max:' . config('validate.salary_max_value')],
             'salary_description' => ['nullable', 'string', 'max:' . $stringMaxLength],
-            'start_work_time' => 'required|string|max:' . config('validate.work_time_max_length'),
-            'end_work_time' => 'required|string|greater_than_field:start_work_time|max:' . config('validate.work_time_max_length'),
+            'range_hours_type' => 'integer|in:' . implode(',', $rangeHoursType),
+            'start_work_time' => [
+                'required',
+                'string',
+                'max:' . config('validate.work_time_max_length'),
+                new CheckHoursRule($this->range_hours_type)
+            ],
+            'end_work_time' => [
+                'required',
+                'string',
+                'greater_than_field:start_work_time',
+                'max:' . config('validate.work_time_max_length'),
+                new CheckHoursRule($this->range_hours_type),
+            ],
             'shifts' => ['nullable', 'max:' . $textMaxLength],
             'age_min' => ['nullable', 'integer', 'min:' . config('validate.age.min'), 'max:' . config('validate.age.max')],
             'age_max' => ['nullable', 'integer', 'greater_than_field:age_min', 'max:' . config('validate.age.max')],
@@ -57,7 +72,7 @@ class CreateRequest extends FormRequest
             'gender_ids.*' => 'integer|exists:m_genders,id',
             'experience_ids' => ['nullable', 'array'],
             'experience_ids.*' => 'integer|exists:m_job_experiences,id',
-            'postal_code' => ['required', 'numeric', 'digits:' . config('validate.zip_code_max_length')],
+            'postal_code' => ['nullable', 'numeric', 'digits:' . config('validate.zip_code_max_length')],
             'province_id' => 'required|numeric|exists:m_provinces,id',
             'province_city_id' => ['required', 'numeric', 'exists:m_provinces_cities,id,province_id,' . $this->province_id],
             'working_days' => ['nullable', 'array'],

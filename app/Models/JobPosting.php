@@ -19,6 +19,9 @@ class JobPosting extends Model
     public const STATUS_RELEASE = 2;
     public const STATUS_END = 3;
 
+    public const FULL_DAY = 1;
+    public const HALF_DAY = 2;
+
     /**
      * @var string
      */

@@ -111,6 +111,7 @@ class JobController extends Controller
             'salary_min',
             'salary_max',
             'salary_description',
+            'range_hours_type',
             'working_days',
             'start_work_time',
             'end_work_time',
