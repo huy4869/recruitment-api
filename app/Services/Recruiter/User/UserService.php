@@ -57,6 +57,7 @@ class UserService extends Service
             ->orderBy('point', 'DESC')
             ->orderBy('last_login_at', 'DESC')
             ->orderBy('users.created_at', 'DESC')
+            ->take(config('paginate.user.suggest_amount'))
             ->get();
 
         $recruiterFavoriteUser = $recruiter->favoriteUsers()->pluck('favorite_user_id')->toArray();
