@@ -91,4 +91,5 @@ Route::group(['as' => 'notifications.', 'prefix' => 'notifications', 'middleware
     Route::get('/', 'NotificationController@getNotify');
     Route::get('/count', 'NotificationController@count');
     Route::post('/update-read/{id}', 'NotificationController@updateBeReadNotify');
+    Route::get('/announcement/matching', 'NotificationController@matchingAnnouncement');
 });

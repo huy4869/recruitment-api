@@ -1,6 +1,14 @@
 <?php
 
 return [
+    'announcement' => [
+        'honorifics' => 'さん',
+        'amount_other' => 'ほか:amount',
+        'matching' => [
+            'one_person' => 'とメッセージを始めてください。',
+            'many_person' => '名と採用マッチングしました。',
+        ]
+    ],
     'interview' => [
         'title' => '明日「面談」の予定があります。',
         'content' => '明日面談の予定があります。 変更があればマイページの応募履歴欄より変更をしましょう。 頑張ってください！',

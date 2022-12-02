@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Recruiter;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Recruiter\NotificationCollection;
 use App\Services\Recruiter\NotificationService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class NotificationController extends Controller
@@ -19,7 +20,7 @@ class NotificationController extends Controller
     /**
      * total notification
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function count()
     {
@@ -32,7 +33,7 @@ class NotificationController extends Controller
      * list notification
      *
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function getNotify(Request $request)
     {
@@ -45,7 +46,7 @@ class NotificationController extends Controller
      * update be read
      *
      * @param $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      * @throws \App\Exceptions\InputException
      */
     public function updateBeReadNotify($id)
@@ -53,5 +54,16 @@ class NotificationController extends Controller
         $data = $this->notificationService->withUser($this->guard()->user())->updateBeReadNotify($id);
 
         return $this->sendSuccessResponse($data);
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function matchingAnnouncement()
+    {
+        $recruiter = $this->guard()->user();
+        $msg = $this->notificationService->withUser($recruiter)->makeMatchingAnnouncement();
+
+        return $this->sendSuccessResponse($msg);
     }
 }
