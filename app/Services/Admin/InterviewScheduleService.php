@@ -158,8 +158,8 @@ class InterviewScheduleService extends Service
             $isNotGood = InterviewScheduleService::RESULT;
             $isHasInterview = InterviewScheduleService::RESULT;
             $applierName = '';
-            $applierId = '';
-            $applierUserId = '';
+            $applierId = null;
+            $applierUserId = null;
 
             if (isset($recruiterOffTimes[$date . ' ' . $time])) {
                 $isNotGood = !$isNotGood;
@@ -181,8 +181,8 @@ class InterviewScheduleService extends Service
                 $isNotGood = InterviewScheduleService::RESULT;
                 $isHasInterview = InterviewScheduleService::RESULT;
                 $applierName = '';
-                $applierId = '';
-                $applierUserId = '';
+                $applierId = null;
+                $applierUserId = null;
             }
 
             $data[] = [
