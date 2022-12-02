@@ -53,7 +53,7 @@ class JobController extends Controller
      */
     public function suggestJobs($id)
     {
-        $jobs = JobService::getInstance()->getSuggestJobs($id);
+        $jobs = JobService::getInstance()->withUser($this->guard()->user())->getSuggestJobs($id);
 
         return $this->sendSuccessResponse(JobPostingResource::collection($jobs));
     }
@@ -81,7 +81,7 @@ class JobController extends Controller
      */
     public function getListMostViewJobPostings()
     {
-        $jobPostings = JobService::getInstance()->getListMostViewJobPostings();
+        $jobPostings = JobService::getInstance()->withUser($this->guard()->user())->getListMostViewJobPostings();
 
         return $this->sendSuccessResponse(JobPostingResource::collection($jobPostings));
     }
