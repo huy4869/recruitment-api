@@ -93,11 +93,14 @@ abstract class TableService extends Service implements TableContract
         $query = $this->buildQuery($search, $orders, $filters);
         $currentRouteUri = Route::getCurrentRoute()->uri();
 
-        if (
-            $currentRouteUri == 'user/job'
-            || $currentRouteUri == 'recruiter/jobs'
-        ) {
-            $query->orderBy('released_at', 'desc');
+        switch ($currentRouteUri) {
+            case 'user/job':
+            case 'recruiter/jobs':
+                $query->orderBy('released_at', 'desc');
+                break;
+            case 'recruiter/users':
+                $query->orderBy('users.created_at', 'desc');
+                break;
         }
 
         if ($this->isPaginate) {
