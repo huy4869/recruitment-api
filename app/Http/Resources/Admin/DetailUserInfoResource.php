@@ -5,6 +5,7 @@ namespace App\Http\Resources\Admin;
 use App\Helpers\DateTimeHelper;
 use App\Helpers\UserHelper;
 use App\Http\Resources\Recruiter\Job\DetailImageResource;
+use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class DetailUserInfoResource extends JsonResource
@@ -19,8 +20,10 @@ class DetailUserInfoResource extends JsonResource
     {
         return [
             'id' => $this['id'],
-            'avatar' => $this['avatar_banner'],
-            'avatar_details' => DetailImageResource::collection($this['avatar_details']),
+            'avatar' => $this['is_public_avatar'] ? $this['avatar_banner'] : null,
+            'avatar_details' => $this['is_public_thumbnail'] == User::STATUS_PUBLIC_AVATAR
+                ? DetailImageResource::collection($this['avatar_details'])
+                : null,
             'first_name' => $this['first_name'],
             'last_name' => $this['last_name'],
             'furi_first_name' => $this['furi_first_name'],

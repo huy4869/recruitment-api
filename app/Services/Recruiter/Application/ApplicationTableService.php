@@ -154,6 +154,7 @@ class ApplicationTableService extends TableService
             application_users.last_name,
             application_users.furi_first_name,
             application_users.furi_last_name,
+            application_users.is_public_avatar,
             application_users.age';
     }
 }

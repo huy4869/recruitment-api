@@ -4,6 +4,7 @@ namespace App\Http\Resources\Admin;
 
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
+use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class UserInfoResource extends JsonResource
@@ -20,7 +21,9 @@ class UserInfoResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'avatar' => FileHelper::getFullUrl(@$this->avatarBanner->url),
+            'avatar' => $this->is_public_avatar == User::STATUS_PUBLIC_AVATAR
+                ? FileHelper::getFullUrl(@$this->avatarBanner->url)
+                : null,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'furi_first_name' => $this->furi_first_name,

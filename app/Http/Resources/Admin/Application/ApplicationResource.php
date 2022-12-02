@@ -4,6 +4,7 @@ namespace App\Http\Resources\Admin\Application;
 
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
+use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
 
@@ -29,7 +30,9 @@ class ApplicationResource extends JsonResource
             ],
             'user' => [
                 'id' => $this->user_id,
-                'avatar_banner' => FileHelper::getFullUrl(@$this->applicationUser->avatarBanner->url),
+                'avatar_banner' => $this->is_public_avatar == User::STATUS_PUBLIC_AVATAR
+                    ? FileHelper::getFullUrl(@$this->applicationUser->avatarBanner->url)
+                    : null,
                 'first_name' => $this->first_name,
                 'last_name' => $this->last_name,
                 'furi_first_name' => $this->furi_first_name,

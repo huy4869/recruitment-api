@@ -5,6 +5,7 @@ namespace App\Http\Resources\Recruiter\User;
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
 use App\Helpers\UrlHelper;
+use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 use function Symfony\Component\String\s;
 
@@ -22,7 +23,9 @@ class UserResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'avatar' => FileHelper::getFullUrl(@$this->avatarBanner->url),
+            'avatar' => $this->is_public_avatar == User::STATUS_PUBLIC_AVATAR
+                ? FileHelper::getFullUrl(@$this->avatarBanner->url)
+                : null,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
             'furi_first_name' => $this->furi_first_name,
