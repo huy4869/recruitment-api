@@ -6,6 +6,7 @@ use App\Exceptions\InputException;
 use App\Helpers\CommonHelper;
 use App\Helpers\DateTimeHelper;
 use App\Helpers\JobHelper;
+use App\Helpers\ResponseHelper;
 use App\Models\Application;
 use App\Models\FavoriteJob;
 use App\Models\Gender;
@@ -41,7 +42,7 @@ class JobService extends Service
         $user = $this->user;
         $job = JobPosting::query()->where('id', $id)
             ->where(function ($query) use ($user) {
-                $query->released()
+                $query->whereIn('job_status_id', [JobPosting::STATUS_DRAFT, JobPosting::STATUS_RELEASE])
                     ->orWhere(function ($query) use ($user) {
                         if ($user) {
                             $query->where('job_status_id', JobPosting::STATUS_END)
