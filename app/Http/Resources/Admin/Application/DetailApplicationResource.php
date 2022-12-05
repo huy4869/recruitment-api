@@ -5,6 +5,7 @@ namespace App\Http\Resources\Admin\Application;
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
 use App\Http\Resources\Admin\Application\DetailAvatarResource;
+use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class DetailApplicationResource extends JsonResource
@@ -24,8 +25,12 @@ class DetailApplicationResource extends JsonResource
                 'id' => $user->id,
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
-                'avatar_banner' => FileHelper::getFullUrl(@$user->avatarBanner->url),
-                'avatar_detail' => DetailAvatarResource::collection($user->avatarDetails),
+                'avatar_banner' => $user->is_public_avatar == User::STATUS_PUBLIC_AVATAR
+                    ? FileHelper::getFullUrl(@$user->avatarBanner->url)
+                    : null,
+                'avatar_detail' => $user->is_public_thumbnail == User::STATUS_PUBLIC_AVATAR
+                    ? DetailAvatarResource::collection($user->avatarDetails)
+                    : null,
                 'birthday' => DateTimeHelper::formatDateJa($user->birthday),
                 'age' => $user->age,
                 'gender' => $user->gender->name ?? null,

@@ -25,6 +25,9 @@ class User extends Authenticatable
     public const STATUS_ACTIVE = 1;
     public const STATUS_INACTIVE = 0;
 
+    public const STATUS_NOT_PUBLIC_AVATAR = 0;
+    public const STATUS_PUBLIC_AVATAR = 1;
+
     public const ROLE_USER = 1;
     public const ROLE_RECRUITER = 2;
     public const ROLE_SUB_ADMIN = 3;
