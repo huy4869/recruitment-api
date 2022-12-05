@@ -56,7 +56,7 @@ class InterviewScheduleService extends Service
             ->with(['applications' => function ($query) use ($startDate, $endDate) {
                 $query->whereDate('date', '>=', $startDate)
                     ->whereDate('date', '<=', $endDate)
-                    ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW]);
+                    ->where('interview_status_id', MInterviewStatus::STATUS_WAITING_INTERVIEW);
             }, 'applications.applicationUser'])
             ->where('user_id', '=', $recId)->get();
         $applications = collect();
@@ -274,7 +274,7 @@ class InterviewScheduleService extends Service
         }
 
         $applications = Application::query()
-            ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW])
+            ->whereIn('interview_status_id', MInterviewStatus::STATUS_WAITING_INTERVIEW)
             ->where('id', '!=', $applicationId)
             ->whereDate('date', $date)
             ->where('hours', '=', $hours)
@@ -294,7 +294,7 @@ class InterviewScheduleService extends Service
             ->where('date', '=', $date . ' 00:00:00')
             ->where('hours', '=', $hours)
             ->where('id', '!=', $application->id)
-            ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW])
+            ->where('interview_status_id', MInterviewStatus::STATUS_WAITING_INTERVIEW)
             ->exists();
 
         if ($userApplications) {
@@ -389,7 +389,7 @@ class InterviewScheduleService extends Service
             ->with(['applications' => function ($query) use ($date, $hours) {
                 $query->whereDate('date', $date)
                     ->where('hours', '=', $hours)
-                    ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW]);
+                    ->whereIn('interview_status_id', MInterviewStatus::STATUS_WAITING_INTERVIEW);
             }, 'applications.user'])
             ->where('user_id', '=', $recId)->get();
 
@@ -558,14 +558,12 @@ class InterviewScheduleService extends Service
             ->whereIn('store_id', $storeIds)
             ->where('job_posting_id', '!=', $jobPosting->id)
             ->where('date', '>=', $now)
-            ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW])
             ->get();
         $applicationsTime = $jobPosting->applications;
         $userApplicationsTime = Application::query()
             ->where('user_id', $userId)
             ->where('job_posting_id', '!=', $jobPosting->id)
             ->whereDate('date', '>=', $now)
-            ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW])
             ->get();
         $recruiterOffTimes = $jobPosting->store->owner->recruiterOffTimes->off_times ?? [];
         $monthNow = now()->firstOfMonth()->format('Y-m-d');
@@ -677,8 +675,7 @@ class InterviewScheduleService extends Service
         $jobPosting = JobPosting::query()
             ->released()
             ->with(['applications' => function($query) use ($userId) {
-                $query->where('user_id', '!=', $userId)
-                    ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW]);
+                $query->where('user_id', '!=', $userId);
             }, 'store.owner.recruiterOffTimes', 'store.owner.stores.applications'])
             ->where('id', '=', $jobPostingId)
             ->first();
