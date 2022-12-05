@@ -15,6 +15,9 @@ class Notification extends Model
     public const STATUS_UNREAD = 0;
     public const STATUS_READ = 1;
 
+    public const STATUS_NOT_ANNOUNCE = 0;
+    public const STATUS_ANNOUNCE = 1;
+
     public const TYPE_INTERVIEW_COMING = 1;
     public const TYPE_CANCEL_APPLY = 2;
     public const TYPE_NEW_MESSAGE = 3;
