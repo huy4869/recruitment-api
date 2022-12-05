@@ -30,4 +30,9 @@ return [
         'welfare_treatment_description' => '福利厚生・待遇 ',
         'feature_ids' => '特徴',
     ],
+
+    'range_hours_type' => [
+        'full_day' => '丸1日',
+        'half_day' => '半日',
+    ]
 ];

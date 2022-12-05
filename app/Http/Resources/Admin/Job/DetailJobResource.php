@@ -4,6 +4,7 @@ namespace App\Http\Resources\Admin\Job;
 
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
+use App\Models\JobPosting;
 use App\Services\Admin\Job\JobService;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
@@ -40,6 +41,8 @@ class DetailJobResource extends JsonResource
                 'type' => $this->salaryType->name,
             ],
             'working_days' => $this->working_days,
+            'range_hours_type' => $this->range_hours_type,
+            'range_hours_type_name' => $this->range_hours_type == JobPosting::FULL_DAY ? trans('job_posting.range_hours_type.half_day') : trans('job_posting.range_hours_type.full_day'),
             'work_time' => [
                 'start' => $this->start_work_time,
                 'start_time' => DateTimeHelper::getHoursMinute($this->start_work_time),
