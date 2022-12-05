@@ -3,6 +3,7 @@
 namespace App\Services\Recruiter\Store;
 
 use App\Exceptions\InputException;
+use App\Helpers\StringHelper;
 use App\Models\Store;
 use App\Services\TableService;
 
@@ -18,57 +19,57 @@ class StoreTableService extends TableService
         'recruiter_name' => 'filterTypes',
     ];
 
-    protected function filterTypes($query, $filter, $filters)
+    protected function filterTypes($query, $filter)
     {
-        if (!count($filters)) {
+        if (!count($filter)) {
             return $query;
         }
 
-        foreach ($filters as $filterItem) {
-            if (!isset($filterItem['key']) || !isset($filterItem['data'])) {
-                throw new InputException(trans('response.invalid'));
-            }
+        if (!isset($filter['key']) || !isset($filter['data'])) {
+            throw new InputException(trans('response.invalid'));
+        }
 
-            if ($filterItem['key'] == 'specialize_ids') {
-                $query->where(function ($query) use ($filterItem) {
-                    $types = json_decode($filterItem['data']);
-                    $query->whereJsonContains($filterItem['key'], $types[self::FIRST_ARRAY]);
-                    unset($types[self::FIRST_ARRAY]);
+        if ($filter['key'] == 'specialize_ids') {
+            $query->where(function ($query) use ($filter) {
+                $types = json_decode($filter['data']);
+                $query->whereJsonContains($filter['key'], $types[self::FIRST_ARRAY]);
+                unset($types[self::FIRST_ARRAY]);
 
-                    foreach ($types as $type) {
-                        $query->orWhereJsonContains($filterItem['key'], $type);
-                    }
-                });
-            }
+                foreach ($types as $type) {
+                    $query->orWhereJsonContains($filter['key'], $type);
+                }
+            });
+        }
 
-            if ($filterItem['key'] == 'province_ids') {
-                $query->where(function ($query) use ($filterItem) {
-                    $provinceIds = json_decode($filterItem['data']);
+        if ($filter['key'] == 'province_ids') {
+            $query->where(function ($query) use ($filter) {
+                $provinceIds = json_decode($filter['data']);
 
-                    foreach ($provinceIds as $id) {
-                        $query->orWhere('province_id', $id);
-                    }
-                });
-            }
+                foreach ($provinceIds as $id) {
+                    $query->orWhere('province_id', $id);
+                }
+            });
+        }
 
-            if ($filterItem['key'] == 'province_city_ids') {
-                $query->where(function ($query) use ($filterItem) {
-                    $provinceCityIds = json_decode($filterItem['data']);
+        if ($filter['key'] == 'province_city_ids') {
+            $query->where(function ($query) use ($filter) {
+                $provinceCityIds = json_decode($filter['data']);
 
-                    foreach ($provinceCityIds as $id) {
-                        $query->orWhere('province_city_id', $id);
-                    }
-                });
-            }
+                foreach ($provinceCityIds as $id) {
+                    $query->orWhere('province_city_id', $id);
+                }
+            });
+        }
 
-            if ($filterItem['key'] == 'store_name') {
-                $query->where('name', 'like', '%' . $filterItem['data'] . '%');
-            }
+        if ($filter['key'] == 'store_name') {
+            $filter['data'] = StringHelper::escapeLikeSearch($filter['data']);
+            $query->where('name', 'like', '%' . $filter['data'] . '%');
+        }
 
-            if ($filterItem['key'] == 'recruiter_name') {
-                $query->where('recruiter_name', 'like', '%' . $filterItem['data'] . '%');
-            }
-        }//end foreach
+        if ($filter['key'] == 'recruiter_name') {
+            $filter['data'] = StringHelper::escapeLikeSearch($filter['data']);
+            $query->where('recruiter_name', 'like', '%' . $filter['data'] . '%');
+        }
 
         return $query;
     }
