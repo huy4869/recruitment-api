@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\User;
 
 use App\Exceptions\InputException;
+use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\User\FavoriteJobResource;
 use App\Http\Resources\User\Job\DetailJobPostingResource;
 use App\Http\Resources\User\Job\JobCollection;
 use App\Http\Resources\User\Job\JobPostingResource;
+use App\Models\JobPosting;
 use App\Services\User\Job\JobTableService;
 use App\Services\User\Job\JobService;
 use App\Services\User\SearchJob\SearchJobService;
@@ -30,6 +32,10 @@ class JobController extends Controller
     {
         $user = $this->guard()->user();
         $job = JobService::getInstance()->withUser($user)->detail($id);
+
+        if ($job['job_status_id'] == JobPosting::STATUS_DRAFT && $job['applications']) {
+            return $this->sendSuccessResponse(null, trans('response.invitation_job_end'), ResponseHelper::STATUS_CODE_NOTFOUND);
+        }
 
         return $this->sendSuccessResponse(new DetailJobPostingResource($job));
     }

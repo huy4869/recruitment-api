@@ -15,6 +15,7 @@ return [
     'status_updated' => '成功しました。',
     'cant_delete' => ':objectの削除に失敗しました。',
     'cant_update' => ':objectの更新に失敗しました。',
+    'invitation_job_end' => '「こちらの求人は募集を終了しました」',
     'label' => [
         'user' => 'ユーザー',
         'user_work_history' => '実務経験',
