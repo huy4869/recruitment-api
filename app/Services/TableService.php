@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Helpers\StringHelper;
 use App\Services\Contracts\TableContract;
 use Closure;
 use Exception;
@@ -139,6 +140,7 @@ abstract class TableService extends Service implements TableContract
             return $query;
         }
 
+        $search = StringHelper::escapeLikeSearch($search);
         $content = '%' . trim($search) . '%';
         $query->where(function ($q) use ($content) {
             foreach ($this->searchables as $searchable) {

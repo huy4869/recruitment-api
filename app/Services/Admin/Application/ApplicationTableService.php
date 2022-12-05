@@ -2,6 +2,7 @@
 
 namespace App\Services\Admin\Application;
 
+use App\Helpers\StringHelper;
 use App\Models\Application;
 use App\Services\TableService;
 use Illuminate\Database\Eloquent\Builder;
@@ -97,6 +98,7 @@ class ApplicationTableService extends TableService
                 return $query;
         }//end switch
 
+        $filter['data'] = StringHelper::escapeLikeSearch($filter['data']);
         $content = '%' . str_replace(' ', '', $filter['data']) . '%';
         $query->where(function ($q) use ($content, $queryKeys) {
             foreach ($queryKeys as $key) {

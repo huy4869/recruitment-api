@@ -4,6 +4,7 @@ namespace App\Services\Admin\Job;
 
 use App\Exceptions\InputException;
 use App\Models\JobPosting;
+use App\Services\Common\SearchService;
 use App\Services\TableService;
 use Illuminate\Database\Eloquent\Builder;
 
@@ -76,37 +77,9 @@ class JobTableService extends TableService
             }
 
             if (in_array($filterItem['key'], $jsonKey)) {
-                $query->where(function ($query) use ($filterItem) {
-                    $types = json_decode($filterItem['data']);
-
-                    if ($types) {
-                        $query->whereJsonContains($filterItem['key'], $types[self::FIRST_ARRAY]);
-                        unset($types[self::FIRST_ARRAY]);
-
-                        foreach ($types as $type) {
-                            $query->orWhereJsonContains($filterItem['key'], $type);
-                        }
-                    }
-                });
+                SearchService::queryJsonKey($query, $filter);
             } elseif (in_array($filterItem['key'], $rangeKey)) {
-                preg_match('/([^_]+)_(min|max)/', $filterItem['key'], $matches);
-                $keyMin = $matches[1] . '_min';
-                $keyMax = $matches[1] . '_max';
-
-                $query->where( function ($query) use ($keyMin, $filterItem) {
-                    $query->whereNull($keyMin)
-                        ->orWhere( function ($query) use ($keyMin, $filterItem) {
-                            $query->whereNotNull($keyMin)
-                                ->where($keyMin, '<=', $filterItem['data']);
-                        });
-                })
-                ->where( function ($query) use ($keyMax, $filterItem) {
-                    $query->whereNull($keyMax)
-                        ->orWhere( function ($query) use ($keyMax, $filterItem) {
-                            $query->whereNotNull($keyMax)
-                                ->where($keyMax, '>=', $filterItem['data']);
-                        });
-                });
+                SearchService::queryRangeKey($query, $filter);
             } else {
                 $query->where($filterItem['key'], $filterItem['data']);
             }

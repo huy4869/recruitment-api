@@ -3,16 +3,17 @@
 namespace App\Services\User\Job;
 
 use App\Exceptions\InputException;
+use App\Helpers\StringHelper;
 use App\Models\JobPosting;
 use App\Models\MJobType;
 use App\Models\MWorkType;
+use App\Services\Common\SearchService;
 use App\Services\TableService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 class JobTableService extends TableService
 {
-    const FIRST_ARRAY = 0;
     const ORDER_BY_CREATED_AT = 1;
     const ORDER_BY_UPDATED_AT = 2;
 
@@ -58,6 +59,7 @@ class JobTableService extends TableService
      */
     protected function applySearchToQuery($search, $query)
     {
+        $search = StringHelper::escapeLikeSearch($search);
         $content = '%' . trim($search) . '%';
         $query->where(function ($q) use ($content) {
             foreach ($this->searchables as $searchable) {
@@ -74,13 +76,12 @@ class JobTableService extends TableService
     /**
      * @param $query
      * @param $filter
-     * @param $filters
      * @return mixed
      * @throws InputException
      */
-    protected function filterTypes($query, $filter, $filters)
+    protected function filterTypes($query, $filter)
     {
-        if (!count($filters)) {
+        if (!count($filter)) {
             return $query;
         }
 
@@ -91,41 +92,13 @@ class JobTableService extends TableService
             'feature_ids',
         ];
 
-        foreach ($filters as $filterItem) {
-            if (!isset($filterItem['key']) || !isset($filterItem['data'])) {
-                throw new InputException(trans('response.invalid'));
-            }
+        if (!isset($filter['key']) || !isset($filter['data'])) {
+            throw new InputException(trans('response.invalid'));
+        }
 
-            if (in_array($filterItem['key'], $jsonKey)) {
-                $query->where(function ($query) use ($filterItem) {
-                    $types = json_decode($filterItem['data']);
-                    $query->whereJsonContains($filterItem['key'], $types[self::FIRST_ARRAY]);
-                    unset($types[self::FIRST_ARRAY]);
-
-                    foreach ($types as $type) {
-                        $query->orWhereJsonContains($filterItem['key'], $type);
-
-                        if ($filterItem['key'] == 'job_type_ids' && $type == MJobType::OTHER) {
-                            $otherJobTypeIds = JobService::getOtherJobTypeIds();
-
-                            //other job types query
-                            foreach ($otherJobTypeIds as $jobType) {
-                                $query->orWhereJsonContains('job_type_ids', $jobType);
-                            }
-                        }
-
-                        if ($filterItem['key'] == 'work_type_ids' && $type == MWorkType::OTHER) {
-                            $otherWorkTypeIds = JobService::getOtherWorkTypeIds();
-
-                            //other work types query
-                            foreach ($otherWorkTypeIds as $workType) {
-                                $query->orWhereJsonContains('work_type_ids', $workType);
-                            }
-                        }
-                    }//end foreach
-                });
-            }//end if
-        }//end foreach
+        if (in_array($filter['key'], $jsonKey)) {
+            SearchService::queryJsonKey($query, $filter);
+        }//end if
 
         return $query;
     }

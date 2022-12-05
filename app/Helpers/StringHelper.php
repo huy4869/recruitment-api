@@ -42,4 +42,16 @@ class StringHelper
     {
         return substr(base_convert(sha1(uniqid(mt_rand())), 16, 36), 0, $limit);
     }
+
+    /**
+     * @param $string
+     * @return array|string|string[]
+     */
+    public static function escapeLikeSearch($string)
+    {
+        $search = array('%', '_', '\\');
+        $replace   = array('\%', '\_', '\\\\');
+
+        return str_replace($search, $replace, $string);
+    }
 }

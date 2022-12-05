@@ -3,16 +3,16 @@
 namespace App\Services\Recruiter\Job;
 
 use App\Exceptions\InputException;
+use App\Helpers\StringHelper;
 use App\Models\JobPosting;
 use App\Models\MJobType;
 use App\Models\MWorkType;
+use App\Services\Common\SearchService;
 use App\Services\TableService;
 use App\Services\User\Job\JobService;
 
 class JobTableService extends TableService
 {
-    const FIRST_ARRAY = 0;
-
     /**
      * @var array
      */
@@ -54,6 +54,8 @@ class JobTableService extends TableService
      */
     protected function filterJobName($query, $filter)
     {
+        $filter['data'] = StringHelper::escapeLikeSearch($filter['data']);
+
         return $query->where('job_postings.name', 'like', '%' . $filter['data'] . '%');
     }
 
@@ -64,19 +66,20 @@ class JobTableService extends TableService
      */
     protected function filterStoreName($query, $filter)
     {
+        $filter['data'] = StringHelper::escapeLikeSearch($filter['data']);
+
         return $query->where('stores.name', 'like', '%' . $filter['data'] . '%');
     }
 
     /**
      * @param $query
      * @param $filter
-     * @param $filters
      * @return mixed
      * @throws InputException
      */
-    protected function filterTypes($query, $filter, $filters)
+    protected function filterTypes($query, $filter)
     {
-        if (!count($filters)) {
+        if (!count($filter)) {
             return $query;
         }
 
@@ -99,77 +102,19 @@ class JobTableService extends TableService
             'province_city_id',
         ];
 
-        $skipKey = [
-            'store_name',
-            'job_name',
-        ];
+        if (!isset($filter['key']) || !isset($filter['data'])) {
+            throw new InputException(trans('response.invalid'));
+        }
 
-        foreach ($filters as $filterItem) {
-            if (!isset($filterItem['key']) || !isset($filterItem['data'])) {
-                throw new InputException(trans('response.invalid'));
-            }
-
-            if (in_array($filterItem['key'], $jsonKey)) {
-                $query->where(function ($query) use ($filterItem) {
-                    $types = json_decode($filterItem['data']);
-                    $query->whereJsonContains($filterItem['key'], $types[self::FIRST_ARRAY]);
-                    unset($types[self::FIRST_ARRAY]);
-
-                    foreach ($types as $type) {
-                        $query->orWhereJsonContains($filterItem['key'], $type);
-
-                        if ($filterItem['key'] == 'job_type_ids' && $type == MJobType::OTHER) {
-                            $otherJobTypeIds = JobService::getOtherJobTypeIds();
-
-                            //other job types query
-                            foreach ($otherJobTypeIds as $jobType) {
-                                $query->orWhereJsonContains('job_type_ids', $jobType);
-                            }
-                        }
-
-                        if ($filterItem['key'] == 'work_type_ids' && $type == MWorkType::OTHER) {
-                            $otherWorkTypeIds = JobService::getOtherWorkTypeIds();
-
-                            //other work types query
-                            foreach ($otherWorkTypeIds as $workType) {
-                                $query->orWhereJsonContains('work_type_ids', $workType);
-                            }
-                        }
-                    }//end foreach
-                });
-            } elseif (in_array($filterItem['key'], $rangeKey)) {
-                preg_match('/([^_]+)_(min|max)/', $filterItem['key'], $matches);
-                $keyMin = $matches[1] . '_min';
-                $keyMax = $matches[1] . '_max';
-
-                $query->where( function ($query) use ($keyMin, $filterItem) {
-                    $query->whereNull($keyMin)
-                        ->orWhere( function ($query) use ($keyMin, $filterItem) {
-                            $query->whereNotNull($keyMin)
-                                ->where($keyMin, '<=', $filterItem['data']);
-                        });
-                })
-                ->where( function ($query) use ($keyMax, $filterItem) {
-                    $query->whereNull($keyMax)
-                        ->orWhere( function ($query) use ($keyMax, $filterItem) {
-                            $query->whereNotNull($keyMax)
-                                ->where($keyMax, '>=', $filterItem['data']);
-                        });
-                });
-            } elseif (in_array($filterItem['key'], $provinceKey)) {
-                $types = json_decode($filterItem['data']);
-                $query->where('job_postings.' . $filterItem['key'], $types[self::FIRST_ARRAY]);
-                unset($types[self::FIRST_ARRAY]);
-
-                foreach ($types as $type) {
-                    $query->orWhere('job_postings.' . $filterItem['key'], $type);
-                }
-            } else {
-                if (!in_array($filterItem['key'], $skipKey)) {
-                    $query->where($filterItem['key'], $filterItem['data']);
-                }
-            }//end if
-        }//end foreach
+        if (in_array($filter['key'], $jsonKey)) {
+            SearchService::queryJsonKey($query, $filter);
+        } elseif (in_array($filter['key'], $rangeKey)) {
+            SearchService::queryRangeKey($query, $filter);
+        } elseif (in_array($filter['key'], $provinceKey)) {
+            SearchService::queryJobProvinceKey($query, $filter);
+        } else {
+            $query->where($filter['key'], $filter['data']);
+        }//end if
 
         return $query;
     }
