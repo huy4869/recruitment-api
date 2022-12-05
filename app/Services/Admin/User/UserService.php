@@ -6,10 +6,12 @@ use App\Exceptions\InputException;
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
 use App\Helpers\JobHelper;
+use App\Helpers\UrlHelper;
 use App\Helpers\UserHelper;
 use App\Jobs\Admin\User\JobDestroy;
 use App\Jobs\Admin\User\JobStore;
 use App\Jobs\Admin\User\JobUpdate;
+use App\Jobs\User\JobVerifyRegister;
 use App\Models\Application;
 use App\Models\MInterviewStatus;
 use App\Models\MRole;
@@ -22,9 +24,11 @@ use App\Services\Service;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class UserService extends Service
 {
@@ -48,26 +52,60 @@ class UserService extends Service
 
     /**
      * @param $data
-     * @return bool
+     * @return Builder|Model
      * @throws Exception
      */
     public function store($data)
     {
-        $data['password'] = Hash::make($data['password']);
-
         try {
             DB::beginTransaction();
+            $newUser = User::query()->create([
+                'first_name' => $data['first_name'],
+                'last_name' => $data['last_name'],
+                'furi_first_name' => $data['furi_first_name'],
+                'furi_last_name' => $data['furi_last_name'],
+                'email' => Str::lower($data['email']),
+                'password' => Hash::make($data['password']),
+                'role_id' => $data['role_id'],
+                'verify_token' => Str::random(config('password_reset.token.length_verify')),
+            ]);
 
-            User::create($data);
+            if (!$newUser) {
+                throw new InputException(__('auth.register_fail'));
+            }
 
             dispatch(new JobStore($data))->onQueue(config('queue.email_queue'));
 
+            if ($newUser->role_id == User::ROLE_USER || $newUser->role_id == User::ROLE_RECRUITER) {
+                $this->sendMailVerifyRegister($newUser);
+            }
+
             DB::commit();
-            return true;
-        } catch (Exception $e) {
+            return $newUser;
+        } catch (\Exception $exception) {
             DB::rollBack();
-            throw $e;
-        }//end try
+            Log::error($exception->getMessage(), [$exception]);
+            throw new InputException($exception->getMessage());
+        }
+    }
+
+    /**
+     * Send mail verify register
+     *
+     * @param $newUser
+     */
+    public function sendMailVerifyRegister($newUser)
+    {
+        $token = Crypt::encryptString($newUser->email . '&' . $newUser->verify_token);
+        $url = UrlHelper::verifyRegisterLink($token, $newUser);
+
+        $infoSendMail = [
+            'email' => $newUser->email,
+            'subject' => trans('mail.subject.verify_register'),
+            'url' => $url,
+        ];
+
+        dispatch(new JobVerifyRegister($infoSendMail))->onQueue(config('queue.email_queue'));
     }
 
     /**

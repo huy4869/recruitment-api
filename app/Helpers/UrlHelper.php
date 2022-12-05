@@ -58,4 +58,18 @@ class UrlHelper
         $path = config('password_reset.path.reset_password') . '?token=' . UrlHelper::urlEncode($token);
         return UrlHelper::userUrl($path, $user);
     }
+
+    /**
+     * verify register Link
+     *
+     * @param $token
+     * @param $user
+     * @return string
+     */
+    public static function verifyRegisterLink($token, $user)
+    {
+        $path = config('password_reset.path.verify_register') . '?token=' . $token;
+
+        return UrlHelper::userUrl($path, $user);
+    }
 }

@@ -91,6 +91,7 @@ class User extends Authenticatable
         'noteworthy',
         'last_login_at',
         'be_read_applications',
+        'verify_token',
     ];
 
     /**
