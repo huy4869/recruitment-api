@@ -47,13 +47,12 @@ class JobTableService extends TableService
     /**
      * @param $query
      * @param $filter
-     * @param $filters
      * @return mixed
      * @throws InputException
      */
-    protected function filterTypes($query, $filter, $filters)
+    protected function filterTypes($query, $filter)
     {
-        if (!count($filters)) {
+        if (!count($filter)) {
             return $query;
         }
 
@@ -71,19 +70,17 @@ class JobTableService extends TableService
             'age_max',
         ];
 
-        foreach ($filters as $filterItem) {
-            if (!isset($filterItem['key']) || !isset($filterItem['data'])) {
-                throw new InputException(trans('response.invalid'));
-            }
+        if (!isset($filter['key']) || !isset($filter['data'])) {
+            throw new InputException(trans('response.invalid'));
+        }
 
-            if (in_array($filterItem['key'], $jsonKey)) {
-                SearchService::queryJsonKey($query, $filter);
-            } elseif (in_array($filterItem['key'], $rangeKey)) {
-                SearchService::queryRangeKey($query, $filter);
-            } else {
-                $query->where($filterItem['key'], $filterItem['data']);
-            }
-        }//end foreach
+        if (in_array($filter['key'], $jsonKey)) {
+            SearchService::queryJsonKey($query, $filter);
+        } elseif (in_array($filter['key'], $rangeKey)) {
+            SearchService::queryRangeKey($query, $filter);
+        } else {
+            $query->where($filter['key'], $filter['data']);
+        }
 
         return $query;
     }

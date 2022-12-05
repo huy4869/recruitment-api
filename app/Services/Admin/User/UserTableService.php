@@ -60,8 +60,6 @@ class UserTableService extends TableService
             return $query;
         }
 
-        $queryKeys = [];
-
         switch ($filter['key']) {
             case 'user_name':
                 $queryKeys = [
@@ -86,6 +84,7 @@ class UserTableService extends TableService
                 return $query;
         }//end switch
 
+        $filter['data'] = StringHelper::escapeLikeSearch($filter['data']);
         $content = '%' . str_replace(' ', '', $filter['data']) . '%';
         $query->where(function ($q) use ($content, $queryKeys) {
             foreach ($queryKeys as $key) {

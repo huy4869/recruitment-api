@@ -3,12 +3,13 @@
 namespace App\Services\Admin\Store;
 
 use App\Exceptions\InputException;
+use App\Helpers\StringHelper;
 use App\Models\Store;
+use App\Services\Common\SearchService;
 use App\Services\TableService;
 
 class StoreTableService extends TableService
 {
-    const FIRST_ARRAY = 0;
     protected $filterables = [
         'province_id' => 'filterTypes',
         'province_city_id' => 'filterTypes',
@@ -17,9 +18,9 @@ class StoreTableService extends TableService
         'recruiter_name' => 'filterTypes',
     ];
 
-    public function filterTypes($query, $filter, $filters)
+    public function filterTypes($query, $filter)
     {
-        if (!count($filters)) {
+        if (!count($filter)) {
             return $query;
         }
 
@@ -27,38 +28,27 @@ class StoreTableService extends TableService
             'specialize_ids',
         ];
 
-        foreach ($filters as $filterItem) {
-            if (!isset($filterItem['key']) || !isset($filterItem['data'])) {
-                throw new InputException(trans('response.invalid'));
-            }
+        if (!isset($filter['key']) || !isset($filter['data'])) {
+            throw new InputException(trans('response.invalid'));
+        }
 
-            if (in_array($filterItem['key'], $jsonKey)) {
-                $query->where(function ($query) use ($filterItem) {
-                    $types = json_decode($filterItem['data']);
+        if (in_array($filter['key'], $jsonKey)) {
+            SearchService::queryJsonKey($query, $filter);
+        }
 
-                    if ($types) {
-                        $query->whereJsonContains($filterItem['key'], $types[self::FIRST_ARRAY]);
-                        unset($types[self::FIRST_ARRAY]);
+        if ($filter['key'] == 'province_id' || $filter['key'] == 'province_city_id') {
+            $query->where($filter['key'], $filter['data']);
+        }
 
-                        foreach ($types as $type) {
-                            $query->whereJsonContains($filterItem['key'], $type);
-                        }
-                    }
-                });
-            }
+        if ($filter['key'] == 'store_name') {
+            $filter['data'] = StringHelper::escapeLikeSearch($filter['data']);
+            $query->where('name', 'like', '%' . trim($filter['data']) . '%');
+        }
 
-            if ($filterItem['key'] == 'province_id' || $filterItem['key'] == 'province_city_id') {
-                $query->where($filterItem['key'], $filterItem['data']);
-            }
-
-            if ($filterItem['key'] == 'store_name') {
-                $query->where('name', 'like', '%' . trim($filterItem['data']) . '%');
-            }
-
-            if ($filterItem['key'] == 'recruiter_name') {
-                $query->where('recruiter_name', 'like', '%' . trim($filterItem['data']) . '%');
-            }
-        }//end foreach
+        if ($filter['key'] == 'recruiter_name') {
+            $filter['data'] = StringHelper::escapeLikeSearch($filter['data']);
+            $query->where('recruiter_name', 'like', '%' . trim($filter['data']) . '%');
+        }
 
         return $query;
     }
