@@ -117,7 +117,6 @@ class ApplicationService extends Service
         }
 
         $applications = Application::query()
-            ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW])
             ->where('id', '!=', $application->id)
             ->whereDate('date', $date)
             ->where('hours', '=', $hours)
@@ -137,7 +136,6 @@ class ApplicationService extends Service
             ->where('date', '=', $date . ' 00:00:00')
             ->where('hours', '=', $hours)
             ->where('id', '!=', $application->id)
-            ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW])
             ->exists();
 
         if ($recruiterInterviewApplications) {
@@ -162,30 +160,29 @@ class ApplicationService extends Service
      */
     public function updateApplication($application, $data)
     {
-        if ($application->interview_status_id != $data['interview_status_id']) {
-            $userNotifyData = [
-                'user_id' => $application->user_id,
-                'notice_type_id' => Notification::TYPE_INTERVIEW_CHANGED,
-                'noti_object_ids' => [
-                    'store_id' => $application->store_id,
-                    'application_id' => $application->id,
-                    'user_id' => $this->user->id
-                ],
-                'title' => trans('notification.N006.title', [
-                    'store_name' => $application->store->name,
-                ]),
-                'content' => trans('notification.N006.content', [
-                    'store_name' => $application->store->name,
-                    'interview_status' => $application->interviews->name,
-                ]),
-            ];
-        }
-
         try {
             DB::beginTransaction();
 
+            if ($application->interview_status_id != $data['interview_status_id']) {
+                Notification::query()->create([
+                    'user_id' => $application->user_id,
+                    'notice_type_id' => Notification::TYPE_INTERVIEW_CHANGED,
+                    'noti_object_ids' => [
+                        'store_id' => $application->store_id,
+                        'application_id' => $application->id,
+                        'user_id' => $this->user->id
+                    ],
+                    'title' => trans('notification.N006.title', [
+                        'store_name' => $application->store->name,
+                    ]),
+                    'content' => trans('notification.N006.content', [
+                        'store_name' => $application->store->name,
+                        'interview_status' => $application->interviews->name,
+                    ]),
+                ]);
+            }
+
             $application->update($this->saveMakeData($data, $application));
-            Notification::query()->create($userNotifyData);
 
             DB::commit();
             return true;
