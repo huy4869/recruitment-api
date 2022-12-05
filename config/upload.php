@@ -4,12 +4,12 @@ return [
     'image_types' => [
         'avatar_banner' => [
             'crop' => true,
-            'full_size' => [319, 319],
+            'full_size' => [866, 866],
             'thumb_size' => [190, 190],
         ],
         'avatar_detail' => [
             'crop' => true,
-            'full_size' => [140, 140],
+            'full_size' => [866, 866],
             'thumb_size' => [100, 100],
         ],
         'job_banner' => [
@@ -19,12 +19,12 @@ return [
         ],
         'job_detail' => [
             'crop' => true,
-            'full_size' => [276, 184],
+            'full_size' => [866, 577],
             'thumb_size' => [195, 130],
         ],
         'store_banner' => [
             'crop' => true,
-            'full_size' => [130, 130],
+            'full_size' => [866, 866],
             'thumb_size' => [100, 100],
         ],
     ],
