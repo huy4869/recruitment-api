@@ -9,7 +9,10 @@ class MPositionOffice extends Model
 {
     use HasFactory;
 
+    public const NO_DEFAULT = 0;
+    public const IS_DEFAULT = 1;
+
     protected $table = 'm_position_offices';
 
-    protected $fillable = ['name'];
+    protected $fillable = ['name', 'is_default', 'created_by'];
 }

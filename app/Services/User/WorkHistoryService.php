@@ -224,22 +224,28 @@ class WorkHistoryService extends Service
 
         if (count($dataNameDiffs) > 0) {
             $inputsNameDiffs = [];
-            $dataObjects = MPositionOffice::query()->get()->pluck('name')->toArray();
+            $dataObjects = MPositionOffice::query()
+                ->where('is_default', '=', MPositionOffice::IS_DEFAULT)
+                ->orwhere('created_by', '=', $this->user->id)
+                ->get()->pluck('name')->toArray();
             $dataNameDuplicate = [];
+            $dataInputName = [];
 
             foreach ($dataNameDiffs as $dataNameDiff) {
                 if (in_array($dataNameDiff, $dataObjects)) {
                     $dataNameDuplicate[] = $dataNameDiff;
                 } else {
                     $inputsNameDiffs[] = [
-                        'name' => $dataNameDiff
+                        'name' => $dataNameDiff,
+                        'is_default' => MPositionOffice::NO_DEFAULT,
+                        'created_by' => $this->user->id,
                     ];
+                    $dataInputName[] = $dataNameDiff;
                 }
             }
 
-
             MPositionOffice::query()->insert($inputsNameDiffs);
-            $inputsNameDiffs = array_merge($inputsNameDiffs, $dataNameDuplicate);
+            $inputsNameDiffs = array_merge($dataInputName, $dataNameDuplicate);
             $dataNameIds = MPositionOffice::query()
                 ->whereIn('name', $inputsNameDiffs)
                 ->get()
