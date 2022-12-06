@@ -41,6 +41,7 @@ class ApplicationUser extends Model
         'twitter',
         'postal_code',
         'province_id',
+        'province_city_id',
         'address',
         'building',
         'favorite_skill',
