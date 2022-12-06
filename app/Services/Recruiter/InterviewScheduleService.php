@@ -70,7 +70,7 @@ class InterviewScheduleService extends Service
                 $nameUserApplication = @$application->applicationUser->email;
             }
 
-            $data[$applicationDate][$application->hours] = [$nameUserApplication, @$application->user_id];
+            $data[$applicationDate][$application->hours] = [$nameUserApplication, @$application->user_id, $application->job_posting_id];
         }
 
         return $data;
@@ -144,6 +144,7 @@ class InterviewScheduleService extends Service
             $isNotGood = InterviewScheduleService::RESULT;
             $isHasInterview = InterviewScheduleService::RESULT;
             $applierUserId = null;
+            $applierJobPostingId = null;
             $applierName = '';
 
             if (isset($recruiterOffTimes[$date . ' ' . $time])) {
@@ -154,6 +155,7 @@ class InterviewScheduleService extends Service
             if (isset($applications[$time])) {
                 $applierName = $applications[$time][0] ?? null;
                 $applierUserId = $applications[$time][1] ?? null;
+                $applierJobPostingId = $applications[$time][2] ?? null;
                 $isHasInterview = !$isHasInterview;
                 $isNotGood = InterviewScheduleService::RESULT;
                 $isGood = InterviewScheduleService::RESULT;
@@ -165,6 +167,7 @@ class InterviewScheduleService extends Service
                 $isNotGood = InterviewScheduleService::RESULT;
                 $isHasInterview = InterviewScheduleService::RESULT;
                 $applierUserId = null;
+                $applierJobPostingId = null;
                 $applierName = '';
             }
 
@@ -176,6 +179,7 @@ class InterviewScheduleService extends Service
                 'is_has_interview' => $isHasInterview,
                 'applier_name' => $applierName,
                 'applier_user_id' => $applierUserId,
+                'job_posting_id' => $applierJobPostingId,
             ];
         }//end foreach
 
@@ -198,6 +202,7 @@ class InterviewScheduleService extends Service
                 'is_has_interview' => InterviewScheduleService::RESULT,
                 'applier_name' => '',
                 'applier_user_id' => null,
+                'job_posting_id' => null,
             ];
         }
 
