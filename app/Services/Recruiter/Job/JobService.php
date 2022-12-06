@@ -89,26 +89,52 @@ class JobService extends Service
         $recruiter = $this->user;
         $job = JobPosting::query()->where('id', $id)->with(['store'])->first();
 
-        if ($job->job_status_id == JobPosting::STATUS_END) {
-            throw new InputException(trans('validation.ERR.999'));
+        if ($data['job_status_id'] != JobPosting::STATUS_DRAFT) {
+            try {
+                DB::beginTransaction();
+
+                if ($data['job_status_id'] == JobPosting::STATUS_END) {
+                    $applications = Application::query()
+                        ->where('job_posting_id', '=', $job->id)
+                        ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW, MInterviewStatus::STATUS_WAITING_RESULT]);
+                    UserJobDesiredMatch::query()->where('job_id', '=', $job->id)->delete();
+                    $notifications = [];
+
+                    foreach ($applications->get() as $application) {
+                        $notifications[] = [
+                            'user_id' => $application->user_id,
+                            'notice_type_id' => Notification::TYPE_DELETE_JOB,
+                            'noti_object_ids' => json_encode([
+                                'store_id' => $application->store_id,
+                                'application_id' => $application->id,
+                                'user_id' => $this->user->id,
+                            ]),
+                            'title' => trans('notification.N011.title'),
+                            'content' => trans('notification.N011.content', ['job_id' => $job->name]),
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ];
+                    }
+
+                    $applications->update(['interview_status_id' => MInterviewStatus::STATUS_REJECTED]);
+                    collect($notifications)->chunk(self::QUANTITY_CHUNK)->each(function ($notifications) {
+                        Notification::query()->insert($notifications->toArray());
+                    });
+                }//end if
+                $job->update(['job_status_id' => $data['job_status_id']]);
+
+                DB::commit();
+
+                return $job->job_status_id;
+            } catch (Exception $exception) {
+                DB::rollBack();
+                Log::error($exception->getMessage(), [$exception]);
+                throw new Exception($exception->getMessage());
+            }//end try
         }
 
         if ($job->store->user_id != $recruiter->id) {
             throw new InputException(trans('response.not_found'));
-        }
-
-        if ($data['job_status_id'] == JobPosting::STATUS_DRAFT && $job->job_status_id == JobPosting::STATUS_RELEASE) {
-            $applications = Application::query()
-                ->where('job_posting_id', '=', $job->id)
-                ->whereIn('interview_status_id', [
-                    MInterviewStatus::STATUS_ACCEPTED,
-                    MInterviewStatus::STATUS_REJECTED
-                ])
-                ->get();
-
-            if (count($applications)) {
-                throw new InputException(trans('validation.ERR.998'));
-            }
         }
 
         $dataImage = $this->makeSaveDataImage($data);
@@ -122,35 +148,6 @@ class JobService extends Service
                 Image::JOB_BANNER,
                 Image::JOB_DETAIL
             ]);
-
-            if ($data['job_status_id'] == JobPosting::STATUS_END) {
-                $applications = Application::query()
-                    ->where('job_posting_id', '=', $job->id)
-                    ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW, MInterviewStatus::STATUS_WAITING_RESULT]);
-                UserJobDesiredMatch::query()->where('job_id', '=', $job->id)->delete();
-                $notifications = [];
-
-                foreach ($applications->get() as $application) {
-                    $notifications[] = [
-                        'user_id' => $application->user_id,
-                        'notice_type_id' => Notification::TYPE_DELETE_JOB,
-                        'noti_object_ids' => json_encode([
-                            'store_id' => $application->store_id,
-                            'application_id' => $application->id,
-                            'user_id' => $this->user->id,
-                        ]),
-                        'title' => trans('notification.N011.title'),
-                        'content' => trans('notification.N011.content', ['job_id' => $job->name]),
-                        'created_at' => now(),
-                        'updated_at' => now(),
-                    ];
-                }
-
-                $applications->update(['interview_status_id' => MInterviewStatus::STATUS_REJECTED]);
-                collect($notifications)->chunk(self::QUANTITY_CHUNK)->each(function ($notifications) {
-                    Notification::query()->insert($notifications->toArray());
-                });
-            }//end if
 
             $job->update($data);
 
@@ -172,21 +169,45 @@ class JobService extends Service
     public function destroy($id)
     {
         $job = JobPosting::query()->where('id', $id)->first();
+        $notifications = [];
 
         if (!$job) {
             throw new InputException(trans('response.invalid'));
         }
 
+        $applications = $job->applications()?->whereNotIn('interview_status_id', [
+            MInterviewStatus::STATUS_REJECTED,
+            MInterviewStatus::STATUS_CANCELED,
+            MInterviewStatus::STATUS_ACCEPTED
+        ]);
+
+        foreach ($applications->get() as $application) {
+            $notifications[] = [
+                'user_id' => $application->user_id,
+                'notice_type_id' => Notification::TYPE_DELETE_JOB,
+                'noti_object_ids' => json_encode([
+                    'store_id' => $application->store_id,
+                    'application_id' => $application->id,
+                    'user_id' => $this->user->id,
+                ]),
+                'title' => trans('notification.N011.title'),
+                'content' => trans('notification.N011.content', ['job_id' => $job->name]),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
         try {
             DB::beginTransaction();
 
-            $job->applications()?->whereIn('interview_status_id', [
-                MInterviewStatus::STATUS_APPLYING,
-                MInterviewStatus::STATUS_WAITING_INTERVIEW,
-                MInterviewStatus::STATUS_WAITING_RESULT
-            ])->update([
+            $applications->update([
                 'interview_status_id' => MInterviewStatus::STATUS_REJECTED
             ]);
+
+            if ($notifications) {
+                Notification::query()->insert($notifications);
+            }
+
             $job->feedbacks()?->delete();
             $job->userJobDesiredMatch()?->delete();
             $job->images()?->delete();

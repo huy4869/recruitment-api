@@ -3,6 +3,7 @@
 namespace App\Services\Admin\Job;
 
 use App\Exceptions\InputException;
+use App\Helpers\StringHelper;
 use App\Models\JobPosting;
 use App\Services\Common\SearchService;
 use App\Services\TableService;
@@ -35,6 +36,9 @@ class JobTableService extends TableService
         'salary_min' => 'filterTypes',
         'salary_max' => 'filterTypes',
         'gender_ids' => 'filterTypes',
+        'job_name' => 'filterJobName',
+        'store_name' => 'filterStoreName',
+        'store_id' => 'filterTypes',
     ];
 
     /**
@@ -43,6 +47,30 @@ class JobTableService extends TableService
     protected $orderables = [
         'updated_at' => 'job_postings.updated_at'
     ];
+
+    /**
+     * @param $query
+     * @param $filter
+     * @return mixed
+     */
+    protected function filterJobName($query, $filter)
+    {
+        $filter['data'] = StringHelper::escapeLikeSearch($filter['data']);
+
+        return $query->where('job_postings.name', 'like', '%' . $filter['data'] . '%');
+    }
+
+    /**
+     * @param $query
+     * @param $filter
+     * @return mixed
+     */
+    protected function filterStoreName($query, $filter)
+    {
+        $filter['data'] = StringHelper::escapeLikeSearch($filter['data']);
+
+        return $query->where('stores.name', 'like', '%' . $filter['data'] . '%');
+    }
 
     /**
      * @param $query
@@ -70,6 +98,11 @@ class JobTableService extends TableService
             'age_max',
         ];
 
+        $provinceKey = [
+            'province_id',
+            'province_city_id',
+        ];
+
         if (!isset($filter['key']) || !isset($filter['data'])) {
             throw new InputException(trans('response.invalid'));
         }
@@ -78,6 +111,8 @@ class JobTableService extends TableService
             SearchService::queryJsonKey($query, $filter);
         } elseif (in_array($filter['key'], $rangeKey)) {
             SearchService::queryRangeKey($query, $filter);
+        } elseif (in_array($filter['key'], $provinceKey)) {
+            SearchService::queryJobProvinceKey($query, $filter);
         } else {
             $query->where($filter['key'], $filter['data']);
         }

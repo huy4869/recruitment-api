@@ -6,6 +6,7 @@ use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
 use App\Helpers\JobHelper;
 use App\Models\Application;
+use App\Models\JobPosting;
 use App\Models\MInterviewApproach;
 use App\Services\User\Job\JobService;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -102,6 +103,10 @@ class DetailJobPostingResource extends JsonResource
                     'approach' => $approach,
                 ]
             ] : [],
+            'is_draft' => $this['job_status_id'] == JobPosting::STATUS_DRAFT,
+            'is_release' => $this['job_status_id'] == JobPosting::STATUS_RELEASE,
+            'is_end' => $this['job_status_id'] == JobPosting::STATUS_END,
+            'is_hide' => $this['job_status_id'] == JobPosting::STATUS_HIDE,
             'released_at' => DateTimeHelper::formatDateJa($this['released_at']),
             'updated_at' => DateTimeHelper::formatDateJa($this['updated_at']),
         ];

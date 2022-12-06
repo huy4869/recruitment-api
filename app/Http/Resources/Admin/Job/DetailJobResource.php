@@ -38,7 +38,9 @@ class DetailJobResource extends JsonResource
             'salary' => [
                 'min' => $this->salary_min,
                 'max' => $this->salary_max,
-                'type' => $this->salaryType->name,
+                'type_id' => $this->salaryType->id,
+                'type_name' => $this->salaryType->name,
+                'description' =>  $this->salary_description,
             ],
             'working_days' => $this->working_days,
             'range_hours_type' => $this->range_hours_type,
@@ -66,6 +68,7 @@ class DetailJobResource extends JsonResource
                 'address' => $this['address'],
             ],
             'stations' => $this->stations,
+            'shifts' => $this->shifts,
             'welfare_treatment_description' => $this['welfare_treatment_description'],
             'released_at' => DateTimeHelper::formatDateJa($this['released_at']),
             'updated_at' => DateTimeHelper::formatDateJa($this['updated_at']),
