@@ -4,13 +4,11 @@
 namespace App\Services\Recruiter\User;
 
 use App\Exceptions\InputException;
-use App\Models\MJobType;
-use App\Models\MWorkType;
 use App\Models\User;
 use App\Services\Common\SearchService;
 use App\Services\TableService;
-use App\Services\User\Job\JobService;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Route;
 
 class UserTableService extends TableService
 {
@@ -114,16 +112,23 @@ class UserTableService extends TableService
      */
     public function makeNewQuery()
     {
-        return User::query()->roleUser()
+        $q = User::query()->roleUser()
             ->with([
                 'avatarBanner',
                 'province',
-                'province.provinceDistrict',
                 'desiredConditionUser.salaryType',
                 'desiredConditionUser.province',
                 'desiredConditionUser.province.provinceDistrict',
             ])
             ->selectRaw($this->getSelectRaw());
+
+        if (Route::getCurrentRoute()->uri() == "recruiter/users/favorites") {
+            $q->rightJoin('favorite_users', 'users.id', 'favorite_user_id')
+                ->where('favorite_users.user_id', auth()->user()->id)
+                ->withTrashed();
+        }
+
+        return $q;
     }
 
     /**
@@ -133,7 +138,7 @@ class UserTableService extends TableService
      */
     protected function getSelectRaw()
     {
-        return 'users.id,
+        $selectList = 'users.id,
             users.first_name,
             users.last_name,
             users.furi_first_name,
@@ -145,5 +150,11 @@ class UserTableService extends TableService
             users.email,
             users.last_login_at,
             users.created_at';
+
+        if (Route::getCurrentRoute()->uri() == "recruiter/users/favorites") {
+            $selectList .= ', users.deleted_at, 1 as favorite';
+        }
+
+        return $selectList;
     }
 }

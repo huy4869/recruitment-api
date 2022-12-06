@@ -4,10 +4,8 @@ namespace App\Http\Resources\Recruiter\User;
 
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
-use App\Helpers\UrlHelper;
 use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
-use function Symfony\Component\String\s;
 
 class UserResource extends JsonResource
 {
@@ -58,7 +56,8 @@ class UserResource extends JsonResource
             'job_experiences' => @$this->job_experiences,
             'work_types' => @$this->work_types,
             'job_features' => @$this->job_features,
-            'is_favorite' => @$this->favorite,
+            'is_favorite' => !!@$this->favorite,
+            'be_deleted' => !!@$this->deleted_at
         ];
     }
 }

@@ -90,4 +90,16 @@ class UserController extends Controller
 
         throw new InputException(trans('response.not_found'));
     }
+
+    public function listFavorite(Request $request)
+    {
+        $users = UserTableService::getInstance()->data(
+            null,
+            null,
+            null,
+            $request->get('per_page')
+        );
+
+        return $this->sendSuccessResponse(UserResource::collection($users));
+    }
 }
