@@ -52,7 +52,7 @@ class ApplicationTableService extends TableService
                 $comparisonOperator = '>=';
                 break;
             case 'created_at_to':
-                $comparisonOperator = '<';
+                $comparisonOperator = '<=';
                 break;
             default:
                 $comparisonOperator = '=';
