@@ -43,13 +43,13 @@ class UpdateRequest extends FormRequest
             'job_thumbnails.*' => 'string',
             'job_type_ids' => 'required|array',
             'job_type_ids.*' => 'integer|exists:m_job_types,id,is_default,' . MJobType::IS_DEFAULT,
-            'description' => 'required|string|max:' . config('validate.text_max_length'),
+            'description' => 'required|string|max:' . config('validate.job_posting_textarea_max_length'),
             'work_type_ids' => 'required|array',
             'work_type_ids.*' => 'integer|exists:m_work_types,id,is_default,' . MWorkType::IS_DEFAULT,
             'salary_type_id' => 'required|integer|exists:m_salary_types,id',
             'salary_min' => 'required|integer|max:' . config('validate.salary_max_value'),
             'salary_max' => 'required|integer|greater_than_field:salary_min|max:' . config('validate.salary_max_value'),
-            'salary_description' => 'nullable|string|max:' . config('validate.string_max_length'),
+            'salary_description' => 'nullable|string|max:' . config('validate.job_posting_textarea_max_length'),
             'range_hours_type' => 'integer|in:' . implode(',', $rangeHoursType),
             'start_work_time' => [
                 'required',
@@ -64,7 +64,7 @@ class UpdateRequest extends FormRequest
                 'max:' . config('validate.work_time_max_length'),
                 new CheckHoursRule($this->range_hours_type),
             ],
-            'shifts' => 'nullable|max:' . config('validate.text_max_length'),
+            'shifts' => 'nullable|max:' . config('validate.job_posting_textarea_max_length'),
             'age_min' => 'nullable|integer|min:' . config('validate.age.min') . '|max:' . config('validate.age.max'),
             'age_max' => 'nullable|integer|greater_than_field:age_min|max:' . config('validate.age.max'),
             'gender_ids' => 'nullable|array',
@@ -80,7 +80,7 @@ class UpdateRequest extends FormRequest
             'building' => 'nullable|max:' . config('validate.string_max_length'),
             'station_ids' => 'nullable|array',
             'stations_ids.*' => 'integer|exists:m_stations,id',
-            'welfare_treatment_description' => 'required|max:' . config('validate.text_max_length'),
+            'welfare_treatment_description' => 'required|max:' . config('validate.job_posting_textarea_max_length'),
             'feature_ids' => 'nullable|array',
             'feature_ids.*' => 'integer|exists:m_job_features,id',
         ];
@@ -110,7 +110,7 @@ class UpdateRequest extends FormRequest
             'feature_ids.required' => trans('validation.COM.010', [
                 'attribute' => trans('job_posting.attributes.feature_ids')
             ]),
-            'description.max' => trans('validation.COM.014', [
+            'description.max' => trans('validation.COM.013', [
                 'attribute' => trans('job_posting.attributes.description')
             ]),
             'salary_min.max' => trans('validation.COM.017', [
@@ -127,8 +127,11 @@ class UpdateRequest extends FormRequest
             ]),
             'salary_max.greater_than_field' => trans('validation.ERR.028'),
             'salary_type_id.required' => trans('validation.ERR.030'),
-            'salary_description.max' => trans('validation.COM.014', [
+            'salary_description.max' => trans('validation.COM.013', [
                 'attribute' => trans('job_posting.attributes.salary_description')
+            ]),
+            'shifts.max' => trans('validation.COM.013', [
+                'attribute' => trans('job_posting.attributes.shifts')
             ]),
             'start_work_time.required' => trans('validation.COM.010', [
                 'attribute' => trans('job_posting.attributes.start_work_time')
@@ -144,7 +147,7 @@ class UpdateRequest extends FormRequest
             'province_id.required' => trans('validation.COM.010', [
                 'attribute' => trans('job_posting.attributes.province_id')
             ]),
-            'welfare_treatment_description.max' => trans('validation.COM.014', [
+            'welfare_treatment_description.max' => trans('validation.COM.013', [
                 'attribute' => trans('job_posting.attributes.welfare_treatment_description')
             ]),
         ];

@@ -41,7 +41,7 @@ class ApplicationResource extends JsonResource
                 'last_name' => $user->last_name,
                 'furi_first_name' => $user->furi_first_name,
                 'furi_last_name' => $user->furi_last_name,
-                'age' => $user->age,
+                'age' => DateTimeHelper::birthDayByAge($user->birthday, $this->created_at),
             ],
             'be_read' => in_array($this->id, Auth::user()->be_read_applications ?? []),
             'created_at' => DateTimeHelper::formatDateDayOfWeekJa($this->created_at),

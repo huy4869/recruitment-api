@@ -30,7 +30,7 @@ class ApplicationProfileUserResource extends JsonResource
             'furi_first_name' => @$this['application_user']['furi_first_name'],
             'furi_last_name' => @$this['application_user']['furi_last_name'],
             'alias_name' => @$this['application_user']['alias_name'],
-            'age' => @$this['application_user']['age'],
+            'age' => DateTimeHelper::birthDayByAge(@$this['application_user']['birthday'], @$this['application_user']['created']),
             'user_address' => [
                 'postal_code' => @$this['application_user']['postal_code'],
                 'province_name' => $this['province'],

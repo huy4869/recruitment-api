@@ -41,7 +41,7 @@ class InfoResource extends JsonResource
             'alias_name' => $data->alias_name,
             'birthday' => $data->birthday,
             'birthday_format' => DateTimeHelper::formatDateJa($data->birthday),
-            'age' => $data->age,
+            'age' => DateTimeHelper::birthDayByAge($data->birthday, now()),
             'gender_id' => $data->gender_id,
             'gender_name' => @$data->gender->name,
             'tel' => $data->tel,

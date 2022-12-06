@@ -40,4 +40,5 @@ return [
     'approach_text_max_length' => 2000,
     'string_phone_min_length' => 9,
     'string_phone_max_length' => 11,
+    'job_posting_textarea_max_length' => 2000
 ];

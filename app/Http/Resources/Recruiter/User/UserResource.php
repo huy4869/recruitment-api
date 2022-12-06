@@ -29,7 +29,7 @@ class UserResource extends JsonResource
             'furi_first_name' => $this->furi_first_name,
             'furi_last_name' => $this->furi_last_name,
             'alias_name' => $this->alias_name,
-            'age' => $this->age,
+            'age' => DateTimeHelper::birthDayByAge($this->birthday, now()),
             'user_address' => [
                 'postal_code' => $this->postal_code,
                 'province_id' => @$this->province->id,
