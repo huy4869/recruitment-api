@@ -35,6 +35,7 @@ Route::group(['as' => 'users.', 'prefix' => 'users', 'middleware' => 'recruiter'
     Route::get('/new', 'UserController@newUsers')->name('newUsers');
     Route::get('/suggest', 'UserController@suggestUsers')->name('suggestUsers');
     Route::get('/detail/{id}', 'UserProfileController@detail')->name('detail');
+    Route::get('/favorites', 'UserController@listFavorite')->name('listFavorite');
     Route::post('/favorite', 'UserController@addOrRemoveFavoriteUser')->name('addOrRemoveFavoriteUser');
 });
 

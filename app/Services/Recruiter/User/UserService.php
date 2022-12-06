@@ -3,7 +3,6 @@
 namespace App\Services\Recruiter\User;
 
 use App\Exceptions\InputException;
-use App\Helpers\CommonHelper;
 use App\Helpers\JobHelper;
 use App\Helpers\UserHelper;
 use App\Models\FavoriteUser;
@@ -11,7 +10,6 @@ use App\Models\Notification;
 use App\Models\User;
 use App\Services\Service;
 use Exception;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class UserService extends Service
