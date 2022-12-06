@@ -22,6 +22,7 @@ Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {
     Route::get('/me', 'AuthController@me')->name('me')->middleware('recruiter');
     Route::post('/register', 'AuthController@register')->name('register');
     Route::post('/change-password', 'AuthController@changePassword')->name('changePassword')->middleware('recruiter');
+    Route::post('/verify-register', 'AuthController@verifyRegister')->name('verifyRegister');
 });
 
 Route::group(['as' => 'forgot-password.', 'prefix' => 'forgot-password'], function () {

@@ -12,6 +12,7 @@ use App\Http\Requests\User\Auth\UpdateProfileRequest;
 use App\Http\Resources\User\Auth\MeResource;
 use App\Services\User\AuthService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class AuthController extends BaseController
@@ -26,8 +27,8 @@ class AuthController extends BaseController
      */
     public function __construct()
     {
-        $this->middleware($this->authMiddleware())->except(['login', 'register']);
-        $this->middleware($this->guestMiddleware())->only(['login', 'register']);
+        $this->middleware($this->authMiddleware())->except(['login', 'register', 'verifyRegister']);
+        $this->middleware($this->guestMiddleware())->only(['login', 'register', 'verifyRegister']);
     }
 
     /**
@@ -109,6 +110,21 @@ class AuthController extends BaseController
                 ]
             ]
         );
+    }
+
+    /**
+     * Verify register
+     *
+     * @param Request $request
+     * @return JsonResponse
+     * @throws InputException
+     */
+    public function verifyRegister(Request $request)
+    {
+        $token = $request->get('token');
+        $data = AuthService::getInstance()->verifyRegister($token);
+
+        return $this->sendSuccessResponse($data, __('auth.verify_register_success'));
     }
 
     /**

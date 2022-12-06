@@ -11,6 +11,7 @@ use App\Http\Requests\Recruiter\ChangePasswordRequest;
 use App\Http\Resources\Recruiter\MeResource;
 use App\Services\Recruiter\AuthService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class AuthController extends BaseController
@@ -25,8 +26,8 @@ class AuthController extends BaseController
      */
     public function __construct()
     {
-        $this->middleware($this->guestMiddleware())->only(['login', 'register']);
-        $this->middleware($this->authMiddleware())->except(['login', 'register']);
+        $this->middleware($this->guestMiddleware())->only(['login', 'register', 'verifyRegister']);
+        $this->middleware($this->authMiddleware())->except(['login', 'register', 'verifyRegister']);
     }
 
     /**
@@ -108,6 +109,21 @@ class AuthController extends BaseController
         $currentUser->currentAccessToken()->delete();
 
         return $this->sendSuccessResponse(null, trans('auth.logout_success'));
+    }
+
+    /**
+     * Verify register
+     *
+     * @param Request $request
+     * @return JsonResponse
+     * @throws InputException
+     */
+    public function verifyRegister(Request $request)
+    {
+        $token = $request->get('token');
+        $data = AuthService::getInstance()->verifyRegister($token);
+
+        return $this->sendSuccessResponse($data, __('auth.verify_register_success'));
     }
 
     /**

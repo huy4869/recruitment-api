@@ -9,6 +9,7 @@ return [
     'password_min_length' => 4,
     'max_image_detail' => 3,
     'password_max_length' => 12,
+    'verify_register_max_length' => 20,
     'string_max_length' => 255,
     'phone_min_length' => 10,
     'phone_max_length' => 13,
