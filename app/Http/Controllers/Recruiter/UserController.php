@@ -100,6 +100,9 @@ class UserController extends Controller
             $request->get('per_page')
         );
 
-        return $this->sendSuccessResponse(UserResource::collection($users));
+        return $this->sendSuccessResponse(new UserCollection([
+            'recruiter' => $this->guard()->user(),
+            'users' => $users,
+        ]));
     }
 }
