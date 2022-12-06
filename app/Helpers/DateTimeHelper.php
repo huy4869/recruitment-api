@@ -407,4 +407,13 @@ class DateTimeHelper
             'minute' => $timeHoursMinute->format(config('date.time_hours.minute')),
         ];
     }
+
+    public static function birthDayByAge($dateBirthDay, $date)
+    {
+        if (!$dateBirthDay || !$date) {
+            return null;
+        }
+
+        return Carbon::parse($dateBirthDay)->diff($date)->y;
+    }
 }

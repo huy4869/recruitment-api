@@ -199,7 +199,7 @@ class ApplicationService extends Service
                     ]),
                     'content' => trans('notification.N006.content', [
                         'store_name' => $application->store->name,
-                        'interview_status' => $application->interviews->name,
+                        'interview_status' => MInterviewStatus::where('id', $data['interview_status_id'])->first()->name,
                     ]),
                 ]);
             }
