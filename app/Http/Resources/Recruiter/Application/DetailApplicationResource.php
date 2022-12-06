@@ -26,10 +26,10 @@ class DetailApplicationResource extends JsonResource
                 'user_id' => $this->user_id,
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
-                'avatar_banner' => $this->is_public_avatar == User::STATUS_PUBLIC_AVATAR
+                'avatar_banner' => $user->is_public_avatar == User::STATUS_PUBLIC_AVATAR
                     ? FileHelper::getFullUrl(@$user->avatarBanner->url)
                     : null,
-                'avatar_detail' => $this->is_public_thumbnail == User::STATUS_PUBLIC_AVATAR
+                'avatar_detail' => $user->is_public_thumbnail == User::STATUS_PUBLIC_AVATAR
                     ? DetailAvatarResource::collection($user->avatarDetails)
                     : null,
                 'birthday' => DateTimeHelper::formatDateJa($user->birthday),
