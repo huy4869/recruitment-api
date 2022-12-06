@@ -8,6 +8,7 @@ use App\Models\MJobFeature;
 use App\Models\MJobFeatureCategory;
 use App\Models\MJobType;
 use App\Models\MNoticeType;
+use App\Models\MPositionOffice;
 use App\Models\MProvince;
 use App\Models\MProvinceCity;
 use App\Models\MProvinceDistrict;
@@ -18,6 +19,7 @@ use Exception;
 use Illuminate\Config\Repository;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use App\Services\Service;
 
@@ -161,12 +163,46 @@ class MasterDataService extends Service
             'driver' => self::DRIVER_CUSTOM,
             'target' => 'getMasterDataSkills',
         ],
+
+        'm_position_offices_user' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getPositionOffices',
+        ],
     ];
 
     /**
      * @var null
      */
     protected $data = null;
+
+    /**
+     * Get position office of user
+     *
+     * @return array
+     */
+    protected function getPositionOffices()
+    {
+        $result = [];
+        if (isset(Auth::user()->id)) {
+            $data = MPositionOffice::query()
+                ->where('is_default', '=', MPositionOffice::IS_DEFAULT)
+                ->orWhere('created_by', '=', Auth::user()->id)
+                ->get();
+        } else {
+            $data = MPositionOffice::query()
+                ->where('is_default', '=', MPositionOffice::IS_DEFAULT)
+                ->get();
+        }
+
+        foreach ($data as $item) {
+            $result[] = [
+                'id' => $item->id,
+                'name' => $item->name,
+            ];
+        }
+
+        return $result;
+    }
 
     /**
      * With resources
