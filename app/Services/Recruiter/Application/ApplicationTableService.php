@@ -52,13 +52,13 @@ class ApplicationTableService extends TableService
                 $comparisonOperator = '>=';
                 break;
             case 'created_at_to':
-                $comparisonOperator = '<=';
+                $comparisonOperator = '<';
                 break;
             default:
                 $comparisonOperator = '=';
         }
 
-        return $query->where('applications.created_at', $comparisonOperator, $filter['data']);
+        return $query->whereDate('applications.created_at', $comparisonOperator, $filter['data']);
     }
 
     /**
