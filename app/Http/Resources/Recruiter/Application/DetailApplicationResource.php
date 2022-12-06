@@ -33,7 +33,7 @@ class DetailApplicationResource extends JsonResource
                     ? DetailAvatarResource::collection($user->avatarDetails)
                     : null,
                 'birthday' => DateTimeHelper::formatDateJa($user->birthday),
-                'age' => DateTimeHelper::birthDayByAge($user->birthday, $user->creatd_at),
+                'age' => DateTimeHelper::birthDayByAge($user->birthday, $user->created_at),
                 'gender' => @$user->gender->name,
                 'tel' => $user->tel,
                 'email' => $user->email,
