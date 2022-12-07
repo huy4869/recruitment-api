@@ -28,7 +28,7 @@ class DetailJobResource extends JsonResource
             'detail_images' => DetailImageResource::collection($this->detailImages),
             'job_status_id' => $this->job_status_id,
             'job_status_name' => $this->status->name ?? null,
-            'statuses' => JobService::getStatusJob($this->job_status_id),
+            'statuses' => JobService::getStatusJob(),
             'job_types' => $this->job_types,
             'feature_ids' => $this->feature_ids,
             'feature_types' => $this->feature_types,
