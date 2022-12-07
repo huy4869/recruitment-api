@@ -73,7 +73,7 @@ class UserTableService extends TableService
                 case 'age':
                     $ageValues = config('user.age');
 
-                    if (isset($ageValues[$filterItem['data']])) {
+                    if (isset($ageValues[$filter['data']])) {
                         $query->where('age', '>=', $ageValues[$filter['data']]);
                         break;
                     }
