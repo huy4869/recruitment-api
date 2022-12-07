@@ -306,8 +306,10 @@ class DateTimeHelper
             $date = ($minute != config('date.zero_minute')) ? $minute . trans('common.minute') : config('date.one_minute') . trans('common.minute');
         } elseif ($hour >= config('date.more_than_hour')  && $hour < config('date.less_than_date')) {
             $date = $hour . trans('common.hour');
-        } elseif ($week < config('date.week')) {
+        } elseif ($week <= config('date.week')) {
             $date = $time->diffInDays($now) . trans('common.before_day');
+        } elseif ($week > config('date.week')) {
+            $date = $time->diffInWeeks($now) . trans('common.week');
         } else {
             $date = sprintf('%s (%s) %s', $formatDate, $dayOfWeek, $formatTime);
         }

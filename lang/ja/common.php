@@ -18,4 +18,5 @@ return [
     'update' => '更新',
     'before_day' => '日前',
     'now' => '現在',
+    'week' => '週間前',
 ];
