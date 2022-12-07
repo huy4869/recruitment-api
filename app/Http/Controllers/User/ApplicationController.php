@@ -127,7 +127,7 @@ class ApplicationController extends BaseController
 
             $data = $this->jobPostingService->withUser($user)->store($inputs, $jobPosting);
             $this->applicationUserHistoryService->withUser($user)->storeNotifications($data, $jobPosting);
-            $this->applicationUserHistoryService->storeChat($data);
+            $this->applicationUserHistoryService->storeChat($data, $jobPosting);
             $this->applicationUserHistoryService->storeApplicationWorkHistories($data);
             $this->applicationUserHistoryService->storeApplicationLearningHistories($data);
             $this->applicationUserHistoryService->storeApplicationLicensesQualificationHistories($data);

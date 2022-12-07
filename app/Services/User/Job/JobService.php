@@ -42,7 +42,7 @@ class JobService extends Service
         $user = $this->user;
         $job = JobPosting::query()->where('id', $id)
             ->where(function ($query) use ($user) {
-                $query->whereIn('job_status_id', [JobPosting::STATUS_DRAFT, JobPosting::STATUS_RELEASE])
+                $query->where('job_status_id', JobPosting::STATUS_RELEASE)
                     ->orWhere(function ($query) use ($user) {
                         if ($user) {
                             $query->where('job_status_id', JobPosting::STATUS_END)

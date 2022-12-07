@@ -48,9 +48,10 @@ class ApplicationUserHistoryService extends Service
      * Store user chat
      *
      * @param $application
+     * @param $jobPosting
      * @return bool|Builder|Model
      */
-    public function storeChat($application)
+    public function storeChat($application, $jobPosting)
     {
         $chat = Chat::query()
             ->where('user_id', '=', $application->user_id)
@@ -63,7 +64,10 @@ class ApplicationUserHistoryService extends Service
                 'store_id' => $application->store_id,
                 'is_from_user' => Chat::FROM_USER['TRUE'],
                 'be_readed' => Chat::BE_READED,
-                'content' => NULL,
+                'content' => trans('chat.auto_apply_chat', [
+                    'name' => $this->user->full_name,
+                    'job_name' => $jobPosting->name
+                ])
             ]);
         }
 
