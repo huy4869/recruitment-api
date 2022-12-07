@@ -130,6 +130,7 @@ class ApplicationService extends Service
      *
      * @return bool
      * @throws InputException
+     * @throws Exception
      */
     public function cancelApplied($id)
     {
@@ -171,7 +172,7 @@ class ApplicationService extends Service
         } catch (\Exception $exception) {
             DB::rollBack();
             Log::error($exception->getMessage(), [$exception]);
-            throw new InputException($exception);
+            throw new Exception($exception->getMessage());
         }
     }
 

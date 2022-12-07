@@ -92,6 +92,21 @@ class JobController extends Controller
     }
 
     /**
+     * delete job posting
+     *
+     * @param $id
+     * @return JsonResponse
+     * @throws InputException
+     */
+    public function delete($id)
+    {
+        $admin = $this->guard()->user();
+        $response = JobService::getInstance()->withUser($admin)->delete($id);
+
+        return $this->sendSuccessResponse($response, trans('validation.INF.005'));
+    }
+
+    /**
      * @param $request
      * @return mixed
      */

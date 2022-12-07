@@ -247,7 +247,71 @@ class JobService extends Service
         return $job;
     }
 
-    public static function getStatusJob()
+    /**
+     * @param $id
+     * @return bool
+     * @throws InputException
+     * @throws Exception
+     */
+    public function delete($id)
+    {
+        $job = JobPosting::query()->where('id', $id)->first();
+        $notifications = [];
+
+        if (!$job) {
+            throw new InputException(trans('response.invalid'));
+        }
+
+        $applications = $job->applications()?->whereNotIn('interview_status_id', [
+            MInterviewStatus::STATUS_REJECTED,
+            MInterviewStatus::STATUS_CANCELED,
+            MInterviewStatus::STATUS_ACCEPTED
+        ]);
+
+        foreach ($applications->get() as $application) {
+            $notifications[] = [
+                'user_id' => $application->user_id,
+                'notice_type_id' => Notification::TYPE_DELETE_JOB,
+                'noti_object_ids' => json_encode([
+                    'store_id' => $application->store_id,
+                    'application_id' => $application->id,
+                    'user_id' => $this->user->id,
+                ]),
+                'title' => trans('notification.N011.title'),
+                'content' => trans('notification.N011.content', ['job_id' => $job->name]),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+
+        try {
+            DB::beginTransaction();
+
+            $applications->update([
+                'interview_status_id' => MInterviewStatus::STATUS_REJECTED
+            ]);
+
+            if ($notifications) {
+                collect($notifications)->chunk(self::QUANTITY_CHUNK)->each(function ($data) {
+                    Notification::query()->insert($data->toArray());
+                });
+            }
+
+            $job->feedbacks()?->delete();
+            $job->userJobDesiredMatch()?->delete();
+            $job->images()?->delete();
+            $job->delete();
+
+            DB::commit();
+            return true;
+        } catch (Exception $exception) {
+            DB::rollBack();
+            Log::error($exception->getMessage(), [$exception]);
+            throw new Exception($exception->getMessage());
+        }
+    }
+
+    public static function getStatusJob($idStatus)
     {
         $jobStatus = MJobStatus::query()->get();
         $dataStatus = [];
