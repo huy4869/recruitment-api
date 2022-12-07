@@ -113,7 +113,8 @@ class JobController extends Controller
      */
     public function destroy($id)
     {
-        $response = JobService::getInstance()->destroy($id);
+        $recruiter = $this->guard()->user();
+        $response = JobService::getInstance()->withUser($recruiter)->destroy($id);
 
         return $this->sendSuccessResponse($response, trans('validation.INF.005'));
     }

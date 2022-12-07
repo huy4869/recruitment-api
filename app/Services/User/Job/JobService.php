@@ -651,6 +651,7 @@ class JobService extends Service
     {
         $jobPosting = JobPosting::query()
             ->where('id', $jobPostingId)
+            ->released()
             ->with([
                 'store',
                 'store.owner',
