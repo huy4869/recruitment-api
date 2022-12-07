@@ -247,25 +247,15 @@ class JobService extends Service
         return $job;
     }
 
-    public static function getStatusJob($idStatus)
+    public static function getStatusJob()
     {
-        $jobStatus = MJobStatus::query();
+        $jobStatus = MJobStatus::query()->get();
+        $dataStatus = [];
 
-        if (in_array($idStatus, [JobPosting::STATUS_DRAFT, JobPosting::STATUS_RELEASE])) {
-            $dataJob = $jobStatus->get();
-            $dataStatus = [];
-
-            foreach ($dataJob as $job) {
-                $dataStatus[] = [
-                    'id' => $job->id,
-                    'name' => $job->name,
-                ];
-            }
-        } else {
-            $job = $jobStatus->where('id', JobPosting::STATUS_END)->first();
+        foreach ($jobStatus as $status) {
             $dataStatus[] = [
-                'id' => $job->id,
-                'name' => $job->name,
+                'id' => $status->id,
+                'name' => $status->name,
             ];
         }
 
