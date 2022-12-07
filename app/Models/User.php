@@ -128,7 +128,7 @@ class User extends Authenticatable
 
     public function getFullNameFuriAttribute()
     {
-        return $this->furi_first_name . $this->furi_last_name;
+        return $this->furi_first_name . ' ' . $this->furi_last_name;
     }
 
     public function getAgeAttribute()
