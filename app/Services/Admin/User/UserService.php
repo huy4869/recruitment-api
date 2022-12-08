@@ -525,4 +525,16 @@ class UserService extends Service
 
         return $userArr;
     }
+
+    public function getAllOwner()
+    {
+        return User::query()->roleRecruiter()
+            ->get()
+            ->map(function ($query) {
+                return [
+                    'id'    => $query->id,
+                    'name'  => $query->full_name
+                ];
+            });
+    }
 }
