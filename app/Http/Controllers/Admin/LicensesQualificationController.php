@@ -5,7 +5,10 @@ namespace App\Http\Controllers\Admin;
 use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\LicensesQualificationRequest;
+use App\Http\Resources\Admin\User\DetailLicensesResource;
 use App\Services\Admin\LicensesQualificationService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 
 class LicensesQualificationController extends Controller
 {
@@ -20,7 +23,7 @@ class LicensesQualificationController extends Controller
      * create licenses qualification
      *
      * @param LicensesQualificationRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      * @throws InputException
      */
     public function store(LicensesQualificationRequest $request)
@@ -44,7 +47,7 @@ class LicensesQualificationController extends Controller
      *
      * @param LicensesQualificationRequest $request
      * @param $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      * @throws InputException
      */
     public function update(LicensesQualificationRequest $request, $id)
@@ -61,5 +64,31 @@ class LicensesQualificationController extends Controller
         }
 
         throw new InputException(trans('response.ERR.007'));
+    }
+
+    /**
+     * @param $id
+     * @param Request $request
+     * @return JsonResponse
+     * @throws InputException
+     */
+    public function detail($id, Request $request)
+    {
+        $data = $this->licensesQualificationService->detail($id, $request->get('user_id'));
+
+        return $this->sendSuccessResponse(new DetailLicensesResource($data));
+    }
+
+    /**
+     * @param $id
+     * @param Request $request
+     * @return JsonResponse
+     * @throws InputException
+     */
+    public function delete($id, Request $request)
+    {
+        $this->licensesQualificationService->delete($id, $request->get('user_id'));
+
+        return $this->sendSuccessResponse([], trans('validation.INF.005'));
     }
 }

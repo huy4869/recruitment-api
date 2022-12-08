@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\LearningHistoryRequest;
+use App\Http\Resources\Admin\User\DetailLearningHistoryResource;
 use App\Services\Admin\LearningHistoryService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class LearningHistoryController extends Controller
@@ -21,7 +23,7 @@ class LearningHistoryController extends Controller
      * create learning history
      *
      * @param LearningHistoryRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      * @throws InputException
      */
     public function store(LearningHistoryRequest $request)
@@ -47,7 +49,7 @@ class LearningHistoryController extends Controller
      *
      * @param LearningHistoryRequest $request
      * @param $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      * @throws InputException
      */
     public function update(LearningHistoryRequest $request, $id)
@@ -66,5 +68,31 @@ class LearningHistoryController extends Controller
         }
 
         throw new InputException(trans('response.ERR.007'));
+    }
+
+    /**
+     * @param $id
+     * @param Request $request
+     * @return JsonResponse
+     * @throws InputException
+     */
+    public function detail($id, Request $request)
+    {
+        $data = $this->learningHistory->detail($id, $request->get('user_id'));
+
+        return $this->sendSuccessResponse(new DetailLearningHistoryResource($data));
+    }
+
+    /**
+     * @param $id
+     * @param Request $request
+     * @return JsonResponse
+     * @throws InputException
+     */
+    public function delete($id, Request $request)
+    {
+        $this->learningHistory->delete($id, $request->get('user_id'));
+
+        return $this->sendSuccessResponse([], trans('validation.INF.005'));
     }
 }

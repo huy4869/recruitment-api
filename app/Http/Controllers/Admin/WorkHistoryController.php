@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\WorkHistoryRequest;
 use App\Http\Requests\Admin\WorkHistoryUpdateRequest;
+use App\Http\Resources\Admin\User\DetailWorkHistoryResource;
 use App\Services\Admin\WorkHistoryService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class WorkHistoryController extends Controller
@@ -21,8 +24,8 @@ class WorkHistoryController extends Controller
      * create work history
      *
      * @param WorkHistoryRequest $request
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \App\Exceptions\InputException
+     * @return JsonResponse
+     * @throws InputException
      */
     public function store(WorkHistoryRequest $request)
     {
@@ -48,8 +51,8 @@ class WorkHistoryController extends Controller
      *
      * @param WorkHistoryUpdateRequest $request
      * @param $id
-     * @return \Illuminate\Http\JsonResponse
-     * @throws \App\Exceptions\InputException
+     * @return JsonResponse
+     * @throws InputException
      */
     public function update(WorkHistoryUpdateRequest $request, $id)
     {
@@ -68,5 +71,31 @@ class WorkHistoryController extends Controller
         $data = $this->workHistory->update($input, $id, $request->get('user_id'));
 
         return $this->sendSuccessResponse($data, trans('validation.INF.001'));
+    }
+
+    /**
+     * @param $id
+     * @param Request $request
+     * @return JsonResponse
+     * @throws InputException
+     */
+    public function delete($id, Request $request)
+    {
+        $this->workHistory->delete($id, $request->get('user_id'));
+
+        return $this->sendSuccessResponse([], trans('validation.INF.005'));
+    }
+
+    /**
+     * @param $id
+     * @param Request $request
+     * @return JsonResponse
+     * @throws InputException
+     */
+    public function detail($id, Request $request)
+    {
+        $data = $this->workHistory->detail($id, $request->get('user_id'));
+
+        return $this->sendSuccessResponse(new DetailWorkHistoryResource($data));
     }
 }
