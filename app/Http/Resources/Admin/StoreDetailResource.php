@@ -22,6 +22,8 @@ class StoreDetailResource extends JsonResource
         return [
             'url' => FileHelper::getFullUrl($this->storeBanner->url ?? null),
             'store_name' => $this->name,
+            'user_id' => $this->user_id,
+            'user_name' => $this->owner->full_name,
             'website' => $this->website,
             'tel' => $this->tel,
             'address' => [
