@@ -383,7 +383,7 @@ class UserService extends Service
                     ]
                 ],
                 'job_type' => @$workHistory->jobType->name,
-                'positionOffices' => JobHelper::getTypeName($workHistory->position_office_ids, $masterData['masterPositionOffice']),
+                'positionOffices' => @JobHelper::getTypeName($workHistory->position_office_ids, $masterData['masterPositionOffice']),
                 'work_type' => @$workHistory->workType->name,
             ];
         }//end foreach
@@ -433,7 +433,7 @@ class UserService extends Service
             'province_city' => @$user->provinceCity->name,
             'gender' => $user->gender->name ?? null,
             'gender_id' => $user->gender->id ?? null,
-            'user_word_histories' => $userWorkHistories,
+            'user_work_histories' => $userWorkHistories,
             'favorite_skill' => $user->favorite_skill,
             'experience_knowledge' => $user->experience_knowledge,
             'self_pr' => $user->self_pr,

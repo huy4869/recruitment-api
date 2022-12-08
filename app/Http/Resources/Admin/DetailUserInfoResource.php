@@ -50,7 +50,7 @@ class DetailUserInfoResource extends JsonResource
             'birthday_format' => DateTimeHelper::formatDateJa($this['birthday']),
             'gender' => $this['gender'],
             'gender_id' => $this['gender_id'],
-            'user_word_histories' => $this['user_word_histories'],
+            'user_work_histories' => $this['user_work_histories'],
             'pr' => [
                 'favorite_skill' => $this['favorite_skill'],
                 'experience_knowledge' => $this['experience_knowledge'],
