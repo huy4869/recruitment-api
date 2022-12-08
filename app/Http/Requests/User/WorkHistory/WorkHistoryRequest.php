@@ -6,6 +6,7 @@ use App\Models\MJobType;
 use App\Models\MWorkType;
 use App\Models\UserWorkHistory;
 use App\Rules\CheckYearRule;
+use App\Rules\User\CheckStringLength;
 use App\Services\User\WorkHistoryService;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
@@ -42,7 +43,7 @@ class WorkHistoryRequest extends FormRequest
             'work_types' => ['required', 'array'],
             'work_types.id' => ['nullable', 'in:' . implode(',', $workTypeIds)],
             'work_types.name' => ['required', 'string', 'max:' . $stringMaxLength],
-            'position_offices' => ['required', 'array'],
+            'position_offices' => ['required', 'array', new CheckStringLength()],
             'position_offices.*.id' => ['nullable', 'integer', 'exists:m_position_offices,id'],
             'position_offices.*.name' => ['required', 'string', 'max:' . $stringMaxLength, 'distinct'],
             'store_name' => ['required', 'string', 'max:' . $stringMaxLength],

@@ -35,7 +35,10 @@ class MasterDataSeeder extends Seeder
         DB::table('m_job_features')->truncate();
         DB::table('m_stations')->truncate();
         DB::table('m_notice_types')->truncate();
-        DB::table('m_position_offices')->truncate();
+        DB::table('m_position_offices')->where([
+            ['is_default', MJobType::IS_DEFAULT],
+            ['id', '>' , 0]
+        ])->delete();
         DB::table('m_provinces_cities')->truncate();
         DB::table('m_job_types')->where([
             ['is_default', MJobType::IS_DEFAULT],
