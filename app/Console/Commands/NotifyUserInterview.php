@@ -66,11 +66,11 @@ class NotifyUserInterview extends Command
             DB::beginTransaction();
 
             $notifications = [];
-            $now = now();
+            $now = now()->toDateTimeString();
 
             foreach ($applications as $application) {
                 $notifications[] = [
-                    'user_id' => $application->user->id,
+                    'user_id' => $application->user_id,
                     'notice_type_id' => Notification::TYPE_INTERVIEW_COMING,
                     'noti_object_ids' => json_encode([
                         'store_id' => $application->store_id,
@@ -79,7 +79,8 @@ class NotifyUserInterview extends Command
                     ]),
                     'title' => trans('notification.interview.title'),
                     'content' => trans('notification.interview.content'),
-                    'created_at' => $now->toDateTimeString(),
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ];
                 $notifications[] = [
                     'user_id' => $application->store->owner->id,
@@ -91,7 +92,8 @@ class NotifyUserInterview extends Command
                     ]),
                     'title' => __('notification.NOO5.title'),
                     'content' => __('notification.NOO5.content', ['user_name' => $application->user->first_name . $application->user->last_name]),
-                    'created_at' => $now->toDateTimeString(),
+                    'created_at' => $now,
+                    'updated_at' => $now,
                 ];
             }//end foreach
 

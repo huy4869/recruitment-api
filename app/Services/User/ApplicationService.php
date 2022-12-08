@@ -140,6 +140,7 @@ class ApplicationService extends Service
         ];
 
         $application = Application::query()
+            ->with(['store.owner', 'user'])
             ->where('user_id', $this->user->id)
             ->where('id', $id)
             ->whereIn('interview_status_id', $statusCanCancel)
@@ -149,9 +150,29 @@ class ApplicationService extends Service
             throw new InputException(trans('response.invalid'));
         }
 
-        return $application->update([
-            'interview_status_id' => MInterviewStatus::STATUS_CANCELED
-        ]);
+        try {
+            DB::beginTransaction();
+
+            $application->update(['interview_status_id' => MInterviewStatus::STATUS_CANCELED]);
+            Notification::query()->create([
+                'user_id' => $application->user_id,
+                'notice_type_id' => Notification::TYPE_INTERVIEW_CHANGED,
+                'noti_object_ids' => [
+                    'store_id' => $application->store_id,
+                    'job_id' => $application->job_posting_id,
+                    'application_id' => $application->id,
+                ],
+                'title' => __('notification.NOO4.title', ['user_name' => $application->user->first_name . $application->user->last_name]),
+                'content' => __('notification.NOO4.content'),
+            ]);
+
+            DB::commit();
+            return true;
+        } catch (\Exception $exception) {
+            DB::rollBack();
+            Log::error($exception->getMessage(), [$exception]);
+            throw new InputException($exception);
+        }
     }
 
     /**
