@@ -192,4 +192,11 @@ class UserController extends Controller
 
         return $this->sendSuccessResponse(new UserInfoCollection($data));
     }
+
+    public function getAllOwner()
+    {
+        $data = UserService::getInstance()->getAllOwner();
+
+        return $this->sendSuccessResponse($data);
+    }
 }
