@@ -74,16 +74,22 @@ Route::group(['as' => 'interview-schedule.', 'prefix' => 'interview-schedule', '
 });
 
 Route::group(['as' => 'work-histories', 'prefix' => 'work-histories', 'middleware' => 'admin'], function () {
+    Route::get('/{id}', 'WorkHistoryController@detail')->name('detail');
     Route::post('/', 'WorkHistoryController@store');
     Route::post('/{id}', 'WorkHistoryController@update');
+    Route::delete('/{id}', 'WorkHistoryController@delete');
 });
 
 Route::group(['as' => 'learning-histories', 'prefix' => 'learning-histories', 'middleware' => 'admin'], function () {
+    Route::get('/{id}', 'LearningHistoryController@detail');
     Route::post('/', 'LearningHistoryController@store');
     Route::post('/{id}', 'LearningHistoryController@update');
+    Route::delete('/{id}', 'LearningHistoryController@delete');
 });
 
 Route::group(['as' => 'licenses-qualifications', 'prefix' => 'licenses-qualifications', 'middleware' => 'admin'], function () {
+    Route::get('/{id}', 'LicensesQualificationController@detail');
+    Route::delete('/{id}', 'LicensesQualificationController@delete');
     Route::post('/', 'LicensesQualificationController@store');
     Route::post('/{id}', 'LicensesQualificationController@update');
 });

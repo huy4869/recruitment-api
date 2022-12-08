@@ -10,7 +10,9 @@ use App\Models\User;
 use App\Models\UserWorkHistory;
 use App\Services\Service;
 use Exception;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\HigherOrderBuilderProxy;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
@@ -199,5 +201,47 @@ class WorkHistoryService extends Service
             Log::error($exception->getMessage(), [$exception]);
             throw new InputException($exception->getMessage());
         }//end try
+    }
+
+    /**
+     * @param $id
+     * @param $user_id
+     * @return array|Builder|Model|object
+     * @throws InputException
+     */
+    public function detail($id, $user_id)
+    {
+        $userWorkHistory = UserWorkHistory::query()
+            ->with(['jobType', 'workType'])
+            ->where('user_id', '=', $user_id)
+            ->where('id', '=', $id)
+            ->first();
+        if (!$userWorkHistory) {
+            throw new InputException(trans('response.not_found'));
+        }
+
+        $positionOffices = MPositionOffice::query()->whereIn('id', $userWorkHistory->position_office_ids)->get();
+        $userWorkHistory['position_offices'] = $positionOffices;
+
+        return $userWorkHistory;
+    }
+
+    /**
+     * @param $id
+     * @param $user_id
+     * @return bool|mixed|null
+     * @throws InputException
+     */
+    public function delete($id, $user_id)
+    {
+        $userWorkHistory = UserWorkHistory::query()
+            ->where('user_id', '=', $user_id)
+            ->where('id', '=', $id)
+            ->first();
+        if (!$userWorkHistory) {
+            throw new InputException(trans('response.not_found'));
+        }
+
+        return $userWorkHistory->delete();
     }
 }

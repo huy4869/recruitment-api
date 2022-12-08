@@ -69,4 +69,44 @@ class LearningHistoryService extends Service
 
         throw new InputException(trans('response.not_found'));
     }
+
+    /**
+     * @param $id
+     * @param $user_id
+     * @return Builder|Model|object
+     * @throws InputException
+     */
+    public function detail($id, $user_id)
+    {
+        $userLearningHistory = UserLearningHistory::query()
+            ->where('user_id', '=', $user_id)
+            ->where('id', $id)
+            ->first();
+
+        if ($userLearningHistory) {
+            return $userLearningHistory;
+        }
+
+        throw new InputException(trans('response.not_found'));
+    }
+
+    /**
+     * @param $id
+     * @param $user_id
+     * @return bool|mixed|null
+     * @throws InputException
+     */
+    public function delete($id, $user_id)
+    {
+        $userLearningHistory = UserLearningHistory::query()
+            ->where('user_id', '=', $user_id)
+            ->where('id', $id)
+            ->first();
+
+        if ($userLearningHistory) {
+            return $userLearningHistory->delete();
+        }
+
+        throw new InputException(trans('response.not_found'));
+    }
 }
