@@ -71,11 +71,7 @@ class UserInfoTableService extends TableService
             } elseif ($filter['key'] == 'salary_min' || $filter['key'] == 'salary_max') {
                 SearchService::queryRangeKey($query, $filter);
             } elseif ($filter['key'] == 'age') {
-                $ageValues = config('user.age');
-
-                if (isset($ageValues[$filterItem['data']])) {
-                    $query->where('age', '>=', $ageValues[$filter['data']]);
-                }
+                $query->where('age', '>=', $filter['data']);
             } else {
                 $query->where($filter['key'], $filter['data']);
             }//end if
