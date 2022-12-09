@@ -12,6 +12,8 @@ use App\Http\Resources\Admin\DetailUserInfoResource;
 use App\Http\Requests\Admin\User\StoreRequest;
 use App\Http\Requests\Admin\User\UpdateRequest;
 use App\Http\Resources\Admin\User\DetailUserResource;
+use App\Http\Resources\Admin\User\MotivationResource;
+use App\Http\Resources\Admin\User\PrResource;
 use App\Http\Resources\Admin\User\UserCollection;
 use App\Http\Resources\Admin\User\UserDetailResource;
 use App\Http\Resources\Admin\UserInfoCollection;
@@ -211,5 +213,19 @@ class UserController extends Controller
         $data = UserService::getInstance()->getAllOwner();
 
         return $this->sendSuccessResponse($data);
+    }
+
+    public function detailPr($userId)
+    {
+        $data = UserService::getInstance()->getInfoUser($userId);
+
+        return $this->sendSuccessResponse(new PrResource($data));
+    }
+
+    public function detailMotivation($userId)
+    {
+        $data = UserService::getInstance()->getInfoUser($userId);
+
+        return $this->sendSuccessResponse(new MotivationResource($data));
     }
 }

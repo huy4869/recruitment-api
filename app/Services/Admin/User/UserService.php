@@ -543,4 +543,15 @@ class UserService extends Service
                 ];
             });
     }
+
+    public function getInfoUser($userId)
+    {
+        $user = User::query()->where('id', $userId)->roleUser()->first();
+
+        if ($user) {
+            return $user;
+        }
+
+        throw new InputException(trans('response.not_found'));
+    }
 }
