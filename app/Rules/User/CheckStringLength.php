@@ -25,7 +25,12 @@ class CheckStringLength implements Rule
      */
     public function passes($attribute, $value)
     {
-        $strLen = strlen(implode('', array_merge_recursive(...$value)['name']));
+        $str = array_merge_recursive(...$value)['name'];
+        if (is_string($str)) {
+            $strLen = strlen($str);
+        } else {
+            $strLen = strlen(implode('', $str));
+        }
 
         if ($strLen > config('validate.string_max_length')) {
             return false;
