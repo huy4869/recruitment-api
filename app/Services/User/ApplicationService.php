@@ -314,10 +314,6 @@ class ApplicationService extends Service
     public function updateApplication($applicationId, $data)
     {
         $user = $this->user;
-        if (!in_array($data['hours'], config('date.time'))) {
-            throw new InputException(trans('response.ERR.999'));
-        }
-
         $application = Application::query()
             ->with(['store.owner.recruiterOffTimes', 'store.owner.stores.applications'])
             ->where('user_id', '=', $user->id)

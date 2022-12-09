@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\User\Application;
 
+use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateRequest extends FormRequest
@@ -24,8 +25,8 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         return [
-            'date' => ['required', 'date'],
-            'hours' => ['required', 'string'],
+            'date' => ['required', 'date', 'date_format:Y-m-d', 'before_or_equal:' . Carbon::now()->addDays(config('date.max_day'))],
+            'hours' => ['required', 'string', 'in:' . implode(',', config('date.time'))],
             'interview_approaches_id' => ['required', 'numeric'],
             'note' => ['nullable', 'string', 'max:' . config('validate.text_max_length')],
         ];
@@ -40,7 +41,9 @@ class UpdateRequest extends FormRequest
             'note.max' => trans('validation.COM.014'),
             'interview_approaches_id.required' => trans('validation.COM.010', ['attribute' => trans('validation.attributes.interview_approaches_id')]),
             'date.required' => trans('validation.COM.010', ['attribute' => trans('validation.attributes.date')]),
+            'date.before_or_equal' => __('validation.ERR.037'),
             'hours.required' => trans('validation.COM.010', ['attribute' => trans('validation.attributes.hours')]),
+            'hours.in' => __('validation.ERR.037'),
         ];
     }
 }
