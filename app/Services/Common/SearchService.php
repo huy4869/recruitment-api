@@ -83,7 +83,7 @@ class SearchService extends Service
      */
     public static function queryJobProvinceKey($query, $filter)
     {
-        $types = json_decode($filter['data']);
+        $types = self::encodeStringToArray($filter['data']);
         $query->where('job_postings.' . $filter['key'], $types[self::FIRST_ARRAY]);
         unset($types[self::FIRST_ARRAY]);
 
