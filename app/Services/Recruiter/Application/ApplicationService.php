@@ -24,7 +24,7 @@ class ApplicationService extends Service
             'user',
             'applicationUser',
             'applicationUserWorkHistories' => function ($query) {
-                $query->orderByRaw('period_end is not null, period_start DESC, period_end DESC');
+                $query->orderByRaw('period_end is not null, period_end DESC, period_start DESC');
             },
             'applicationUserLearningHistories' => function ($query) {
                 $query->orderByRaw('enrollment_period_start ASC, enrollment_period_end ASC');

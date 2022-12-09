@@ -42,7 +42,7 @@ class JobService extends Service
         $user = $this->user;
         $job = JobPosting::query()->where('id', $id)
             ->where(function ($query) use ($user) {
-                $query->where('job_status_id', JobPosting::STATUS_RELEASE)
+                $query->whereIn('job_status_id', [JobPosting::STATUS_RELEASE, JobPosting::STATUS_DRAFT])
                     ->orWhere(function ($query) use ($user) {
                         if ($user) {
                             $query->where('job_status_id', JobPosting::STATUS_END)
@@ -76,7 +76,7 @@ class JobService extends Service
         $job = $job->first();
 
         if (!$job) {
-            throw new InputException(trans('response.not_found'));
+            return null;
         }
 
         $masterData = JobHelper::getJobMasterData();

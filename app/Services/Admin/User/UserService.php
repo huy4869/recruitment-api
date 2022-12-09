@@ -415,6 +415,7 @@ class UserService extends Service
         $licensesQualifications = [];
         foreach ($user->userLicensesQualifications as $userLicensesQualification) {
             $licensesQualifications[] = [
+                'id' => $userLicensesQualification->id,
                 'name' => $userLicensesQualification->name,
                 'date_time' => [
                     'new_issuance_date' => DateTimeHelper::formatMonthYear($userLicensesQualification->new_issuance_date),
