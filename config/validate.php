@@ -11,6 +11,7 @@ return [
     'password_max_length' => 12,
     'verify_register_max_length' => 20,
     'string_max_length' => 255,
+    'input_max_length' => 100,
     'phone_min_length' => 10,
     'phone_max_length' => 13,
     'quantity_max_length' => 99,

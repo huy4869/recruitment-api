@@ -45,7 +45,7 @@ class WorkHistoryRequest extends FormRequest
             'work_types.name' => ['required', 'string', 'max:' . $stringMaxLength],
             'position_offices' => ['required', 'array', new CheckStringLength()],
             'position_offices.*.id' => ['nullable', 'integer', 'exists:m_position_offices,id'],
-            'position_offices.*.name' => ['required', 'string', 'max:' . $stringMaxLength, 'distinct'],
+            'position_offices.*.name' => ['required', 'string', 'max:' . config('validate.input_max_length'), 'distinct'],
             'store_name' => ['required', 'string', 'max:' . $stringMaxLength],
             'company_name' => ['nullable', 'string', 'max:' . $stringMaxLength],
             'period_check' => ['required', 'integer', 'in:' . implode(',', $type)],

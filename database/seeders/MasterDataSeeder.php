@@ -157,10 +157,10 @@ class MasterDataSeeder extends Seeder
 
 
         $dataJobStatus = [
-            ['id' => JobPosting::STATUS_DRAFT, 'name' => '下書き', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => JobPosting::STATUS_DRAFT, 'name' => '下書き保存', 'created_at' => $time, 'updated_at' => $time],
             ['id' => JobPosting::STATUS_RELEASE, 'name' => '公開', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => JobPosting::STATUS_HIDE, 'name' => '非公開', 'created_at' => $time, 'updated_at' => $time],
             ['id' => JobPosting::STATUS_END, 'name' => '終了', 'created_at' => $time, 'updated_at' => $time],
-            ['id' => JobPosting::STATUS_HIDE, 'name' => '隠れる', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_job_statuses')->insert($dataJobStatus);
 
