@@ -47,7 +47,7 @@ class UserService extends Service
         $jobOwnedIds = $recruiter->jobsOwned()->pluck('job_postings.id')->toArray();
 
         $userSuggestList = User::query()->roleUser()
-            ->select('users.*', DB::raw('sum(suitability_point) as point'))
+            ->select('users.*', 'user_id', DB::raw('sum(suitability_point) as point'))
             ->leftJoin('user_job_desired_matches', 'users.id', '=', 'user_id')
             ->whereIn('job_id', $jobOwnedIds)
             ->groupBy('user_id')
