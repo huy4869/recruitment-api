@@ -95,7 +95,7 @@ class ApplicationUserHistoryService extends Service
                 'company_name' => $userWorkHistory->company_name,
                 'period_start' => $userWorkHistory->period_start,
                 'period_end' => $userWorkHistory->period_end,
-                'position_office_ids' => $userWorkHistory->position_offices,
+                'position_office_ids' => $userWorkHistory->position_office_ids,
                 'business_content' => $userWorkHistory->business_content,
                 'experience_accumulation' => $userWorkHistory->experience_accumulation,
                 'created_at' => now(),
