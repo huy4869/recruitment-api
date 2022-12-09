@@ -20,6 +20,7 @@ class SearchService extends Service
     {
         return $query->where(function ($query) use ($filter) {
             $types = json_decode($filter['data']);
+            $types = is_array($types) ? $types : [$types];
             $query->whereJsonContains($filter['key'], $types[self::FIRST_ARRAY]);
             unset($types[self::FIRST_ARRAY]);
 
