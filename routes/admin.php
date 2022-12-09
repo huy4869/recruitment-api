@@ -33,6 +33,7 @@ Route::group(['as' => 'users.', 'prefix' => 'users', 'middleware' => 'admin'], f
     Route::get('/list-user', 'UserController@listInfoUser');
     Route::get('/{id}', 'UserController@detail')->name('detail');
     Route::post('/update-pr/{id}', 'UserController@updatePr');
+    Route::post('/update-motivation/{id}', 'UserController@updateMotivation');
     Route::post('/update-user/{id}', 'UserController@updateUser');
     Route::get('/{id}/detail', 'UserController@detailUser');
     Route::post('/', 'UserController@store')->name('store');

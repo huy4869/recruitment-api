@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\UpdateMotivationRequest;
 use App\Http\Requests\Admin\UpdatePrRequest;
 use App\Http\Requests\Admin\User\UserInfoUpdateRequest;
 use App\Http\Requests\Admin\User\UserUpdateRequest;
@@ -173,6 +174,18 @@ class UserController extends Controller
         }
 
         throw new InputException(trans('validation.ERR.007'));
+    }
+
+    public function updateMotivation($userId, UpdateMotivationRequest $request)
+    {
+        $inputs = $request->only(['motivation', 'noteworthy']);
+        $data = UserService::getInstance()->updateMotivation($userId, $inputs);
+
+        if ($data) {
+            return $this->sendSuccessResponse([], trans('validation.INF.001'));
+        }
+
+        throw new InputException(trans('response.ERR.007'));
     }
 
     /**
