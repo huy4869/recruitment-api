@@ -57,6 +57,7 @@ class NotificationService extends Service
             ->where('notice_type_id', Notification::TYPE_MATCHING_FAVORITE)
             ->where('be_announce', Notification::STATUS_NOT_ANNOUNCE)
             ->get();
+        $matchingUserAnnounceIds = $matchingUserAnnounces->pluck('id')->toArray();
         $countMatching = $matchingUserAnnounces->count();
         $msg = '';
 
@@ -94,6 +95,9 @@ class NotificationService extends Service
 
             $msg = $msg . trans('notification.announcement.matching.many_person');
         }
+
+        Notification::query()->whereIn('id', $matchingUserAnnounceIds)
+            ->update(['be_announce' => Notification::STATUS_ANNOUNCE]);
 
         return $msg;
     }
