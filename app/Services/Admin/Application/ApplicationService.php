@@ -241,7 +241,7 @@ class ApplicationService extends Service
             'applicationUser.avatarDetails',
             'applicationUser.avatarBanner',
             'applicationUserWorkHistories' => function ($query) {
-                $query->orderByRaw('period_end is not null, period_start DESC, period_end DESC');
+                $query->orderByRaw('period_end is not null, period_end DESC , period_start DESC');
             },
             'applicationUserLearningHistories' => function ($query) {
                 $query->orderByRaw('enrollment_period_start ASC, enrollment_period_end ASC');
@@ -275,6 +275,7 @@ class ApplicationService extends Service
 
         foreach ($application->applicationUserWorkHistories as $workHistory) {
             $applicationUserWorkHistories[] = [
+                'id' => $workHistory->id,
                 'store_name' => $workHistory->store_name,
                 'company_name' => $workHistory->company_name,
                 'business_content' => $workHistory->business_content,
@@ -290,6 +291,7 @@ class ApplicationService extends Service
 
         foreach ($application->applicationUserLearningHistories as $learningHistory) {
             $applicationLearningHistories[] = [
+                'id' => $learningHistory->id,
                 'school_name' => $learningHistory->school_name,
                 'time_start_end' => sprintf(
                     '%s ～ %s(%s)',
@@ -304,6 +306,7 @@ class ApplicationService extends Service
 
         foreach ($application->applicationUserLicensesQualifications as $applicationLicensesQualification) {
             $applicationLicensesQualifications[] = [
+                'id' => $applicationLicensesQualification->id,
                 'name' => $applicationLicensesQualification->name,
                 'new_issuance_date' => DateTimeHelper::formatMonthYear($applicationLicensesQualification->new_issuance_date),
             ];
