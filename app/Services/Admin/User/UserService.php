@@ -491,6 +491,11 @@ class UserService extends Service
             ->update($data);
     }
 
+    public function updateMotivation($userId, $data)
+    {
+        return User::query()->where('id', $userId)->update($data);
+    }
+
     /**
      * Get user info for list user
      *
