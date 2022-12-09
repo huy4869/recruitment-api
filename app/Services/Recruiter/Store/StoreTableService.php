@@ -5,6 +5,7 @@ namespace App\Services\Recruiter\Store;
 use App\Exceptions\InputException;
 use App\Helpers\StringHelper;
 use App\Models\Store;
+use App\Services\Common\SearchService;
 use App\Services\TableService;
 
 class StoreTableService extends TableService
@@ -31,7 +32,7 @@ class StoreTableService extends TableService
 
         if ($filter['key'] == 'specialize_ids') {
             $query->where(function ($query) use ($filter) {
-                $types = json_decode($filter['data']);
+                $types = SearchService::encodeStringToArray($filter['data']);
                 $query->whereJsonContains($filter['key'], $types[self::FIRST_ARRAY]);
                 unset($types[self::FIRST_ARRAY]);
 
@@ -43,7 +44,7 @@ class StoreTableService extends TableService
 
         if ($filter['key'] == 'province_ids') {
             $query->where(function ($query) use ($filter) {
-                $provinceIds = json_decode($filter['data']);
+                $provinceIds = SearchService::encodeStringToArray($filter['data']);
 
                 foreach ($provinceIds as $id) {
                     $query->orWhere('province_id', $id);
@@ -53,7 +54,7 @@ class StoreTableService extends TableService
 
         if ($filter['key'] == 'province_city_ids') {
             $query->where(function ($query) use ($filter) {
-                $provinceCityIds = json_decode($filter['data']);
+                $provinceCityIds = SearchService::encodeStringToArray($filter['data']);
 
                 foreach ($provinceCityIds as $id) {
                     $query->orWhere('province_city_id', $id);
