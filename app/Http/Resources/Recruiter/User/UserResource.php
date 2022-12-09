@@ -21,7 +21,7 @@ class UserResource extends JsonResource
 
         return [
             'id' => $this->id,
-            'avatar' => $this->is_public_avatar == User::STATUS_PUBLIC_AVATAR
+            'avatar' => $this->is_public_avatar == User::STATUS_PUBLIC_AVATAR || $this->matching
                 ? FileHelper::getFullUrl(@$this->avatarBanner->url)
                 : null,
             'first_name' => $this->first_name,

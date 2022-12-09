@@ -21,10 +21,8 @@ class ApplicationProfileUserResource extends JsonResource
     {
         return [
             'id' => $this['user_id'],
-            'avatar' => $this['application_user']['is_public_thumbnail'] == User::STATUS_PUBLIC_AVATAR ? $this['avatar_banner'] : null,
-            'avatar_details' => $this['application_user']['is_public_thumbnail'] == User::STATUS_PUBLIC_AVATAR
-                ? MultipleImageResoure::collection($this['avatar_details'])
-                : null,
+            'avatar' => FileHelper::getFullUrl($this['avatar_banner']),
+            'avatar_details' => MultipleImageResoure::collection($this['avatar_details']),
             'first_name' => @$this['application_user']['first_name'],
             'last_name' => @$this['application_user']['last_name'],
             'furi_first_name' => @$this['application_user']['furi_first_name'],

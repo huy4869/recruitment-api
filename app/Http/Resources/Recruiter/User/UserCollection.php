@@ -17,9 +17,8 @@ class UserCollection extends ResourceCollection
     {
         $recruiter = $this['recruiter'];
         $paginator = $this['users']->resource;
-        $recruiterFavoriteUser = $recruiter->favoriteUsers()->pluck('favorite_user_id')->toArray();
 
-        $users = UserService::getUserInfoForListUser($recruiterFavoriteUser, $paginator);
+        $users = UserService::getUserInfoForListUser($recruiter, $paginator);
 
         return [
             'data' => UserResource::collection($users),

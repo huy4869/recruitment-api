@@ -29,14 +29,13 @@ class UserService extends Service
                 'desiredConditionUser.salaryType',
                 'desiredConditionUser.province',
                 'desiredConditionUser.province.provinceDistrict',
+                'favoriteJobs'
             ])
             ->orderBy('created_at', 'desc')
             ->take(config('paginate.user.new_amount'))
             ->get();
 
-        $recruiterFavoriteUser = $recruiter->favoriteUsers()->pluck('favorite_user_id')->toArray();
-
-        return self::getUserInfoForListUser($recruiterFavoriteUser, $userNewList);
+        return self::getUserInfoForListUser($recruiter, $userNewList);
     }
 
     /**
@@ -58,9 +57,7 @@ class UserService extends Service
             ->take(config('paginate.user.suggest_amount'))
             ->get();
 
-        $recruiterFavoriteUser = $recruiter->favoriteUsers()->pluck('favorite_user_id')->toArray();
-
-        return self::getUserInfoForListUser($recruiterFavoriteUser, $userSuggestList);
+        return self::getUserInfoForListUser($recruiter, $userSuggestList);
     }
 
     /**
@@ -155,17 +152,21 @@ class UserService extends Service
     /**
      * Get user info for list user
      *
-     * @param $recruiterFavoriteUser
+     * @param $recruiter
      * @param $userList
      * @return array
      */
-    public static function getUserInfoForListUser($recruiterFavoriteUser, $userList)
+    public static function getUserInfoForListUser($recruiter, $userList)
     {
+        $recruiterFavoriteUser = $recruiter->favoriteUsers->pluck('favorite_user_id')->toArray();
+        $recruiterJobIds = $recruiter->jobsOwned->pluck('job_postings.id')->toArray();
         $jobMasterData = UserHelper::getJobMasterData();
         $userArr = [];
 
         foreach ($userList as $user) {
             $userDesiredCondition = $user->desiredConditionUser;
+            $userFavoriteJobs = $user->favoriteJobs->pluck('job_posting_id')->toArray();
+
             if (isset($userDesiredCondition->job_type_ids)) {
                 $user->job_types = JobHelper::getTypeName(
                     $userDesiredCondition->job_type_ids,
@@ -201,6 +202,7 @@ class UserService extends Service
             }
 
             $user->favorite = !!in_array($user->id, $recruiterFavoriteUser);
+            $user->matching = array_intersect($recruiterJobIds, $userFavoriteJobs);
 
             $userArr[$user->id] = $user;
         }//end foreach

@@ -6,6 +6,7 @@ use App\Models\MJobType;
 use App\Models\MWorkType;
 use App\Services\Service;
 use App\Services\User\Job\JobService;
+use function JmesPath\search;
 
 class SearchService extends Service
 {
@@ -18,9 +19,9 @@ class SearchService extends Service
      */
     public static function queryJsonKey($query, $filter)
     {
-        return $query->where(function ($query) use ($filter) {
-            $types = json_decode($filter['data']);
-            $types = is_array($types) ? $types : [$types];
+        $types = self::encodeStringToArray($filter['data']);
+
+        return $query->where(function ($query) use ($filter, $types) {
             $query->whereJsonContains($filter['key'], $types[self::FIRST_ARRAY]);
             unset($types[self::FIRST_ARRAY]);
 
@@ -91,5 +92,16 @@ class SearchService extends Service
         }
 
         return $query;
+    }
+
+    public static function encodeStringToArray($data)
+    {
+        if (!str_contains($data, '[')) {
+            $data = array_map('intval', explode(',', $data));
+        } else {
+            $data = json_decode($data);
+        }
+
+        return $data;
     }
 }
