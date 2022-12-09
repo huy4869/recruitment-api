@@ -902,11 +902,8 @@ class JobService extends Service
         $hours = $data['hours'];
         $now = now()->format('Y-m-d');
         $user = $this->user;
-        if (!in_array($data['hours'], config('date.time'))) {
-            throw new InputException(trans('validation.ERR.036'));
-        }
 
-        if (($date == $now && $this->checkTimeStore($hours)) || $date < $now) {
+        if ($date == $now && $this->checkTimeStore($hours)) {
             throw ValidationException::withMessages([
                 'date' => trans('validation.ERR.037')
             ]);
@@ -938,7 +935,7 @@ class JobService extends Service
         $storeIds = $jobPosting->store->owner->stores->pluck('id')->toArray();
         $recruiterInterviewApplications = Application::query()
             ->whereIn('store_id', $storeIds)
-            ->where('date', '=', $date . ' 00:00:00')
+            ->whereDate('date', '=', $date . ' 00:00:00')
             ->where('hours', '=', $hours)
             ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW])
             ->exists();
