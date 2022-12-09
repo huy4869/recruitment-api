@@ -32,7 +32,9 @@ Route::group(['as' => 'users.', 'prefix' => 'users', 'middleware' => 'admin'], f
     Route::delete('/delete/{id}', 'UserController@destroy')->name('destroy');
     Route::get('/list-user', 'UserController@listInfoUser');
     Route::get('/{id}', 'UserController@detail')->name('detail');
+    Route::get('/detail-pr/{id}', 'UserController@detailPr');
     Route::post('/update-pr/{id}', 'UserController@updatePr');
+    Route::get('/detail-motivation/{id}', 'UserController@detailMotivation');
     Route::post('/update-motivation/{id}', 'UserController@updateMotivation');
     Route::post('/update-user/{id}', 'UserController@updateUser');
     Route::get('/{id}/detail', 'UserController@detailUser');
