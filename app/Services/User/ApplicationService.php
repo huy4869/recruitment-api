@@ -156,7 +156,7 @@ class ApplicationService extends Service
 
             $application->update(['interview_status_id' => MInterviewStatus::STATUS_CANCELED]);
             Notification::query()->create([
-                'user_id' => $application->user_id,
+                'user_id' => $application->store->owner->id,
                 'notice_type_id' => Notification::TYPE_INTERVIEW_CHANGED,
                 'noti_object_ids' => [
                     'store_id' => $application->store_id,
