@@ -45,6 +45,6 @@ class FavoriteJob extends Model
      */
     public function jobPostingTrashed()
     {
-        return $this->belongsTo(JobPosting::class, 'job_posting_id')->withTrashed()->released();
+        return $this->belongsTo(JobPosting::class, 'job_posting_id')->withTrashed();
     }
 }
