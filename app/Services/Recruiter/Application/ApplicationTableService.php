@@ -79,14 +79,14 @@ class ApplicationTableService extends TableService
                 $queryKeys = [
                     'application_users.first_name',
                     'application_users.last_name',
-                    'CONCAT(application_users.first_name, application_users.last_name)',
+                    'CONCAT(application_users.first_name, " ",application_users.last_name)',
                 ];
                 break;
             case 'user_furi_name':
                 $queryKeys = [
                     'application_users.furi_first_name',
                     'application_users.furi_last_name',
-                    'CONCAT(application_users.furi_first_name, application_users.furi_last_name)',
+                    'CONCAT(application_users.furi_first_name, " ",application_users.furi_last_name)',
                 ];
                 break;
             case 'job_name':
@@ -99,10 +99,9 @@ class ApplicationTableService extends TableService
         }//end switch
 
         $filter['data'] = StringHelper::escapeLikeSearch($filter['data']);
-        $content = '%' . str_replace(' ', '', $filter['data']) . '%';
+        $content = '%' . trim($filter['data']) . '%';
         $query->where(function ($q) use ($content, $queryKeys) {
             foreach ($queryKeys as $key) {
-                $key = sprintf('replace(%s, \' \', \'\')', $key);
                 $q->orWhere(DB::raw($key), 'like', $content);
             }
         });

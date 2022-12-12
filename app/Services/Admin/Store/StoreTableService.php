@@ -7,6 +7,7 @@ use App\Helpers\StringHelper;
 use App\Models\Store;
 use App\Services\Common\SearchService;
 use App\Services\TableService;
+use Illuminate\Support\Facades\DB;
 
 class StoreTableService extends TableService
 {
@@ -16,7 +17,31 @@ class StoreTableService extends TableService
         'specialize_ids' => 'filterTypes',
         'store_name' => 'filterTypes',
         'recruiter_name' => 'filterTypes',
+        'owner' => 'filterName',
     ];
+
+    public function filterName($query, $filter)
+    {
+        if (!count($filter) || !is_string($filter['data'])) {
+            return $query;
+        }
+
+        $queryKeys = [
+            'users.first_name',
+            'users.last_name',
+            'CONCAT(users.first_name, " ",users.last_name)',
+        ];
+
+        $filter['data'] = StringHelper::escapeLikeSearch($filter['data']);
+        $content = '%' . trim($filter['data']) . '%';
+        $query->where(function ($q) use ($content, $queryKeys) {
+            foreach ($queryKeys as $key) {
+                $q->orWhere(DB::raw($key), 'like', $content);
+            }
+        });
+
+        return $query;
+    }
 
     public function filterTypes($query, $filter)
     {
@@ -56,13 +81,14 @@ class StoreTableService extends TableService
     public function makeNewQuery()
     {
         return Store::query()
+            ->join('users', 'stores.user_id', '=', 'users.id')
             ->with([
                 'province',
                 'province.provinceDistrict',
                 'provinceCity'
             ])
             ->selectRaw($this->getSelectRaw())
-            ->orderByDesc('created_at');
+            ->orderByDesc('stores.created_at');
     }
 
     /**
@@ -71,15 +97,17 @@ class StoreTableService extends TableService
      */
     protected function getSelectRaw()
     {
-        return 'id,
-            name,
-            tel,
-            province_id,
-            province_city_id,
-            recruiter_name,
-            postal_code,
-            building,
-            address,
-            specialize_ids';
+        return 'stores.id,
+            stores.name,
+            stores.tel,
+            stores.province_id,
+            stores.province_city_id,
+            stores.recruiter_name,
+            stores.postal_code,
+            stores.building,
+            stores.address,
+            stores.specialize_ids,
+            users.last_name,
+            users.first_name';
     }
 }
