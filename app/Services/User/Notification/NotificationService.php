@@ -25,4 +25,14 @@ class NotificationService extends Service
 
         throw new InputException(trans('response.not_found'));
     }
+
+    /**
+     * count notifications
+     *
+     * @return int
+     */
+    public function count()
+    {
+        return $this->user->notifications()->where('be_read', Notification::STATUS_UNREAD)->count();
+    }
 }
