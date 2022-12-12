@@ -279,7 +279,7 @@ class JobService extends Service
                         ->orWhere('user_id', '=', null);
                 },
                 'jobPostingTrashed.applications.interviews',
-                'jobPostingTrashed.store',
+                'jobPostingTrashed.storeTrashed',
                 'jobPostingTrashed.provinceCity',
                 'jobPostingTrashed.province',
                 'jobPostingTrashed.province.provinceDistrict',

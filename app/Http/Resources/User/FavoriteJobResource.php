@@ -23,7 +23,7 @@ class FavoriteJobResource extends JsonResource
                 'id' => $this['job_posting_id'],
                 'name' => $jobPosting['name'],
                 'banner_image' => FileHelper::getFullUrl($jobPosting['banner_image']['url'] ?? null),
-                'store_name' => $jobPosting['store']['name'],
+                'store_name' => $jobPosting['store_trashed']['name'],
                 'interview_status' => $jobPosting['applications'][0]['interviews']['name'] ?? null,
                 'postal_code' => $jobPosting['postal_code'],
                 'address' => [

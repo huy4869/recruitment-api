@@ -91,6 +91,14 @@ class JobPosting extends Model
     /**
      * @return BelongsTo
      */
+    public function storeTrashed()
+    {
+        return $this->belongsTo(Store::class, 'store_id')->withTrashed();
+    }
+
+    /**
+     * @return BelongsTo
+     */
     public function status()
     {
         return $this->belongsTo(MJobStatus::class, 'job_status_id');
