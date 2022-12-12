@@ -37,4 +37,17 @@ class NotificationController extends Controller
 
         return $this->sendSuccessResponse($result);
     }
+
+    /**
+     * count notifications
+     *
+     * @return JsonResponse
+     */
+    public function count()
+    {
+        $user = $this->guard()->user();
+        $result = NotificationService::getInstance()->withUser($user)->count();
+
+        return $this->sendSuccessResponse(['count' => $result]);
+    }
 }
