@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Recruiter;
 
+use App\Helpers\DateTimeHelper;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
@@ -25,6 +26,7 @@ class MeResource extends JsonResource
             'alias_name' => $this->alias_name,
             'tel' => $this->tel,
             'email' => $this->email,
+            'last_login_at' => DateTimeHelper::formatDateDayOfWeekTimeJa($this->last_login_at),
         ];
     }
 }
