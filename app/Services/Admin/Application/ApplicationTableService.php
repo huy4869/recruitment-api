@@ -23,6 +23,7 @@ class ApplicationTableService extends TableService
     protected $filterables = [
         'job_name' => 'filterName',
         'user_name' => 'filterName',
+        'owner' => 'filterOwner',
         'user_furi_name' => 'filterName',
         'created_at_from' => 'filterByCreatedAt',
         'created_at_to' => 'filterByCreatedAt',
@@ -110,14 +111,44 @@ class ApplicationTableService extends TableService
     }
 
     /**
+     * @param $query
+     * @param $filter
+     * @return mixed
+     */
+    protected function filterOwner($query, $filter)
+    {
+        if (!count($filter) || !is_string($filter['data'])) {
+            return $query;
+        }
+
+        $queryKeys = [
+            'users.first_name',
+            'users.last_name',
+            'CONCAT(users.first_name, " ",users.last_name)',
+        ];
+
+        $filter['data'] = StringHelper::escapeLikeSearch($filter['data']);
+        $content = '%' . trim($filter['data']) . '%';
+        $query->where(function ($q) use ($content, $queryKeys) {
+            foreach ($queryKeys as $key) {
+                $q->orWhere(DB::raw($key), 'like', $content);
+            }
+        });
+
+        return $query;
+    }
+
+    /**
      * @return \Illuminate\Database\Eloquent\Builder|\Illuminate\Database\Query\Builder
      */
     public function makeNewQuery()
     {
         return Application::query()
             ->selectRaw($this->getSelectRaw())
-            ->leftJoin('application_users', 'applications.id', '=', 'application_users.application_id')
+            ->join('application_users', 'applications.id', '=', 'application_users.application_id')
             ->join('job_postings', 'job_posting_id', '=', 'job_postings.id')
+            ->join('stores', 'applications.store_id', '=', 'stores.id')
+            ->join('users', 'stores.user_id', '=', 'users.id')
             ->with([
                 'interviews',
                 'applicationUser.avatarBanner'
@@ -144,6 +175,9 @@ class ApplicationTableService extends TableService
             application_users.furi_first_name,
             application_users.furi_last_name,
             application_users.is_public_avatar,
-            application_users.age';
+            application_users.age,
+            users.first_name as owner_first_name,
+            users.last_name as owner_last_name,
+            stores.name as store_name';
     }
 }

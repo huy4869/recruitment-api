@@ -126,7 +126,7 @@ class ApplicationTableService extends TableService
 
         return Application::query()
             ->selectRaw($this->getSelectRaw())
-            ->leftJoin('application_users', 'applications.id', '=', 'application_users.application_id')
+            ->join('application_users', 'applications.id', '=', 'application_users.application_id')
             ->join('job_postings', 'job_posting_id', '=', 'job_postings.id')
             ->with([
                 'interviews',
