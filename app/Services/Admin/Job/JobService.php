@@ -311,7 +311,7 @@ class JobService extends Service
         }
     }
 
-    public static function getStatusJob($idStatus)
+    public static function getStatusJob()
     {
         $jobStatus = MJobStatus::query()->get();
         $dataStatus = [];
