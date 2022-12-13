@@ -183,4 +183,22 @@ class StoreService extends Service
             throw new Exception(trans('response.EXC.001'));
         }//end try
     }
+
+    /**
+     * @return array
+     */
+    public function all()
+    {
+        $stores = Store::query()->get();
+        $result = [];
+
+        foreach ($stores as $store) {
+            $result[] = [
+                'id' => $store->id,
+                'name' => $store->name,
+            ];
+        }
+
+        return $result;
+    }
 }

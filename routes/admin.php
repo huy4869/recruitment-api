@@ -50,6 +50,7 @@ Route::group(['as' => 'forgot-password.', 'prefix' => 'forgot-password'], functi
 
 Route::group(['as' => 'stores.', 'prefix' => 'stores', 'middleware' => 'admin'], function () {
     Route::get('/', 'StoreController@list');
+    Route::get('/all', 'StoreController@all')->name('all');
     Route::get('/{id}', 'StoreController@detail');
     Route::post('/', 'StoreController@store');
     Route::post('/update/{id}', 'StoreController@update');

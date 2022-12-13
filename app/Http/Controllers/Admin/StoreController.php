@@ -10,6 +10,7 @@ use App\Http\Resources\Admin\StoreCollection;
 use App\Http\Resources\Admin\StoreDetailResource;
 use App\Services\Admin\Store\StoreService;
 use App\Services\Admin\Store\StoreTableService;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class StoreController extends Controller
@@ -25,7 +26,7 @@ class StoreController extends Controller
 
     /**
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
     public function list(Request $request)
     {
@@ -41,7 +42,7 @@ class StoreController extends Controller
 
     /**
      * @param $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      * @throws InputException
      */
     public function detail($id)
@@ -57,7 +58,7 @@ class StoreController extends Controller
 
     /**
      * @param StoreRequest $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      * @throws \Exception
      */
     public function store(StoreRequest $request)
@@ -90,7 +91,7 @@ class StoreController extends Controller
     /**
      * @param UpdateRequest $request
      * @param $id
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      * @throws InputException
      */
     public function update(UpdateRequest $request, $id)
@@ -124,5 +125,15 @@ class StoreController extends Controller
         $data = $this->storeService->withUser($this->guard()->user())->delete($id);
 
         return $this->sendSuccessResponse($data, trans('response.INF.005'));
+    }
+
+    /**
+     * @return JsonResponse
+     */
+    public function all()
+    {
+        $data = StoreService::getInstance()->all();
+
+        return $this->sendSuccessResponse($data);
     }
 }
