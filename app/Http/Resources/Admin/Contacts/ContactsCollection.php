@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources\Admin\Contacts;
 
+use App\Models\User;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
@@ -16,10 +17,17 @@ class ContactsCollection extends ResourceCollection
      */
     public function toArray($request)
     {
-        $paginator = $this->resource;
+        $data = $this->resource;
+        $paginator = $data['data'];
+
+        if ($data['role_id'] == User::ROLE_USER) {
+            $resource = ContactResource::collection($paginator);
+        } else {
+            $resource = ContactStoreResource::collection($paginator);
+        }
 
         return [
-            'data' => ContactResource::collection($paginator),
+            'data' => $resource,
             'per_page' => $paginator->perPage(),
             'total_page' => $paginator->lastPage(),
             'current_page' => $paginator->currentPage(),

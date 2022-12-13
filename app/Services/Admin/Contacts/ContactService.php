@@ -24,11 +24,24 @@ class ContactService extends Service
         $roleId = $roleId ?? User::ROLE_USER;
         $perPage = $perPage ?? self::PER_PAGE;
 
-        return Contact::query()
-            ->whereRelation('user', 'role_id', '=', $roleId)
-            ->with('store')
-            ->orderByDesc('created_at')
-            ->paginate($perPage);
+        if ($roleId == User::ROLE_USER) {
+            $contacts = Contact::query()
+                ->with('user')
+                ->whereNull('store_id')
+                ->orderByDesc('created_at')
+                ->paginate($perPage);
+        } else {
+            $contacts = Contact::query()
+                ->with('store')
+                ->whereNotNull('store_id')
+                ->orderByDesc('created_at')
+                ->paginate($perPage);
+        }//end if
+
+        return [
+            'role_id' => $roleId,
+            'data' => $contacts
+        ];
     }
 
     /**

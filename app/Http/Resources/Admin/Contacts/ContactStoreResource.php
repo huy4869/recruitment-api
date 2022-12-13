@@ -1,15 +1,13 @@
 <?php
 
-namespace App\Http\Resources\Admin\FeedbackJobs;
+namespace App\Http\Resources\Admin\Contacts;
 
 use App\Helpers\DateTimeHelper;
-use App\Models\MFeedbackType;
-use App\Services\Admin\FeedbackJobs\FeedbackJobsService;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class FeedbackJobResource extends JsonResource
+class ContactStoreResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -20,16 +18,15 @@ class FeedbackJobResource extends JsonResource
     public function toArray($request)
     {
         $data = $this->resource;
-        $dataFeedbackType = FeedbackJobsService::getDataObject($data->feedback_type_ids, MFeedbackType::query());
 
         return [
             'id' => $data->id,
-            'user_id' => $data->user_id,
-            'email' => $data->user->email,
+            'name' => $data->name,
+            'email' => $data->email,
+            'tel' => $data->tel,
             'be_read' => $data->be_read,
             'content' => $data->content,
-            'desired_salary' => $data->desired_salary,
-            'feedback_types' => $dataFeedbackType,
+            'store' => $data->store,
             'created_at' => DateTimeHelper::formatDateDayOfWeekTimeJa($this->created_at),
         ];
     }
