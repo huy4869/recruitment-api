@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Http\Requests\User\Auth;
+namespace App\Http\Requests\Admin;
 
+use App\Rules\Admin\CurrentPassword;
 use App\Rules\Password;
-use App\Rules\User\CurrentPassword;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ChangePasswordRequest extends FormRequest

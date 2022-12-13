@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Requests\Admin\Auth;
+namespace App\Http\Requests\User;
 
 use App\Rules\Password;
+use App\Rules\User\CurrentPassword;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ChangePasswordRequest extends FormRequest
@@ -25,37 +26,36 @@ class ChangePasswordRequest extends FormRequest
     public function rules()
     {
         return [
-            'current_password' => 'required',
-            'password' => [
-                'required',
-                'confirmed',
-                new Password(),
-                'min:' . config('validate.password_min_length'),
-                'max:' . config('validate.password_max_length'),
-            ],
-            'password_confirmation' => 'required',
+            'current_password' => ['required', new Password(), new CurrentPassword()],
+            'password' => ['required', new Password(), 'min:' . config('validate.password_min_length'), 'max:' . config('validate.password_max_length')],
+            'password_confirmation' => ['required', 'same:password'],
         ];
     }
 
     /**
+     * Get the validation messages
      * @return array
      */
     public function messages()
     {
         return [
-            'password_confirmation.required' => trans('validation.COM.001'),
+            'current_password.required' => trans('validation.COM.001'),
+            'password.required' => trans('validation.COM.001'),
             'password.min' => trans('validation.COM.005'),
             'password.max' => trans('validation.COM.005'),
+            'password_confirmation.required' => trans('validation.COM.001'),
+            'password_confirmation.same' => trans('validation.COM.007'),
         ];
     }
 
     /**
-     * @return array
+     * attributes
+     *
+     * @return string[]
      */
     public function attributes()
     {
         return [
-            'current_password' => '現在のパスワード',
             'password' => '新しいパスワード',
             'password_confirmation' => '新しいパスワード確認',
         ];
