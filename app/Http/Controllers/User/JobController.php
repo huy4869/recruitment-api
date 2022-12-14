@@ -175,7 +175,7 @@ class JobController extends Controller
 
         $data = $this->jobService->withUser($user)->storeFavorite($request->get('job_posting_id'));
 
-        return $this->sendSuccessResponse($data, trans('response.INF.001'));
+        return $this->sendSuccessResponse($data, trans('response.INF.020'));
     }
 
     /**
