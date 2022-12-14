@@ -31,6 +31,7 @@ class Store extends Model
         'name',
         'website',
         'tel',
+        'application_tel',
         'employee_quantity',
         'founded_year',
         'business_segment',

@@ -100,6 +100,7 @@ class StoreTableService extends TableService
         return 'stores.id,
             stores.name,
             stores.tel,
+            stores.application_tel,
             stores.province_id,
             stores.province_city_id,
             stores.recruiter_name,

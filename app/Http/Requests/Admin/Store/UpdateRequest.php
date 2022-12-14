@@ -32,6 +32,7 @@ class UpdateRequest extends FormRequest
             'store_name' => ['required', 'string', 'max:' . $lengthText],
             'website' => ['nullable', 'max:' . $lengthText],
             'tel' => ['required', 'string', new CheckPhoneNumber()],
+            'application_tel' => ['nullable', 'string', new CheckPhoneNumber()],
             'postal_code' => ['nullable', 'numeric', 'digits:' . config('validate.zip_code_max_length')],
             'province_id' => ['required', 'numeric', 'exists:m_provinces,id'],
             'province_city_id' => ['required', 'numeric', 'exists:m_provinces_cities,id'],

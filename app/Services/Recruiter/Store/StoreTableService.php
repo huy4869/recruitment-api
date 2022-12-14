@@ -99,6 +99,7 @@ class StoreTableService extends TableService
         return 'id,
             name,
             tel,
+            application_tel,
             province_id,
             province_city_id,
             recruiter_name,

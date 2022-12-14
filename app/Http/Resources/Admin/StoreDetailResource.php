@@ -26,6 +26,7 @@ class StoreDetailResource extends JsonResource
             'user_name' => $this->owner->full_name,
             'website' => $this->website,
             'tel' => $this->tel,
+            'application_tel' => $this->application_tel,
             'address' => [
                 'postal_code' => $this->postal_code,
                 'province_id' => $this->province_id,

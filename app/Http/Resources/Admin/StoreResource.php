@@ -22,6 +22,7 @@ class StoreResource extends JsonResource
             'last_name' => $this->last_name,
             'recruiter_name' => $this->recruiter_name,
             'tel' => $this->tel,
+            'application_tel' => $this->application_tel,
             'address' => [
                 'postal_code' => $this->postal_code,
                 'province' => $this->province->name,
