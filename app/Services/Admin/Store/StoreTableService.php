@@ -12,8 +12,8 @@ use Illuminate\Support\Facades\DB;
 class StoreTableService extends TableService
 {
     protected $filterables = [
-        'province_id' => 'filterTypes',
-        'province_city_id' => 'filterTypes',
+        'province_ids' => 'filterTypes',
+        'province_city_ids' => 'filterTypes',
         'specialize_ids' => 'filterTypes',
         'store_name' => 'filterTypes',
         'recruiter_name' => 'filterTypes',
@@ -61,8 +61,24 @@ class StoreTableService extends TableService
             SearchService::queryJsonKey($query, $filter);
         }
 
-        if ($filter['key'] == 'province_id' || $filter['key'] == 'province_city_id') {
-            $query->where($filter['key'], $filter['data']);
+        if ($filter['key'] == 'province_ids') {
+            $query->where(function ($query) use ($filter) {
+                $provinceIds = SearchService::encodeStringToArray($filter['data']);
+
+                foreach ($provinceIds as $id) {
+                    $query->orWhere('stores.province_id', $id);
+                }
+            });
+        }
+
+        if ($filter['key'] == 'province_city_ids') {
+            $query->where(function ($query) use ($filter) {
+                $provinceCityIds = SearchService::encodeStringToArray($filter['data']);
+
+                foreach ($provinceCityIds as $id) {
+                    $query->orWhere('stores.province_city_id', $id);
+                }
+            });
         }
 
         if ($filter['key'] == 'store_name') {

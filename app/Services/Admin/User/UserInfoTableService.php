@@ -9,9 +9,12 @@ use App\Models\User;
 use App\Services\Common\CommonService;
 use App\Services\Common\SearchService;
 use App\Services\TableService;
+use Doctrine\DBAL\Exception;
 
 class UserInfoTableService extends TableService
 {
+    const FIRST_ARRAY = 0;
+
     /**
      * @var string[]
      */
@@ -40,41 +43,38 @@ class UserInfoTableService extends TableService
         }
 
         $query->whereHas('desiredConditionUser', function ($query) use ($filter) {
-            $jsonKey = [
-                'work_type_ids' => 'work_type_ids',
-                'job_type_ids' => 'job_type_ids',
-                'job_experience_ids' => 'job_experience_ids',
-            ];
-
             if (!isset($filter['key']) || !isset($filter['data'])) {
                 throw new InputException(trans('response.invalid'));
             }
 
-            if (isset($jsonKey[$filterItem['key']])) {
-                SearchService::queryJsonKey($query, $filter);
-            } elseif ($filter['key'] == 'province_ids') {
-                $query->where(function ($query) use ($filter) {
-                    $provinceIds = json_decode($filter['data']);
+            switch ($filter['key']) {
+                case 'work_type_ids':
+                case 'job_type_ids':
+                case 'job_experience_ids':
+                    SearchService::queryJsonKey($query, $filter);
+                    break;
+                case 'salary_min':
+                case 'salary_max':
+                    SearchService::queryRangeKey($query, $filter);
+                    break;
+                case 'province_ids':
+                    $query->where(function ($query) use ($filter) {
+                        $types = json_decode($filter['data']);
+                        $query->whereJsonContains('province_ids', $types[self::FIRST_ARRAY]);
+                        unset($types[self::FIRST_ARRAY]);
 
-                    foreach ($provinceIds as $id) {
-                        $query->orWhere('province_id', $id);
-                    }
-                });
-            } elseif ($filter['key'] == 'province_city_ids') {
-                $query->where(function ($query) use ($filter) {
-                    $provinceCityIds = json_decode($filter['data']);
+                        foreach ($types as $type) {
+                            $query->orWhereJsonContains('province_ids', $type);
+                        }//end foreach
+                    });
 
-                    foreach ($provinceCityIds as $id) {
-                        $query->orWhere('province_city_id', $id);
-                    }
-                });
-            } elseif ($filter['key'] == 'salary_min' || $filter['key'] == 'salary_max') {
-                SearchService::queryRangeKey($query, $filter);
-            } elseif ($filter['key'] == 'age') {
-                $query->where('age', '>=', $filter['data']);
-            } else {
-                $query->where($filter['key'], $filter['data']);
-            }//end if
+                    break;
+                case 'age':
+                    $query->where('age', '>=', $filter['data']);
+                    break;
+                default:
+                    $query->where($filter['key'], $filter['data']);
+            }//end switch
         });
 
         return $query;
