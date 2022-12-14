@@ -39,7 +39,7 @@ class ListInterviewResource extends JsonResource
                 );
                 break;
             case MInterviewApproach::STATUS_INTERVIEW_PHONE:
-                $approach = $this->storeAcceptTrashed->owner->tel;
+                $approach = @$this->storeAcceptTrashed->application_tel ?? @$this->storeAcceptTrashed->tel;
                 break;
         }//end switch
 

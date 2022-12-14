@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Recruiter;
 
+use App\Rules\CheckPhoneNumber;
 use App\Rules\PhoneFirstChar;
 use App\Rules\PhoneJapan;
 use Carbon\Carbon;
@@ -32,14 +33,8 @@ class CreateStoreRequest extends FormRequest
             'url' => ['nullable', 'string', 'url'],
             'store_name' => ['required', 'string', 'max:' . $lengthText],
             'website' => ['nullable', 'max:' . $lengthText],
-            'tel' => [
-                'required',
-                'string',
-                new PhoneFirstChar(),
-                new PhoneJapan(),
-                'min:' . config('validate.phone_min_length'),
-                'max:' . config('validate.phone_max_length'),
-            ],
+            'tel' => ['required', 'string', new CheckPhoneNumber()],
+            'application_tel' => ['nullable', 'string', new CheckPhoneNumber()],
             'postal_code' => ['nullable', 'numeric', 'digits:' . config('validate.zip_code_max_length')],
             'province_id' => ['required', 'numeric', 'exists:m_provinces,id'],
             'province_city_id' => ['required', 'numeric', 'exists:m_provinces_cities,id'],

@@ -31,7 +31,7 @@ class ListApplicationResource extends JsonResource
         } elseif ($data->interview_approach_id == MInterviewApproach::STATUS_INTERVIEW_ONLINE) {
             $dataApproach = config('application.interview_approach_online');
         } else {
-            $dataApproach = @$data->storeAcceptTrashed->owner->tel;
+            $dataApproach = @$data->storeAcceptTrashed->application_tel ?? @$data->storeAcceptTrashed->tel;
         }
 
         $applyOrInterview = in_array($data->interview_status_id, [MInterviewApproach::STATUS_INTERVIEW_ONLINE, MInterviewStatus::STATUS_WAITING_INTERVIEW]);
