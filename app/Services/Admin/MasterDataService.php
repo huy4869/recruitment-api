@@ -9,9 +9,11 @@ use App\Models\MJobFeatureCategory;
 use App\Models\MJobType;
 use App\Models\MProvince;
 use App\Models\MProvinceDistrict;
+use App\Models\MRole;
 use App\Models\MSalaryType;
 use App\Models\MStation;
 use App\Models\MWorkType;
+use App\Models\User;
 use App\Services\Service;
 use Illuminate\Config\Repository;
 use Illuminate\Contracts\Foundation\Application;
@@ -86,7 +88,7 @@ class MasterDataService extends Service
 
         'm_roles' => [
             'driver' => self::DRIVER_CUSTOM,
-            'target' => 'getMasterDataName',
+            'target' => 'getMasterDataRole',
         ],
 
         'm_work_positions' => [
@@ -678,6 +680,21 @@ class MasterDataService extends Service
                 'id' => $dataJobType->id,
                 'name' => $dataJobType->name,
                 'is_other' => $dataJobType->id == MJobType::OTHER
+            ];
+        }
+
+        return $result;
+    }
+
+    protected function getMasterDataRole()
+    {
+        $roles = MRole::query()->where('id', '!=', User::ROLE_ADMIN)->get();
+        $result = [];
+
+        foreach ($roles as $role) {
+            $result[] = [
+                'id' => $role->id,
+                'name' => $role->name,
             ];
         }
 
