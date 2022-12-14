@@ -5,8 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ContactRequest;
+use App\Http\Resources\Admin\Contacts\ContactResource;
 use App\Http\Resources\Admin\Contacts\ContactsCollection;
+use App\Http\Resources\Admin\Contacts\ContactStoreResource;
 use App\Http\Resources\Admin\Contacts\DetailContactResource;
+use App\Models\User;
 use App\Services\Admin\Contacts\ContactService;
 use Illuminate\Http\JsonResponse;
 
@@ -38,6 +41,12 @@ class ContactsController extends Controller
     {
         $data = ContactService::getInstance()->detail($id);
 
-        return $this->sendSuccessResponse(new DetailContactResource($data));
+        if ($data['role_id'] == User::ROLE_USER) {
+            $resource = new ContactResource($data['data']);
+        } else {
+            $resource = new ContactStoreResource($data['data']);
+        }
+
+        return $this->sendSuccessResponse($resource);
     }
 }
