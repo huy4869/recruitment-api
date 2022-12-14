@@ -313,11 +313,6 @@ class User extends Authenticatable
         return sprintf('〒 %s %s%s%s', $this->postal_code, $provinceName, $this->address, $this->building);
     }
 
-    public function recruiterOffTimes()
-    {
-        return $this->HasOne(RecruiterOffTime::class, 'user_id', 'id');
-    }
-
     public function applicationUser()
     {
         return $this->hasMany(ApplicationUser::class);

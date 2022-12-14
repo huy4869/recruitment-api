@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Admin;
 
-use App\Services\Admin\InterviewScheduleService;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ListInterviewScheduleRequest extends FormRequest
@@ -24,11 +23,9 @@ class ListInterviewScheduleRequest extends FormRequest
      */
     public function rules()
     {
-        $recIds = InterviewScheduleService::getRecIds();
-
         return [
             'start_date' => ['nullable', 'date'],
-            'rec_id' => ['required', 'in:' . implode(',', $recIds)],
+            'store_id' => ['required', 'numeric', 'exists:stores,id'],
         ];
     }
 }

@@ -13,6 +13,7 @@ use App\Models\MInterviewStatus;
 use App\Models\MJobType;
 use App\Models\Notification;
 use App\Models\Store;
+use App\Models\StoreOffTime;
 use App\Services\Common\FileService;
 use App\Services\Service;
 use App\Services\User\Job\JobService;
@@ -69,6 +70,7 @@ class StoreService extends Service
 
             $store->contacts()?->delete();
             $store->images()?->delete();
+            StoreOffTime::query()->where('store_id', '=', $store->id)->delete();
 
             $jobHasApplicationNotReject = $store->jobs()?->whereHas('applications', function ($query) {
                 $query->whereNot('interview_status_id', MInterviewStatus::STATUS_REJECTED);

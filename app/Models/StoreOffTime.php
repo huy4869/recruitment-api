@@ -7,20 +7,20 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class RecruiterOffTime extends Model
+class StoreOffTime extends Model
 {
     use HasFactory, SoftDeletes;
 
     /**
      * @var string
      */
-    protected $table = 'recruiter_off_times';
+    protected $table = 'store_off_times';
 
     /**
      * @var string[]
      */
     protected $fillable = [
-        'user_id',
+        'store_id',
         'off_times',
     ];
 

@@ -36,7 +36,8 @@ class InterviewScheduleController extends Controller
     {
         $recruiter = $this->guard()->user();
         $date = $request->get('start_date');
-        $data = $this->interviewScheduleService->withUser($recruiter)->getInterviewSchedule($date);
+        $storeId = $request->get('store_id');
+        $data = $this->interviewScheduleService->withUser($recruiter)->getInterviewSchedule($date, $storeId);
 
         return $this->sendSuccessResponse($data);
     }
@@ -63,7 +64,9 @@ class InterviewScheduleController extends Controller
     public function updateOrCreateInterviewScheduleDate(InterviewScheduleDateRequest $request)
     {
         $recruiter = $this->guard()->user();
-        $data = $this->interviewScheduleService->withUser($recruiter)->updateOrCreateInterviewScheduleDate($request->get('date'));
+        $date = $request->get('date');
+        $storeId = $request->get('store_id');
+        $data = $this->interviewScheduleService->withUser($recruiter)->updateOrCreateInterviewScheduleDate($date, $storeId);
 
         return $this->sendSuccessResponse($data, trans('validation.INF.016'));
     }

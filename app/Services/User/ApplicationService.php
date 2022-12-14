@@ -8,6 +8,7 @@ use App\Models\Application;
 use App\Models\MInterviewApproach;
 use App\Models\MInterviewStatus;
 use App\Models\Notification;
+use App\Models\StoreOffTime;
 use App\Services\Service;
 use App\Services\User\Job\JobService;
 use Carbon\Carbon;
@@ -315,7 +316,6 @@ class ApplicationService extends Service
     {
         $user = $this->user;
         $application = Application::query()
-            ->with(['store.owner.recruiterOffTimes', 'store.owner.stores.applications'])
             ->where('user_id', '=', $user->id)
             ->where('id', '=', $applicationId)
             ->first();
@@ -353,34 +353,35 @@ class ApplicationService extends Service
             ->where('id', '!=', $applicationId)
             ->whereDate('date', $date)
             ->where('hours', '=', $hours)
-            ->get()
-            ->pluck('user_id', 'job_posting_id')
-            ->toArray();
+            ->where(function ($query) use ($application) {
+                $query->where('user_id', '=', $application->user_id)
+                    ->orWhere('job_posting_id', '=', $application->job_posting_id);
+            })
+            ->exists();
 
-        if (in_array($user->id, $applications) || in_array($application->job_posting_id, array_keys($applications))) {
+        if ($applications) {
             throw new InputException(trans('validation.ERR.036'));
         }
 
-        $storeIds = $application->store->owner->stores->pluck('id')->toArray();
-        $recruiterInterviewApplications = Application::query()
-            ->whereIn('store_id', $storeIds)
+        $storeInterviewApplications = Application::query()
+            ->where('store_id', '=', $application->store_id)
             ->where('date', '=', $date . ' 00:00:00')
             ->where('hours', '=', $hours)
             ->where('id', '!=', $application->id)
             ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW])
             ->exists();
 
-        if ($recruiterInterviewApplications) {
+        if ($storeInterviewApplications) {
             throw new InputException(trans('validation.ERR.036'));
         }
 
         $month = Carbon::parse($data['date'])->firstOfMonth()->format('Y-m-d');
-        $recruiterOffTimes = $application->store->owner->recruiterOffTimes->off_times ?? [];
-        $recruiterOffTimes = JobService::resultRecruiterOffTimes([$month], $recruiterOffTimes);
-        $dataHours = preg_grep('/' . $date . '/i', $recruiterOffTimes);
+        $storeOffTimes = StoreOffTime::query()->where('store_id', '=', $application->store_id)->first();
 
-        foreach ($dataHours as $dataHour) {
-            if ($hours == explode(' ', $dataHour)[1]) {
+        if ($storeOffTimes && isset($storeOffTimes->off_times[$month])) {
+            $dataHours = preg_grep('/' . $date . '/i', $storeOffTimes->off_times[$month]);
+
+            if (isset($dataHours[$date . ' ' . $hours])) {
                 throw new InputException(trans('validation.ERR.036'));
             }
         }

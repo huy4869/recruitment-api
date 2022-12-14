@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Recruiter;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class ListInterviewScheduleRequest extends FormRequest
 {
@@ -25,6 +26,7 @@ class ListInterviewScheduleRequest extends FormRequest
     {
         return [
             'start_date' => ['nullable', 'date'],
+            'store_id' => ['required', 'numeric', 'exists:stores,id,user_id,' . Auth::user()->id],
         ];
     }
 }

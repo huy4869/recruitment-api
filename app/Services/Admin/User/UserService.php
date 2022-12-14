@@ -17,6 +17,7 @@ use App\Models\MInterviewStatus;
 use App\Models\MRole;
 use App\Models\Notification;
 use App\Models\Store;
+use App\Models\StoreOffTime;
 use App\Models\User;
 use App\Models\UserJobDesiredMatch;
 use App\Services\Common\FileService;
@@ -281,8 +282,10 @@ class UserService extends Service
     public function destroyRecruiter($admin, $recruiter)
     {
         $userNotifyData = [];
+        $storeIds = [];
 
         foreach ($recruiter->stores as $store) {
+            $storeIds[] = $store->id;
             foreach ($store->jobs as $job) {
                 foreach ($job->applications as $application) {
                     $userNotifyData[] = [
@@ -304,7 +307,7 @@ class UserService extends Service
             }
         }
 
-        $recruiter->recruiterOffTimes()?->delete();
+        StoreOffTime::query()->whereIn('store_id', $storeIds)->delete();
         $recruiter->favoriteUsers()?->delete();
         $recruiter->images()?->delete();
         $recruiter->contacts()?->delete();

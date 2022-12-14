@@ -8,8 +8,8 @@ use App\Models\Application;
 use App\Models\JobPosting;
 use App\Models\MInterviewApproach;
 use App\Models\MInterviewStatus;
-use App\Models\RecruiterOffTime;
 use App\Models\Store;
+use App\Models\StoreOffTime;
 use App\Models\User;
 use App\Services\Service;
 use App\Services\User\Job\JobService;
@@ -33,10 +33,10 @@ class InterviewScheduleService extends Service
         $date = DateTimeHelper::firstDayOfWeek($data['start_date']);
 
         if ($date) {
-            $recruiterOffTimes = $this->getRecruiterOffTimes($date, $data['rec_id']);
-            $applications = $this->getApplicationOffTimes($date, $data['rec_id']);
+            $storeOffTimes = $this->getStoreOffTimes($date, $data['store_id']);
+            $applications = $this->getApplicationOffTimes($date, $data['store_id']);
 
-            return $this->resultDate($date, $recruiterOffTimes, $applications);
+            return $this->resultDate($date, $storeOffTimes, $applications);
         }
 
         return [];
@@ -44,26 +44,22 @@ class InterviewScheduleService extends Service
 
     /**
      * @param $date
-     * @param $recId
+     * @param $storeId
      * @return array
      */
-    public function getApplicationOffTimes($date, $recId)
+    public function getApplicationOffTimes($date, $storeId)
     {
         $data = [];
         $startDate = now()->format(config('date.format_date'));
         $endDate = Carbon::parse($date)->addDays(config('date.day_of_week'))->format(config('date.format_date'));
-        $stores = Store::query()
-            ->with(['applications' => function ($query) use ($startDate, $endDate) {
-                $query->whereDate('date', '>=', $startDate)
-                    ->whereDate('date', '<=', $endDate)
-                    ->where('interview_status_id', MInterviewStatus::STATUS_WAITING_INTERVIEW);
-            }, 'applications.applicationUser'])
-            ->where('user_id', '=', $recId)->get();
-        $applications = collect();
 
-        foreach ($stores as $store) {
-            $applications = $applications->merge($store->applications);
-        }
+        $applications = Application::query()
+            ->with('applicationUser')
+            ->where('store_id', '=', $storeId)
+            ->whereDate('date', '>=', $startDate)
+            ->whereDate('date', '<=', $endDate)
+            ->where('interview_status_id', MInterviewStatus::STATUS_WAITING_INTERVIEW)
+            ->get();
 
         foreach ($applications as $application) {
             $applicationDate = explode(' ', $application->date)[0];
@@ -86,11 +82,11 @@ class InterviewScheduleService extends Service
 
     /**
      * @param $date
-     * @param array $recruiterOffTimes
+     * @param array $storeOffTimes
      * @param array $applications
      * @return array
      */
-    public function resultDate($date, $recruiterOffTimes = [], $applications = [])
+    public function resultDate($date, $storeOffTimes = [], $applications = [])
     {
         $data = [];
         $i = 0;
@@ -101,7 +97,7 @@ class InterviewScheduleService extends Service
             if ($dateCheck < now()->format('Y-m-d')) {
                 $times = $this->timePast();
             } else {
-                $dataHours = preg_grep('/' . $dateCheck . '/i', $recruiterOffTimes);
+                $dataHours = preg_grep('/' . $dateCheck . '/i', $storeOffTimes);
                 $applicationTimes = isset($applications[$dateCheck]) ? $applications[$dateCheck] : [];
                 $times = $this->checkTime($dateCheck, $dataHours, $applicationTimes);
             }
@@ -120,32 +116,29 @@ class InterviewScheduleService extends Service
 
     /**
      * @param $date
-     * @param $recId
+     * @param $storeId
      * @return mixed
      */
-    public function getRecruiterOffTimes($date, $recId)
+    public function getStoreOffTimes($date, $storeId)
     {
         $startMonthOfWeek = Carbon::parse($date)->firstOfMonth()->format('Y-m-d');
         $endMonthOfWeek = Carbon::parse($date)->addDays(config('date.day_of_week'))->firstOfMonth()->format('Y-m-d');
-        $user = User::query()
-            ->with('recruiterOffTimes')
-            ->where('id', '=', $recId)
-            ->first();
 
-        $recruiterOffTimes = @$user->recruiterOffTimes->off_times ?? [];
+        $storeOffTimes = StoreOffTime::query()->where('store_id', '=', $storeId)->first();
+        $storeOffTimes = $storeOffTimes ? $storeOffTimes->off_times : [];
 
-        return JobService::resultRecruiterOffTimes([$startMonthOfWeek, $endMonthOfWeek], $recruiterOffTimes);
+        return JobService::resultStoreOffTimes([$startMonthOfWeek, $endMonthOfWeek], $storeOffTimes);
     }
 
     /**
      * Time check
      *
      * @param $date
-     * @param array $recruiterOffTimes
+     * @param array $storeOffTimes
      * @param array $applications
      * @return array
      */
-    public function checkTime($date, $recruiterOffTimes = [], $applications = [])
+    public function checkTime($date, $storeOffTimes = [], $applications = [])
     {
         $data = [];
         $currentHour = DateTimeHelper::getTime();
@@ -161,7 +154,7 @@ class InterviewScheduleService extends Service
             $applierId = null;
             $applierUserId = null;
 
-            if (isset($recruiterOffTimes[$date . ' ' . $time])) {
+            if (isset($storeOffTimes[$date . ' ' . $time])) {
                 $isNotGood = !$isNotGood;
                 $isGood = InterviewScheduleService::RESULT;
             }
@@ -224,14 +217,6 @@ class InterviewScheduleService extends Service
     }
 
     /**
-     * @return array
-     */
-    public static function getRecIds()
-    {
-        return User::query()->roleRecruiter()->get()->pluck('id')->toArray();
-    }
-
-    /**
      * Admin update application
      *
      * @param $applicationId
@@ -246,10 +231,7 @@ class InterviewScheduleService extends Service
             throw new InputException(trans('validation.ERR.999'));
         }
 
-        $application = Application::query()
-            ->with(['store.owner.recruiterOffTimes', 'store.owner.stores.applications'])
-            ->where('id', '=', $applicationId)
-            ->first();
+        $application = Application::query()->where('id', '=', $applicationId)->first();
 
         if (!$application) {
             throw new InputException(trans('response.not_found'));
@@ -274,7 +256,7 @@ class InterviewScheduleService extends Service
         }
 
         $applications = Application::query()
-            ->whereIn('interview_status_id', MInterviewStatus::STATUS_WAITING_INTERVIEW)
+            ->where('interview_status_id', '=', MInterviewStatus::STATUS_WAITING_INTERVIEW)
             ->where('id', '!=', $applicationId)
             ->whereDate('date', $date)
             ->where('hours', '=', $hours)
@@ -288,13 +270,11 @@ class InterviewScheduleService extends Service
             throw new InputException(trans('validation.ERR.036'));
         }
 
-        $storeIds = $application->store->owner->stores->pluck('id')->toArray();
         $userApplications = Application::query()
-            ->whereIn('store_id', $storeIds)
+            ->where('store_id', '=', $application->store_id)
             ->where('date', '=', $date . ' 00:00:00')
             ->where('hours', '=', $hours)
             ->where('id', '!=', $application->id)
-            ->where('interview_status_id', MInterviewStatus::STATUS_WAITING_INTERVIEW)
             ->exists();
 
         if ($userApplications) {
@@ -302,12 +282,14 @@ class InterviewScheduleService extends Service
         }
 
         $month = Carbon::parse($data['date'])->firstOfMonth()->format('Y-m-d');
-        $recruiterOffTimes = $application->store->owner->recruiterOffTimes->off_times ?? [];
-        $recruiterOffTimes = $recruiterOffTimes[$month];
-        $dataHours = preg_grep('/' . $date . '/i', $recruiterOffTimes);
+        $storeOffTimes = StoreOffTime::query()->where('store_id', '=', $application->store_id)->first();
 
-        if (isset($dataHours[$date . ' ' . $hours])) {
-            throw new InputException(trans('validation.ERR.036'));
+        if ($storeOffTimes && isset($storeOffTimes->off_times[$month])) {
+            $dataHours = preg_grep('/' . $date . '/i', $storeOffTimes->off_times[$month]);
+
+            if (isset($dataHours[$date . ' ' . $hours])) {
+                throw new InputException(trans('validation.ERR.036'));
+            }
         }
 
         return $application->update($data);
@@ -362,12 +344,11 @@ class InterviewScheduleService extends Service
     /**
      * Admin update or create or delete recruiter off time
      *
-     * @param $recId
      * @param $data
      * @return bool|Builder|Model|int
      * @throws ValidationException
      */
-    public function updateOrCreateInterviewSchedule($recId, $data)
+    public function updateOrCreateInterviewSchedule($data)
     {
         $date = $data['date'];
         $hours = $data['hours'];
@@ -385,29 +366,26 @@ class InterviewScheduleService extends Service
             }
         }
 
-        $stores = Store::query()
-            ->with(['applications' => function ($query) use ($date, $hours) {
-                $query->whereDate('date', $date)
-                    ->where('hours', '=', $hours)
-                    ->whereIn('interview_status_id', MInterviewStatus::STATUS_WAITING_INTERVIEW);
-            }, 'applications.user'])
-            ->where('user_id', '=', $recId)->get();
+        $applications = Application::query()
+            ->where('store_id', '=', $data['store_id'])
+            ->whereDate('date', '=', $date)
+            ->where('hours', '=', $hours)
+            ->whereIn('interview_status_id', MInterviewStatus::STATUS_WAITING_INTERVIEW)
+            ->exists();
 
-        foreach ($stores as $store) {
-            if ($store->applications->count()) {
-                throw ValidationException::withMessages([
-                    'hours' => trans('validation.ERR.037')
-                ]);
-            }
+        if ($applications) {
+            throw ValidationException::withMessages([
+                'hours' => trans('validation.ERR.037')
+            ]);
         }
 
         $dateTime = $date . ' ' . $hours;
         $firstMonth = Carbon::parse($date)->firstOfMonth()->format('Y-m-d');
-        $recruiterOffTime = RecruiterOffTime::query()->where('user_id', '=', $recId)->first();
+        $storeOffTime = StoreOffTime::query()->where('store_id', '=', $data['store_id'])->first();
 
-        if (!$recruiterOffTime) {
-            return RecruiterOffTime::query()->create([
-                'user_id' => $recId,
+        if (!$storeOffTime) {
+            return StoreOffTime::query()->create([
+                'store_id' => $data['store_id'],
                 'off_times' => [
                     $firstMonth => [
                         $dateTime => $dateTime
@@ -416,7 +394,7 @@ class InterviewScheduleService extends Service
             ]);
         }
 
-        $dataOffTimes = $recruiterOffTime['off_times'];
+        $dataOffTimes = $storeOffTime->off_times;
 
         if ($data['is_has_interview'] == InterviewScheduleService::IS_HAS_INTERVIEW) {
             if (isset($dataOffTimes[$firstMonth])) {
@@ -428,12 +406,12 @@ class InterviewScheduleService extends Service
                 ], $dataOffTimes);
             }
 
-            return $recruiterOffTime->update(['off_times' => $dataOffTimes]);
+            return $storeOffTime->update(['off_times' => $dataOffTimes]);
         }
 
         unset($dataOffTimes[$firstMonth][$dateTime]);
 
-        return $recruiterOffTime->update(['off_times' => $dataOffTimes]);
+        return $storeOffTime->update(['off_times' => $dataOffTimes]);
     }
 
     /**
@@ -526,17 +504,17 @@ class InterviewScheduleService extends Service
     }
 
     /**
-     * Recruiter off times
+     * Store off times
      *
-     * @param $recruiterOffTimes
+     * @param $storeOffTimes
      * @param $key
      * @return mixed
      */
-    public static function resultRecruiterOffTimes($key, $recruiterOffTimes = [])
+    public static function resultStoreOffTimes($key, $storeOffTimes = [])
     {
         $keys = array_map('strval', $key);
 
-        return call_user_func_array('array_merge', array_values(array_intersect_key($recruiterOffTimes, array_flip($keys))));
+        return call_user_func_array('array_merge', array_values(array_intersect_key($storeOffTimes, array_flip($keys))));
     }
 
     /**
@@ -550,12 +528,11 @@ class InterviewScheduleService extends Service
     public function detailJobUserApplication($id, $application)
     {
         $jobPosting = $this->checkJobPosting($id, $application->user_id);
-        $storeIds = $jobPosting->store->owner->stores->pluck('id')->toArray();
         $now = now()->format('Y-m-d 00:00:00');
         $userId = $application->user_id;
 
         $recruiterInterviewApplications = Application::query()
-            ->whereIn('store_id', $storeIds)
+            ->where('store_id', '=', $jobPosting->store_id)
             ->where('job_posting_id', '!=', $jobPosting->id)
             ->where('date', '>=', $now)
             ->get();
@@ -565,7 +542,9 @@ class InterviewScheduleService extends Service
             ->where('job_posting_id', '!=', $jobPosting->id)
             ->whereDate('date', '>=', $now)
             ->get();
-        $recruiterOffTimes = $jobPosting->store->owner->recruiterOffTimes->off_times ?? [];
+
+        $storeOffTimes = StoreOffTime::query()->where('store_id', '=', $jobPosting->store_id)->first();
+        $storeOffTimes = $storeOffTimes ? $storeOffTimes->off_times : [];
         $monthNow = now()->firstOfMonth()->format('Y-m-d');
         $monthDay = now()->addDays(config('date.max_day'))->firstOfMonth()->format('Y-m-d');
 
@@ -573,7 +552,7 @@ class InterviewScheduleService extends Service
             self::resultApplication($applicationsTime),
             self::resultApplication($userApplicationsTime),
             self::resultApplication($recruiterInterviewApplications),
-            self::resultRecruiterOffTimes([$monthNow, $monthDay], $recruiterOffTimes),
+            self::resultStoreOffTimes([$monthNow, $monthDay], $storeOffTimes),
             $application
         );
     }
@@ -582,11 +561,11 @@ class InterviewScheduleService extends Service
      * @param $applicationsTime
      * @param $userApplicationsTime
      * @param $recruiterApplicationOther
-     * @param $recruiterOffTimes
+     * @param $storeOffTimes
      * @param null $application
      * @return mixed
      */
-    public function resultDateApplication($applicationsTime, $userApplicationsTime, $recruiterApplicationOther, $recruiterOffTimes, $application = null)
+    public function resultDateApplication($applicationsTime, $userApplicationsTime, $recruiterApplicationOther, $storeOffTimes, $application = null)
     {
         $dateStart = [];
         $i = 0;
@@ -597,7 +576,7 @@ class InterviewScheduleService extends Service
             $userApplicationsTimes = $userApplicationsTime[$dateCheck] ?? [];
             $recruiterApplicationOthers = $recruiterApplicationOther[$dateCheck] ?? [];
             $timeChecks = array_merge($applicationsTimes, $userApplicationsTimes, $recruiterApplicationOthers);
-            $dataHours = preg_grep('/' . $dateCheck . '/i', $recruiterOffTimes);
+            $dataHours = preg_grep('/' . $dateCheck . '/i', $storeOffTimes);
 
             foreach ($dataHours as $dataHour) {
                 $timeChecks[] = explode(' ', $dataHour)[1];
@@ -667,6 +646,7 @@ class InterviewScheduleService extends Service
      * Check job posting
      *
      * @param $jobPostingId
+     * @param $userId
      * @return Builder|Model|object
      * @throws InputException
      */
@@ -676,7 +656,7 @@ class InterviewScheduleService extends Service
             ->released()
             ->with(['applications' => function($query) use ($userId) {
                 $query->where('user_id', '!=', $userId);
-            }, 'store.owner.recruiterOffTimes', 'store.owner.stores.applications'])
+            }])
             ->where('id', '=', $jobPostingId)
             ->first();
 
