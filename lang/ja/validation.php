@@ -300,6 +300,7 @@ return [
         'job_thumbnails' => 'サブ画像',
         'furi_first_name' => 'セイ',
         'furi_last_name' => 'メイ',
+        'meet_link' => '面接URL',
     ],
 
     'COM' => [

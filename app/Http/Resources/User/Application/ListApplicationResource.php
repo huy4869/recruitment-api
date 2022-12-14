@@ -29,7 +29,11 @@ class ListApplicationResource extends JsonResource
         if ($isDirectInterview) {
             $dataApproach = @$data->storeAcceptTrashed->address;
         } elseif ($data->interview_approach_id == MInterviewApproach::STATUS_INTERVIEW_ONLINE) {
-            $dataApproach = config('application.interview_approach_online');
+            if ($this->meet_link) {
+                $dataApproach = $this->meet_link;
+            } else {
+                $dataApproach = config('application.interview_approach_online');
+            }
         } else {
             $dataApproach = @$data->storeAcceptTrashed->application_tel ?? @$data->storeAcceptTrashed->tel;
         }

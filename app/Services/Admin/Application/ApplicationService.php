@@ -7,11 +7,12 @@ use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
 use App\Helpers\JobHelper;
 use App\Helpers\UserHelper;
+use App\Jobs\Recruiter\ApplicationInterviewOnline;
 use App\Models\Application;
+use App\Models\MInterviewApproach;
 use App\Models\MInterviewStatus;
 use App\Models\Notification;
 use App\Services\Service;
-use App\Services\User\Job\JobService;
 use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
@@ -144,11 +145,13 @@ class ApplicationService extends Service
 
         $month = Carbon::parse($data['date'])->firstOfMonth()->format('Y-m-d');
         $recruiterOffTimes = $application->store->owner->recruiterOffTimes->off_times ?? [];
-        $recruiterOffTimes = $recruiterOffTimes[$month];
-        $dataHours = preg_grep('/' . $date . '/i', $recruiterOffTimes);
+        if (isset($recruiterOffTimes)) {
+            $recruiterOffTimes = $recruiterOffTimes[$month];
+            $dataHours = preg_grep('/' . $date . '/i', $recruiterOffTimes);
 
-        if (isset($dataHours[$date . ' ' . $hours])) {
-            throw new InputException(trans('validation.ERR.036'));
+            if (isset($dataHours[$date . ' ' . $hours])) {
+                throw new InputException(trans('validation.ERR.036'));
+            }
         }
     }
 
@@ -183,6 +186,10 @@ class ApplicationService extends Service
             }
 
             $application->update($this->saveMakeData($data, $application));
+
+            if ($data['meet_link'] && $application->interview_approach_id == MInterviewApproach::STATUS_INTERVIEW_ONLINE) {
+                dispatch(new ApplicationInterviewOnline($application))->onQueue(config('queue.email_queue'));
+            }
 
             DB::commit();
             return true;
@@ -222,6 +229,11 @@ class ApplicationService extends Service
      */
     public function saveMakeData($data, $application)
     {
+        $meetLink = $data['meet_link'];
+        if ($data['interview_approach_id'] != MInterviewApproach::STATUS_INTERVIEW_ONLINE) {
+            $meetLink = null;
+        }
+
         return [
             'interview_approach_id' => $data['interview_approach_id'] ?? $application->interview_approach_id,
             'date' => $data['date'] ?? $application->date,
@@ -229,6 +241,7 @@ class ApplicationService extends Service
             'note' => $data['note'] ?? $application->note,
             'interview_status_id' => $data['interview_status_id'],
             'owner_memo' => $data['owner_memo'],
+            'meet_link' => $meetLink,
             'update_times' => now(),
         ];
     }

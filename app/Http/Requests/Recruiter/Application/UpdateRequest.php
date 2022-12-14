@@ -29,6 +29,14 @@ class UpdateRequest extends FormRequest
         return [
             'interview_status_id' => 'required|integer|in:' . implode(',', $applicationStatuses),
             'owner_memo' => 'nullable|string|max:' . config('validate.approach_text_max_length'),
+            'meet_link' => ['nullable', 'string', 'max:' . config('validate.max_length_text')],
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'meet_link.max' => trans('validate.COM.003'),
         ];
     }
 }

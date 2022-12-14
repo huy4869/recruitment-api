@@ -41,6 +41,7 @@ class ApplicationController extends Controller
             'interview_status_id',
             'owner_memo',
             'date',
+            'meet_link',
             'hours',
             'interview_approach_id',
             'note',
