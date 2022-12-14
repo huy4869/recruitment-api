@@ -46,19 +46,27 @@ class ContactService extends Service
 
     /**
      * @param $id
-     * @return Builder|Model|object
+     * @return array
      * @throws InputException
      */
     public function detail($id)
     {
-        $contact = Contact::query()->where('id', '=', $id)->first();
+        $contact = Contact::query()->with(['user', 'store'])->where('id', '=', $id)->first();
+        $roleId = User::ROLE_RECRUITER;
 
         if ($contact) {
             if ($contact->be_read == Contact::NOT_READ) {
                 $contact->update(['be_read' => Contact::BE_READ]);
             }
 
-            return $contact;
+            if (is_null($contact->store_id)) {
+                $roleId = User::ROLE_USER;
+            }
+
+            return [
+                'role_id' => $roleId,
+                'data' =>  $contact
+            ];
         }
 
         throw new InputException(trans('response.not_found'));
