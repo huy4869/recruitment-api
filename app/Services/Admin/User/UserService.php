@@ -430,7 +430,7 @@ class UserService extends Service
         return array_merge($user->toArray(), [
             'avatar_banner' => FileHelper::getFullUrl($user->avatarBanner->url ?? null),
             'avatar_details' => $user->avatarDetails ?: null,
-            'province' => $user->province->name,
+            'province' => @$user->province->name,
             'province_city' => @$user->provinceCity->name,
             'gender' => $user->gender->name ?? null,
             'gender_id' => $user->gender->id ?? null,
