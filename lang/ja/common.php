@@ -19,4 +19,5 @@ return [
     'before_day' => '日前',
     'now' => '現在',
     'week' => '週間前',
+    'subject_mail_interview_online' => 'オンライン面接のメール通知URLリンク',
 ];

@@ -31,6 +31,7 @@ class Application extends Model
         'update_times',
         'checked_at',
         'owner_memo',
+        'meet_link',
     ];
 
     /**

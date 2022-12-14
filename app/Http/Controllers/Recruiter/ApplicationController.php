@@ -60,6 +60,7 @@ class ApplicationController extends Controller
         $inputs = $request->only([
             'interview_status_id',
             'owner_memo',
+            'meet_link',
         ]);
         $result = ApplicationService::getInstance()->withUser($recruiter)->update($id, $inputs);
 

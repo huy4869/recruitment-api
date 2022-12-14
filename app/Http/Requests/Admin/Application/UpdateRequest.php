@@ -31,6 +31,14 @@ class UpdateRequest extends FormRequest
             'hours' => ['nullable', 'string', 'in:' . implode(',', config('date.time'))],
             'interview_approach_id' => ['nullable', 'numeric', 'exists:m_interview_approaches,id'],
             'note' => ['nullable', 'string', 'max:' . config('validate.text_max_length')],
+            'meet_link' => ['nullable', 'string', 'max:' . config('validate.max_length_text')],
+        ];
+    }
+
+    public function messages()
+    {
+        return [
+            'meet_link.max' => trans('validate.COM.003'),
         ];
     }
 }

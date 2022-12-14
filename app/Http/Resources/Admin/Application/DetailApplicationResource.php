@@ -5,6 +5,7 @@ namespace App\Http\Resources\Admin\Application;
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
 use App\Http\Resources\Admin\Application\DetailAvatarResource;
+use App\Models\MInterviewApproach;
 use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -59,6 +60,8 @@ class DetailApplicationResource extends JsonResource
             'hours' => $this->hours,
             'note' => $this->note,
             'owner_memo' => $this->owner_memo,
+            'meet_link' => $this->meet_link,
+            'has_input_link' => $this->interview_approach_id == MInterviewApproach::STATUS_INTERVIEW_ONLINE,
         ];
     }
 }

@@ -7,7 +7,9 @@ use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
 use App\Helpers\JobHelper;
 use App\Helpers\UserHelper;
+use App\Jobs\Recruiter\ApplicationInterviewOnline;
 use App\Models\Application;
+use App\Models\MInterviewApproach;
 use App\Models\MInterviewStatus;
 use App\Models\Notification;
 use App\Services\Service;
@@ -204,7 +206,15 @@ class ApplicationService extends Service
                 ]);
             }
 
+            if ($application->interview_approach_id != MInterviewApproach::STATUS_INTERVIEW_ONLINE) {
+                $data['meet_link'] = null;
+            }
+
             $application->update($data);
+
+            if ($data['meet_link'] && $application->interview_approach_id == MInterviewApproach::STATUS_INTERVIEW_ONLINE) {
+                dispatch(new ApplicationInterviewOnline($application))->onQueue(config('queue.email_queue'));
+            }
 
             DB::commit();
             return true;

@@ -21,7 +21,11 @@ class ListInterviewResource extends JsonResource
     {
         switch ($this->interview_approach_id) {
             case MInterviewApproach::STATUS_INTERVIEW_ONLINE:
-                $approach = config('application.interview_approach_online');
+                if ($this->meet_link) {
+                    $approach = $this->meet_link;
+                } else {
+                    $approach = config('application.interview_approach_online');
+                }
                 break;
             case MInterviewApproach::STATUS_INTERVIEW_DIRECT:
                 $postalCode = @$this->jobPostingAcceptTrashed->postal_code;
