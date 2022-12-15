@@ -1,8 +1,6 @@
 <?php
 
 return [
-    'forgot_password' => 'パスワード再設定',
-
     'subject' => [
         'contact' => config('app.name') . 'までのお問い合わせありがとうございました。',
         'store_user' => config('app.name') . ' create new user',
@@ -10,5 +8,6 @@ return [
         'destroy_user' => config('app.name') . ' delete user',
         'verify_register' => config('app.name') . ' verify register',
         'verify_account' => 'メールアドレスの認証',
+        'forgot_password' => 'パスワード再設定',
     ]
 ];

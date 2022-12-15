@@ -40,8 +40,8 @@ class PasswordResetService extends Service
 
         $infoSendMail = [
             'email' => $user->email,
-            'first_name' => $user->first_name,
-            'subject' => trans('mail.forgot_password'),
+            'name' => $user->first_name . ' ' . $user->last_name,
+            'subject' => trans('mail.subject.forgot_password'),
             'url' => $url,
         ];
 

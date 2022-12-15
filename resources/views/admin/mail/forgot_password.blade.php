@@ -10,7 +10,7 @@
 <body style="background: #cccccc">
 <div style="background:#fff; width:100%;margin:auto; word-break: break-all">
     <div style="padding:20px">
-        <p>{{ $data['first_name'] }}様</p>
+        <p>{{ $data['name'] }}様</p>
         <p>いつも {{ config('app.name') }} をご利用いただきまして、誠にありがとうございます。</p>
         <p>下記URLをクリックし、新しいパスワードを設定してください。</p>
         <a href="{{ $data['url'] }}">{{ $data['url'] }}</a>
