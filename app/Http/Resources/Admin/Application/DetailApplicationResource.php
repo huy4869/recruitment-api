@@ -56,11 +56,11 @@ class DetailApplicationResource extends JsonResource
             ],
             'interview_date' => DateTimeHelper::formatDateDayOfWeekJa($this->date) . $this->hours,
             'date' => @explode(' ', $this->date)[0],
-            'interview_approach_id' => $this->interview_approach_id,
             'hours' => $this->hours,
             'note' => $this->note,
             'owner_memo' => $this->owner_memo,
             'meet_link' => $this->meet_link,
+            'interview_approach_name' => $this->interviewApproach->name,
             'has_input_link' => $this->interview_approach_id == MInterviewApproach::STATUS_INTERVIEW_ONLINE,
         ];
     }

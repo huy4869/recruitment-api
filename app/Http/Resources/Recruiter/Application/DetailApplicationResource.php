@@ -55,6 +55,7 @@ class DetailApplicationResource extends JsonResource
             'note' => $this->note,
             'owner_memo' => $this->owner_memo,
             'meet_link' => $this->meet_link,
+            'interview_approach_name' => $this->interviewApproach->name,
             'has_input_link' => $this->interview_approach_id == MInterviewApproach::STATUS_INTERVIEW_ONLINE,
         ];
     }
