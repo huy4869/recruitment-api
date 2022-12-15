@@ -4,6 +4,7 @@ namespace App\Services\Admin\User;
 
 use App\Helpers\StringHelper;
 use App\Models\User;
+use App\Services\Common\SearchService;
 use App\Services\TableService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
@@ -36,7 +37,9 @@ class UserTableService extends TableService
      */
     protected function filterRole($query, $filter)
     {
-        return $query->whereIn($filter['key'], json_decode($filter['data']));
+        $types = SearchService::encodeStringToArray($filter['data']);
+
+        return $query->whereIn($filter['key'], $types);
     }
 
     /**
