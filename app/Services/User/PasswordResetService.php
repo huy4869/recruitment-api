@@ -32,6 +32,10 @@ class PasswordResetService extends Service
             return false;
         }
 
+        if (is_null($user->email_verified_at)) {
+            throw new InputException(__('validation.ERR.051'));
+        }
+
         $token = Str::random(config('password_reset.token.length'));
         $url = UrlHelper::resetPasswordLink($token, $user);
 
