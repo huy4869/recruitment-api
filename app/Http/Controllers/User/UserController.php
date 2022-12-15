@@ -133,6 +133,6 @@ class UserController extends BaseController
             return $this->sendSuccessResponse([], trans('validation.INF.001'));
         }
 
-        throw new InputException(trans('response.ERR.006'));
+        throw new InputException(trans('validation.ERR.006'));
     }
 }

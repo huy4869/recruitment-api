@@ -55,7 +55,7 @@ class DesiredConditionController extends BaseController
             return $this->sendSuccessResponse($data, trans('validation.INF.001'));
         }
 
-        throw new InputException(trans('response.ERR.006'));
+        throw new InputException(trans('validation.ERR.006'));
     }
 
     /**

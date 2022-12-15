@@ -139,7 +139,7 @@ class ApplicationController extends BaseController
         } catch (Exception $exception) {
             DB::rollBack();
             Log::error($exception->getMessage(), [$exception]);
-            return $this->sendErrorResponse(trans('response.EXC.001'));
+            return $this->sendErrorResponse(trans('validation.EXC.001'));
         }
     }
 

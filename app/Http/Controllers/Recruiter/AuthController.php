@@ -95,7 +95,7 @@ class AuthController extends BaseController
 
         $data = AuthService::getInstance()->register($input);
 
-        return $this->sendSuccessResponse($data, trans('auth.register_success'));
+        return $this->sendSuccessResponse($data, trans('validation.INF.025'));
     }
 
     /**

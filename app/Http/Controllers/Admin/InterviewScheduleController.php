@@ -55,7 +55,7 @@ class InterviewScheduleController extends Controller
         $inputs = $request->only(['date', 'hours', 'interview_approaches_id', 'note']);
         $this->interviewScheduleService->updateApplication($applicationId, $inputs);
 
-        return $this->sendSuccessResponse([], trans('response.INF.008'));
+        return $this->sendSuccessResponse([], trans('validation.INF.008'));
     }
 
     /**

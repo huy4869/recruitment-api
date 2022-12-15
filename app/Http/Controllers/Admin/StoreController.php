@@ -86,7 +86,7 @@ class StoreController extends Controller
 
         $data = $this->storeService->withUser($this->guard()->user())->store($input);
 
-        return $this->sendSuccessResponse($data, trans('response.INF.010'));
+        return $this->sendSuccessResponse($data, trans('validation.INF.010'));
     }
 
     /**
@@ -119,14 +119,14 @@ class StoreController extends Controller
 
         $data = $this->storeService->withUser($this->guard()->user())->update($input, $id);
 
-        return $this->sendSuccessResponse($data, trans('response.INF.001'));
+        return $this->sendSuccessResponse($data, trans('validation.INF.001'));
     }
 
     public function delete($id)
     {
         $data = $this->storeService->withUser($this->guard()->user())->delete($id);
 
-        return $this->sendSuccessResponse($data, trans('response.INF.005'));
+        return $this->sendSuccessResponse($data, trans('validation.INF.005'));
     }
 
     /**

@@ -243,7 +243,7 @@ class InterviewScheduleService extends Service
     public function updateApplication($applicationId, $data)
     {
         if (!in_array($data['hours'], config('date.time'))) {
-            throw new InputException(trans('response.ERR.999'));
+            throw new InputException(trans('validation.ERR.999'));
         }
 
         $application = Application::query()

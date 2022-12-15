@@ -39,7 +39,7 @@ class AuthService extends Service
         }
 
         if (is_null($recruiter->email_verified_at)) {
-            throw new InputException(__('auth.verify_register_fail'));
+            throw new InputException(trans('validation.ERR.051'));
         }
 
         $token = $recruiter->createToken('authRecruiterToken', [], Carbon::now()
@@ -117,7 +117,7 @@ class AuthService extends Service
 
         $infoSendMail = [
             'email' => $newUser->email,
-            'subject' => trans('mail.subject.verify_register'),
+            'subject' => trans('mail.subject.verify_account'),
             'url' => $url,
         ];
 
