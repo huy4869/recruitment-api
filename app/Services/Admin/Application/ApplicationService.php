@@ -12,6 +12,7 @@ use App\Models\Application;
 use App\Models\MInterviewApproach;
 use App\Models\MInterviewStatus;
 use App\Models\Notification;
+use App\Models\StoreOffTime;
 use App\Services\Service;
 use Carbon\Carbon;
 use Exception;
@@ -74,8 +75,6 @@ class ApplicationService extends Service
             ->with([
                 'store',
                 'interviews',
-                'store.owner.recruiterOffTimes',
-                'store.owner.stores.applications',
             ])
             ->first();
 
@@ -102,7 +101,6 @@ class ApplicationService extends Service
     {
         $date = $data['date'];
         $hours = $data['hours'];
-
         $now = now()->format('Y-m-d');
         $dateApplication = explode(' ', $application->date)[0];
         $hoursApplication = $application->hours;
@@ -131,9 +129,8 @@ class ApplicationService extends Service
             throw new InputException(trans('validation.ERR.036'));
         }
 
-        $storeIds = $application->store->owner->stores->pluck('id')->toArray();
         $recruiterInterviewApplications = Application::query()
-            ->whereIn('store_id', $storeIds)
+            ->where('store_id', '=', $application->store_id)
             ->where('date', '=', $date . ' 00:00:00')
             ->where('hours', '=', $hours)
             ->where('id', '!=', $application->id)
@@ -144,10 +141,10 @@ class ApplicationService extends Service
         }
 
         $month = Carbon::parse($data['date'])->firstOfMonth()->format('Y-m-d');
-        $recruiterOffTimes = $application->store->owner->recruiterOffTimes->off_times ?? [];
-        if (isset($recruiterOffTimes)) {
-            $recruiterOffTimes = $recruiterOffTimes[$month];
-            $dataHours = preg_grep('/' . $date . '/i', $recruiterOffTimes);
+        $storeOffTimes = StoreOffTime::query()->where('store_id', '=', $application->store_id)->first();
+
+        if ($storeOffTimes && isset($storeOffTimes->off_times[$month])) {
+            $dataHours = preg_grep('/' . $date . '/i', $storeOffTimes->off_times[$month]);
 
             if (isset($dataHours[$date . ' ' . $hours])) {
                 throw new InputException(trans('validation.ERR.036'));

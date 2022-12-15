@@ -35,7 +35,7 @@ class InterviewScheduleController extends Controller
      */
     public function getInterviewSchedule(ListInterviewScheduleRequest $request)
     {
-        $inputs = $request->only(['start_date', 'rec_id']);
+        $inputs = $request->only(['start_date', 'store_id']);
         $data = $this->interviewScheduleService->getInterviewSchedule($inputs);
 
         return $this->sendSuccessResponse($data);
@@ -61,14 +61,13 @@ class InterviewScheduleController extends Controller
     /**
      * Admin update or create interview schedule
      *
-     * @param $userId
      * @param UpdateOrCreateInterviewScheduleRequest $request
      * @return JsonResponse
      * @throws ValidationException
      */
-    public function updateInterviewSchedule($userId, UpdateOrCreateInterviewScheduleRequest $request)
+    public function updateInterviewSchedule(UpdateOrCreateInterviewScheduleRequest $request)
     {
-        $this->interviewScheduleService->updateOrCreateInterviewSchedule($userId, $request->all());
+        $this->interviewScheduleService->updateOrCreateInterviewSchedule($request->all());
 
         return $this->sendSuccessResponse([], trans('validation.INF.016'));
     }

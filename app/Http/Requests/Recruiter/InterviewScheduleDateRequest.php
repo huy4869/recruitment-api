@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Recruiter;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Support\Facades\Auth;
 
 class InterviewScheduleDateRequest extends FormRequest
 {
@@ -23,8 +24,8 @@ class InterviewScheduleDateRequest extends FormRequest
      */
     public function rules()
     {
-
         return [
+            'store_id' => ['required', 'numeric', 'exists:stores,id,user_id,' . Auth::user()->id],
             'date' => ['required', 'date', 'after_or_equal:today'],
         ];
     }
