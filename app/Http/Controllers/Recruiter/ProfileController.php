@@ -55,7 +55,7 @@ class ProfileController extends Controller
             return $this->sendSuccessResponse($data, trans('response.update_success'));
         }
 
-        throw new InputException(trans('response.ERR.006'));
+        throw new InputException(trans('validation.ERR.006'));
     }
 
     /**

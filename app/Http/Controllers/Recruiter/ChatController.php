@@ -51,7 +51,7 @@ class ChatController extends Controller
         $data = $this->chatService->withUser($this->guard()->user())->store($input);
 
         if ($data) {
-            return $this->sendSuccessResponse(new ChatResource($data), trans('response.INF.006'));
+            return $this->sendSuccessResponse(new ChatResource($data), trans('validation.INF.006'));
         }
 
         throw new InputException(trans('validation.ERR.006'));

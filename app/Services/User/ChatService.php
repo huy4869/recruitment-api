@@ -166,7 +166,7 @@ class ChatService extends Service
             DB::rollBack();
             Log::error($e->getMessage(), [$e]);
 
-            throw new InputException(trans('response.EXC.001'));
+            throw new InputException(trans('validation.EXC.001'));
         }//end try
     }
 

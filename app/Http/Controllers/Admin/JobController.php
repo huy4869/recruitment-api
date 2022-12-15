@@ -84,7 +84,7 @@ class JobController extends Controller
                 $msg = trans('validation.INF.012');
                 break;
             default:
-                $msg = trans('response.INF.006');
+                $msg = trans('validation.INF.006');
                 break;
         }
 

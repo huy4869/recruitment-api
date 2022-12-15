@@ -187,7 +187,7 @@ class UserController extends Controller
             return $this->sendSuccessResponse([], trans('validation.INF.001'));
         }
 
-        throw new InputException(trans('response.ERR.007'));
+        throw new InputException(trans('validation.ERR.007'));
     }
 
     /**

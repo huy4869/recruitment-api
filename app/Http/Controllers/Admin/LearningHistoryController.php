@@ -38,10 +38,10 @@ class LearningHistoryController extends Controller
         $data = $this->learningHistory->store($input, $request->get('user_id'));
 
         if ($data) {
-            return $this->sendSuccessResponse($data, trans('response.INF.006'));
+            return $this->sendSuccessResponse($data, trans('validation.INF.006'));
         }
 
-        throw new InputException(trans('response.ERR.006'));
+        throw new InputException(trans('validation.ERR.006'));
     }
 
     /**
@@ -64,10 +64,10 @@ class LearningHistoryController extends Controller
         $data = $this->learningHistory->update($input, $id, $request->get('user_id'));
 
         if ($data) {
-            return $this->sendSuccessResponse($data, trans('response.INF.001'));
+            return $this->sendSuccessResponse($data, trans('validation.INF.001'));
         }
 
-        throw new InputException(trans('response.ERR.007'));
+        throw new InputException(trans('validation.ERR.007'));
     }
 
     /**

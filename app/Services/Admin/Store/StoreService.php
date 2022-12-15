@@ -111,7 +111,7 @@ class StoreService extends Service
         } catch (Exception $e) {
             DB::rollBack();
             Log::error($e->getMessage(), [$e]);
-            throw new Exception(trans('response.EXC.001'));
+            throw new Exception(trans('validation.EXC.001'));
         }
     }
 
@@ -180,7 +180,7 @@ class StoreService extends Service
         } catch (Exception $e) {
             DB::rollBack();
             Log::error($e->getMessage(), [$e]);
-            throw new Exception(trans('response.EXC.001'));
+            throw new Exception(trans('validation.EXC.001'));
         }//end try
     }
 

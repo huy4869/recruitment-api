@@ -138,7 +138,7 @@ class JobController extends Controller
         $data = $this->jobService->withUser($this->guard()->user())->deleteFavorite($id);
 
         if ($data) {
-            return $this->sendSuccessResponse($data, trans('response.INF.003'));
+            return $this->sendSuccessResponse($data, trans('validation.INF.003'));
         }
 
         throw new InputException(trans('validation.ERR.011'));
@@ -175,7 +175,7 @@ class JobController extends Controller
 
         $data = $this->jobService->withUser($user)->storeFavorite($request->get('job_posting_id'));
 
-        return $this->sendSuccessResponse($data, trans('response.INF.020'));
+        return $this->sendSuccessResponse($data, trans('validation.INF.020'));
     }
 
     /**
