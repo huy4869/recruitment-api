@@ -119,7 +119,7 @@ class JobHelper
             'banner_image' => FileHelper::getFullUrl($job->bannerImage->url ?? null),
             'detail_images' => $job->detailImages,
             'province' => $job->province->name,
-            'district' => $job->province->provinceDistrict->name,
+            'province_city' => $job->provinceCity->name,
             'salary_type' => $job->salaryType->name,
             'experience_types' => $experience,
             'feature_types' => $feature,
