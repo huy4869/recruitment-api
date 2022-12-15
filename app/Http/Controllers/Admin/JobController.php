@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\Job\UpdateRequest;
 use App\Http\Resources\Admin\Job\DetailJobResource;
 use App\Http\Resources\Admin\Job\JobCollection;
 use App\Models\JobPosting;
@@ -67,7 +68,7 @@ class JobController extends Controller
      * @return JsonResponse
      * @throws Exception
      */
-    public function update($id, CreateRequest $request)
+    public function update($id, UpdateRequest $request)
     {
         $admin = $this->guard()->user();
         $inputs = self::makeRequestData($request);

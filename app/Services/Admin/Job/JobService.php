@@ -41,8 +41,14 @@ class JobService extends Service
         }
 
         $dataImage = $this->makeSaveDataImage($data);
-        unset($data['job_banner']);
-        unset($data['job_thumbnails']);
+
+        if (isset($data['job_banner'])) {
+            unset($data['job_banner']);
+        }
+
+        if (isset($data['job_thumbnails'])) {
+            unset($data['job_thumbnails']);
+        }
 
         try {
             DB::beginTransaction();
@@ -73,27 +79,17 @@ class JobService extends Service
     {
         $dataUrl = [];
 
-        foreach ($data['job_thumbnails'] as $image) {
-            $dataUrl[] = FileHelper::fullPathNotDomain($image);
+        if (isset($data['job_thumbnails'])) {
+            foreach ($data['job_thumbnails'] as $image) {
+                $dataUrl[] = FileHelper::fullPathNotDomain($image);
+            }
         }
 
-        return array_merge([FileHelper::fullPathNotDomain($data['job_banner'])], $dataUrl);
-    }
+        if (isset($data['job_banner'])) {
+            $dataUrl = array_merge([FileHelper::fullPathNotDomain($data['job_banner'])], $dataUrl);
+        }
 
-    /**
-     * @return mixed
-     */
-    public static function getStoreIdsAccordingToAdmin()
-    {
-        return Store::query()->get()->pluck('id')->toArray();
-    }
-
-    /**
-     * @return array
-     */
-    public static function getSalaryTypeIds()
-    {
-        return MSalaryType::query()->pluck('id')->toArray();
+        return $dataUrl;
     }
 
     /**
@@ -189,8 +185,14 @@ class JobService extends Service
         }
 
         $dataImage = $this->makeSaveDataImage($data);
-        unset($data['job_banner']);
-        unset($data['job_thumbnails']);
+
+        if (isset($data['job_banner'])) {
+            unset($data['job_banner']);
+        }
+
+        if (isset($data['job_thumbnails'])) {
+            unset($data['job_thumbnails']);
+        }
 
         try {
             DB::beginTransaction();

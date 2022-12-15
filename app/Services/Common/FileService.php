@@ -91,10 +91,15 @@ class FileService extends Service
      */
     public function updateImageable($object, array $images, array $types = [Images::AVATAR_BANNER, Images::AVATAR_DETAIL])
     {
+        if (!count($images)) {
+            return;
+        }
+
         $dataImages = [];
         foreach ($images as $image) {
             $dataImages[] = Str::after($image, 'storage/upload/');
         }
+
         $existImages = Images::query()->whereIn('url', $dataImages);
 
         if (!$existImages) {
