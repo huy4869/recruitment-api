@@ -42,14 +42,14 @@ class UpdateRequest extends FormRequest
                 'max:' . config('validate.string_max_length')
             ],
             'password' => [
-                'required',
+                'nullable',
                 'confirmed',
                 new Password(),
                 'min:' . config('validate.password_min_length'),
                 'max:' . config('validate.password_max_length')
             ],
             'password_confirmation' => [
-                'required',
+                'nullable',
                 'same:password'
             ],
         ];

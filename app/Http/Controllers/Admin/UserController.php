@@ -17,6 +17,7 @@ use App\Http\Resources\Admin\User\PrResource;
 use App\Http\Resources\Admin\User\UserCollection;
 use App\Http\Resources\Admin\User\UserDetailResource;
 use App\Http\Resources\Admin\UserInfoCollection;
+use App\Models\User;
 use App\Services\Admin\User\UserInfoTableService;
 use App\Services\Admin\User\UserService;
 use App\Services\Admin\User\UserTableService;
@@ -80,7 +81,13 @@ class UserController extends Controller
         ]);
         $data = UserService::getInstance()->store($inputs);
 
-        return $this->sendSuccessResponse($data, trans('validation.INF.010'));
+        $mes = trans('auth.register_success');
+
+        if (in_array($data->role_id, [User::ROLE_USER, User::ROLE_RECRUITER])) {
+            $mes = trans('validation.INF.025');
+        }
+
+        return $this->sendSuccessResponse($data, $mes);
     }
 
     /**

@@ -36,7 +36,7 @@ class AuthService extends Service
         }
 
         if (is_null($user->email_verified_at)) {
-            throw new InputException(__('auth.verify_register_fail'));
+            throw new InputException(__('validation.ERR.051'));
         }
 
         $token = $user->createToken('authUserToken', [], Carbon::now()
