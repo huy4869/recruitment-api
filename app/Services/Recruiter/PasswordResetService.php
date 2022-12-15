@@ -21,7 +21,6 @@ class PasswordResetService extends Service
      *
      * @param $email
      * @return bool
-     * @throws ValidationException
      * @throws InputException
      */
     public function sendMail($email)
@@ -30,6 +29,10 @@ class PasswordResetService extends Service
 
         if (!$user) {
             return false;
+        }
+
+        if (is_null($user->email_verified_at)) {
+            throw new InputException(__('validation.ERR.051'));
         }
 
         $token = Str::random(config('password_reset.token.length'));
