@@ -150,6 +150,7 @@ class StoreService extends Service
                 UserJobDesiredMatch::whereIn('job_id', $store->jobs()->pluck('id')->toArray())->delete();
             }
 
+            $store->feedbacks()?->delete();
             $store->jobs()?->delete();
             $store->delete();
 
