@@ -52,7 +52,7 @@ class AuthController extends BaseController
         $data = AuthService::getInstance()->register($inputs);
 
         if ($data) {
-            return $this->sendSuccessResponse($data, trans('auth.register_success'));
+            return $this->sendSuccessResponse($data, trans('validation.INF.025'));
         }
 
         return ResponseHelper::sendResponse(
