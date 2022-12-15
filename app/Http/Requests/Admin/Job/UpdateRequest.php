@@ -1,11 +1,12 @@
 <?php
 
-namespace App\Http\Requests\Recruiter\Job;
+namespace App\Http\Requests\Admin\Job;
 
 use App\Models\JobPosting;
 use App\Models\MJobType;
 use App\Models\MWorkType;
 use App\Rules\CheckHoursRule;
+use App\Services\Admin\Job\JobService;
 use Illuminate\Foundation\Http\FormRequest;
 
 class UpdateRequest extends FormRequest
@@ -28,13 +29,12 @@ class UpdateRequest extends FormRequest
     public function rules()
     {
         $dayIds = array_keys(config('date.day_of_week_ja_fe'));
-        $recruiter = auth()->user();
         $rangeHoursType = [JobPosting::FULL_DAY, JobPosting::HALF_DAY];
         $requireOrNullable = $this->job_status_id == JobPosting::STATUS_DRAFT ? 'nullable' : 'required';
 
         return [
             'name' => $requireOrNullable . '|string|max:' . config('validate.string_max_length'),
-            'store_id' => $requireOrNullable . '|integer|exists:stores,id,user_id,' . $recruiter->id,
+            'store_id' => $requireOrNullable . '|integer|exists:stores,id',
             'job_status_id' => $requireOrNullable . '|integer|exists:m_job_statuses,id',
             'pick_up_point' => 'nullable|string|max:' . config('validate.text_max_length'),
             'job_banner' => $requireOrNullable . '|string|url',
@@ -138,7 +138,7 @@ class UpdateRequest extends FormRequest
             'end_work_time.required' => trans('validation.COM.010', [
                 'attribute' => trans('job_posting.attributes.end_work_time')
             ]),
-            'end_work_time.greater_than_field' => trans('validation.ERR.031'),
+            'end_work_time.after_or_equal' => trans('validation.COM.021'),
             'age_min.min' => trans('validation.ERR.040'),
             'age_min.max' => trans('validation.ERR.033'),
             'age_max.max' => trans('validation.ERR.033'),

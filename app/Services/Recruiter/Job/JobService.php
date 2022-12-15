@@ -49,8 +49,14 @@ class JobService extends Service
         }
 
         $dataImage = $this->makeSaveDataImage($data);
-        unset($data['job_banner']);
-        unset($data['job_thumbnails']);
+
+        if (isset($data['job_banner'])) {
+            unset($data['job_banner']);
+        }
+
+        if (isset($data['job_thumbnails'])) {
+            unset($data['job_thumbnails']);
+        }
 
         try {
             DB::beginTransaction();
@@ -88,6 +94,10 @@ class JobService extends Service
 
         $recruiter = $this->user;
         $job = JobPosting::query()->where('id', $id)->with(['store'])->first();
+
+        if ($job->store && $job->store->user_id != $recruiter->id) {
+            throw new InputException(trans('response.not_found'));
+        }
 
         if ($data['job_status_id'] != JobPosting::STATUS_DRAFT) {
             try {
@@ -133,13 +143,15 @@ class JobService extends Service
             }//end try
         }
 
-        if ($job->store->user_id != $recruiter->id) {
-            throw new InputException(trans('response.not_found'));
+        $dataImage = $this->makeSaveDataImage($data);
+
+        if (isset($data['job_banner'])) {
+            unset($data['job_banner']);
         }
 
-        $dataImage = $this->makeSaveDataImage($data);
-        unset($data['job_banner']);
-        unset($data['job_thumbnails']);
+        if (isset($data['job_thumbnails'])) {
+            unset($data['job_thumbnails']);
+        }
 
         try {
             DB::beginTransaction();
@@ -232,28 +244,17 @@ class JobService extends Service
     {
         $dataUrl = [];
 
-        foreach ($data['job_thumbnails'] as $image) {
-            $dataUrl[] = FileHelper::fullPathNotDomain($image);
+        if (isset($data['job_thumbnails'])) {
+            foreach ($data['job_thumbnails'] as $image) {
+                $dataUrl[] = FileHelper::fullPathNotDomain($image);
+            }
         }
 
-        return array_merge([FileHelper::fullPathNotDomain($data['job_banner'])], $dataUrl);
-    }
+        if (isset($data['job_banner'])) {
+            $dataUrl = array_merge([FileHelper::fullPathNotDomain($data['job_banner'])], $dataUrl);
+        }
 
-    /**
-     * @param $recruiter
-     * @return mixed
-     */
-    public static function getStoreIdsAccordingToRecruiter($recruiter)
-    {
-        return $recruiter->stores()->pluck('id')->toArray();
-    }
-
-    /**
-     * @return array
-     */
-    public static function getSalaryTypeIds()
-    {
-        return MSalaryType::query()->pluck('id')->toArray();
+        return $dataUrl;
     }
 
     /**

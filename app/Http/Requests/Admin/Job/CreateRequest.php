@@ -28,61 +28,60 @@ class CreateRequest extends FormRequest
      */
     public function rules()
     {
-        $storeIds = JobService::getStoreIdsAccordingToAdmin();
-        $stringMaxLength = config('validate.string_max_length');
-        $textMaxLength = config('validate.text_max_length');
+        $jobStatusIds = JobService::getJobStatusIdsNotEnd();
         $dayIds = array_keys(config('date.day_of_week_ja_fe'));
         $rangeHoursType = [JobPosting::FULL_DAY, JobPosting::HALF_DAY];
+        $requireOrNullable = $this->job_status_id == JobPosting::STATUS_DRAFT ? 'nullable' : 'required';
 
         return [
-            'name' => ['required', 'string', 'max:' . $stringMaxLength],
-            'store_id' => ['required', 'integer', 'in:' . implode(',', $storeIds)],
-            'job_status_id' => ['required', 'integer', 'exists:m_job_statuses,id'],
-            'pick_up_point' => ['nullable', 'string', 'max:' . $textMaxLength],
-            'job_banner' => ['required', 'string', 'url'],
-            'job_thumbnails' => ['required', 'array', 'max:' . config('validate.max_image_detail')],
-            'job_thumbnails.*' => ['string', 'url', 'string', 'url', 'max:' . $stringMaxLength],
-            'job_type_ids' => ['required', 'array'],
+            'name' => $requireOrNullable . '|string|max:' . config('validate.string_max_length'),
+            'store_id' => $requireOrNullable . '|integer|exists:stores,id',
+            'job_status_id' => $requireOrNullable . '|integer|in:' . implode(',', $jobStatusIds),
+            'pick_up_point' => 'nullable|string|max:' . config('validate.text_max_length'),
+            'job_banner' => $requireOrNullable . '|string|url',
+            'job_thumbnails' => $requireOrNullable . '|array',
+            'job_thumbnails.*' => 'string|url',
+            'job_type_ids' => $requireOrNullable . '|array',
             'job_type_ids.*' => 'integer|exists:m_job_types,id,is_default,' . MJobType::IS_DEFAULT,
-            'description' => ['required', 'string', 'max:' . config('validate.job_posting_textarea_max_length')],
-            'work_type_ids' => ['required', 'array'],
+            'description' => $requireOrNullable . '|string|max:' . config('validate.job_posting_textarea_max_length'),
+            'work_type_ids' => $requireOrNullable . '|array',
             'work_type_ids.*' => 'integer|exists:m_work_types,id,is_default,' . MWorkType::IS_DEFAULT,
-            'salary_type_id' => 'required|integer|exists:m_salary_types,id',
-            'salary_min' => ['required', 'integer', 'max:' . config('validate.salary_max_value')],
-            'salary_max' => ['required', 'integer', 'greater_than_field:salary_min', 'max:' . config('validate.salary_max_value')],
-            'salary_description' => ['nullable', 'string', 'max:' . config('validate.job_posting_textarea_max_length')],
+            'salary_type_id' => $requireOrNullable . '|integer|exists:m_salary_types,id',
+            'salary_min' => $requireOrNullable . '|integer|max:' . config('validate.salary_max_value'),
+            'salary_max' => $requireOrNullable . '|integer|greater_than_field:salary_min|max:' . config('validate.salary_max_value'),
+            'salary_description' => 'nullable|string|max:' . config('validate.job_posting_textarea_max_length'),
             'range_hours_type' => 'integer|in:' . implode(',', $rangeHoursType),
             'start_work_time' => [
-                'required',
+                $requireOrNullable,
                 'string',
                 'max:' . config('validate.work_time_max_length'),
                 new CheckHoursRule($this->range_hours_type)
             ],
             'end_work_time' => [
-                'required',
+                $requireOrNullable,
                 'string',
                 'greater_than_field:start_work_time',
                 'max:' . config('validate.work_time_max_length'),
                 new CheckHoursRule($this->range_hours_type),
             ],
-            'shifts' => ['nullable', 'max:' . config('validate.job_posting_textarea_max_length')],
-            'age_min' => ['nullable', 'integer', 'min:' . config('validate.age.min'), 'max:' . config('validate.age.max')],
-            'age_max' => ['nullable', 'integer', 'greater_than_field:age_min', 'max:' . config('validate.age.max')],
-            'gender_ids' => ['nullable', 'array'],
+            'shifts' => 'nullable|max:' . config('validate.job_posting_textarea_max_length'),
+            'age_min' => 'nullable|integer|min:' . config('validate.age.min') . '|max:' . config('validate.age.max'),
+            'age_max' => 'nullable|integer|greater_than_field:age_min|max:' . config('validate.age.max'),
+            'gender_ids' => 'nullable|array',
             'gender_ids.*' => 'integer|exists:m_genders,id',
-            'experience_ids' => ['nullable', 'array'],
+            'experience_ids' => 'nullable|array',
             'experience_ids.*' => 'integer|exists:m_job_experiences,id',
             'postal_code' => ['nullable', 'numeric', 'digits:' . config('validate.zip_code_max_length')],
-            'province_id' => 'required|numeric|exists:m_provinces,id',
-            'province_city_id' => ['required', 'numeric', 'exists:m_provinces_cities,id,province_id,' . $this->province_id],
+            'province_id' => $requireOrNullable . '|numeric|exists:m_provinces,id',
+            'province_city_id' => $requireOrNullable . '|numeric|exists:m_provinces_cities,id,province_id,' . $this->province_id,
             'working_days' => ['nullable', 'array'],
             'working_days.*' => ['nullable', 'integer', 'in:' . implode(',', $dayIds)],
-            'address' => ['required', 'max:' . $stringMaxLength],
-            'building' => ['nullable', 'max:' . $stringMaxLength],
-            'station_ids' => ['nullable', 'array', 'max:' . config('validate.max_image_detail')],
+            'address' => $requireOrNullable . '|max:' . config('validate.string_max_length'),
+            'building' => 'nullable|max:' . config('validate.string_max_length'),
+            'station_ids' => 'nullable|array',
             'stations_ids.*' => 'integer|exists:m_stations,id',
-            'welfare_treatment_description' => ['required', 'max:' . config('validate.job_posting_textarea_max_length')],
-            'feature_ids' => ['required', 'array'],
+            'welfare_treatment_description' => $requireOrNullable . '|max:' . config('validate.job_posting_textarea_max_length'),
+            'feature_ids' => 'nullable|array',
             'feature_ids.*' => 'integer|exists:m_job_features,id',
         ];
     }
