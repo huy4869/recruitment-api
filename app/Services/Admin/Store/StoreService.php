@@ -197,6 +197,8 @@ class StoreService extends Service
             $result[] = [
                 'id' => $store->id,
                 'name' => $store->name,
+                'province_id' => $store->province_id,
+                'province_city_id' => $store->province_city_id
             ];
         }
 
