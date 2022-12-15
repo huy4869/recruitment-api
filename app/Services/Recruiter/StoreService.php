@@ -86,6 +86,7 @@ class StoreService extends Service
             ]);
 
             $store->jobImages()?->delete();
+            $store->feedbacks()?->delete();
             $store->jobs()?->delete();
             $store->delete();
 
