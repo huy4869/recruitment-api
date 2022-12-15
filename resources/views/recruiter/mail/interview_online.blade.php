@@ -10,7 +10,7 @@
 <body style="background: #cccccc">
 <div style="background:#fff; width:100%;margin:auto; word-break: break-all">
     <div style="padding:20px">
-        <p>{{ $data['user']['first_name'] }}様</p>
+        <p>{{ sprintf('%s %s', $data['user']['first_name'], $data['user']['last_name']) }}様</p>
         <p>{{ config('app.name') }} をご利用いただき、ありがとうございます。</p>
         <p>{{ \App\Helpers\DateTimeHelper::formatDateJa($data['date']) . ' interview_online.blade.php' . $data['hours'] }}
             日のインタビュー時間とインタビュー リンクの URL をお知らせします。</p>
