@@ -15,6 +15,10 @@ class Chat extends Model
         'TRUE' => 1,
         'FALSE' => 0,
     ];
+    public const APPLY_MESSAGE = [
+        'FROM_USER' => 0,
+        'FROM_REC' => 1,
+    ];
     public const BE_READED = 1;
     public const UNREAD = 0;
 

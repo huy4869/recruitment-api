@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOneThrough;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -214,5 +215,13 @@ class JobPosting extends Model
     public function provinceCity()
     {
         return $this->belongsTo(MProvinceCity::class, 'province_city_id');
+    }
+
+    /**
+     * @return HasOneThrough
+     */
+    public function owner()
+    {
+        return $this->hasOneThrough(User::class, Store::class, 'user_id', 'id', 'store_id', 'id');
     }
 }

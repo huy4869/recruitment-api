@@ -81,7 +81,8 @@ class ChatService extends Service
         $stores = $this->user->stores()
             ->with([
                 'chats' => function ($query) {
-                    $query->orderByDesc('created_at');
+                    $query->whereNot('is_apply_message', Chat::APPLY_MESSAGE['FROM_REC'])
+                        ->orderByDesc('created_at');
                 },
                 'chats.userTrashed',
                 'chats.userTrashed.avatarBanner'
@@ -143,6 +144,7 @@ class ChatService extends Service
                 ['store_id', $store_id],
                 ['user_id', $user_id]
             ])
+            ->whereNot('is_apply_message', Chat::APPLY_MESSAGE['FROM_REC'])
             ->orderBy('created_at', 'asc')
             ->get()
             ->groupBy(function ($date) {

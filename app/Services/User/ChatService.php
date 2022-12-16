@@ -26,10 +26,11 @@ class ChatService extends Service
         $user = $this->user;
 
         return Chat::with([
-            'storeTrashed',
-            'storeTrashed.storeBanner'
+                'storeTrashed',
+                'storeTrashed.storeBanner'
             ])
             ->where('user_id', $user->id)
+            ->whereNot('is_apply_message', Chat::APPLY_MESSAGE['FROM_USER'])
             ->orderByDesc('created_at')
             ->get()
             ->unique('store_id');
@@ -53,6 +54,7 @@ class ChatService extends Service
                 ['store_id', $store_id],
                 ['user_id', $user->id]
             ])
+            ->whereNot('is_apply_message', Chat::APPLY_MESSAGE['FROM_USER'])
             ->orderBy('created_at', 'asc')
             ->get()
             ->groupBy(function ($date) {

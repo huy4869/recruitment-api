@@ -11,9 +11,9 @@ class MJobType extends Model
 
     public const HAIR = 1;
     public const NAIL = 2;
-    public const CHIRO_CAIRO_OXY_HOTBATH = 3;
-    public const FACIAL_BODY_REMOVAL = 4;
-    public const CLINIC = 5;
+    public const CLINIC = 3;
+    public const CHIRO_CAIRO_OXY_HOTBATH = 4;
+    public const FACIAL_BODY_REMOVAL = 5;
     public const OTHER = 6;
 
     public const NO_DEFAULT = 0;
