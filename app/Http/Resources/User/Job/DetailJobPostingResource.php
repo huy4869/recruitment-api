@@ -36,7 +36,7 @@ class DetailJobPostingResource extends JsonResource
                 case MInterviewApproach::STATUS_INTERVIEW_DIRECT:
                     $postalCode = $this['postal_code'];
                     $province = $this['province'];
-                    $provinceCity = $this['province_city']['name'];
+                    $provinceCity = $this['province_city'];
                     $address = $this['address'];
                     $building = $this['building'];
                     $approach = sprintf(
