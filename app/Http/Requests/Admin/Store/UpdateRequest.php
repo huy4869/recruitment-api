@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Admin\Store;
 
+use App\Models\User;
 use App\Rules\CheckPhoneNumber;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
@@ -28,6 +29,7 @@ class UpdateRequest extends FormRequest
         $lengthText = config('validate.string_max_length');
 
         return [
+            'user_id' => ['required', 'numeric', 'exists:users,id,role_id,' . User::ROLE_RECRUITER],
             'url' => ['nullable', 'string', 'url'],
             'store_name' => ['required', 'string', 'max:' . $lengthText],
             'website' => ['nullable', 'max:' . $lengthText],
@@ -75,6 +77,7 @@ class UpdateRequest extends FormRequest
             'address' => trans('validation.store.city'),
             'manager_name' => trans('validation.store.manager_name'),
             'founded_year' => trans('validation.store.founded_year'),
+            'user_id' => trans('validation.store.user_id'),
         ];
     }
 }

@@ -98,6 +98,7 @@ class StoreController extends Controller
     public function update(UpdateRequest $request, $id)
     {
         $input = $request->only([
+            'user_id',
             'url',
             'store_name',
             'website',

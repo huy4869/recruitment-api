@@ -29,7 +29,7 @@ class StoreRequest extends FormRequest
         $lengthText = config('validate.string_max_length');
 
         return [
-            'user_id' => ['nullable', 'numeric', 'exists:users,id,role_id,' . User::ROLE_RECRUITER],
+            'user_id' => ['required', 'numeric', 'exists:users,id,role_id,' . User::ROLE_RECRUITER],
             'url' => ['nullable', 'string', 'url'],
             'store_name' => ['required', 'string', 'max:' . $lengthText],
             'website' => ['nullable', 'max:' . $lengthText],
