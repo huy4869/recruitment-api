@@ -87,7 +87,7 @@ class LocationService extends Service
             asort($provinceAccordingJobType, SORT_DESC);
 
             $locations = array_slice($provinceAccordingJobType, 0, is_null($limit) ? self::DEFAULT_LIMIT_LOCATION : $limit, true);
-            $locationName = isset($mJobTypes[$jobType]) ? $mJobTypes[$jobType] : $other['name'];
+            $locationName = isset($mJobTypes[$jobType]) ? $mJobTypes[$jobType] . trans('job_posting.search_in_popular_area') : $other['name'];
             $list[$locationName] = [];
 
 

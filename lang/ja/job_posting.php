@@ -34,5 +34,7 @@ return [
     'range_hours_type' => [
         'full_day' => '丸1日',
         'half_day' => '半日',
-    ]
+    ],
+
+    'search_in_popular_area' => 'の人気エリアで検索'
 ];
