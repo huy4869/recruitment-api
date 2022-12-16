@@ -28,6 +28,7 @@ Route::group(['as' => 'auth.', 'prefix' => 'auth'], function () {
 
 Route::group(['as' => 'users.', 'prefix' => 'users', 'middleware' => 'admin'], function () {
     Route::get('/all-owner', 'UserController@getAllOwner');
+    Route::get('/roles', 'UserController@availableActionRoles');
     Route::get('/', 'UserController@list')->name('list');
     Route::delete('/delete/{id}', 'UserController@destroy')->name('destroy');
     Route::get('/list-user', 'UserController@listInfoUser');

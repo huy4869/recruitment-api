@@ -110,6 +110,7 @@ class UserTableService extends TableService
                 'role',
                 'stores'
             ])
+            ->orderBy('last_login_at', 'desc')
             ->selectRaw($this->getSelectRaw());
     }
 

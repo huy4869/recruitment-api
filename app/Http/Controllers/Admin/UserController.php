@@ -69,6 +69,7 @@ class UserController extends Controller
      */
     public function store(StoreRequest $request)
     {
+        $admin = $this->guard()->user();
         $inputs = $request->only([
             'role_id',
             'first_name',
@@ -78,7 +79,7 @@ class UserController extends Controller
             'email',
             'password',
         ]);
-        $data = UserService::getInstance()->store($inputs);
+        $data = UserService::getInstance()->withUser($admin)->store($inputs);
 
         $mes = trans('auth.register_success');
 
@@ -233,5 +234,13 @@ class UserController extends Controller
         $data = UserService::getInstance()->getInfoUser($userId);
 
         return $this->sendSuccessResponse(new MotivationResource($data));
+    }
+
+    public function availableActionRoles()
+    {
+        $admin = $this->guard()->user();
+        $data = UserService::getInstance()->withUser($admin)->getAvailableActionRoles();
+
+        return $this->sendSuccessResponse($data);
     }
 }
