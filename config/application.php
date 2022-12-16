@@ -6,7 +6,7 @@ return [
         2 => '場所：',
         3 => '電話番号：',
     ],
-    'interview_approach_online' => '2営業日以内にZoomURLをメールにて送付いたします。',
+    'interview_approach_online' => '５営業日以内に面接予定ページにオンライン面接のURLが表示されます。',
     'waiting_interview_nearest_amount' => 3,
     'application_newest_amount' => 5,
 ];

@@ -184,10 +184,6 @@ class ApplicationService extends Service
 
             $application->update($this->saveMakeData($data, $application));
 
-            if ($data['meet_link'] && $application->interview_approach_id == MInterviewApproach::STATUS_INTERVIEW_ONLINE) {
-                dispatch(new ApplicationInterviewOnline($application))->onQueue(config('queue.email_queue'));
-            }
-
             DB::commit();
             return true;
         } catch (Exception $e) {
