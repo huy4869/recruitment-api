@@ -33,11 +33,11 @@ class JobController extends Controller
         $user = $this->guard()->user();
         $job = JobService::getInstance()->withUser($user)->detail($id);
 
-        if ($user && ($job['job_status_id'] == JobPosting::STATUS_DRAFT && $job['applications'])) {
+        if ($job && $user && ($job['job_status_id'] == JobPosting::STATUS_DRAFT && $job['applications'])) {
             return $this->sendSuccessResponse(null, trans('response.invitation_job_end'), ResponseHelper::STATUS_CODE_BAD_REQUEST);
         }
 
-        if ($job['job_status_id'] != JobPosting::STATUS_DRAFT) {
+        if ($job && $job['job_status_id'] != JobPosting::STATUS_DRAFT) {
             return $this->sendSuccessResponse(new DetailJobPostingResource($job));
         }
 
