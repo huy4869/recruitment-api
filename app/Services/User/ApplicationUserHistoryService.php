@@ -73,7 +73,7 @@ class ApplicationUserHistoryService extends Service
             'be_readed' => Chat::UNREAD,
             'is_apply_message' => Chat::APPLY_MESSAGE['FROM_REC'],
             'content' => trans('chat.C002_from_rec', [
-                'name' => $jobPosting->owner->full_name
+                'name' => $jobPosting->store->owner->full_name
             ]),
             'created_at' => $now
         ];
