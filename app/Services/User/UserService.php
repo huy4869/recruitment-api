@@ -28,7 +28,10 @@ class UserService extends Service
             DB::beginTransaction();
 
             $user->update($this->makeSaveData($data));
-            FileService::getInstance()->updateImageable($user, $this->makeSaveDataImage($data));
+
+            if (isset($data['images']) && isset($data['avatar'])) {
+                FileService::getInstance()->updateImageable($user, $this->makeSaveDataImage($data));
+            }
 
             DB::commit();
             return true;
@@ -63,25 +66,36 @@ class UserService extends Service
      */
     private function makeSaveData($data)
     {
-        return [
-            'first_name' => $data['first_name'],
-            'last_name' => $data['last_name'],
-            'alias_name' => $data['alias_name'],
-            'furi_first_name' => $data['furi_first_name'],
-            'furi_last_name' => $data['furi_last_name'],
-            'birthday' => $data['birthday'],
-            'gender_id' => $data['gender_id'],
-            'tel' => $data['tel'],
-            'line' => $data['line'],
-            'facebook' => $data['facebook'],
-            'instagram' => $data['instagram'],
-            'twitter' => $data['twitter'],
-            'postal_code' => $data['postal_code'],
-            'province_id' => $data['province_id'],
-            'province_city_id' => $data['province_city_id'],
-            'address' => $data['address'],
-            'building' => $data['building'],
+        $result = [];
+
+        $attrs = [
+            'first_name',
+            'last_name',
+            'alias_name',
+            'furi_first_name',
+            'furi_last_name',
+            'birthday',
+            'gender_id',
+            'tel',
+            'line',
+            'facebook',
+            'instagram',
+            'twitter',
+            'postal_code',
+            'province_id',
+            'province_city_id',
+            'address',
+            'building',
+            'is_public_avatar',
         ];
+
+        foreach ($attrs as $attr) {
+            if (isset($data[$attr])) {
+                $result[$attr] = $data[$attr];
+            }
+        }
+
+       return $result;
     }
 
     /**
@@ -89,7 +103,10 @@ class UserService extends Service
      */
     public function getBasicInfo()
     {
-        return User::query()->with(['avatarDetails', 'avatarBanner', 'provinceCity', 'provinceCity.province'])->where('id', '=', $this->user->id)->first();
+        return User::query()
+            ->with(['avatarDetails', 'avatarBanner', 'provinceCity', 'provinceCity.province'])
+            ->where('id', $this->user->id)
+            ->first();
     }
 
     /**

@@ -92,6 +92,7 @@ class User extends Authenticatable
         'last_login_at',
         'be_read_applications',
         'verify_token',
+        'is_public_avatar',
     ];
 
     /**

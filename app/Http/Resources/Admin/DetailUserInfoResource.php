@@ -21,7 +21,7 @@ class DetailUserInfoResource extends JsonResource
         return [
             'id' => $this['id'],
             'avatar' => $this['is_public_avatar'] ? $this['avatar_banner'] : null,
-            'avatar_details' => $this['is_public_thumbnail'] == User::STATUS_PUBLIC_AVATAR
+            'avatar_details' => $this['is_public_avatar'] == User::STATUS_PUBLIC_AVATAR
                 ? DetailImageResource::collection($this['avatar_details'])
                 : null,
             'first_name' => $this['first_name'],

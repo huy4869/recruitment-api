@@ -468,7 +468,10 @@ class UserService extends Service
             DB::beginTransaction();
 
             $user->update($data);
-            FileService::getInstance()->updateImageable($user, $this->makeSaveDataImage($data));
+
+            if (isset($data['images']) && isset($data['avatar'])) {
+                FileService::getInstance()->updateImageable($user, $this->makeSaveDataImage($data));
+            }
 
             DB::commit();
             return true;
@@ -477,6 +480,46 @@ class UserService extends Service
             Log::error($exception->getMessage(), [$exception]);
             throw new InputException($exception->getMessage());
         }
+    }
+
+    /**
+     * Make Save data
+     *
+     * @param $data
+     * @return array
+     */
+    private function makeSaveData($data)
+    {
+        $result = [];
+
+        $attrs = [
+            'first_name',
+            'last_name',
+            'alias_name',
+            'furi_first_name',
+            'furi_last_name',
+            'birthday',
+            'gender_id',
+            'tel',
+            'line',
+            'facebook',
+            'instagram',
+            'twitter',
+            'postal_code',
+            'province_id',
+            'province_city_id',
+            'address',
+            'building',
+            'is_public_avatar',
+        ];
+
+        foreach ($attrs as $attr) {
+            if (isset($data[$attr])) {
+                $result[$attr] = $data[$attr];
+            }
+        }
+
+        return $result;
     }
 
     /**

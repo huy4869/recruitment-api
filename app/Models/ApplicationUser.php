@@ -50,6 +50,7 @@ class ApplicationUser extends Model
         'motivation',
         'noteworthy',
         'skills',
+        'is_public_avatar',
     ];
 
     protected $casts = [
