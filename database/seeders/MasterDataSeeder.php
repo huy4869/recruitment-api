@@ -52,7 +52,7 @@ class MasterDataSeeder extends Seeder
         $time = Carbon::now();
         $dataRoles = [
             ['name' => '求職者', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => '美容室オーナ', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '美容室オーナー', 'created_at' => $time, 'updated_at' => $time],
             ['name' => '管理者', 'created_at' => $time, 'updated_at' => $time],
             ['name' => 'SUPER ADMIN', 'created_at' => $time, 'updated_at' => $time],
         ];

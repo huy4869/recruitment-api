@@ -58,6 +58,15 @@ class UserService extends Service
      */
     public function store($data)
     {
+        $admin = $this->user;
+
+        if (
+            $admin->role_id == User::ROLE_SUB_ADMIN
+            && $data['role_id'] == User::ROLE_SUB_ADMIN
+        ) {
+            throw new InputException(trans('response.invalid'));
+        }
+
         try {
             DB::beginTransaction();
             $newUser = User::query()->create([
@@ -124,7 +133,7 @@ class UserService extends Service
                 $admin->role_id == User::ROLE_SUB_ADMIN
                 && $user->role_id == User::ROLE_SUB_ADMIN
             )) {
-            throw new InputException(trans('response.not_found'));
+            throw new InputException(trans('response.invalid'));
         }
 
         try {
@@ -556,5 +565,27 @@ class UserService extends Service
         }
 
         throw new InputException(trans('response.not_found'));
+    }
+
+    public function getAvailableActionRoles()
+    {
+        $admin = $this->user;
+        $notCondition = [
+            User::ROLE_ADMIN
+        ];
+
+        if ($admin->role_id == User::ROLE_SUB_ADMIN) {
+            $notCondition[] = User::ROLE_SUB_ADMIN;
+        }
+
+        return MRole::query()->whereNotIn('id', $notCondition)
+            ->orderBy('id', 'desc')
+            ->get()
+            ->map(function ($query) {
+                return [
+                    'id'    => $query->id,
+                    'name'  => $query->name
+                ];
+            });
     }
 }

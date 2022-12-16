@@ -688,7 +688,9 @@ class MasterDataService extends Service
 
     protected function getMasterDataRole()
     {
-        $roles = MRole::query()->where('id', '!=', User::ROLE_ADMIN)->get();
+        $roles = MRole::query()->whereNot('id', User::ROLE_ADMIN)
+            ->orderBy('id', 'desc')
+            ->get();
         $result = [];
 
         foreach ($roles as $role) {
