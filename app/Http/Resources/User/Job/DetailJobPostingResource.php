@@ -26,8 +26,8 @@ class DetailJobPostingResource extends JsonResource
         if (count($application)) {
             switch ($application['interview_approach_id']) {
                 case MInterviewApproach::STATUS_INTERVIEW_ONLINE:
-                    if ($this->meet_link) {
-                        $approach = $this->meet_link;
+                    if ($application['meet_link']) {
+                        $approach = $application['meet_link'];
                     } else {
                         $approach = config('application.interview_approach_online');
                     }
