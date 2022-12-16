@@ -104,6 +104,8 @@ class UserTableService extends TableService
     public function makeNewQuery()
     {
         return User::query()
+            ->whereNot('role_id', User::ROLE_ADMIN)
+            ->whereNot('id', $this->user->id)
             ->with([
                 'role',
                 'stores'
