@@ -40,8 +40,8 @@ class DetailJobResource extends JsonResource
             'salary' => [
                 'min' => $this->salary_min,
                 'max' => $this->salary_max,
-                'type_id' => $this->salaryType->id,
-                'type_name' => $this->salaryType->name,
+                'type_id' => @$this->salaryType->id,
+                'type_name' => @$this->salaryType->name,
                 'description' =>  $this->salary_description,
             ],
             'work_time' => [
@@ -61,10 +61,10 @@ class DetailJobResource extends JsonResource
             'genders' =>  $this->genders,
             'address' => [
                 'postal_code' => $this->postal_code,
-                'province_id' => $this->province->id,
-                'province_name' => $this->province->name,
-                'province_city_id' => $this->provinceCity->id,
-                'province_city_name' => $this->provinceCity->name,
+                'province_id' => @$this->province->id,
+                'province_name' => @$this->province->name,
+                'province_city_id' => @$this->provinceCity->id,
+                'province_city_name' => @$this->provinceCity->name,
                 'address' => $this['address'],
                 'building' => $this['building'],
             ],

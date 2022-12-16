@@ -30,7 +30,7 @@ class DetailJobResource extends JsonResource
             'banner_image' => FileHelper::getFullUrl(@$this->bannerImage->url),
             'detail_images' => DetailImageResource::collection($this->detailImages),
             'job_status_id' => $this->job_status_id,
-            'job_status_name' => $this->status->name ?? null,
+            'job_status_name' => $this->status->name,
             'statuses' => JobService::getStatusJob(),
             'job_types' => $this->job_types,
             'feature_types' => $this->feature_types,
@@ -40,8 +40,8 @@ class DetailJobResource extends JsonResource
             'salary' => [
                 'min' => $this->salary_min,
                 'max' => $this->salary_max,
-                'type_id' => $this->salaryType->id,
-                'type_name' => $this->salaryType->name,
+                'type_id' => @$this->salaryType->id,
+                'type_name' => @$this->salaryType->name,
                 'description' =>  $this->salary_description,
             ],
             'working_days' => $this->working_days,
@@ -64,7 +64,7 @@ class DetailJobResource extends JsonResource
             'genders' =>  $this->genders,
             'address' => [
                 'postal_code' => $this->postal_code,
-                'district_id' => $this->province->id,
+                'district_id' => @$this->province->id,
                 'province_city_id' => $this->province_city_id,
                 'province_city_name' => @$this->provinceCity->name,
                 'district_name' => @$this->province->name,
