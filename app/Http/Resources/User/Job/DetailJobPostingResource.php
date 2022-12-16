@@ -70,6 +70,7 @@ class DetailJobPostingResource extends JsonResource
                 'min' => $this['salary_min'],
                 'max' => $this['salary_max'],
                 'type' => $this['salary_type'],
+                'description' => $this['salary_description'],
             ],
             'work_time' => [
                 'start' => $dataWorkTime['start'],
