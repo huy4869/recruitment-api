@@ -20,6 +20,7 @@ use App\Models\MProvince;
 use App\Models\MStation;
 use App\Models\MWorkType;
 use App\Models\Notification;
+use App\Models\Store;
 use App\Models\StoreOffTime;
 use App\Services\Service;
 use Carbon\Carbon;
@@ -767,13 +768,44 @@ class JobService extends Service
         $monthNow = now()->firstOfMonth()->format('Y-m-d');
         $monthDay = now()->addDays(config('date.max_day'))->firstOfMonth()->format('Y-m-d');
 
-        return $this->resultDate(
-            self::resultApplication($applicationsTime),
-            self::resultApplication($userApplicationsTime),
-            self::resultApplication($storeInterviewApplications),
-            self::resultStoreOffTimes([$monthNow, $monthDay], $storeOffTimes),
-            $application
-        );
+
+        $dataInterViewApproaches = MInterviewApproach::query()->get();
+        $approach = [];
+
+        foreach ($dataInterViewApproaches as $dataInterViewApproach) {
+            $output = $dataInterViewApproach->name;
+            if ($dataInterViewApproach->id == MInterviewApproach::STATUS_INTERVIEW_ONLINE) {
+                $output .= sprintf('（%s）', config('application.interview_approach_online'));
+            } elseif ($dataInterViewApproach->id == MInterviewApproach::STATUS_INTERVIEW_DIRECT) {
+                $store = Store::query()
+                    ->where('id', $jobPosting->store_id)
+                    ->with(['province', 'provinceCity'])
+                    ->first();
+                $output .= sprintf('（%s%s%s%s%s）',
+                    $store->postal_code,
+                    $store->province->name,
+                    $store->provinceCity->name,
+                    $store->address,
+                    $store->building
+                );
+            }
+
+            $approach[] = [
+                'id' => $dataInterViewApproach->id,
+                'name' => $output,
+            ];
+        }
+
+        return [
+            'time' => $this->resultDate(
+                self::resultApplication($applicationsTime),
+                self::resultApplication($userApplicationsTime),
+                self::resultApplication($storeInterviewApplications),
+                self::resultStoreOffTimes([$monthNow, $monthDay], $storeOffTimes),
+                $application
+            ),
+            'approach' => $approach,
+        ];
     }
 
     /**

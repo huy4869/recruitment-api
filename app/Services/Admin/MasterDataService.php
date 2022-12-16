@@ -43,7 +43,7 @@ class MasterDataService extends Service
 
         'm_interview_approaches' => [
             'driver' => self::DRIVER_CUSTOM,
-            'target' => 'getInterviewApproaches',
+            'target' => 'getMasterDataName',
         ],
 
         'm_interviews_status' => [
@@ -734,34 +734,6 @@ class MasterDataService extends Service
             $result[] = [
                 'id' => $key,
                 'name' => $day,
-            ];
-        }
-
-        return $result;
-    }
-
-    /**
-     * @return array
-     */
-    protected function getInterviewApproaches()
-    {
-        $dataInterViewApproaches = MInterviewApproach::query()->get();
-        $result = [];
-
-        foreach ($dataInterViewApproaches as $dataInterViewApproach) {
-            $id = $dataInterViewApproach->id;
-
-            if ($id == MInterviewApproach::STATUS_INTERVIEW_ONLINE) {
-                $output = '（2営業日以内にZoomURLをメールにて送付いたします）';
-            } elseif ($id == MInterviewApproach::STATUS_INTERVIEW_DIRECT) {
-                $output = '（東京都港区虎ノ門１－２－３)';
-            } else {
-                $output = '';
-            }
-
-            $result[] = [
-                'id' => $id,
-                'name' => $dataInterViewApproach->name . $output,
             ];
         }
 
