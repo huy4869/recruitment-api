@@ -44,10 +44,10 @@ class UserInfoResource extends JsonResource
             'last_login_at' => DateTimeHelper::checkDateLoginAt($this->last_login_at),
             'job_types' => $this->job_types,
             'salary' => [
-                'id' => @$desiredConditionUser->salaryType->id,
-                'type' => @$desiredConditionUser->salaryType->name,
-                'min' => @$desiredConditionUser->salary_min,
-                'max' => @$desiredConditionUser->salary_max,
+                'salary_id' => @$desiredConditionUser->salaryType->id,
+                'salary_type' => @$desiredConditionUser->salaryType->name,
+                'salary_min' => @$desiredConditionUser->salary_min,
+                'salary_max' => @$desiredConditionUser->salary_max,
             ],
             'address' => [
                 'province_id' => @$desiredConditionUser->province->id,
