@@ -40,6 +40,30 @@ class MasterDataService extends Service
      * @var array
      */
     protected $availableResources = [
+        'minute_work_time' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMinuteWorkTime',
+        ],
+        'full_hours' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getFullHour',
+        ],
+        'half_hours_morning' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getFullHourMorning',
+        ],
+        'half_hours_afternoon' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getFullHourAfternoon',
+        ],
+        'range_hours_type' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getFullHourType',
+        ],
+        'morning_afternoon' => [
+            'driver' => self::DRIVER_CUSTOM,
+            'target' => 'getMorningAfternoon',
+        ],
         'm_feedback_types' => [
             'driver' => self::DRIVER_CUSTOM,
             'target' => 'getMasterDataFeedbackTypes',
@@ -523,6 +547,92 @@ class MasterDataService extends Service
                 'name' => $salaryType->name,
                 'term' => $salaryType->term,
                 'currency' => $salaryType->currency,
+            ];
+        }
+
+        return $result;
+    }
+
+    protected function getMinuteWorkTime()
+    {
+        $minuteWorkTimes = config('date.minute');
+        $result = [];
+
+        foreach ($minuteWorkTimes as $minuteWorkTime) {
+            $result[] = [
+                'name' => $minuteWorkTime,
+            ];
+        }
+
+        return $result;
+    }
+
+    protected function getFullHour()
+    {
+        $fullHours = config('date.full_day');
+        $result = [];
+
+        foreach ($fullHours as $fullHour) {
+            $result[] = [
+                'name' => $fullHour,
+            ];
+        }
+
+        return $result;
+    }
+
+    protected function getFullHourMorning()
+    {
+        $fullHourMornings = config('date.half_day_morning');
+        $result = [];
+
+        foreach ($fullHourMornings as $fullHourMorning) {
+            $result[] = [
+                'name' => $fullHourMorning,
+            ];
+        }
+
+        return $result;
+    }
+
+    protected function getFullHourAfternoon()
+    {
+        $fullHourAfternoons = config('date.half_day_afternoon');
+        $result = [];
+
+        foreach ($fullHourAfternoons as $fullHourAfternoon) {
+            $result[] = [
+                'name' => $fullHourAfternoon,
+            ];
+        }
+
+        return $result;
+    }
+
+    protected function getFullHourType()
+    {
+        $hourTypes = config('date.range_hours_type');
+        $result = [];
+
+        foreach ($hourTypes as $key => $hourType) {
+            $result[] = [
+                'id' => $key,
+                'name' => $hourType,
+            ];
+        }
+
+        return $result;
+    }
+
+    protected function getMorningAfternoon()
+    {
+        $morningAfternoons = config('date.day');
+        $result = [];
+
+        foreach ($morningAfternoons as $key => $morningAfternoon) {
+            $result[] = [
+                'id' => $key,
+                'name' => $morningAfternoon,
             ];
         }
 
