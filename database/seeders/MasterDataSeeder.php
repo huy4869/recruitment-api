@@ -68,9 +68,9 @@ class MasterDataSeeder extends Seeder
         $dataJobType = [
             ['id' => MJobType::HAIR, 'name' => 'ヘア', 'created_at' => $time, 'updated_at' => $time],
             ['id' => MJobType::NAIL, 'name' => 'ネイル・マツゲ', 'created_at' => $time, 'updated_at' => $time],
+            ['id' => MJobType::CLINIC, 'name' => '美容クリニック', 'created_at' => $time, 'updated_at' => $time],
             ['id' => MJobType::CHIRO_CAIRO_OXY_HOTBATH, 'name' => '整体・カイロ・酸素・温浴', 'created_at' => $time, 'updated_at' => $time],
             ['id' => MJobType::FACIAL_BODY_REMOVAL, 'name' => 'フェイシャル・ボディ・脱毛', 'created_at' => $time, 'updated_at' => $time],
-            ['id' => MJobType::CLINIC, 'name' => '美容クリニック', 'created_at' => $time, 'updated_at' => $time],
             ['id' => MJobType::OTHER, 'name' => 'その他', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_job_types')->insert($dataJobType);
@@ -79,10 +79,10 @@ class MasterDataSeeder extends Seeder
             ['name' => 'ブランク', 'created_at' => $time, 'updated_at' => $time],
             ['name' => '未経験者可', 'created_at' => $time, 'updated_at' => $time],
             ['name' => '管理美容師免許歓迎', 'created_at' => $time, 'updated_at' => $time],
-            ['name' => '幹部・店長候補歓迎', 'created_at' => $time, 'updated_at' => $time],
             ['name' => '美容師歓迎', 'created_at' => $time, 'updated_at' => $time],
             ['name' => '免許・資格不問', 'created_at' => $time, 'updated_at' => $time],
             ['name' => '通信生（見習い）相談可', 'created_at' => $time, 'updated_at' => $time],
+            ['name' => '幹部・店長候補歓迎', 'created_at' => $time, 'updated_at' => $time],
         ];
         DB::table('m_job_experiences')->insert($dataJobExperiences);
 

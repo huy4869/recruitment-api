@@ -53,23 +53,35 @@ class ApplicationUserHistoryService extends Service
      */
     public function storeChat($application, $jobPosting)
     {
-        $chat = Chat::query()
-            ->where('user_id', '=', $application->user_id)
-            ->where('store_id', '=', $application->store_id)
-            ->exists();
+        $now = now();
+        $fromUser = [
+            'user_id' => $application->user_id,
+            'store_id' => $application->store_id,
+            'is_from_user' => Chat::FROM_USER['TRUE'],
+            'be_readed' => Chat::UNREAD,
+            'is_apply_message' => Chat::APPLY_MESSAGE['FROM_USER'],
+            'content' => trans('chat.C001_from_user', [
+                'name' => $this->user->full_name,
+                'job_name' => $jobPosting->name
+            ]),
+            'created_at' => $now
+        ];
+        $fromRec = [
+            'user_id' => $application->user_id,
+            'store_id' => $application->store_id,
+            'is_from_user' => Chat::FROM_USER['FALSE'],
+            'be_readed' => Chat::UNREAD,
+            'is_apply_message' => Chat::APPLY_MESSAGE['FROM_REC'],
+            'content' => trans('chat.C002_from_rec', [
+                'name' => $jobPosting->owner->full_name
+            ]),
+            'created_at' => $now
+        ];
 
-        if (!$chat) {
-            return Chat::query()->create([
-                'user_id' => $application->user_id,
-                'store_id' => $application->store_id,
-                'is_from_user' => Chat::FROM_USER['TRUE'],
-                'be_readed' => Chat::BE_READED,
-                'content' => trans('chat.auto_apply_chat', [
-                    'name' => $this->user->full_name,
-                    'job_name' => $jobPosting->name
-                ])
-            ]);
-        }
+        Chat::insert([
+            $fromUser,
+            $fromRec
+        ]);
 
         return true;
     }
