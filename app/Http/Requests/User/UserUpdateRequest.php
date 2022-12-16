@@ -26,7 +26,12 @@ class UserUpdateRequest extends FormRequest
      */
     public function rules()
     {
-        $gender = [User::GENDER_FEMALE, User::GENDER_MALE, User::GENDER_THIRD];
+        if (isset($this->is_public_avatar)) {
+            return [
+                'is_public_avatar' => 'numeric|in:' . implode(',', [User::STATUS_PUBLIC_AVATAR, User::STATUS_NOT_PUBLIC_AVATAR]),
+            ];
+        }
+
         $stringMaxLength = config('validate.string_max_length');
         $zipcodeLength = config('validate.zip_code_max_length');
 
@@ -37,7 +42,7 @@ class UserUpdateRequest extends FormRequest
             'furi_first_name' => ['required', 'string', 'max:' . $stringMaxLength, new FuriUserNameRule(trans('validation.user_first_name'))],
             'furi_last_name' => ['required', 'string', 'max:' . $stringMaxLength, new FuriUserNameRule(trans('validation.user_last_name'))],
             'birthday' => ['required', 'date', 'before:today'],
-            'gender_id' => ['required', 'in:' . implode(',', $gender)],
+            'gender_id' => ['required', 'exists:m_genders,id'],
             'tel' => ['required', 'string', new CheckPhoneNumber()],
             'line' => ['nullable', 'string', 'max:' . $stringMaxLength],
             'facebook' => ['nullable', 'string', 'max:' . $stringMaxLength],

@@ -160,6 +160,7 @@ class UserController extends Controller
             'province_city_id',
             'address',
             'building',
+            'is_public_avatar',
         ]);
 
         UserService::getInstance()->updateUser($input, $id);

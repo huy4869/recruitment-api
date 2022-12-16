@@ -52,6 +52,7 @@ class UserController extends BaseController
             'address',
             'avatar',
             'images',
+            'is_public_avatar',
         ]);
         $this->userService->withUser($user)->update($inputs);
 

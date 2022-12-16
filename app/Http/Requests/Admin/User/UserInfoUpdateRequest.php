@@ -27,6 +27,12 @@ class UserInfoUpdateRequest extends FormRequest
      */
     public function rules()
     {
+        if (isset($this->is_public_avatar)) {
+            return [
+                'is_public_avatar' => 'numeric|in:' . implode(',', [User::STATUS_PUBLIC_AVATAR, User::STATUS_NOT_PUBLIC_AVATAR]),
+            ];
+        }
+
         $stringMaxLength = config('validate.string_max_length');
         $zipcodeLength = config('validate.zip_code_max_length');
 
