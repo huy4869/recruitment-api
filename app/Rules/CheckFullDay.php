@@ -2,24 +2,21 @@
 
 namespace App\Rules;
 
-use App\Helpers\DateTimeHelper;
 use App\Models\JobPosting;
-use Carbon\Carbon;
 use Illuminate\Contracts\Validation\Rule;
 
-class CheckHoursRule implements Rule
+class CheckFullDay implements Rule
 {
     protected $rangeHoursType;
-    protected $workTimeType;
+
     /**
      * Create a new rule instance.
      *
      * @return void
      */
-    public function __construct($rangeHoursType, $workTimeType)
+    public function __construct($rangeHoursType)
     {
         $this->rangeHoursType = $rangeHoursType;
-        $this->workTimeType = $workTimeType;
     }
 
     /**
@@ -31,12 +28,8 @@ class CheckHoursRule implements Rule
      */
     public function passes($attribute, $value)
     {
-        if ($this->rangeHoursType == JobPosting::HALF_DAY) {
-            if ($this->workTimeType == JobPosting::TYPE_MORNING) {
-                return !!preg_match('/^(1[0-1]|0?[0-9]):00|30/', $value);
-            } else {
-                return !!preg_match('/^(1[0-2]|0?[1-9]):00|30/', $value);
-            }
+        if ($this->rangeHoursType == JobPosting::FULL_DAY) {
+            return !!preg_match('/^(1[0-9]|0?[0-9]|2[0-3]):00|30/', $value);
         }
 
         return true;
@@ -49,6 +42,6 @@ class CheckHoursRule implements Rule
      */
     public function message()
     {
-        return trans('validation.COM.999');
+        return trans('validation.COM.998');
     }
 }

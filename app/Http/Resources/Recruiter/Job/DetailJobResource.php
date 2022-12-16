@@ -18,6 +18,8 @@ class DetailJobResource extends JsonResource
      */
     public function toArray($request)
     {
+        $dataWorkTime = DateTimeHelper::getStartEndWorkTime($this->start_work_time, $this->end_work_time, $this->start_work_time_type, $this->end_work_time_type, $this->range_hours_type);
+
         return [
             'id' => $this->id,
             'name' => $this->name,
@@ -43,9 +45,13 @@ class DetailJobResource extends JsonResource
                 'description' =>  $this->salary_description,
             ],
             'work_time' => [
-                'start' => $this->start_work_time,
+                'start' => $dataWorkTime['start'],
+                'start_work_time_type' => $this->start_work_time_type,
+                'start_work_time_name' => config('date.day.' . $this->start_work_time_type),
                 'start_time' => DateTimeHelper::getHoursMinute($this->start_work_time),
-                'end' => $this->end_work_time,
+                'end' => $dataWorkTime['end'],
+                'end_work_time_type' => $this->end_work_time_type,
+                'end_work_time_name' => config('date.day.' . $this->end_work_time_type),
                 'end_time' => DateTimeHelper::getHoursMinute($this->end_work_time),
             ],
             'age' => [
@@ -64,7 +70,7 @@ class DetailJobResource extends JsonResource
             ],
             'working_days' => $this->working_days,
             'range_hours_type' => $this->range_hours_type,
-            'range_hours_type_name' => $this->range_hours_type == JobPosting::FULL_DAY ? trans('job_posting.range_hours_type.half_day') : trans('job_posting.range_hours_type.full_day'),
+            'range_hours_type_name' => $this->range_hours_type == JobPosting::FULL_DAY ? trans('job_posting.range_hours_type.full_day') : trans('job_posting.range_hours_type.half_day'),
             'stations' => $this->stations,
             'shifts' => $this->shifts,
             'welfare_treatment_description' => $this['welfare_treatment_description'],
