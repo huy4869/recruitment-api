@@ -144,4 +144,8 @@ return [
         2 => '30',
     ],
     'thirty_minutes' => 30,
+    'range_hours_type' => [
+        1 => '24時間表示',
+        2 => '午前・午後表示',
+    ],
 ];

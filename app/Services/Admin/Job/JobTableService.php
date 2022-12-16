@@ -164,6 +164,9 @@ class JobTableService extends TableService
             job_postings.gender_ids,
             job_postings.feature_ids,
             job_postings.experience_ids,
-            job_postings.updated_at';
+            job_postings.updated_at,
+            job_postings.start_work_time_type,
+            job_postings.end_work_time_type,
+            job_postings.range_hours_type,';
     }
 }
