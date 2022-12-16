@@ -6,16 +6,14 @@ use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UpdateMotivationRequest;
 use App\Http\Requests\Admin\UpdatePrRequest;
-use App\Http\Requests\Admin\User\UserInfoUpdateRequest;
-use App\Http\Requests\Admin\User\UserUpdateRequest;
-use App\Http\Resources\Admin\DetailUserInfoResource;
 use App\Http\Requests\Admin\User\StoreRequest;
 use App\Http\Requests\Admin\User\UpdateRequest;
+use App\Http\Requests\Admin\User\UserInfoUpdateRequest;
+use App\Http\Resources\Admin\DetailUserInfoResource;
 use App\Http\Resources\Admin\User\DetailUserResource;
 use App\Http\Resources\Admin\User\MotivationResource;
 use App\Http\Resources\Admin\User\PrResource;
 use App\Http\Resources\Admin\User\UserCollection;
-use App\Http\Resources\Admin\User\UserDetailResource;
 use App\Http\Resources\Admin\UserInfoCollection;
 use App\Models\User;
 use App\Services\Admin\User\UserInfoTableService;
@@ -43,8 +41,9 @@ class UserController extends Controller
      */
     public function list(Request $request)
     {
+        $admin = $this->guard()->user();
         [$search, $orders, $filters, $perPage] = $this->convertRequest($request);
-        $data = UserTableService::getInstance()->data($search, $orders, $filters, $perPage);
+        $data = UserTableService::getInstance()->withUser($admin)->data($search, $orders, $filters, $perPage);
 
         return $this->sendSuccessResponse(new UserCollection($data));
     }
