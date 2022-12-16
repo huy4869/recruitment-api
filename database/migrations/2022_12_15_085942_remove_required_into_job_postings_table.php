@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::table('job_postings', function (Blueprint $table) {
             $table->unsignedBigInteger('store_id')->nullable(true)->change();
-            $table->unsignedBigInteger('job_type_ids')->nullable(true)->change();
+            $table->json('job_type_ids')->nullable(true)->change();
             $table->json('work_type_ids')->nullable(true)->change();
             $table->unsignedBigInteger('job_status_id')->nullable(true)->change();
             $table->unsignedBigInteger('province_id')->nullable(true)->change();
@@ -38,7 +38,7 @@ return new class extends Migration
     {
         Schema::table('job_postings', function (Blueprint $table) {
             $table->unsignedBigInteger('store_id')->nullable(false)->change();
-            $table->unsignedBigInteger('job_type_id')->nullable(false)->change();
+            $table->json('job_type_ids')->nullable(false)->change();
             $table->json('work_type_ids')->nullable(false)->change();
             $table->unsignedBigInteger('job_status_id')->nullable(false)->change();
             $table->unsignedBigInteger('province_id')->nullable(false)->change();
