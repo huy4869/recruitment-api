@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Models\JobPosting;
 use Carbon\Carbon;
 
 class DateTimeHelper
@@ -417,5 +418,42 @@ class DateTimeHelper
         }
 
         return Carbon::parse($dateBirthDay)->diff($date)->y;
+    }
+
+    public static function getStartEndWorkTime($start, $end, $startWorkType, $endWorkType, $rangeHoursType)
+    {
+        $startHoursMinute = DateTimeHelper::getHoursMinute($start);
+        $endHoursMinute = DateTimeHelper::getHoursMinute($end);
+        $hourStart = ltrim($startHoursMinute['hours'], '0');
+        $hourEnd = ltrim($endHoursMinute['hours'], '0');
+        $oneHourStartMorning = __('job_posting.morning.one_hours', ['hours' => $hourStart]);
+        $halfHourStartMorning = __('job_posting.morning.half_hours', ['hours' => $hourStart]);
+        $oneHourStartAfternoon = __('job_posting.afternoon.one_hours', ['hours' => $hourStart]);
+        $halfHourStartAfternoon = __('job_posting.afternoon.half_hours', ['hours' => $hourStart]);
+        $oneHourEndMorning = __('job_posting.morning.one_hours', ['hours' => $hourEnd]);
+        $halfHourEndMorning = __('job_posting.morning.half_hours', ['hours' => $hourEnd]);
+        $oneHourEndAfternoon = __('job_posting.afternoon.one_hours', ['hours' => $hourEnd]);
+        $halfHourEndAfternoon = __('job_posting.afternoon.half_hours', ['hours' => $hourEnd]);
+
+        if ($rangeHoursType == JobPosting::HALF_DAY) {
+            if ($startWorkType == JobPosting::TYPE_MORNING && $endWorkType == JobPosting::TYPE_MORNING) {
+                $start = $startHoursMinute['minute'] == config('date.thirty_minutes') ? $halfHourStartMorning : $oneHourStartMorning;
+                $end = $endHoursMinute['minute'] == config('date.thirty_minutes') ? $halfHourEndMorning : $oneHourEndMorning;
+            } elseif ($startWorkType == JobPosting::TYPE_AFTERNOON && $endWorkType == JobPosting::TYPE_AFTERNOON) {
+                $start = $startHoursMinute['minute'] == config('date.thirty_minutes') ? $halfHourStartAfternoon : $oneHourStartAfternoon;
+                $end = $endHoursMinute['minute'] == config('date.thirty_minutes') ? $halfHourEndAfternoon : $oneHourEndAfternoon;
+            } elseif ($startWorkType == JobPosting::TYPE_MORNING && $endWorkType == JobPosting::TYPE_AFTERNOON) {
+                $start = $startHoursMinute['minute'] == config('date.thirty_minutes') ? $halfHourStartMorning : $oneHourStartMorning;
+                $end = $endHoursMinute['minute'] == config('date.thirty_minutes') ? $halfHourEndAfternoon : $oneHourEndAfternoon;
+            } else {
+                $start = $startHoursMinute['minute'] == config('date.thirty_minutes') ? $halfHourStartAfternoon : $oneHourStartAfternoon;
+                $end = $endHoursMinute['minute'] == config('date.thirty_minutes') ? $halfHourEndMorning : $oneHourEndMorning;
+            }
+        }
+
+        return [
+          'start' => $start,
+          'end' => $end,
+        ];
     }
 }

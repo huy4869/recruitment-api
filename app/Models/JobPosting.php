@@ -24,6 +24,9 @@ class JobPosting extends Model
     public const FULL_DAY = 1;
     public const HALF_DAY = 2;
 
+    public const TYPE_MORNING = 1;
+    public const TYPE_AFTERNOON = 2;
+
     /**
      * @var string
      */
@@ -64,6 +67,9 @@ class JobPosting extends Model
         'created_by',
         'released_at',
         'working_days',
+        'range_hours_type',
+        'start_work_time_type',
+        'end_work_time_type',
     ];
 
     /**

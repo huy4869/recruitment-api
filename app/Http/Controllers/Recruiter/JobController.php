@@ -162,6 +162,8 @@ class JobController extends Controller
             'province_city_id',
             'working_days',
             'range_hours_type',
+            'start_work_time_type',
+            'end_work_time_type',
             'address',
             'building',
             'station_ids',

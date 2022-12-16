@@ -18,6 +18,7 @@ class FavoriteJobResource extends JsonResource
     {
         $jobPosting = $this['job_posting_trashed'];
         $releasedAt = sprintf('%s%s', DateTimeHelper::formatDateJa($this['created_at']), trans('common.update'));
+        $dataWorkTime = DateTimeHelper::getStartEndWorkTime($jobPosting['start_work_time'], $jobPosting['end_work_time'], $jobPosting['start_work_time_type'], $jobPosting['end_work_time_type'], $jobPosting['range_hours_type']);
 
         return [
                 'id' => $this['job_posting_id'],
@@ -42,8 +43,8 @@ class FavoriteJobResource extends JsonResource
                     'max' => $jobPosting['salary_max'],
                 ],
                 'work_time' => [
-                    'start' => $jobPosting['start_work_time'],
-                    'end' => $jobPosting['end_work_time'],
+                    'start' => $dataWorkTime['start'],
+                    'end' => $dataWorkTime['end'],
                 ],
                 'holiday_description' => $jobPosting['holiday_description'],
                 'description' => $jobPosting['description'],

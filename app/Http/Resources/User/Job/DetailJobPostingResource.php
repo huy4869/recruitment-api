@@ -22,6 +22,7 @@ class DetailJobPostingResource extends JsonResource
     public function toArray($request)
     {
         $application = $this['applications'][0] ?? [];
+        $dataWorkTime = DateTimeHelper::getStartEndWorkTime($this['start_work_time'], $this['end_work_time'], $this['start_work_time_type'], $this['end_work_time_type'], $this['range_hours_type']);
 
         if (count($application)) {
             switch ($application['interview_approach_id']) {
@@ -71,8 +72,8 @@ class DetailJobPostingResource extends JsonResource
                 'type' => $this['salary_type'],
             ],
             'work_time' => [
-                'start' => $this['start_work_time'],
-                'end' => $this['end_work_time'],
+                'start' => $dataWorkTime['start'],
+                'end' => $dataWorkTime['end'],
                 'shifts' => $this['shifts'],
             ],
             'age' => [

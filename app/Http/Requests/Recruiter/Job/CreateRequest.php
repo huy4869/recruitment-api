@@ -6,6 +6,8 @@ use App\Models\JobPosting;
 use App\Models\MJobStatus;
 use App\Models\MJobType;
 use App\Models\MWorkType;
+use App\Rules\AfterTimeRule;
+use App\Rules\CheckFullDay;
 use App\Rules\CheckHoursRule;
 use App\Services\Recruiter\Job\JobService;
 use Illuminate\Foundation\Http\FormRequest;
@@ -34,6 +36,7 @@ class CreateRequest extends FormRequest
         $jobStatusIds = JobService::getJobStatusIdsNotEnd();
         $rangeHoursType = [JobPosting::FULL_DAY, JobPosting::HALF_DAY];
         $requireOrNullable = $this->job_status_id == JobPosting::STATUS_DRAFT ? 'nullable' : 'required';
+        $timeTypes = [JobPosting::TYPE_MORNING, JobPosting::TYPE_AFTERNOON];
 
         return [
             'name' => $requireOrNullable . '|string|max:' . config('validate.string_max_length'),
@@ -53,18 +56,24 @@ class CreateRequest extends FormRequest
             'salary_max' => $requireOrNullable . '|integer|greater_than_field:salary_min|max:' . config('validate.salary_max_value'),
             'salary_description' => 'nullable|string|max:' . config('validate.job_posting_textarea_max_length'),
             'range_hours_type' => 'integer|in:' . implode(',', $rangeHoursType),
+            'start_work_time_type' => 'integer|in:' . implode(',', $timeTypes),
+            'end_work_time_type' => 'integer|in:' . implode(',', $timeTypes),
             'start_work_time' => [
                 $requireOrNullable,
                 'string',
+                'date_format:H:i',
                 'max:' . config('validate.work_time_max_length'),
-                new CheckHoursRule($this->range_hours_type)
+                new CheckFullDay($this->range_hours_type),
+                new CheckHoursRule($this->range_hours_type, $this->start_work_time_type)
             ],
             'end_work_time' => [
                 $requireOrNullable,
                 'string',
-                'greater_than_field:start_work_time',
+                'date_format:H:i',
                 'max:' . config('validate.work_time_max_length'),
-                new CheckHoursRule($this->range_hours_type),
+                new AfterTimeRule($this->range_hours_type, $this->start_work_time),
+                new CheckFullDay($this->range_hours_type),
+                new CheckHoursRule($this->range_hours_type, $this->end_work_time_type),
             ],
             'shifts' => 'nullable|max:' . config('validate.job_posting_textarea_max_length'),
             'age_min' => 'nullable|integer|min:' . config('validate.age.min') . '|max:' . config('validate.age.max'),

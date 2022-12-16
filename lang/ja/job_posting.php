@@ -32,9 +32,16 @@ return [
     ],
 
     'range_hours_type' => [
-        'full_day' => '丸1日',
-        'half_day' => '半日',
+        'full_day' => '24時間表示',
+        'half_day' => '午前・午後表示',
     ],
-
-    'search_in_popular_area' => 'の人気エリアで検索'
+    'morning' => [
+        'one_hours' => '午前:hours時',
+        'half_hours' => '午前:hours時半',
+    ],
+    'afternoon' => [
+        'one_hours' => '午後:hours時',
+        'half_hours' => '午後:hours時半',
+    ],
+    'search_in_popular_area' => 'の人気エリアで検索',
 ];
