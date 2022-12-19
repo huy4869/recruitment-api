@@ -49,8 +49,8 @@ class StringHelper
      */
     public static function escapeLikeSearch($string)
     {
-        $search = array('%', '_', '\\');
-        $replace   = array('\%', '\_', '\\\\');
+        $search = array('\\', '_', '\%');
+        $replace   = array('\\\\', '\_', '\%');
 
         return str_replace($search, $replace, $string);
     }
