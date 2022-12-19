@@ -469,7 +469,7 @@ class UserService extends Service
 
             $user->update($data);
 
-            if (isset($data['images']) && isset($data['avatar'])) {
+            if (!isset($data['is_public_avatar'])) {
                 FileService::getInstance()->updateImageable($user, $this->makeSaveDataImage($data));
             }
 
