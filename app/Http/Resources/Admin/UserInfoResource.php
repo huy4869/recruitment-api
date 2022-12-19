@@ -4,6 +4,7 @@ namespace App\Http\Resources\Admin;
 
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
+use App\Helpers\UserHelper;
 use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -50,8 +51,8 @@ class UserInfoResource extends JsonResource
                 'salary_max' => @$desiredConditionUser->salary_max,
             ],
             'address' => [
-                'province_id' => @$desiredConditionUser->province->id,
-                'province_name' => @$desiredConditionUser->province->name,
+                'province_id' => @$desiredConditionUser->province_ids,
+                'province_name' => $this->province_name,
             ],
             'job_experiences' => $this->job_experiences,
             'work_types' => $this->work_types,

@@ -70,7 +70,7 @@ class UserInfoTableService extends TableService
 
                     break;
                 case 'age':
-                    $query->where('age', '>=', $filter['data']);
+                    $query->where('desired_condition_users.age', '=', $filter['data']);
                     break;
                 default:
                     $query->where($filter['key'], $filter['data']);
@@ -86,6 +86,7 @@ class UserInfoTableService extends TableService
     public function makeNewQuery()
     {
         return User::query()->roleUser()
+            ->join('desired_condition_users', 'users.id', '=', 'desired_condition_users.user_id')
             ->with([
                 'avatarBanner',
                 'province',
@@ -94,6 +95,7 @@ class UserInfoTableService extends TableService
                 'desiredConditionUser.province',
             ])
             ->selectRaw($this->getSelectRaw())
+            ->orderByDesc('last_login_at')
             ->orderByDesc('created_at');
     }
 
@@ -117,6 +119,8 @@ class UserInfoTableService extends TableService
             users.last_login_at,
             users.address,
             users.building,
-            users.created_at';
+            users.postal_code,
+            users.created_at,
+            users.birthday';
     }
 }

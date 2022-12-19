@@ -2,6 +2,7 @@
 
 namespace App\Helpers;
 
+use App\Models\MProvince;
 use App\Services\Recruiter\UserProfileService;
 use App\Services\User\Job\JobService;
 
@@ -145,6 +146,26 @@ class UserHelper
                 'id' => $feature['id'],
                 'name' => $feature['name'],
             ];
+        }
+
+        return $result;
+    }
+
+    public static function getProvinceName($provinces, $provinceIds)
+    {
+        $result = [];
+
+        if (!$provinceIds) {
+            return $result;
+        }
+
+        foreach ($provinces as $province) {
+            if (in_array($province->id, $provinceIds)) {
+                $result[] = [
+                    'id' => $province->id,
+                    'name' => $province->name,
+                ];
+            }
         }
 
         return $result;
