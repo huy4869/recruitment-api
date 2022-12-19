@@ -14,6 +14,7 @@ use App\Jobs\Admin\User\JobUpdate;
 use App\Jobs\User\JobVerifyRegister;
 use App\Models\Application;
 use App\Models\MInterviewStatus;
+use App\Models\MProvince;
 use App\Models\MRole;
 use App\Models\Notification;
 use App\Models\Store;
@@ -560,6 +561,7 @@ class UserService extends Service
     public static function appendMasterDataForUser($userList)
     {
         $jobMasterData = UserHelper::getJobMasterData();
+        $provinces = MProvince::query()->get();
         $userArr = [];
 
         foreach ($userList as $user) {
@@ -572,7 +574,7 @@ class UserService extends Service
                 @$userDesiredCondition->job_experience_ids,
                 $jobMasterData['masterJobExperiences']
             );
-            $user->job_features = JobHelper::getFeatureCategoryName(
+            $user->job_features = JobHelper::getFeature(
                 @$userDesiredCondition->job_feature_ids,
                 $jobMasterData['masterJobFeatures']
             );
@@ -581,6 +583,7 @@ class UserService extends Service
                 $jobMasterData['masterWorkTypes']
             );
 
+            $user->province_name = UserHelper::getProvinceName($provinces, $userDesiredCondition->province_ids);
             $userArr[$user->id] = $user;
         }//end foreach
 

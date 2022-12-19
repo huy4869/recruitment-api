@@ -193,6 +193,31 @@ class JobHelper
 
     /**
      * @param $typeIds
+     * @param $features
+     * @return array
+     */
+    public static function getFeature($typeIds, $masterDataType)
+    {
+        $result = [];
+
+        if (!$typeIds || !$masterDataType) {
+            return $result;
+        }
+
+        foreach ($typeIds as $id) {
+            $feature = $masterDataType[(int)$id - 1];
+
+            $result[] = [
+                'id' => $feature['id'],
+                'name' => $feature['name'],
+            ];
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param $typeIds
      * @param $provinces
      * @return array
      */

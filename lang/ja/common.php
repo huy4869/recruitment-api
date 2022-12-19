@@ -20,4 +20,5 @@ return [
     'now' => '現在',
     'week' => '週間前',
     'subject_mail_interview_online' => 'オンライン面接のメール通知URLリンク',
+    'age_name' => '代以上',
 ];
