@@ -81,7 +81,10 @@ class ChatService extends Service
         $stores = $this->user->stores()
             ->with([
                 'chats' => function ($query) {
-                    $query->whereNot('is_apply_message', Chat::APPLY_MESSAGE['FROM_REC'])
+                    $query->where(function ($query) {
+                        $query->where('is_apply_message', Chat::APPLY_MESSAGE['FROM_USER'])
+                            ->orWhere('is_apply_message', null);
+                        })
                         ->orderByDesc('created_at');
                 },
                 'chats.userTrashed',
@@ -144,13 +147,15 @@ class ChatService extends Service
                 ['store_id', $store_id],
                 ['user_id', $user_id]
             ])
-            ->whereNot('is_apply_message', Chat::APPLY_MESSAGE['FROM_REC'])
+            ->where(function ($query) {
+                $query->where('is_apply_message', Chat::APPLY_MESSAGE['FROM_USER'])
+                    ->orWhere('is_apply_message', null);
+            })
             ->orderBy('created_at', 'asc')
             ->get()
             ->groupBy(function ($date) {
                 return Carbon::parse($date->created_at)->format('Y-m-d');
             });
-
         $result = [];
 
         foreach ($detailChats as $key => $items) {

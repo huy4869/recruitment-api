@@ -30,7 +30,10 @@ class ChatService extends Service
                 'storeTrashed.storeBanner'
             ])
             ->where('user_id', $user->id)
-            ->whereNot('is_apply_message', Chat::APPLY_MESSAGE['FROM_USER'])
+            ->where(function ($query) {
+                $query->where('is_apply_message', Chat::APPLY_MESSAGE['FROM_REC'])
+                    ->orWhere('is_apply_message', null);
+            })
             ->orderByDesc('created_at')
             ->get()
             ->unique('store_id');
@@ -54,7 +57,10 @@ class ChatService extends Service
                 ['store_id', $store_id],
                 ['user_id', $user->id]
             ])
-            ->whereNot('is_apply_message', Chat::APPLY_MESSAGE['FROM_USER'])
+            ->where(function ($query) {
+                $query->where('is_apply_message', Chat::APPLY_MESSAGE['FROM_REC'])
+                    ->orWhere('is_apply_message', null);
+            })
             ->orderBy('created_at', 'asc')
             ->get()
             ->groupBy(function ($date) {
