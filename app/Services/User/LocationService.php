@@ -33,7 +33,7 @@ class LocationService extends Service
             ->with('jobPostingAcceptTrashed', 'jobPostingAcceptTrashed.province', 'jobPostingAcceptTrashed.province.provinceCities')
             ->get();
 
-        $mJobTypes = MJobType::query()->get();
+        $mJobTypes = MJobType::query()->whereIn('id', $jobTypeIds)->get();
         $mProvinces = MProvince::query()->get()->pluck('name', 'id');
         $mProvinceCities = MProvinceCity::query()->get()->pluck('name', 'id');
         $other = $mJobTypes->where('id', MJobType::OTHER)->first();
