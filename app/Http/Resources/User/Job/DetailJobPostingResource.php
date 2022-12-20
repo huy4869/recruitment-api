@@ -58,6 +58,7 @@ class DetailJobPostingResource extends JsonResource
             'id' => $this['id'],
             'name' => $this['name'],
             'store_name' => $this['store_name'],
+            'company_name' => $this['store']['owner']['company_name'],
             'pick_up_point' => $this['pick_up_point'],
             'banner_image' => $this['banner_image'],
             'detail_images' => DetailImageResource::collection($this['detail_images']),
