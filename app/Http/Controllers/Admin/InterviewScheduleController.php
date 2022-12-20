@@ -72,7 +72,6 @@ class InterviewScheduleController extends Controller
         return $this->sendSuccessResponse([], trans('validation.INF.016'));
     }
 
-
     /**
      * Detail application
      *

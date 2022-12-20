@@ -774,6 +774,7 @@ class JobService extends Service
 
         foreach ($dataInterViewApproaches as $dataInterViewApproach) {
             $output = $dataInterViewApproach->name;
+
             if ($dataInterViewApproach->id == MInterviewApproach::STATUS_INTERVIEW_ONLINE) {
                 $output .= sprintf('（%s）', config('application.interview_approach_online'));
             } elseif ($dataInterViewApproach->id == MInterviewApproach::STATUS_INTERVIEW_DIRECT) {

@@ -445,6 +445,34 @@ class InterviewScheduleService extends Service
             $datePast = $this->appendCurrentApplicationTime($application->date, $application->hours);
         }
 
+        $dataInterViewApproaches = MInterviewApproach::query()->get();
+        $approach = [];
+
+        foreach ($dataInterViewApproaches as $dataInterViewApproach) {
+            $output = $dataInterViewApproach->name;
+
+            if ($dataInterViewApproach->id == MInterviewApproach::STATUS_INTERVIEW_ONLINE) {
+                $output .= sprintf('（%s）', config('application.interview_approach_online'));
+            } elseif ($dataInterViewApproach->id == MInterviewApproach::STATUS_INTERVIEW_DIRECT) {
+                $store = Store::query()
+                    ->where('id', $application->jobPosting->store_id)
+                    ->with(['province', 'provinceCity'])
+                    ->first();
+                $output .= sprintf('（%s%s%s%s%s）',
+                    $store->postal_code,
+                    $store->province->name,
+                    $store->provinceCity->name,
+                    $store->address,
+                    $store->building
+                );
+            }
+
+            $approach[] = [
+                'id' => $dataInterViewApproach->id,
+                'name' => $output,
+            ];
+        }
+
         return [
             'application_user' => [
                 'date' => explode(' ', $application->date)[0],
@@ -456,7 +484,8 @@ class InterviewScheduleService extends Service
                 ],
                 'interview_approach_id' => $application->interview_approach_id,
             ],
-            'list_time' => array_merge($datePast, $times)
+            'list_time' => array_merge($datePast, $times),
+            'approach' => $approach,
         ];
     }
 
