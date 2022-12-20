@@ -313,6 +313,7 @@ class JobService extends Service
         $recruiter = $this->user;
         $job = JobPosting::query()->where('id', $id)->with([
             'store',
+            'store.owner',
             'bannerImage',
             'detailImages',
             'province',

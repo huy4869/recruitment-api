@@ -109,6 +109,7 @@ class JobService extends Service
     {
         $job = JobPosting::query()->where('id', $id)->with([
             'store',
+            'store.owner',
             'bannerImage',
             'detailImages',
             'province',
