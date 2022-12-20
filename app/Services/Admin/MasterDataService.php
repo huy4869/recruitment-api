@@ -512,10 +512,7 @@ class MasterDataService extends Service
 
         foreach ($stations as $station) {
             if (!isset($result[$station->province_name]) || !isset($result[$station->province_name][$station->railway_name])) {
-                $result[$station->province_name][$station->railway_name][] = [
-                    'id' => $station->id,
-                    'station_name' => $station->station_name
-                ];
+                $result[$station->province_name][$station->railway_name] = [];
             }
 
             $result[$station->province_name][$station->railway_name][] = [
