@@ -181,7 +181,7 @@ class UserService extends Service
             }
 
             if (isset($userDesiredCondition->job_feature_ids)) {
-                $user->job_features = UserHelper::getFeature(
+                $user->job_features = JobHelper::getTypeName(
                     $userDesiredCondition->job_feature_ids,
                     $jobMasterData['masterJobFeatures']
                 );

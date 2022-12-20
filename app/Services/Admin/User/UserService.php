@@ -574,7 +574,7 @@ class UserService extends Service
                 @$userDesiredCondition->job_experience_ids,
                 $jobMasterData['masterJobExperiences']
             );
-            $user->job_features = JobHelper::getFeature(
+            $user->job_features = JobHelper::getTypeName(
                 @$userDesiredCondition->job_feature_ids,
                 $jobMasterData['masterJobFeatures']
             );
