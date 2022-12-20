@@ -37,6 +37,7 @@ class StoreDetailResource extends JsonResource
                 'building' => $this->building,
             ],
             'manager_name' => $this->manager_name,
+            'company_name' => $this->owner->company_name,
             'employee_quantity' => $this->employee_quantity,
             'date' => [
                 'founded_year' => $founded_year,
