@@ -336,22 +336,28 @@ class JobService extends Service
      */
     public function getListNewJobPostings()
     {
-        $jobs = JobPosting::query()->released();
-        $jobCount = $jobs->new()->count();
+        $applicationRejectOrCancelIds = [];
         $applicationIds = [];
 
         if ($this->user) {
+            $applicationRejectOrCancelIds = self::getIdJobApplicationCancelOrReject($this->user);
             $applicationIds = self::getIdJobApplication($this->user);
         }
 
-        $jobList = $jobs->with([
+        $jobList = JobPosting::query()->new()
+            ->released()
+            ->whereNotIn('id', $applicationRejectOrCancelIds);
+
+        $jobCount = $jobList->count();
+
+        $jobList = $jobList
+            ->whereNotIn('id', $applicationIds)
+            ->with([
                 'store',
                 'province',
                 'province.provinceDistrict',
                 'salaryType',
-            ])
-            ->whereNotIn('id', $applicationIds)
-            ->orderBy('released_at', 'desc')
+            ])->orderBy('released_at', 'desc')
             ->take(config('common.job_posting.newest_amount'))
             ->get();
 

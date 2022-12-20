@@ -37,7 +37,7 @@ class JobController extends Controller
      * @return JsonResponse
      * @throws Exception
      */
-    public function store(CreateRequest $request)
+    public function create(CreateRequest $request)
     {
         $admin = $this->guard()->user();
         $inputs = self::makeRequestData($request);

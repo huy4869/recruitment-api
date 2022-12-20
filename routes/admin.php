@@ -60,9 +60,9 @@ Route::group(['as' => 'stores.', 'prefix' => 'stores', 'middleware' => 'admin'],
 
 Route::group(['as' => 'jobs.', 'prefix' => 'jobs', 'middleware' => 'admin'], function () {
     Route::get('/', 'JobController@list')->name('list');
-    Route::post('/', 'JobController@store')->name('store');
+    Route::post('/create', 'JobController@create')->name('create');
     Route::get('/{id}', 'JobController@detail')->name('detail');
-    Route::post('/{id}', 'JobController@update')->name('update');
+    Route::post('/update/{id}', 'JobController@update')->name('update');
     Route::post('/delete/{id}', 'JobController@delete')->name('delete');
 });
 

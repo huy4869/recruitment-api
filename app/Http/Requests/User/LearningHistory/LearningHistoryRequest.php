@@ -40,7 +40,7 @@ class LearningHistoryRequest extends FormRequest
                 'after_or_equal:enrollment_period_start',
                 'before_or_equal:' . Carbon::now()->addYears(config('date.max_year'))->format(config('date.fe_date_work_history_format')),
             ],
-            'learning_status_id' => ['required', 'integer', 'exists:m_learning_status,id'],
+            'learning_status_id' => ['nullable', 'integer', 'exists:m_learning_status,id'],
         ];
     }
 
