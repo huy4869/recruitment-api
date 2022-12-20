@@ -25,6 +25,7 @@ class StoreService extends Service
     {
         $store = Store::query()
             ->with([
+                'owner',
                 'storeBanner',
                 'provinceCity',
                 'provinceCity.province',
