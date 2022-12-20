@@ -18,7 +18,7 @@ class LearningHistoryResource extends JsonResource
     public function toArray($request)
     {
         $data = $this->resource;
-        $learningStatusName = $data->learningStatus->name;
+        $learningStatusName = $data->learning_status_id ? $data->learningStatus->name : null;
         $enrollmentPeriodYearStart = substr($data->enrollment_period_start, 0, 4);
         $enrollmentPeriodMonthStart = substr($data->enrollment_period_start, 4);
         $enrollmentPeriodStart = DateTimeHelper::formatNameDateHalfJa($enrollmentPeriodYearStart, $enrollmentPeriodMonthStart);
