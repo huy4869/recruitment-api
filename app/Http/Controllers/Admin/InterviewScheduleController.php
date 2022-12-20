@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Admin\InterviewScheduleDateRequest;
 use App\Http\Requests\Admin\ListInterviewScheduleRequest;
 use App\Http\Requests\Admin\UpdateApplicationRequest;
 use App\Http\Requests\Admin\UpdateOrCreateInterviewScheduleRequest;
@@ -70,6 +71,21 @@ class InterviewScheduleController extends Controller
         $this->interviewScheduleService->updateOrCreateInterviewSchedule($request->all());
 
         return $this->sendSuccessResponse([], trans('validation.INF.016'));
+    }
+
+    /**
+     * Admin update or create interview schedule date
+     *
+     * @param InterviewScheduleDateRequest $request
+     * @return JsonResponse
+     */
+    public function updateOrCreateInterviewScheduleDate(InterviewScheduleDateRequest $request)
+    {
+        $date = $request->get('date');
+        $storeId = $request->get('store_id');
+        $data = $this->interviewScheduleService->updateOrCreateInterviewScheduleDate($date, $storeId);
+
+        return $this->sendSuccessResponse($data, trans('validation.INF.016'));
     }
 
     /**
