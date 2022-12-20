@@ -223,10 +223,7 @@ class ApplicationService extends Service
      */
     public function saveMakeData($data, $application)
     {
-        $meetLink = $data['meet_link'];
-        if ($data['interview_approach_id'] != MInterviewApproach::STATUS_INTERVIEW_ONLINE) {
-            $meetLink = null;
-        }
+        $meetLink = $data['interview_approach_id'] == MInterviewApproach::STATUS_INTERVIEW_ONLINE ? $data['meet_link'] : null;
 
         return [
             'interview_approach_id' => $data['interview_approach_id'] ?? $application->interview_approach_id,
