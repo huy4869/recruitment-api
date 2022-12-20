@@ -370,7 +370,7 @@ class InterviewScheduleService extends Service
             ->where('store_id', '=', $data['store_id'])
             ->whereDate('date', '=', $date)
             ->where('hours', '=', $hours)
-            ->whereIn('interview_status_id', MInterviewStatus::STATUS_WAITING_INTERVIEW)
+            ->where('interview_status_id', MInterviewStatus::STATUS_WAITING_INTERVIEW)
             ->exists();
 
         if ($applications) {
@@ -412,6 +412,96 @@ class InterviewScheduleService extends Service
         unset($dataOffTimes[$firstMonth][$dateTime]);
 
         return $storeOffTime->update(['off_times' => $dataOffTimes]);
+    }
+
+    /**
+     * update date interview schedule
+     *
+     * @param $date
+     * @param $storeId
+     * @return mixed
+     */
+    public function updateOrCreateInterviewScheduleDate($date, $storeId)
+    {
+        $firstMonth = Carbon::parse($date)->firstOfMonth()->format('Y-m-d');
+        $hours = Application::query()
+            ->where('store_id', '=', $storeId)
+            ->whereDate('date', $date . ' 00:00:00')
+            ->where('interview_status_id', '=', MInterviewStatus::STATUS_WAITING_INTERVIEW)
+            ->get()->pluck('hours')->toArray();
+
+        $defaultHours = config('date.time');
+
+        if ($date == now()->format('Y-m-d')) {
+            $currentHour = DateTimeHelper::getTime();
+
+            foreach ($defaultHours as $key => $hour) {
+                if ($currentHour > $hour) {
+                    unset($defaultHours[$key]);
+                }
+            }
+        }
+
+        $defaultHours = array_diff($defaultHours, $hours);
+        $storeOffTimes = StoreOffTime::query()->where('store_id', '=', $storeId)->first();
+
+        if (!$storeOffTimes) {
+            $dateTimes = [];
+
+            foreach ($defaultHours as $hour) {
+                $dateTime = $date . ' ' . $hour;
+                $dateTimes[$firstMonth][$dateTime] = $dateTime;
+            }
+
+            return StoreOffTime::query()->create([
+                'store_id' => $storeId,
+                'off_times' => $dateTimes
+            ]);
+        }
+
+        $resultStoreOffTimes = $storeOffTimes->off_times;
+
+        if (isset($resultStoreOffTimes[$firstMonth])) {
+            $dateHoursStores = preg_grep('/' . $date . '/i', $resultStoreOffTimes[$firstMonth]);
+
+            if (!$dateHoursStores) {
+                foreach ($defaultHours as $hour) {
+                    $dateTime = $date . ' ' . $hour;
+                    $resultStoreOffTimes[$firstMonth][$dateTime] = $dateTime;
+                }
+            } else {
+                $hoursStoreOffTimes = [];
+                foreach ($dateHoursStores as $dateHour) {
+                    $hoursStoreOffTimes[] = explode(' ', $dateHour)[1];
+                }
+
+                $defaultHours = array_diff($defaultHours, $hoursStoreOffTimes);
+
+                if ($defaultHours) {
+                    foreach ($defaultHours as $hour) {
+                        $dateTime = $date . ' ' . $hour;
+                        $resultStoreOffTimes[$firstMonth][$dateTime] = $dateTime;
+                    }
+                } else {
+                    foreach ($dateHoursStores as $dateHoursStore) {
+                        unset($resultStoreOffTimes[$firstMonth][$dateHoursStore]);
+                    }
+                }
+            }
+        } else {
+            $dateTimes = [];
+
+            foreach ($defaultHours as $hour) {
+                $dateTime = $date . ' ' . $hour;
+                $dateTimes[$dateTime] = $dateTime;
+            }
+
+            $resultStoreOffTimes = array_merge([
+                $firstMonth => $dateTimes
+            ], $resultStoreOffTimes);
+        }
+
+        return $storeOffTimes->update(['off_times' => $resultStoreOffTimes]);
     }
 
     /**
