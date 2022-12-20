@@ -422,20 +422,20 @@ class DateTimeHelper
 
     public static function getStartEndWorkTime($start, $end, $startWorkType, $endWorkType, $rangeHoursType)
     {
-        $startHoursMinute = DateTimeHelper::getHoursMinute($start);
-        $endHoursMinute = DateTimeHelper::getHoursMinute($end);
-        $hourStart = ltrim($startHoursMinute['hours'], '0');
-        $hourEnd = ltrim($endHoursMinute['hours'], '0');
-        $oneHourStartMorning = __('job_posting.morning.one_hours', ['hours' => $hourStart]);
-        $halfHourStartMorning = __('job_posting.morning.half_hours', ['hours' => $hourStart]);
-        $oneHourStartAfternoon = __('job_posting.afternoon.one_hours', ['hours' => $hourStart]);
-        $halfHourStartAfternoon = __('job_posting.afternoon.half_hours', ['hours' => $hourStart]);
-        $oneHourEndMorning = __('job_posting.morning.one_hours', ['hours' => $hourEnd]);
-        $halfHourEndMorning = __('job_posting.morning.half_hours', ['hours' => $hourEnd]);
-        $oneHourEndAfternoon = __('job_posting.afternoon.one_hours', ['hours' => $hourEnd]);
-        $halfHourEndAfternoon = __('job_posting.afternoon.half_hours', ['hours' => $hourEnd]);
-
         if ($rangeHoursType == JobPosting::HALF_DAY) {
+            $startHoursMinute = DateTimeHelper::getHoursMinute($start);
+            $endHoursMinute = DateTimeHelper::getHoursMinute($end);
+            $hourStart = ltrim($startHoursMinute['hours'], '0');
+            $hourEnd = ltrim($endHoursMinute['hours'], '0');
+            $oneHourStartMorning = __('job_posting.morning.one_hours', ['hours' => $hourStart]);
+            $halfHourStartMorning = __('job_posting.morning.half_hours', ['hours' => $hourStart]);
+            $oneHourStartAfternoon = __('job_posting.afternoon.one_hours', ['hours' => $hourStart]);
+            $halfHourStartAfternoon = __('job_posting.afternoon.half_hours', ['hours' => $hourStart]);
+            $oneHourEndMorning = __('job_posting.morning.one_hours', ['hours' => $hourEnd]);
+            $halfHourEndMorning = __('job_posting.morning.half_hours', ['hours' => $hourEnd]);
+            $oneHourEndAfternoon = __('job_posting.afternoon.one_hours', ['hours' => $hourEnd]);
+            $halfHourEndAfternoon = __('job_posting.afternoon.half_hours', ['hours' => $hourEnd]);
+
             if ($startWorkType == JobPosting::TYPE_MORNING && $endWorkType == JobPosting::TYPE_MORNING) {
                 $start = $startHoursMinute['minute'] == config('date.thirty_minutes') ? $halfHourStartMorning : $oneHourStartMorning;
                 $end = $endHoursMinute['minute'] == config('date.thirty_minutes') ? $halfHourEndMorning : $oneHourEndMorning;
@@ -449,7 +449,7 @@ class DateTimeHelper
                 $start = $startHoursMinute['minute'] == config('date.thirty_minutes') ? $halfHourStartAfternoon : $oneHourStartAfternoon;
                 $end = $endHoursMinute['minute'] == config('date.thirty_minutes') ? $halfHourEndMorning : $oneHourEndMorning;
             }
-        }
+        }//end if
 
         return [
           'start' => $start,

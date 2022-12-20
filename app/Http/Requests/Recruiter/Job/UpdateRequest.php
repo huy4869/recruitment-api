@@ -34,6 +34,7 @@ class UpdateRequest extends FormRequest
         $rangeHoursType = [JobPosting::FULL_DAY, JobPosting::HALF_DAY];
         $requireOrNullable = $this->job_status_id == JobPosting::STATUS_DRAFT ? 'nullable' : 'required';
         $timeTypes = [JobPosting::TYPE_MORNING, JobPosting::TYPE_AFTERNOON];
+        $timeTypesCheck = $this->range_hours_type == JobPosting::HALF_DAY ? 'required' : 'nullable';
 
         return [
             'name' => $requireOrNullable . '|string|max:' . config('validate.string_max_length'),
@@ -53,8 +54,8 @@ class UpdateRequest extends FormRequest
             'salary_max' => $requireOrNullable . '|integer|greater_than_field:salary_min|max:' . config('validate.salary_max_value'),
             'salary_description' => 'nullable|string|max:' . config('validate.job_posting_textarea_max_length'),
             'range_hours_type' => 'integer|in:' . implode(',', $rangeHoursType),
-            'start_work_time_type' => 'integer|in:' . implode(',', $timeTypes),
-            'end_work_time_type' => 'integer|in:' . implode(',', $timeTypes),
+            'start_work_time_type' => $timeTypesCheck . '|integer|in:' . implode(',', $timeTypes),
+            'end_work_time_type' => $timeTypesCheck . '|integer|in:' . implode(',', $timeTypes),
             'start_work_time' => [
                 $requireOrNullable,
                 'string',

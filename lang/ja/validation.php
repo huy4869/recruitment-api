@@ -301,6 +301,8 @@ return [
         'furi_first_name' => 'セイ',
         'furi_last_name' => 'メイ',
         'meet_link' => '面接URL',
+        'start_work_time_type' => '時間の種類',
+        'end_work_time_type' => '時間の種類',
     ],
 
     'COM' => [
