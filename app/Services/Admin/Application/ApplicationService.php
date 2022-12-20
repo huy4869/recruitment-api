@@ -35,6 +35,9 @@ class ApplicationService extends Service
             ->where('id', $id)
             ->with([
                 'store',
+                'store.province',
+                'store.provinceCity',
+                'store.owner',
                 'applicationUser',
                 'applicationUser.avatarDetails',
                 'applicationUser.avatarBanner',
