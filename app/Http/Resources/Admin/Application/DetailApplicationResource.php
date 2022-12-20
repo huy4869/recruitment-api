@@ -55,6 +55,7 @@ class DetailApplicationResource extends JsonResource
                 'name' => $this->interviews->name,
             ],
             'interview_date' => DateTimeHelper::formatDateDayOfWeekJa($this->date) . $this->hours,
+            'interview_approach_id' => $this->interview_approach_id,
             'date' => @explode(' ', $this->date)[0],
             'hours' => $this->hours,
             'note' => $this->note,
