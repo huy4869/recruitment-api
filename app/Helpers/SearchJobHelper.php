@@ -62,14 +62,14 @@ class SearchJobHelper
         }
 
         if (isset($content['feature_ids'])) {
-            $content['feature_ids'] = SearchJobHelper::getFeature(
+            $content['feature_ids'] = JobHelper::getTypeName(
                 $content['feature_ids'],
                 $masterData['masterJobFeatures'],
             );
         }
 
         if (isset($content['province_id'])) {
-            $content['province_id'] = JobHelper::getProvinceDistrictName(
+            $content['province_id'] = JobHelper::getTypeName(
                 $content['province_id'],
                 $masterData['masterProvinces'],
             );
@@ -99,37 +99,19 @@ class SearchJobHelper
     public static function getProvinceCityDistrictName($typeIds, $provinceCities)
     {
         $result = [];
-
+        $data = [];
         if (!$typeIds) {
             return $result;
         }
 
-        foreach ($typeIds as $id) {
-            $provinceCity = $provinceCities[$id - 1];
-
-            $result[] = [
-                'id' => $provinceCity['id'],
-                'name' => $provinceCity['name']
-            ];
-        }
-
-        return $result;
-    }
-
-    public static function getFeature($typeIds, $masterDataType)
-    {
-        $result = [];
-
-        if (!$typeIds || !$masterDataType) {
-            return $result;
+        foreach ($provinceCities as $provinceCity) {
+            $data[$provinceCity['id']] = $provinceCity['name'];
         }
 
         foreach ($typeIds as $id) {
-            $feature = $masterDataType[(int)$id - 1];
-
             $result[] = [
-                'id' => $feature['id'],
-                'name' => $feature['name'],
+                'id' => $id,
+                'name' => $data[$id]
             ];
         }
 

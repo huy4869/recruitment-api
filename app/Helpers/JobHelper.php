@@ -140,13 +140,20 @@ class JobHelper
     public static function getTypeName($typeIds, $masterDataType)
     {
         $result = [];
-
+        $data = [];
         if (!$typeIds || !$masterDataType) {
             return $result;
         }
 
+        foreach ($masterDataType as $value) {
+            $data[$value['id']] = $value['name'];
+        }
+
         foreach ($typeIds as $id) {
-            $result[] = $masterDataType[(int)$id - 1];
+            $result[] = [
+                'id' => $id,
+                'name' => $data[$id]
+            ];
         }
 
         return $result;
@@ -160,16 +167,25 @@ class JobHelper
     public static function getFeatureCategoryName($typeIds, $features)
     {
         $result = [];
+        $dataFeature = [];
+        $categories = [];
 
         if (!$typeIds || !$features) {
             return $result;
         }
 
-        foreach ($typeIds as $id) {
-            $feature = $features[$id - 1];
-            $categories[] = [
-                'category_id' => $feature['category']['id'],
+        foreach ($features as $feature) {
+            $dataFeature[$feature['id']] = [
+                'category_id' => $feature['category_id'],
                 'category_name' => $feature['category']['name'],
+                'name' => $feature['name'],
+            ];
+        }
+
+        foreach ($typeIds as $id) {
+            $categories[] = [
+                'category_id' => $dataFeature[$id]['category_id'],
+                'category_name' => $dataFeature[$id]['category_name'],
             ];
         }
 
@@ -177,65 +193,11 @@ class JobHelper
 
         foreach ($categories as $category) {
             foreach ($typeIds as $id) {
-                $feature = $features[$id - 1];
-
-                if ($feature['category_id'] == $category['category_id']) {
-                    $category['features'][] = $feature['name'];
-                }
+                $category['features'][] = $dataFeature[$id]['name'];
             }
 
             $category['features'] = implode('/', $category['features']);
             $result[] = $category;
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param $typeIds
-     * @param $features
-     * @return array
-     */
-    public static function getFeature($typeIds, $masterDataType)
-    {
-        $result = [];
-
-        if (!$typeIds || !$masterDataType) {
-            return $result;
-        }
-
-        foreach ($typeIds as $id) {
-            $feature = $masterDataType[(int)$id - 1];
-
-            $result[] = [
-                'id' => $feature['id'],
-                'name' => $feature['name'],
-            ];
-        }
-
-        return $result;
-    }
-
-    /**
-     * @param $typeIds
-     * @param $provinces
-     * @return array
-     */
-    public static function getProvinceDistrictName($typeIds, $provinces)
-    {
-        $result = [];
-
-        if (!$typeIds) {
-            return $result;
-        }
-
-        foreach ($typeIds as $id) {
-            $province = $provinces[$id - 1];
-
-            $result[] = [
-                'id' => $province['id'],
-                'name' => $province['name'],
-            ];
         }
 
         return $result;
@@ -249,19 +211,26 @@ class JobHelper
     public static function getStations($typeIds, $stations)
     {
         $result = [];
+        $data = [];
 
         if (!$typeIds || !$stations) {
             return $result;
         }
 
-        foreach ($typeIds as $id) {
-            $station = $stations[$id - 1];
-
-            $result[] = [
-                'id' => $station['id'],
+        foreach ($stations as $station) {
+            $data[$station['id']] = [
                 'province_name' => $station['province_name'],
                 'railway_name' => $station['railway_name'],
                 'station_name' => $station['station_name'],
+            ];
+        }
+
+        foreach ($typeIds as $id) {
+            $result[] = [
+                'id' => $id,
+                'province_name' => $stations[$id]['province_name'],
+                'railway_name' => $stations[$id]['railway_name'],
+                'station_name' => $stations[$id]['station_name'],
             ];
         }
 

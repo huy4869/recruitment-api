@@ -34,6 +34,7 @@ class DetailJobResource extends JsonResource
             'job_status_name' => $this->status->name,
             'statuses' => JobService::getStatusJob(),
             'job_types' => $this->job_types,
+            'feature_ids' => $this->feature_ids,
             'feature_types' => $this->feature_types,
             'experience_types' => $this->expericence_types,
             'description' => $this->description,
