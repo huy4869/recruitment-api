@@ -78,7 +78,7 @@ return [
     'day_of_week' => 6,
     'format_date' => 'Y-m-d 00:00:00',
     'time_hours' => [
-        'hours' => 'h',
+        'hours' => 'H',
         'minute' => 'i',
     ],
     'day' => [
