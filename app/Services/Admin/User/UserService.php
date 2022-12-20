@@ -408,10 +408,10 @@ class UserService extends Service
                 'school_name' => $learningHistory->school_name,
                 'date_time' => [
                     'time_start_end' => sprintf(
-                        '%s ～ %s(%s)',
+                        '%s ～ %s（%s）',
                         DateTimeHelper::formatMonthYear($learningHistory->enrollment_period_start),
                         DateTimeHelper::formatMonthYear($learningHistory->enrollment_period_end),
-                        $learningHistory->learningStatus->name,
+                        @$learningHistory->learningStatus->name,
                     ),
                     'enrollment_period_start' => [
                         'month' => substr($learningHistory->enrollment_period_start, 4),
@@ -433,8 +433,8 @@ class UserService extends Service
                 'date_time' => [
                     'new_issuance_date' => DateTimeHelper::formatMonthYear($userLicensesQualification->new_issuance_date),
                     'format_issuance_date' => [
-                        'month' => substr($userLicensesQualification->enrollment_period_end, 4),
-                        'year' => substr($userLicensesQualification->enrollment_period_end, 0, 4),
+                        'month' => substr($userLicensesQualification->new_issuance_date, 4),
+                        'year' => substr($userLicensesQualification->new_issuance_date, 0, 4),
                     ]
                 ]
             ];

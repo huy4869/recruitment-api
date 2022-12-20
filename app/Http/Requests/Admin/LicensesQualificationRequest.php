@@ -28,7 +28,7 @@ class LicensesQualificationRequest extends FormRequest
         return [
             'name' => ['required', 'string', 'max:' . config('validate.string_max_length')],
             'new_issuance_date' => [
-                'required',
+                'nullable',
                 'date_format:' . config('date.fe_date_work_history_format'),
                 'before_or_equal:' . Carbon::now()->format(config('date.fe_date_work_history_format')),
                 new CheckYearRule()

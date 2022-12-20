@@ -42,7 +42,7 @@ class DateTimeHelper
         $dayOfWeek = config('date.day_of_week_ja.' . $date->dayOfWeek);
 
 
-        return sprintf('%s (%s)', $day, $dayOfWeek);
+        return sprintf('%s （%s）', $day, $dayOfWeek);
     }
 
     /**
@@ -312,7 +312,7 @@ class DateTimeHelper
         } elseif ($week == config('date.week')) {
             $date = $time->diffInWeeks($now) . trans('common.week');
         } else {
-            $date = sprintf('%s (%s) %s', $formatDate, $dayOfWeek, $formatTime);
+            $date = sprintf('%s （%s） %s', $formatDate, $dayOfWeek, $formatTime);
         }
 
         return $date;

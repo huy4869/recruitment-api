@@ -36,7 +36,7 @@ class LicensesQualificationController extends Controller
         $data = $this->licensesQualificationService->store($input, $request->get('user_id'));
 
         if ($data) {
-            return $this->sendSuccessResponse($data, trans('validation.INF.006'));
+            return $this->sendSuccessResponse($data, trans('validation.INF.010'));
         }
 
         throw new InputException(trans('validation.ERR.006'));
