@@ -125,14 +125,28 @@ class WorkHistoryService extends Service
                 if (in_array($dataNameDiff, $dataObjects)) {
                     $dataNameDuplicate[] = $dataNameDiff;
                 } else {
+                    $lastCurrentRecord = MPositionOffice::query()
+                        ->where('is_default', MWorkType::NO_DEFAULT)
+                        ->latest()
+                        ->first();
+
+                    if ($lastCurrentRecord) {
+                        $lastId = $lastCurrentRecord->id + 1;
+                    } else {
+                        $lastId = self::START_ID_FOR_NOT_DEFAULT_RECORD;
+                    }
+
                     $inputsNameDiffs[] = [
-                        'name' => $dataNameDiff
+                        'id' => $lastId,
+                        'name' => $dataNameDiff,
+                        'is_default' => MPositionOffice::NO_DEFAULT,
+                        'created_by' => $this->user->id,
                     ];
                 }
             }
 
 
-            MPositionOffice::query()->insert($inputsNameDiffs);
+            count($inputsNameDiffs) && MPositionOffice::query()->insert($inputsNameDiffs);
             $inputsNameDiffs = array_merge($inputsNameDiffs, $dataNameDuplicate);
             $dataNameIds = MPositionOffice::query()
                 ->whereIn('name', $inputsNameDiffs)

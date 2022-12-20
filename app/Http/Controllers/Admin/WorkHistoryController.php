@@ -13,13 +13,6 @@ use Illuminate\Http\Request;
 
 class WorkHistoryController extends Controller
 {
-    private $workHistory;
-
-    public function __construct(WorkHistoryService $workHistory)
-    {
-        $this->workHistory = $workHistory;
-    }
-
     /**
      * create work history
      *
@@ -41,7 +34,9 @@ class WorkHistoryController extends Controller
             'experience_accumulation',
         ]);
 
-        $data = $this->workHistory->store($input, $request->get('user_id'));
+        $data = WorkHistoryService::getInstance()
+            ->withUser($this->guard()->user())
+            ->store($input, $request->get('user_id'));
 
         return $this->sendSuccessResponse($data, trans('validation.INF.006'));
     }
@@ -68,7 +63,9 @@ class WorkHistoryController extends Controller
             'experience_accumulation',
         ]);
 
-        $data = $this->workHistory->update($input, $id, $request->get('user_id'));
+        $data = WorkHistoryService::getInstance()
+            ->withUser($this->guard()->user())
+            ->update($input, $id, $request->get('user_id'));
 
         return $this->sendSuccessResponse($data, trans('validation.INF.001'));
     }
@@ -81,7 +78,7 @@ class WorkHistoryController extends Controller
      */
     public function delete($id, Request $request)
     {
-        $this->workHistory->delete($id, $request->get('user_id'));
+        WorkHistoryService::getInstance()->delete($id, $request->get('user_id'));
 
         return $this->sendSuccessResponse([], trans('validation.INF.005'));
     }
@@ -94,7 +91,7 @@ class WorkHistoryController extends Controller
      */
     public function detail($id, Request $request)
     {
-        $data = $this->workHistory->detail($id, $request->get('user_id'));
+        $data = WorkHistoryService::getInstance()->detail($id, $request->get('user_id'));
 
         return $this->sendSuccessResponse(new DetailWorkHistoryResource($data));
     }
