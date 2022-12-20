@@ -5,6 +5,8 @@ namespace App\Http\Requests\Admin\Job;
 use App\Models\JobPosting;
 use App\Models\MJobType;
 use App\Models\MWorkType;
+use App\Rules\AfterTimeRule;
+use App\Rules\CheckFullDay;
 use App\Rules\CheckHoursRule;
 use App\Services\Admin\Job\JobService;
 use Illuminate\Foundation\Http\FormRequest;
@@ -56,14 +58,18 @@ class UpdateRequest extends FormRequest
             'start_work_time' => [
                 $requireOrNullable,
                 'string',
+                'date_format:H:i',
                 'max:' . config('validate.work_time_max_length'),
+                new CheckFullDay($this->range_hours_type),
                 new CheckHoursRule($this->range_hours_type, $this->start_work_time_type)
             ],
             'end_work_time' => [
                 $requireOrNullable,
                 'string',
-                'greater_than_field:start_work_time',
+                'date_format:H:i',
                 'max:' . config('validate.work_time_max_length'),
+                new AfterTimeRule($this->range_hours_type, $this->start_work_time),
+                new CheckFullDay($this->range_hours_type),
                 new CheckHoursRule($this->range_hours_type, $this->end_work_time_type),
             ],
             'shifts' => 'nullable|max:' . config('validate.job_posting_textarea_max_length'),
