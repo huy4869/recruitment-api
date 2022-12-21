@@ -127,6 +127,7 @@ class JobTableService extends TableService
     {
         return JobPosting::query()->with([
             'store',
+            'store.owner',
             'status',
             'province',
             'provinceCity',

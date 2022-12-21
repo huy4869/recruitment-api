@@ -131,6 +131,7 @@ class JobTableService extends TableService
             ->join('stores', 'store_id', '=', 'stores.id')
             ->with([
                 'store',
+                'store.owner',
                 'status',
                 'province',
                 'province.provinceDistrict',

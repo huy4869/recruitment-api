@@ -22,6 +22,7 @@ class JobPostingResource extends JsonResource
             'id' => $this['id'],
             'name' => $this['name'],
             'store_name' => $this['store_name'],
+            'company_name' => @$this['store']['owner']['company_name'],
             'banner_image' => $this['banner_image'],
             'postal_code' => $this['postal_code'],
             'address' => [

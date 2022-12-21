@@ -23,7 +23,11 @@ class UserJobDesiredMatchService extends Service
             ->join('job_postings', 'user_job_desired_matches.job_id', '=', 'job_postings.id')
             ->where('job_status_id', JobPosting::STATUS_RELEASE)
             ->where('user_job_desired_matches.user_id', $this->user->id)
-            ->with('job')
+            ->with([
+                'job',
+                'job.store',
+                'job.store.owner',
+            ])
             ->orderBy('suitability_point', 'DESC')
             ->orderBy('released_at', 'DESC')
             ->take(config('common.job_posting.recommend'))
