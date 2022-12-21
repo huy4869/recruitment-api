@@ -132,6 +132,7 @@ class JobService extends Service
             ->whereNotIn('id', $applicationIds)
             ->with([
                 'store',
+                'store.owner',
                 'province',
                 'province.provinceDistrict',
                 'salaryType',
@@ -218,6 +219,7 @@ class JobService extends Service
             ->whereIn('id', $jobIds)
             ->with([
                 'store',
+                'store.owner',
                 'province',
                 'province.provinceDistrict',
                 'salaryType',
@@ -354,6 +356,7 @@ class JobService extends Service
             ->whereNotIn('id', $applicationIds)
             ->with([
                 'store',
+                'store.owner',
                 'province',
                 'province.provinceDistrict',
                 'salaryType',
@@ -403,6 +406,7 @@ class JobService extends Service
         $jobList = JobPosting::query()->released()
             ->with([
                 'store',
+                'store.owner',
                 'province',
                 'province.provinceDistrict',
                 'salaryType',
@@ -433,6 +437,7 @@ class JobService extends Service
             ->join('favorite_jobs', 'job_postings.id', '=', 'favorite_jobs.job_posting_id')
             ->with([
                 'store',
+                'store.owner',
                 'province',
                 'province.provinceDistrict',
                 'salaryType',

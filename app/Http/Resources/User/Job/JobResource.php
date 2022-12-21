@@ -24,6 +24,7 @@ class JobResource extends JsonResource
             'name' => $this->name,
             'banner_image' => FileHelper::getFullUrl(@$this->bannerImage->url),
             'store_name' => $this->store->name,
+            'company_name' => @$this->store->owner->company_name,
             'postal_code' => $this->postal_code,
             'address' => [
                 'province_city' => $this->provinceCity->name,
