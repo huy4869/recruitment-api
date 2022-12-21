@@ -125,7 +125,9 @@ class JobTableService extends TableService
      */
     public function makeNewQuery()
     {
-        return JobPosting::query()->with([
+        return JobPosting::query()
+            ->join('stores', 'stores.id', '=', 'job_postings.store_id')
+            ->with([
             'store',
             'store.owner',
             'status',

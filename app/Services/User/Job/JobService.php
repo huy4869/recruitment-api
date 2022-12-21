@@ -284,6 +284,7 @@ class JobService extends Service
                 },
                 'jobPostingTrashed.applications.interviews',
                 'jobPostingTrashed.storeTrashed',
+                'jobPostingTrashed.storeTrashed.owner',
                 'jobPostingTrashed.provinceCity',
                 'jobPostingTrashed.province',
                 'jobPostingTrashed.province.provinceDistrict',
@@ -794,7 +795,7 @@ class JobService extends Service
                     ->with(['province', 'provinceCity'])
                     ->first();
                 $output .= sprintf('（%s%s%s%s%s）',
-                    $store->postal_code,
+                    $store->postal_code ? '〒' . $store->postal_code : null,
                     $store->province->name,
                     $store->provinceCity->name,
                     $store->address,

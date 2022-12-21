@@ -25,6 +25,7 @@ class FavoriteJobResource extends JsonResource
                 'name' => $jobPosting['name'],
                 'banner_image' => FileHelper::getFullUrl($jobPosting['banner_image']['url'] ?? null),
                 'store_name' => $jobPosting['store_trashed']['name'],
+                'company_name' => $jobPosting['store_trashed']['owner']['company_name'],
                 'interview_status' => $jobPosting['applications'][0]['interviews']['name'] ?? null,
                 'postal_code' => $jobPosting['postal_code'],
                 'address' => [

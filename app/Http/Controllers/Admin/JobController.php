@@ -64,9 +64,9 @@ class JobController extends Controller
 
     /**
      * @param $id
-     * @param CreateRequest $request
+     * @param UpdateRequest $request
      * @return JsonResponse
-     * @throws Exception
+     * @throws InputException
      */
     public function update($id, UpdateRequest $request)
     {
@@ -80,6 +80,9 @@ class JobController extends Controller
                 break;
             case JobPosting::STATUS_RELEASE:
                 $msg = trans('validation.INF.010');
+                break;
+            case JobPosting::STATUS_HIDE:
+                $msg = trans('validation.INF.024');
                 break;
             case JobPosting::STATUS_END:
                 $msg = trans('validation.INF.012');

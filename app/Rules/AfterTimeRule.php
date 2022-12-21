@@ -44,6 +44,6 @@ class AfterTimeRule implements Rule
      */
     public function message()
     {
-        return trans('validation.COM.997');
+        return trans('validation.ERR.031');
     }
 }
