@@ -49,6 +49,7 @@ class ListApplicationResource extends JsonResource
             'job_banner' => FileHelper::getFullUrl(@$data->jobPostingAcceptTrashed->bannerImageAcceptTrashed->url),
             'store_id' => $data->store_id,
             'store_name' => @$data->storeAcceptTrashed->name,
+            'company_name' => @$data->storeAcceptTrashed->owner->company_name,
             'interview_status_id' => $data->interview_status_id,
             'interview_status_name' => @$data->interviews->name,
             'interview_date' => DateTimeHelper::formatDateDayOfWeekJa($data['date']) . $data->hours,

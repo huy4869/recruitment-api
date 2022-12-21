@@ -23,6 +23,7 @@ class DetailJobPostingResource extends JsonResource
     {
         $application = $this['applications'][0] ?? [];
         $dataWorkTime = DateTimeHelper::getStartEndWorkTime($this['start_work_time'], $this['end_work_time'], $this['start_work_time_type'], $this['end_work_time_type'], $this['range_hours_type']);
+        $storeOwner = $this['store']['owner'];
 
         if (count($application)) {
             switch ($application['interview_approach_id']) {
@@ -58,7 +59,7 @@ class DetailJobPostingResource extends JsonResource
             'id' => $this['id'],
             'name' => $this['name'],
             'store_name' => $this['store_name'],
-            'company_name' => $this['store']['owner']['company_name'],
+            'company_name' => $storeOwner['company_name'],
             'pick_up_point' => $this['pick_up_point'],
             'banner_image' => $this['banner_image'],
             'detail_images' => DetailImageResource::collection($this['detail_images']),
@@ -110,6 +111,12 @@ class DetailJobPostingResource extends JsonResource
                     'approach' => $approach,
                 ]
             ] : [],
+            'sns' => [
+                'facebook' => $storeOwner['facebook'],
+                'twitter' => $storeOwner['twitter'],
+                'instagram' => $storeOwner['instagram'],
+                'line' => $storeOwner['line'],
+            ],
             'is_draft' => $this['job_status_id'] == JobPosting::STATUS_DRAFT,
             'is_release' => $this['job_status_id'] == JobPosting::STATUS_RELEASE,
             'is_end' => $this['job_status_id'] == JobPosting::STATUS_END,

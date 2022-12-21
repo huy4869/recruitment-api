@@ -53,6 +53,7 @@ class ListInterviewResource extends JsonResource
             'job_banner' => FileHelper::getFullUrl(@$this->jobPostingAcceptTrashed->bannerImageAcceptTrashed->url),
             'job_name' => @$this->jobPostingAcceptTrashed->name,
             'store_name' => @$this->storeAcceptTrashed->name,
+            'company_name' => @$this->storeAcceptTrashed->owner->company_name,
             'interview_date' => DateTimeHelper::formatDateDayOfWeekJa($this->date) . $this->hours,
             'interview_date_status' => $this->date_status,
             'interview_approach' => [
