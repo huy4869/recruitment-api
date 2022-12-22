@@ -141,7 +141,7 @@ class JobService extends Service
             throw new InputException(trans('response.not_found'));
         }
 
-        if ($data['job_status_id'] != JobPosting::STATUS_DRAFT) {
+        if ($job->job_status_id != JobPosting::STATUS_DRAFT) {
             try {
                 DB::beginTransaction();
 
