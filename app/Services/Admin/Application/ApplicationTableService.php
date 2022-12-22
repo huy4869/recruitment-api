@@ -28,6 +28,8 @@ class ApplicationTableService extends TableService
         'created_at_from' => 'filterByCreatedAt',
         'created_at_to' => 'filterByCreatedAt',
         'interview_status_id' => 'applications.interview_status_id',
+        'stores.province_id' => 'stores.province_id',
+        'stores.id' => 'stores.id'
     ];
 
     /**
@@ -178,6 +180,8 @@ class ApplicationTableService extends TableService
             application_users.age,
             users.first_name as owner_first_name,
             users.last_name as owner_last_name,
-            stores.name as store_name';
+            stores.id as store_id,
+            stores.name as store_name,
+            stores.province_id as store_province_id';
     }
 }
