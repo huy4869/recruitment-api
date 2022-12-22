@@ -112,7 +112,7 @@ class UserService extends Service
 
         $infoSendMail = [
             'email' => $newUser->email,
-            'subject' => trans('mail.subject.verify_register'),
+            'subject' => trans('mail.subject.verify_account'),
             'url' => $url,
         ];
 
