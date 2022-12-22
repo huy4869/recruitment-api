@@ -5,6 +5,7 @@ namespace App\Http\Requests\Recruiter\Job;
 use App\Models\JobPosting;
 use App\Models\MJobType;
 use App\Models\MWorkType;
+use App\Rules\AfterTimeHalfDayRule;
 use App\Rules\AfterTimeRule;
 use App\Rules\CheckFullDay;
 use App\Rules\CheckHoursRule;
@@ -70,6 +71,7 @@ class UpdateRequest extends FormRequest
                 'date_format:H:i',
                 'max:' . config('validate.work_time_max_length'),
                 new AfterTimeRule($this->range_hours_type, $this->start_work_time),
+                new AfterTimeHalfDayRule($this->range_hours_type, $this->start_work_time_type, $this->end_work_time_type, $this->start_work_time),
                 new CheckFullDay($this->range_hours_type),
                 new CheckHoursRule($this->range_hours_type, $this->end_work_time_type),
             ],

@@ -69,6 +69,9 @@ class JobController extends Controller
             case JobPosting::STATUS_RELEASE:
                 $msg = trans('validation.INF.010');
                 break;
+            case JobPosting::STATUS_HIDE:
+                $msg = trans('validation.INF.024');
+                break;
             case JobPosting::STATUS_END:
                 $msg = trans('validation.INF.012');
                 break;
