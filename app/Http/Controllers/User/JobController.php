@@ -237,7 +237,7 @@ class JobController extends Controller
      */
     public function totalJobs()
     {
-        $total = JobService::getInstance()->getTotalJobs();
+        $total = JobService::getInstance()->withUser($this->guard()->user())->getTotalJobs();
 
         return $this->sendSuccessResponse($total);
     }

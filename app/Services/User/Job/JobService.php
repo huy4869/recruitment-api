@@ -744,7 +744,11 @@ class JobService extends Service
      */
     public function getTotalJobs()
     {
-        $totalJobs = JobPosting::query()->released()->count();
+        if ($this->user) {
+            $applicationIds = JobService::getIdJobApplicationCancelOrReject($this->user);
+        }
+
+        $totalJobs = JobPosting::query()->released()->whereNotIn('id', $applicationIds)->count();
 
         return JobHelper::thousandNumberFormat($totalJobs);
     }

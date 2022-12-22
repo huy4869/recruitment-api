@@ -110,7 +110,7 @@ class SearchJobHelper
 
         foreach ($typeIds as $id) {
             $result[] = [
-                'id' => $id,
+                'id' => (int)$id,
                 'name' => $data[$id]
             ];
         }

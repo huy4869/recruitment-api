@@ -151,7 +151,7 @@ class JobHelper
 
         foreach ($typeIds as $id) {
             $result[] = [
-                'id' => $id,
+                'id' => (int)$id,
                 'name' => $data[$id]
             ];
         }
@@ -227,7 +227,7 @@ class JobHelper
 
         foreach ($typeIds as $id) {
             $result[] = [
-                'id' => $id,
+                'id' => (int)$id,
                 'province_name' => $stations[$id]['province_name'],
                 'railway_name' => $stations[$id]['railway_name'],
                 'station_name' => $stations[$id]['station_name'],
@@ -295,7 +295,7 @@ class JobHelper
 
         foreach ($dayIds as $id) {
             $result[] = [
-                'id' => $id,
+                'id' => (int)$id,
                 'name' => $masterDataDays[$id],
             ];
         }

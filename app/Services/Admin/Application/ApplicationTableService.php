@@ -176,6 +176,7 @@ class ApplicationTableService extends TableService
             application_users.last_name,
             application_users.furi_first_name,
             application_users.furi_last_name,
+            application_users.birthday,
             application_users.is_public_avatar,
             application_users.age,
             users.first_name as owner_first_name,
