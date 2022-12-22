@@ -18,6 +18,7 @@ class StoreTableService extends TableService
         'store_name' => 'filterTypes',
         'recruiter_name' => 'filterTypes',
         'owner' => 'filterName',
+        'stores.id' => 'stores.id',
     ];
 
     public function filterName($query, $filter)
