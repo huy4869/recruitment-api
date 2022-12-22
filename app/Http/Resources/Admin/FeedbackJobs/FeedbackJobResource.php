@@ -26,6 +26,7 @@ class FeedbackJobResource extends JsonResource
             'id' => $data->id,
             'user_id' => $data->user_id,
             'email' => $data->user->email,
+            'name' => $data->user->first_name . $data->user->last_name,
             'be_read' => $data->be_read,
             'content' => $data->content,
             'desired_salary' => $data->desired_salary,
