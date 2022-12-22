@@ -176,7 +176,7 @@ class WorkHistoryService extends Service
         }
 
         $lastCurrentRecord = DB::table($object)->where('is_default', MWorkType::NO_DEFAULT)
-            ->latest()
+            ->latest('id')
             ->first();
 
         if ($lastCurrentRecord) {
@@ -230,6 +230,7 @@ class WorkHistoryService extends Service
                 ->get()->pluck('name')->toArray();
             $dataNameDuplicate = [];
             $dataInputName = [];
+            $key = 1;
 
             foreach ($dataNameDiffs as $dataNameDiff) {
                 if (in_array($dataNameDiff, $dataObjects)) {
@@ -237,11 +238,11 @@ class WorkHistoryService extends Service
                 } else {
                     $lastCurrentRecord = MPositionOffice::query()
                         ->where('is_default', MWorkType::NO_DEFAULT)
-                        ->latest()
+                        ->latest('id')
                         ->first();
 
                     if ($lastCurrentRecord) {
-                        $lastId = $lastCurrentRecord->id + 1;
+                        $lastId = $lastCurrentRecord->id + $key;
                     } else {
                         $lastId = self::START_ID_FOR_NOT_DEFAULT_RECORD;
                     }
@@ -253,6 +254,7 @@ class WorkHistoryService extends Service
                         'created_by' => $this->user->id,
                     ];
                     $dataInputName[] = $dataNameDiff;
+                    $key++;
                 }
             }
 
