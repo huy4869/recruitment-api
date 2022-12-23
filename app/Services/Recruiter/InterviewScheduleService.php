@@ -66,7 +66,11 @@ class InterviewScheduleService extends Service
                 $nameUserApplication = @$application->applicationUser->email;
             }
 
-            $data[$applicationDate][$application->hours] = [$nameUserApplication, @$application->user_id, $application->id];
+            $data[$applicationDate][$application->hours][] = [
+                $nameUserApplication,
+                @$application->user_id,
+                $application->id
+            ];
         }
 
         return $data;
@@ -141,9 +145,7 @@ class InterviewScheduleService extends Service
             $isGood = !InterviewScheduleService::RESULT;
             $isNotGood = InterviewScheduleService::RESULT;
             $isHasInterview = InterviewScheduleService::RESULT;
-            $applierUserId = null;
-            $applierId = null;
-            $applierName = '';
+            $applicationUsers = [];
 
             if (isset($storeOffTimes[$date . ' ' . $time])) {
                 $isNotGood = !$isNotGood;
@@ -151,9 +153,13 @@ class InterviewScheduleService extends Service
             }
 
             if (isset($applications[$time])) {
-                $applierName = $applications[$time][0] ?? null;
-                $applierUserId = $applications[$time][1] ?? null;
-                $applierId = $applications[$time][2] ?? null;
+                foreach ($applications[$time] as $userApply) {
+                    $applicationUsers[] = [
+                        'id' => $userApply[2] ?? null,
+                        'user_id' => $userApply[1] ?? null,
+                        'name' => $userApply[0] ?? null,
+                    ];
+                }
                 $isHasInterview = !$isHasInterview;
                 $isNotGood = InterviewScheduleService::RESULT;
                 $isGood = InterviewScheduleService::RESULT;
@@ -164,9 +170,7 @@ class InterviewScheduleService extends Service
                 $isGood = InterviewScheduleService::RESULT;
                 $isNotGood = InterviewScheduleService::RESULT;
                 $isHasInterview = InterviewScheduleService::RESULT;
-                $applierUserId = null;
-                $applierId = null;
-                $applierName = '';
+                $applicationUsers = [];
             }
 
             $data[] = [
@@ -175,9 +179,7 @@ class InterviewScheduleService extends Service
                 'is_good' => $isGood,
                 'is_not_good' => $isNotGood,
                 'is_has_interview' => $isHasInterview,
-                'applier_name' => $applierName,
-                'applier_user_id' => $applierUserId,
-                'applier_id' => $applierId,
+                'application_users' => $applicationUsers
             ];
         }//end foreach
 
@@ -198,9 +200,7 @@ class InterviewScheduleService extends Service
                 'is_good' => InterviewScheduleService::RESULT,
                 'is_not_good' => InterviewScheduleService::RESULT,
                 'is_has_interview' => InterviewScheduleService::RESULT,
-                'applier_name' => '',
-                'applier_user_id' => null,
-                'applier_id' => null,
+                'application_users' => []
             ];
         }
 
