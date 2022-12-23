@@ -12,6 +12,7 @@ use App\Models\MProvinceCity;
 use App\Models\MProvinceDistrict;
 use App\Models\UserLicensesQualification;
 use App\Services\Service;
+use App\Services\User\Job\JobService;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -110,11 +111,15 @@ class LocationService extends Service
      */
     public function getAmountJobInProvince()
     {
+        $user = $this->user;
+        $jobApplicationIds = $user ? JobService::getIdJobApplicationCancelOrReject($this->user) : [];
+
         return DB::table('m_provinces_cities')
             ->select('m_provinces.id as province_id', DB::raw('count(distinct job_postings.id) as amount_job'))
             ->join('m_provinces', 'm_provinces_cities.province_id', '=', 'm_provinces.id')
-            ->leftJoin('job_postings', function ($join) {
+            ->leftJoin('job_postings', function ($join) use ($jobApplicationIds) {
                 $join->on('job_postings.province_id', '=', 'm_provinces.id')
+                    ->whereNot('job_postings.id', $jobApplicationIds)
                     ->where('job_postings.job_status_id', '=', JobPosting::STATUS_RELEASE)
                     ->whereNull('deleted_at');
             })

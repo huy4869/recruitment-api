@@ -29,8 +29,9 @@ class LocationController extends BaseController
             $jobTypeIds = [
                 MJobType::HAIR,
                 MJobType::NAIL,
-                MJobType::CHIRO_CAIRO_OXY_HOTBATH,
                 MJobType::CLINIC,
+                MJobType::CHIRO_CAIRO_OXY_HOTBATH,
+                MJobType::FACIAL_BODY_REMOVAL,
                 MJobType::OTHER
             ];
         }
@@ -45,7 +46,8 @@ class LocationController extends BaseController
      */
     public function amountJobInProvince()
     {
-        $data = LocationService::getInstance()->getAmountJobInProvince();
+        $user = $this->guard()->user();
+        $data = LocationService::getInstance()->withUser($user)->getAmountJobInProvince();
 
         return $this->sendSuccessResponse($data);
     }
