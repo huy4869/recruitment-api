@@ -27,7 +27,7 @@ class UpdateOrCreateInterviewScheduleRequest extends FormRequest
         $isHasInterview = [InterviewScheduleService::NO_HAS_INTERVIEW, InterviewScheduleService::IS_HAS_INTERVIEW];
 
         return [
-            'store_id' => ['required', 'numeric', 'exists:stores,id'],
+            'store_id' => ['required', 'numeric', 'exists:stores'],
             'date' => ['required', 'date', 'after_or_equal:today'],
             'hours' => ['required', 'string', 'in:' . implode(',', config('date.time'))],
             'is_has_interview' => ['required', 'in:' . implode(',', $isHasInterview)],

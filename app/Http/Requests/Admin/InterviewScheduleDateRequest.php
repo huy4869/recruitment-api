@@ -24,7 +24,11 @@ class InterviewScheduleDateRequest extends FormRequest
     public function rules()
     {
         return [
-            'store_id' => ['required', 'numeric', 'exists:stores,id'],
+            'store_id' => [
+                'required',
+                'numeric',
+                'exists:stores'
+            ],
             'date' => ['required', 'date', 'after_or_equal:today'],
         ];
     }

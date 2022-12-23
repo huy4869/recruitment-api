@@ -12,6 +12,7 @@ use App\Rules\CheckFullDay;
 use App\Rules\CheckHoursRule;
 use App\Services\Recruiter\Job\JobService;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CreateRequest extends FormRequest
 {
@@ -42,7 +43,12 @@ class CreateRequest extends FormRequest
 
         return [
             'name' => $requireOrNullable . '|string|max:' . config('validate.string_max_length'),
-            'store_id' => $requireOrNullable . '|integer|exists:stores,id,user_id,' . $recruiter->id,
+            'store_id' => [
+                $requireOrNullable,
+                'integer',
+                Rule::exists('stores', 'id')
+                    ->where('deleted_at')->where('user_id', $recruiter->id),
+            ],
             'job_status_id' => $requireOrNullable . '|integer|in:' . implode(',', $jobStatusIds),
             'pick_up_point' => 'nullable|string|max:' . config('validate.text_max_length'),
             'job_banner' => $requireOrNullable . '|string|url',

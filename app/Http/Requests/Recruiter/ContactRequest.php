@@ -7,6 +7,7 @@ use App\Rules\PhoneFirstChar;
 use App\Rules\PhoneJapan;
 use App\Services\Recruiter\StoreService;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ContactRequest extends FormRequest
 {
@@ -36,7 +37,12 @@ class ContactRequest extends FormRequest
                 new Email(),
                 'max:' . config('validate.string_max_length')
             ],
-            'store_id' => 'required|integer|exists:stores,id,user_id,' . $recruiter->id,
+            'store_id' => [
+                'required',
+                'integer',
+                Rule::exists('stores', 'id')
+                    ->where('deleted_at')->where('user_id', $recruiter->id)
+            ],
             'tel' => [
                 'nullable',
                 new PhoneFirstChar(),
