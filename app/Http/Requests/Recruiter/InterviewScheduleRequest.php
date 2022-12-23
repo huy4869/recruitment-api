@@ -5,6 +5,7 @@ namespace App\Http\Requests\Recruiter;
 use App\Services\Recruiter\InterviewScheduleService;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\Rule;
 
 class InterviewScheduleRequest extends FormRequest
 {
@@ -28,7 +29,12 @@ class InterviewScheduleRequest extends FormRequest
         $isHasInterview = [InterviewScheduleService::NO_HAS_INTERVIEW, InterviewScheduleService::IS_HAS_INTERVIEW];
 
         return [
-            'store_id' => ['required', 'numeric', 'exists:stores,id,user_id,' . Auth::user()->id],
+            'store_id' => [
+                'required',
+                'numeric',
+                Rule::exists('stores', 'id')
+                ->where('deleted_at')->where('user_id', Auth::user()->id),
+            ],
             'date' => ['required', 'date', 'after_or_equal:today'],
             'hours' => ['required', 'string', 'in:' . implode(',', config('date.time'))],
             'is_has_interview' => ['required', 'in:' . implode(',', $isHasInterview)],

@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Rules\CheckPhoneNumber;
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreRequest extends FormRequest
 {
@@ -29,7 +30,12 @@ class StoreRequest extends FormRequest
         $lengthText = config('validate.string_max_length');
 
         return [
-            'user_id' => ['required', 'numeric', 'exists:users,id,role_id,' . User::ROLE_RECRUITER],
+            'user_id' => [
+                'required',
+                'numeric',
+                Rule::exists('users', 'id')
+                    ->where('deleted_at')->where('role_id', User::ROLE_RECRUITER)
+            ],
             'url' => ['nullable', 'string', 'url'],
             'store_name' => ['required', 'string', 'max:' . $lengthText],
             'website' => ['nullable', 'max:' . $lengthText],

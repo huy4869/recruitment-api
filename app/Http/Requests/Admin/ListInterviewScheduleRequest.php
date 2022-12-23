@@ -25,7 +25,7 @@ class ListInterviewScheduleRequest extends FormRequest
     {
         return [
             'start_date' => ['nullable', 'date'],
-            'store_id' => ['required', 'numeric', 'exists:stores,id'],
+            'store_id' => ['required', 'numeric', 'exists:stores'],
         ];
     }
 }

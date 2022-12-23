@@ -5,6 +5,7 @@ namespace App\Http\Requests\Recruiter\User;
 use App\Models\FavoriteUser;
 use App\Models\User;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class FavoriteRequest extends FormRequest
 {
@@ -31,7 +32,12 @@ class FavoriteRequest extends FormRequest
         ];
 
         return [
-            'user_id' => 'required|integer|exists:users,id,role_id,' . User::ROLE_USER,
+            'user_id' => [
+                'required',
+                'integer',
+                Rule::exists('users', 'id')
+                    ->where('deleted_at')->where('role_id', User::ROLE_USER),
+            ],
             'action_type' => 'required|integer|in:' . implode(',', $actionTypes),
         ];
     }

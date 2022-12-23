@@ -9,7 +9,9 @@ use App\Rules\AfterTimeHalfDayRule;
 use App\Rules\AfterTimeRule;
 use App\Rules\CheckFullDay;
 use App\Rules\CheckHoursRule;
+use App\Rules\Recruiter\ExistStoreByRec;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateRequest extends FormRequest
 {
@@ -39,7 +41,12 @@ class UpdateRequest extends FormRequest
 
         return [
             'name' => $requireOrNullable . '|string|max:' . config('validate.string_max_length'),
-            'store_id' => $requireOrNullable . '|integer|exists:stores,id,user_id,' . $recruiter->id,
+            'store_id' => [
+                $requireOrNullable,
+                'integer',
+                Rule::exists('stores', 'id')
+                    ->where('deleted_at')->where('user_id', $recruiter->id),
+                ],
             'job_status_id' => $requireOrNullable . '|integer|exists:m_job_statuses,id',
             'pick_up_point' => 'nullable|string|max:' . config('validate.text_max_length'),
             'job_banner' => $requireOrNullable . '|string|url',

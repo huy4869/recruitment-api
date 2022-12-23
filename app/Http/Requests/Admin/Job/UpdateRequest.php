@@ -39,7 +39,11 @@ class UpdateRequest extends FormRequest
 
         return [
             'name' => $requireOrNullable . '|string|max:' . config('validate.string_max_length'),
-            'store_id' => $requireOrNullable . '|integer|exists:stores,id',
+            'store_id' => [
+                $requireOrNullable,
+                'integer',
+                'exists:stores',
+                ],
             'job_status_id' => $requireOrNullable . '|integer|exists:m_job_statuses,id',
             'pick_up_point' => 'nullable|string|max:' . config('validate.text_max_length'),
             'job_banner' => $requireOrNullable . '|string|url',

@@ -40,7 +40,11 @@ class CreateRequest extends FormRequest
 
         return [
             'name' => $requireOrNullable . '|string|max:' . config('validate.string_max_length'),
-            'store_id' => $requireOrNullable . '|integer|exists:stores,id',
+            'store_id' => [
+                $requireOrNullable,
+                'integer',
+                'exists:stores'
+                ],
             'job_status_id' => $requireOrNullable . '|integer|in:' . implode(',', $jobStatusIds),
             'pick_up_point' => 'nullable|string|max:' . config('validate.text_max_length'),
             'job_banner' => $requireOrNullable . '|string|url',

@@ -4,6 +4,7 @@ namespace App\Http\Requests\User\Application;
 
 use Carbon\Carbon;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class StoreRequest extends FormRequest
 {
@@ -27,7 +28,12 @@ class StoreRequest extends FormRequest
         $now = Carbon::now()->format('Y-m-d');
 
         return [
-            'id' => ['required', 'numeric', 'exists:job_postings,id'],
+            'id' => [
+                'required',
+                'numeric',
+                Rule::exists('job_postings', 'id')
+                ->where('deleted_at'),
+            ],
             'date' => ['required', 'date', 'date_format:Y-m-d', 'after_or_equal:' .  $now, 'before_or_equal:' . Carbon::now()->addDays(config('date.max_day'))],
             'hours' => ['required', 'string', 'in:' . implode(',', config('date.time'))],
             'interview_approaches_id' => ['required', 'numeric'],
