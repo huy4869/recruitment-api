@@ -174,7 +174,7 @@ class ApplicationService extends Service
                         'store_id' => $application->store_id,
                         'application_id' => $application->id,
                         'user_id' => $this->user->id,
-                        'job_id' => $this->job_posting_id,
+                        'job_id' => $application->job_posting_id,
                     ],
                     'title' => trans('notification.N006.title', [
                         'store_name' => $application->store->name,
