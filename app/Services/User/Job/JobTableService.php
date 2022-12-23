@@ -173,6 +173,7 @@ class JobTableService extends TableService
 
         return JobPosting::query()->released()
             ->whereNotIn('id', $applicationIds)
+            ->whereHas('store')
             ->with(
                 'store',
                 'salaryType',
