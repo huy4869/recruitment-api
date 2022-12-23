@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class InterviewScheduleDateRequest extends FormRequest
 {
@@ -27,7 +28,8 @@ class InterviewScheduleDateRequest extends FormRequest
             'store_id' => [
                 'required',
                 'numeric',
-                'exists:stores'
+                Rule::exists('stores', 'id')
+                    ->where('deleted_at'),
             ],
             'date' => ['required', 'date', 'after_or_equal:today'],
         ];

@@ -47,7 +47,7 @@ class DetailJobResource extends JsonResource
                 'type_name' => @$this->salaryType->name,
                 'description' =>  $this->salary_description,
             ],
-            'working_days' => array_map('intval', $this->working_days ?: []),
+            'working_days' => $this->working_days,
             'range_hours_type' => $this->range_hours_type,
             'range_hours_type_name' => $this->range_hours_type == JobPosting::FULL_DAY ? trans('job_posting.range_hours_type.half_day') : trans('job_posting.range_hours_type.full_day'),
             'work_time' => [
