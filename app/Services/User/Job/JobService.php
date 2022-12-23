@@ -744,6 +744,8 @@ class JobService extends Service
      */
     public function getTotalJobs()
     {
+        $applicationIds = [];
+
         if ($this->user) {
             $applicationIds = JobService::getIdJobApplicationCancelOrReject($this->user);
         }

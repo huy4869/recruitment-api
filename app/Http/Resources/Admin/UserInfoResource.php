@@ -51,8 +51,8 @@ class UserInfoResource extends JsonResource
                 'salary_max' => @$desiredConditionUser->salary_max,
             ],
             'address' => [
-                'province_id' => @$desiredConditionUser->province_ids,
-                'province_name' => $this->province_name,
+                'province_id' => array_map('intval', @$desiredConditionUser->province_ids ?: []),
+                'province_name' => @$this->province_name,
             ],
             'job_experiences' => $this->job_experiences,
             'work_types' => $this->work_types,

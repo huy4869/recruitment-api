@@ -86,7 +86,7 @@ class UserInfoTableService extends TableService
     public function makeNewQuery()
     {
         return User::query()->roleUser()
-            ->join('desired_condition_users', 'users.id', '=', 'desired_condition_users.user_id')
+            ->leftjoin('desired_condition_users', 'users.id', '=', 'desired_condition_users.user_id')
             ->with([
                 'avatarBanner',
                 'province',
