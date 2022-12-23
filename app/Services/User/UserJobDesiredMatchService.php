@@ -59,7 +59,9 @@ class UserJobDesiredMatchService extends Service
         $result = [];
 
         foreach ($jobPostings as $job) {
-            $result[] = JobHelper::addFormatJobJsonData($job, $masterData, $userAction);
+            if (!is_null($job)) {
+                $result[] = JobHelper::addFormatJobJsonData($job, $masterData, $userAction);
+            }
         }
 
         return $result;
