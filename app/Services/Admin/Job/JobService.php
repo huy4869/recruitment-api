@@ -36,6 +36,12 @@ class JobService extends Service
         $admin = $this->user;
         $data['created_by'] = $admin->id;
 
+        if (isset($data['working_days'])) {
+            $data['working_days'] = collect($data['working_days'])->filter(function ($item) {
+                return $item;
+            });
+        }
+
         if ($data['job_status_id'] == JobPosting::STATUS_RELEASE) {
             $data['released_at'] = now();
         }
@@ -136,6 +142,12 @@ class JobService extends Service
     public function update($id, $data)
     {
         $job = JobPosting::query()->where('id', $id)->with(['store'])->first();
+
+        if (isset($data['working_days'])) {
+            $data['working_days'] = collect($data['working_days'])->filter(function ($item) {
+                return $item;
+            });
+        }
 
         if (!$job) {
             throw new InputException(trans('response.not_found'));
