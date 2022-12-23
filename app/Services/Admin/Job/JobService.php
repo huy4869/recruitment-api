@@ -235,7 +235,7 @@ class JobService extends Service
             $jobMasterData['masterGenders']
         );
         $job->expericence_types = JobHelper::getTypeName(
-            $job->work_type_ids,
+            $job->experience_ids,
             $jobMasterData['masterJobExperiences']
         );
         $job->feature_types = JobHelper::getFeatureCategoryName(

@@ -583,7 +583,7 @@ class UserService extends Service
                 $jobMasterData['masterWorkTypes']
             );
 
-            $user->province_name = UserHelper::getProvinceName($provinces, $userDesiredCondition->province_ids);
+            $user->province_name = UserHelper::getProvinceName($provinces, @$userDesiredCondition->province_ids);
             $userArr[$user->id] = $user;
         }//end foreach
 

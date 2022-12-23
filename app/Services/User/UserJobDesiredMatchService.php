@@ -13,18 +13,31 @@ use Illuminate\Support\Facades\DB;
 
 class UserJobDesiredMatchService extends Service
 {
+    public static function getIdJobApplication($user)
+    {
+        return $user->applications()->pluck('job_posting_id')->toArray();
+    }
+
     /**
      *
      * @return array
      */
     public function getListMatch()
     {
+        $jobPostingIds = [];
+
+        if ($this->user) {
+            $jobPostingIds = self::getIdJobApplication($this->user);
+        }
+
         $res = UserJobDesiredMatch::query()
             ->join('job_postings', 'user_job_desired_matches.job_id', '=', 'job_postings.id')
             ->where('job_status_id', JobPosting::STATUS_RELEASE)
             ->where('user_job_desired_matches.user_id', $this->user->id)
             ->with([
-                'job',
+                'job' => function ($query) use ($jobPostingIds) {
+                    $query->whereNotIn('id', $jobPostingIds);
+                },
                 'job.store',
                 'job.store.owner',
             ])
