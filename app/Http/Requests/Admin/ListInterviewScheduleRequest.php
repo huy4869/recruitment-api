@@ -3,6 +3,7 @@
 namespace App\Http\Requests\Admin;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class ListInterviewScheduleRequest extends FormRequest
 {
@@ -25,7 +26,8 @@ class ListInterviewScheduleRequest extends FormRequest
     {
         return [
             'start_date' => ['nullable', 'date'],
-            'store_id' => ['required', 'numeric', 'exists:stores'],
+            'store_id' => ['required', 'numeric', Rule::exists('stores', 'id')
+                ->where('deleted_at'),],
         ];
     }
 }

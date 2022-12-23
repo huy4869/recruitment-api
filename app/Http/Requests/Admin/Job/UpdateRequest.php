@@ -11,6 +11,7 @@ use App\Rules\CheckFullDay;
 use App\Rules\CheckHoursRule;
 use App\Services\Admin\Job\JobService;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class UpdateRequest extends FormRequest
 {
@@ -42,7 +43,8 @@ class UpdateRequest extends FormRequest
             'store_id' => [
                 $requireOrNullable,
                 'integer',
-                'exists:stores',
+                Rule::exists('stores', 'id')
+                    ->where('deleted_at'),
                 ],
             'job_status_id' => $requireOrNullable . '|integer|exists:m_job_statuses,id',
             'pick_up_point' => 'nullable|string|max:' . config('validate.text_max_length'),
