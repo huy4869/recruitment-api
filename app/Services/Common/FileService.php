@@ -100,7 +100,13 @@ class FileService extends Service
             $dataImages[] = Str::after($image, 'storage/upload/');
         }
 
-        $existImages = Images::query()->whereIn('url', $dataImages);
+        $existImages = Images::query()
+            ->whereIn('url', $dataImages)
+            ->where(function ($query) use ($object) {
+                $query->where('imageable_id', $object->id)
+                ->orWhere('imageable_id', null);
+            })
+            ->get();
 
         if (!$existImages) {
             return;
