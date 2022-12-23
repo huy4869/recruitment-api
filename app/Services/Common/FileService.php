@@ -105,8 +105,7 @@ class FileService extends Service
             ->where(function ($query) use ($object) {
                 $query->where('imageable_id', $object->id)
                 ->orWhere('imageable_id', null);
-            })
-            ->get();
+            });
 
         if (!$existImages) {
             return;
