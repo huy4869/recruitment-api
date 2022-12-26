@@ -61,6 +61,9 @@ class AppUserResource extends JsonResource
             'user_licenses_qualifications' => $this->userLicensesQualifications->map(function ($item) {
                 return ['id' => $item->id, 'name' => $item->name];
             }),
+            'user_learning_histories' => $this->userLearningHistories->map(function ($item) {
+                return ['id' => $item->id, 'name' => $item->school_name];
+            }),
             'skills' => UserHelper::getSkillUser($this->skills),
             'motivation' => $this->motivation,
             'is_favorite' => !!@$this->favorite,
