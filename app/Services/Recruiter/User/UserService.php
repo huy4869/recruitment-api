@@ -11,9 +11,11 @@ use App\Models\User;
 use App\Services\Service;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
 
 class UserService extends Service
 {
+    const APP_MODE = 1;
     /**
      * @return array
      */
@@ -38,6 +40,49 @@ class UserService extends Service
         return self::getUserInfoForListUser($recruiter, $userNewList);
     }
 
+    public function getAppNewUser($ids = [], $currentId = null)
+    {
+        $relation = [
+            'avatarBanner',
+            'province',
+            'province.provinceDistrict',
+            'desiredConditionUser',
+            'desiredConditionUser.salaryType',
+            'desiredConditionUser.province',
+            'desiredConditionUser.province.provinceDistrict',
+            'favoriteJobs',
+            'userLicensesQualifications',
+        ];
+
+        if ($currentId) {
+            $user = User::query()->roleUser()
+                ->with($relation)
+                ->where('id', $currentId)
+                ->orderBy('created_at', 'desc')
+                ->first();
+        } else {
+            $user = User::query()->roleUser()
+                ->with($relation)
+                ->whereNotIn('id', $ids)
+                ->orderBy('created_at', 'desc')
+                ->first();
+
+            if (
+                is_null($user) &&
+                is_array(Session::get('new_watched_ids')) &&
+                count(Session::get('new_watched_ids'))
+            ) {
+                Session::forget('new_watched_ids');
+                $user = User::query()->roleUser()
+                    ->with($relation)
+                    ->orderBy('created_at', 'desc')
+                    ->first();
+            }
+        }
+
+        return self::getUserInfoForListUser($this->user, [$user]);
+    }
+
     /**
      * @return array
      */
@@ -58,6 +103,55 @@ class UserService extends Service
             ->get();
 
         return self::getUserInfoForListUser($recruiter, $userSuggestList);
+    }
+
+    /**
+     * @return array
+     */
+    public function getAppSuggestUsers($ids = [], $currentId = null)
+    {
+        $recruiter = $this->user;
+        $jobOwnedIds = $recruiter->jobsOwned()->pluck('job_postings.id')->toArray();
+
+        $query = User::query()->roleUser()
+            ->select('users.*', 'user_job_desired_matches.user_id', DB::raw('sum(suitability_point) as point'))
+            ->leftJoin('user_job_desired_matches', 'users.id', '=', 'user_job_desired_matches.user_id')
+            ->leftJoin('user_licenses_qualifications', 'users.id', '=', 'user_job_desired_matches.user_id')
+            ->whereIn('job_id', $jobOwnedIds);
+
+        if ($currentId) {
+            $query->where('users.id', $currentId);
+        } else {
+            $query->whereNotIn('users.id', $ids);
+        }
+
+        $userSuggest = $query
+            ->groupBy('user_job_desired_matches.user_id')
+            ->orderBy('point', 'DESC')
+            ->orderBy('last_login_at', 'DESC')
+            ->orderBy('users.created_at', 'DESC')
+            ->first();
+
+        if (
+            !$currentId &&
+            is_null($userSuggest) &&
+            is_array(Session::get('suggest_watched_ids')) &&
+            count(Session::get('suggest_watched_ids'))
+        ) {
+            Session::forget('suggest_watched_ids');
+            $userSuggest = User::query()->roleUser()
+                ->select('users.*', 'user_job_desired_matches.user_id', DB::raw('sum(suitability_point) as point'))
+                ->leftJoin('user_job_desired_matches', 'users.id', '=', 'user_job_desired_matches.user_id')
+                ->leftJoin('user_licenses_qualifications', 'users.id', '=', 'user_job_desired_matches.user_id')
+                ->whereIn('job_id', $jobOwnedIds)
+                ->groupBy('user_job_desired_matches.user_id')
+                ->orderBy('point', 'DESC')
+                ->orderBy('last_login_at', 'DESC')
+                ->orderBy('users.created_at', 'DESC')
+                ->first();
+        }
+
+        return self::getUserInfoForListUser($recruiter, [$userSuggest]);
     }
 
     /**
