@@ -81,7 +81,11 @@ class UserService extends Service
             }
         }
 
-        return self::getUserInfoForListUser($this->user, [$user]);
+        if ($user) {
+            return self::getUserInfoForListUser($this->user, [$user]);
+        }
+
+        throw new InputException(trans('response.invalid'));
     }
 
     /**
@@ -154,7 +158,11 @@ class UserService extends Service
                 ->first();
         }
 
-        return self::getUserInfoForListUser($recruiter, [$userSuggest]);
+        if ($userSuggest) {
+            return self::getUserInfoForListUser($recruiter, [$userSuggest]);
+        }
+
+        throw new InputException(trans('response.invalid'));
     }
 
     /**
