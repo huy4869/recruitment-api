@@ -4,6 +4,8 @@ namespace App\Http\Resources\Recruiter\User;
 
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
+use App\Helpers\UserHelper;
+use App\Http\Resources\Recruiter\Job\DetailImageResource;
 use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -57,6 +59,7 @@ class UserResource extends JsonResource
             'work_types' => @$this->work_types,
             'job_features' => @$this->job_features,
             'is_favorite' => !!@$this->favorite,
+            'is_new' => UserHelper::isNew($this->created_at),
             'be_deleted' => !!@$this->deleted_at
         ];
     }

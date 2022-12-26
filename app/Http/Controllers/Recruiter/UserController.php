@@ -43,20 +43,33 @@ class UserController extends Controller
     public function newUsers(Request $request)
     {
         $recruiter = $this->guard()->user();
+        $userId = $request->get('user_id');
 
         if ($request->get('mode') == UserService::APP_MODE) {
-            $ids = Session::get('new_watched_ids') ?: [] ;
+            $withoutIds = Session::get('new_watched_ids');
+            $currentId = null;
+
+            if (!$userId && $withoutIds) {
+                $currentId = $withoutIds[count($withoutIds) - 1];
+            }
+
             $users = UserService::getInstance()
                 ->withUser($recruiter)
-                ->getAppNewUser($ids, $request->get('user_id'));
-            Session::push('new_watched_ids', array_key_first($users));
+                ->getAppNewUser($withoutIds, $currentId, $userId);
 
-            return $this->sendSuccessResponse(AppUserResource::collection($users));
+            if ($users) {
+                Session::push('new_watched_ids', array_key_first($users));
+                return $this->sendSuccessResponse(AppUserResource::collection($users));
+            }
         } else {
             $users = UserService::getInstance()->withUser($recruiter)->getNewUsers();
 
-            return $this->sendSuccessResponse(UserResource::collection($users));
+            if ($users) {
+                return $this->sendSuccessResponse(UserResource::collection($users));
+            }
         }
+
+        return $this->sendSuccessResponse([]);
     }
 
     /**
@@ -65,20 +78,33 @@ class UserController extends Controller
     public function suggestUsers(Request $request)
     {
         $recruiter = $this->guard()->user();
+        $userId = $request->get('user_id');
 
         if ($request->get('mode') == UserService::APP_MODE) {
-            $ids = Session::get('suggest_watched_ids') ?: [] ;
+            $withoutIds = Session::get('suggest_watched_ids');
+            $currentId = null;
+
+            if (!$userId && $withoutIds) {
+                $currentId = $withoutIds[count($withoutIds) - 1];
+            }
+
             $users = UserService::getInstance()
                 ->withUser($recruiter)
-                ->getAppSuggestUsers($ids, $request->get('user_id'));
-            Session::push('suggest_watched_ids', array_key_first($users));
+                ->getAppSuggestUsers($withoutIds, $currentId, $userId);
 
-            return $this->sendSuccessResponse(AppUserResource::collection($users));
+            if ($users) {
+                Session::push('suggest_watched_ids', array_key_first($users));
+                return $this->sendSuccessResponse(AppUserResource::collection($users));
+            }
         } else {
-            $users = UserService::getInstance()->withUser($recruiter)->getSuggestUsers();
+            $users = UserService::getInstance()->withUser($recruiter)->getNewUsers();
 
-            return $this->sendSuccessResponse(UserResource::collection($users));
+            if ($users) {
+                return $this->sendSuccessResponse(UserResource::collection($users));
+            }
         }
+
+        return $this->sendSuccessResponse([]);
     }
 
     /**

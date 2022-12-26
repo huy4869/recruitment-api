@@ -5,6 +5,7 @@ namespace App\Helpers;
 use App\Models\MProvince;
 use App\Services\Recruiter\UserProfileService;
 use App\Services\User\Job\JobService;
+use Carbon\Carbon;
 
 class UserHelper
 {
@@ -149,5 +150,20 @@ class UserHelper
         }
 
         return $result;
+    }
+
+    /**
+     * @param $date
+     * @return bool
+     */
+    public static function isNew($date)
+    {
+        if (!$date) {
+            return false;
+        }
+
+        $twoWeekAgo = Carbon::now()->subDays(config('validate.date_range.new_user_marker'));
+
+        return $date >= $twoWeekAgo;
     }
 }
