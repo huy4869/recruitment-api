@@ -3,6 +3,7 @@
 namespace App\Services\Recruiter;
 
 use App\Models\MFeedbackType;
+use App\Models\MInterviewStatus;
 use App\Models\MJobFeature;
 use App\Models\MJobFeatureCategory;
 use App\Models\MJobType;
@@ -81,7 +82,7 @@ class MasterDataService extends Service
 
         'm_interviews_status' => [
             'driver' => self::DRIVER_CUSTOM,
-            'target' => 'getMasterDataName',
+            'target' => 'getInterviewStatuses',
         ],
 
         'm_job_experiences' => [
@@ -531,6 +532,19 @@ class MasterDataService extends Service
         }
 
         return $result;
+    }
+
+    protected function getInterviewStatuses() {
+        $statuses = MInterviewStatus::query()
+            ->where('id', '!=', MInterviewStatus::STATUS_CANCELED)
+            ->get();
+
+        return $statuses->map(function($item) {
+            return [
+                'id' => $item->id,
+                'name' => $item->name,
+            ];
+        });
     }
 
     /**
