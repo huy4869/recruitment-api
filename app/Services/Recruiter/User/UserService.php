@@ -6,9 +6,11 @@ use App\Exceptions\InputException;
 use App\Helpers\JobHelper;
 use App\Helpers\UserHelper;
 use App\Models\FavoriteUser;
+use App\Models\Image;
 use App\Models\Notification;
 use App\Models\User;
 use App\Services\Service;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
@@ -23,6 +25,11 @@ class UserService extends Service
     {
         $recruiter = $this->user;
         $userNewList = User::query()->roleUser()
+            ->where('created_at', '>=', DB::raw(sprintf(
+                "DATE_SUB('%s', INTERVAL %s DAY)",
+                Carbon::parse()->format('Y-m-d'),
+                config('validate.date_range.new_user_marker')
+            )))
             ->with([
                 'avatarBanner',
                 'province',
@@ -40,10 +47,11 @@ class UserService extends Service
         return self::getUserInfoForListUser($recruiter, $userNewList);
     }
 
-    public function getAppNewUser($ids = [], $currentId = null)
+    public function getAppNewUser($ids = [], $currentId = null, $userId = null)
     {
         $relation = [
             'avatarBanner',
+            'avatarDetails',
             'province',
             'province.provinceDistrict',
             'desiredConditionUser',
@@ -55,14 +63,22 @@ class UserService extends Service
             'userLearningHistories',
         ];
 
+        $whereDate = DB::raw(sprintf(
+            "DATE_SUB('%s', INTERVAL %s DAY)",
+            Carbon::parse()->format('Y-m-d'),
+            config('validate.date_range.new_user_marker')
+        ));
+
         if ($currentId) {
             $user = User::query()->roleUser()
-                ->with($relation)
+                ->where('created_at', '>=', $whereDate)
                 ->where('id', $currentId)
+                ->with($relation)
                 ->orderBy('created_at', 'desc')
                 ->first();
         } else {
             $user = User::query()->roleUser()
+                ->where('created_at', '>=', $whereDate)
                 ->with($relation)
                 ->whereNotIn('id', $ids)
                 ->orderBy('created_at', 'desc')
@@ -74,18 +90,19 @@ class UserService extends Service
                 count(Session::get('new_watched_ids'))
             ) {
                 Session::forget('new_watched_ids');
-                $user = User::query()->roleUser()
-                    ->with($relation)
+                $user = User::query()->roleUser()->where('created_at', '>=', $whereDate);
+
+                if ($userId) {
+                    $user = $user->where('id', '!=', $userId);
+                }
+
+                $user = $user->with($relation)
                     ->orderBy('created_at', 'desc')
                     ->first();
             }
         }
 
-        if ($user) {
-            return self::getUserInfoForListUser($this->user, [$user]);
-        }
-
-        throw new InputException(trans('response.invalid'));
+        return $user ? self::getUserInfoForListUser($this->user, [$user]) : null;
     }
 
     /**
@@ -104,6 +121,7 @@ class UserService extends Service
             ->orderBy('point', 'DESC')
             ->orderBy('last_login_at', 'DESC')
             ->orderBy('users.created_at', 'DESC')
+            ->with('avatarBanner')
             ->take(config('paginate.user.suggest_amount'))
             ->get();
 
@@ -113,7 +131,7 @@ class UserService extends Service
     /**
      * @return array
      */
-    public function getAppSuggestUsers($ids = [], $currentId = null)
+    public function getAppSuggestUsers($ids = [], $currentId = null, $userId = null)
     {
         $recruiter = $this->user;
         $jobOwnedIds = $recruiter->jobsOwned()->pluck('job_postings.id')->toArray();
@@ -126,17 +144,22 @@ class UserService extends Service
             ->whereIn('job_id', $jobOwnedIds);
 
         if ($currentId) {
-            $query->where('users.id', $currentId);
+            $userSuggest = $query->where('users.id', $currentId)
+                ->groupBy('user_job_desired_matches.user_id')
+                ->orderBy('point', 'DESC')
+                ->orderBy('last_login_at', 'DESC')
+                ->orderBy('users.created_at', 'DESC')
+                ->with(['avatarBanner', 'avatarDetails'])
+                ->first();
         } else {
-            $query->whereNotIn('users.id', $ids);
+            $userSuggest = $query->whereNotIn('users.id', $ids)
+                ->groupBy('user_job_desired_matches.user_id')
+                ->orderBy('point', 'DESC')
+                ->orderBy('last_login_at', 'DESC')
+                ->orderBy('users.created_at', 'DESC')
+                ->with(['avatarBanner', 'avatarDetails'])
+                ->first();
         }
-
-        $userSuggest = $query
-            ->groupBy('user_job_desired_matches.user_id')
-            ->orderBy('point', 'DESC')
-            ->orderBy('last_login_at', 'DESC')
-            ->orderBy('users.created_at', 'DESC')
-            ->first();
 
         if (
             !$currentId &&
@@ -150,24 +173,26 @@ class UserService extends Service
                 ->leftJoin('user_job_desired_matches', 'users.id', '=', 'user_job_desired_matches.user_id')
                 ->leftJoin('user_licenses_qualifications', 'users.id', '=', 'user_licenses_qualifications.user_id')
                 ->leftJoin('user_learning_histories', 'users.id', '=', 'user_learning_histories.user_id')
-                ->whereIn('job_id', $jobOwnedIds)
-                ->groupBy('user_job_desired_matches.user_id')
+                ->whereIn('job_id', $jobOwnedIds);
+
+            if ($userId) {
+                $userSuggest = $userSuggest->where('users.id', '!=', $userId);
+            }
+
+            $userSuggest = $userSuggest->groupBy('user_job_desired_matches.user_id')
                 ->orderBy('point', 'DESC')
                 ->orderBy('last_login_at', 'DESC')
                 ->orderBy('users.created_at', 'DESC')
+                ->with(['avatarBanner', 'avatarDetails'])
                 ->first();
         }
 
-        if ($userSuggest) {
-            return self::getUserInfoForListUser($recruiter, [$userSuggest]);
-        }
-
-        throw new InputException(trans('response.invalid'));
+        return $userSuggest ? self::getUserInfoForListUser($recruiter, [$userSuggest]) : null;
     }
 
     /**
      * @param $data
-     * @return bool
+     * @return bool[]
      * @throws InputException
      * @throws Exception
      */
@@ -226,7 +251,10 @@ class UserService extends Service
                 }
 
                 DB::commit();
-                return true;
+
+                return [
+                    'is_matching' => count($userNotifyData) > 0
+                ];
             } catch (Exception $e) {
                 DB::rollBack();
                 throw $e;
@@ -238,7 +266,7 @@ class UserService extends Service
 
     /**
      * @param $data
-     * @return bool
+     * @return false[]
      * @throws InputException
      */
     public function unfavoriteUser($data)
@@ -248,7 +276,11 @@ class UserService extends Service
         if ($user) {
             $recruiter = $this->user;
 
-            return $recruiter->favoriteUsers()->where('favorite_user_id', $user->id)->delete();
+            $recruiter->favoriteUsers()->where('favorite_user_id', $user->id)->delete();
+
+            return [
+                'is_matching' => false
+            ];
         }
 
         throw new InputException(trans('response.invalid'));

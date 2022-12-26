@@ -21,6 +21,8 @@ return [
     'date_range' => [
         'new_job_marker' => 14,
         'new_job_list' => 14,
+        'new_user_marker' => 14,
+        'new_user_list' => 14,
     ],
     'min_age' => 20,
     'notify_user_interview_delay' => env('NOTIFY_INTERVIEW_DELAY', 1),

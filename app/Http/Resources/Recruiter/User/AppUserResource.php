@@ -5,6 +5,7 @@ namespace App\Http\Resources\Recruiter\User;
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
 use App\Helpers\UserHelper;
+use App\Http\Resources\Recruiter\Job\DetailImageResource;
 use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -25,6 +26,9 @@ class AppUserResource extends JsonResource
             'id' => $this->id,
             'avatar' => $this->is_public_avatar == User::STATUS_PUBLIC_AVATAR || $this->matching
                 ? FileHelper::getFullUrl(@$this->avatarBanner->url)
+                : null,
+            'avatar_details' => $this->is_public_avatar == User::STATUS_PUBLIC_AVATAR || $this->matching
+                ? DetailImageResource::collection(@$this->avatarDetails)
                 : null,
             'first_name' => $this->first_name,
             'last_name' => $this->last_name,
@@ -67,6 +71,7 @@ class AppUserResource extends JsonResource
             'skills' => UserHelper::getSkillUser($this->skills),
             'motivation' => $this->motivation,
             'is_favorite' => !!@$this->favorite,
+            'is_new' => UserHelper::isNew($this->created_at),
             'be_deleted' => !!@$this->deleted_at
         ];
     }
