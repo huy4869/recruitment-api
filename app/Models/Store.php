@@ -19,6 +19,7 @@ class Store extends Model
     protected $table = 'stores';
 
     protected $fillable = [
+        'hex_color',
         'user_id',
         'specialize_ids',
         'manager_name',

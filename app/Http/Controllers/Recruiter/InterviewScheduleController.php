@@ -36,8 +36,8 @@ class InterviewScheduleController extends Controller
     {
         $recruiter = $this->guard()->user();
         $date = $request->get('start_date');
-        $storeId = $request->get('store_id');
-        $data = $this->interviewScheduleService->withUser($recruiter)->getInterviewSchedule($date, $storeId);
+        $storeIds = $request->get('store_ids');
+        $data = $this->interviewScheduleService->withUser($recruiter)->getInterviewSchedule($date, $storeIds);
 
         return $this->sendSuccessResponse($data);
     }

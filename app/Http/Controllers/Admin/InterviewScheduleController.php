@@ -36,7 +36,7 @@ class InterviewScheduleController extends Controller
      */
     public function getInterviewSchedule(ListInterviewScheduleRequest $request)
     {
-        $inputs = $request->only(['start_date', 'store_id']);
+        $inputs = $request->only(['start_date', 'store_ids']);
         $data = $this->interviewScheduleService->getInterviewSchedule($inputs);
 
         return $this->sendSuccessResponse($data);
