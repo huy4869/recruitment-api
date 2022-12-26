@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Recruiter;
 use App\Exceptions\InputException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Recruiter\User\FavoriteRequest;
+use App\Http\Resources\Recruiter\User\AppUserResource;
 use App\Http\Resources\Recruiter\User\UserCollection;
 use App\Http\Resources\Recruiter\User\UserResource;
 use App\Models\FavoriteUser;
@@ -12,6 +13,7 @@ use App\Services\Recruiter\User\UserService;
 use App\Services\Recruiter\User\UserTableService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Session;
 
 class UserController extends Controller
 {
@@ -38,23 +40,45 @@ class UserController extends Controller
     /**
      * @return JsonResponse
      */
-    public function newUsers()
+    public function newUsers(Request $request)
     {
         $recruiter = $this->guard()->user();
-        $users = UserService::getInstance()->withUser($recruiter)->getNewUsers();
 
-        return $this->sendSuccessResponse(UserResource::collection($users));
+        if ($request->get('mode') == UserService::APP_MODE) {
+            $ids = Session::get('new_watched_ids') ?: [] ;
+            $users = UserService::getInstance()
+                ->withUser($recruiter)
+                ->getAppNewUser($ids, $request->get('user_id'));
+            Session::push('new_watched_ids', array_key_first($users));
+
+            return $this->sendSuccessResponse(AppUserResource::collection($users));
+        } else {
+            $users = UserService::getInstance()->withUser($recruiter)->getNewUsers();
+
+            return $this->sendSuccessResponse(UserResource::collection($users));
+        }
     }
 
     /**
      * @return JsonResponse
      */
-    public function suggestUsers()
+    public function suggestUsers(Request $request)
     {
         $recruiter = $this->guard()->user();
-        $users = UserService::getInstance()->withUser($recruiter)->getSuggestUsers();
 
-        return $this->sendSuccessResponse(UserResource::collection($users));
+        if ($request->get('mode') == UserService::APP_MODE) {
+            $ids = Session::get('suggest_watched_ids') ?: [] ;
+            $users = UserService::getInstance()
+                ->withUser($recruiter)
+                ->getAppSuggestUsers($ids, $request->get('user_id'));
+            Session::push('suggest_watched_ids', array_key_first($users));
+
+            return $this->sendSuccessResponse(AppUserResource::collection($users));
+        } else {
+            $users = UserService::getInstance()->withUser($recruiter)->getSuggestUsers();
+
+            return $this->sendSuccessResponse(UserResource::collection($users));
+        }
     }
 
     /**
