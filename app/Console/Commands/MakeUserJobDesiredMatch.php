@@ -16,7 +16,7 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
-class makeUserJobDesiredMatch extends Command
+class MakeUserJobDesiredMatch extends Command
 {
     const QUANTITY_CHUNK = 1000;
     /**
