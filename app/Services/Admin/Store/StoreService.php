@@ -73,6 +73,7 @@ class StoreService extends Service
             $data['created_by'] = $this->user->id;
             $data['name'] = $data['store_name'];
             $data['founded_year'] = str_replace('/', '', $data['founded_year']);
+            $data['color'] = CommonHelper::makeRgbFromValue(rand(100000000,999999999));
             $store = Store::create($data);
             FileService::getInstance()->updateImageable($store, $dataImage, [Image::STORE_BANNER]);
 
@@ -199,6 +200,7 @@ class StoreService extends Service
         foreach ($stores as $store) {
             $result[] = [
                 'id' => $store->id,
+                'hex_color' => $store->hex_color,
                 'name' => $store->name,
                 'province_id' => $store->province_id,
                 'province_city_id' => $store->province_city_id

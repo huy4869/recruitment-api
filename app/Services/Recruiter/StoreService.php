@@ -3,9 +3,11 @@
 namespace App\Services\Recruiter;
 
 use App\Exceptions\InputException;
+use App\Helpers\CommonHelper;
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
 use App\Helpers\JobHelper;
+use App\Helpers\StringHelper;
 use App\Models\Application;
 use App\Models\Image;
 use App\Models\JobPosting;
@@ -143,6 +145,7 @@ class StoreService extends Service
         foreach ($recruiterStores as $store) {
             $result[] = [
                 'id' => $store->id,
+                'hex_color' => $store->hex_color,
                 'name' => $store->name,
                 'province_id' => $store->province_id,
                 'province_city_id' => $store->province_city_id
@@ -178,12 +181,14 @@ class StoreService extends Service
     public function store($data)
     {
         $dataImage = array(FileHelper::fullPathNotDomain($data['url']));
+
         try {
             DB::beginTransaction();
             $data['user_id'] = $this->user->id;
             $data['created_by'] = $this->user->id;
             $data['name'] = $data['store_name'];
             $data['founded_year'] = str_replace('/', '', $data['founded_year']);
+            $data['color'] = CommonHelper::makeRgbFromValue(rand(100000000,999999999));
             $store = Store::create($data);
             FileService::getInstance()->updateImageable($store, $dataImage, [Image::STORE_BANNER]);
 

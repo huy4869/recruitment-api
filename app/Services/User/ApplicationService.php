@@ -348,33 +348,6 @@ class ApplicationService extends Service
             return $this->userUpdateApplication($application, $data);
         }
 
-        $applications = Application::query()
-            ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW])
-            ->where('id', '!=', $applicationId)
-            ->whereDate('date', $date)
-            ->where('hours', '=', $hours)
-            ->where(function ($query) use ($application) {
-                $query->where('user_id', '=', $application->user_id)
-                    ->orWhere('job_posting_id', '=', $application->job_posting_id);
-            })
-            ->exists();
-
-        if ($applications) {
-            throw new InputException(trans('validation.ERR.036'));
-        }
-
-        $storeInterviewApplications = Application::query()
-            ->where('store_id', '=', $application->store_id)
-            ->where('date', '=', $date . ' 00:00:00')
-            ->where('hours', '=', $hours)
-            ->where('id', '!=', $application->id)
-            ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW])
-            ->exists();
-
-        if ($storeInterviewApplications) {
-            throw new InputException(trans('validation.ERR.036'));
-        }
-
         $month = Carbon::parse($data['date'])->firstOfMonth()->format('Y-m-d');
         $storeOffTimes = StoreOffTime::query()->where('store_id', '=', $application->store_id)->first();
 

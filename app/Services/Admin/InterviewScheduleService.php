@@ -70,10 +70,10 @@ class InterviewScheduleService extends Service
                 $nameUserApplication = @$application->applicationUser->email;
             }
 
-            $data[$applicationDate][$application->hours] = [
-                'name' => $nameUserApplication,
-                'application_id' => $application->id,
-                'user_id' => $application->user_id,
+            $data[$applicationDate][$application->hours][] = [
+                $nameUserApplication,
+                @$application->user_id,
+                $application->id
             ];
         }
 
@@ -150,9 +150,7 @@ class InterviewScheduleService extends Service
             $isGood = !InterviewScheduleService::RESULT;
             $isNotGood = InterviewScheduleService::RESULT;
             $isHasInterview = InterviewScheduleService::RESULT;
-            $applierName = '';
-            $applierId = null;
-            $applierUserId = null;
+            $applicationUsers = [];
 
             if (isset($storeOffTimes[$date . ' ' . $time])) {
                 $isNotGood = !$isNotGood;
@@ -160,9 +158,13 @@ class InterviewScheduleService extends Service
             }
 
             if (isset($applications[$time])) {
-                $applierName = $applications[$time]['name'];
-                $applierId = $applications[$time]['application_id'];
-                $applierUserId = $applications[$time]['user_id'];
+                foreach ($applications[$time] as $userApply) {
+                    $applicationUsers[] = [
+                        'id' => $userApply[2] ?? null,
+                        'user_id' => $userApply[1] ?? null,
+                        'name' => $userApply[0] ?? null,
+                    ];
+                }
                 $isHasInterview = !$isHasInterview;
                 $isNotGood = InterviewScheduleService::RESULT;
                 $isGood = InterviewScheduleService::RESULT;
@@ -173,9 +175,7 @@ class InterviewScheduleService extends Service
                 $isGood = InterviewScheduleService::RESULT;
                 $isNotGood = InterviewScheduleService::RESULT;
                 $isHasInterview = InterviewScheduleService::RESULT;
-                $applierName = '';
-                $applierId = null;
-                $applierUserId = null;
+                $applicationUsers = [];
             }
 
             $data[] = [
@@ -184,9 +184,7 @@ class InterviewScheduleService extends Service
                 'is_good' => $isGood,
                 'is_not_good' => $isNotGood,
                 'is_has_interview' => $isHasInterview,
-                'applier_name' => $applierName,
-                'applier_id' => $applierId,
-                'applier_user_id' => $applierUserId,
+                'application_users' => $applicationUsers
             ];
         }//end foreach
 
@@ -207,9 +205,7 @@ class InterviewScheduleService extends Service
                 'is_good' => InterviewScheduleService::RESULT,
                 'is_not_good' => InterviewScheduleService::RESULT,
                 'is_has_interview' => InterviewScheduleService::RESULT,
-                'applier_name' => '',
-                'applier_id' => '',
-                'applier_user_id' => '',
+                'application_users' => []
             ];
         }
 
@@ -253,32 +249,6 @@ class InterviewScheduleService extends Service
 
         if ($date == $dateApplication && $hours == $hoursApplication) {
             return $application->update($data);
-        }
-
-        $applications = Application::query()
-            ->where('interview_status_id', '=', MInterviewStatus::STATUS_WAITING_INTERVIEW)
-            ->where('id', '!=', $applicationId)
-            ->whereDate('date', $date)
-            ->where('hours', '=', $hours)
-            ->where(function ($query) use ($application) {
-                $query->where('user_id', '=', $application->user_id)
-                    ->orWhere('job_posting_id', '=', $application->job_posting_id);
-            })
-            ->exists();
-
-        if ($applications) {
-            throw new InputException(trans('validation.ERR.036'));
-        }
-
-        $userApplications = Application::query()
-            ->where('store_id', '=', $application->store_id)
-            ->where('date', '=', $date . ' 00:00:00')
-            ->where('hours', '=', $hours)
-            ->where('id', '!=', $application->id)
-            ->exists();
-
-        if ($userApplications) {
-            throw new InputException(trans('validation.ERR.036'));
         }
 
         $month = Carbon::parse($data['date'])->firstOfMonth()->format('Y-m-d');

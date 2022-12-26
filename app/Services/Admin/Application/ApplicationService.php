@@ -118,31 +118,6 @@ class ApplicationService extends Service
             return true;
         }
 
-        $applications = Application::query()
-            ->where('id', '!=', $application->id)
-            ->whereDate('date', $date)
-            ->where('hours', '=', $hours)
-            ->where(function ($query) use ($application) {
-                $query->where('user_id', '=', $application->user_id)
-                    ->orWhere('job_posting_id', '=', $application->job_posting_id);
-            })
-            ->exists();
-
-        if ($applications) {
-            throw new InputException(trans('validation.ERR.036'));
-        }
-
-        $recruiterInterviewApplications = Application::query()
-            ->where('store_id', '=', $application->store_id)
-            ->where('date', '=', $date . ' 00:00:00')
-            ->where('hours', '=', $hours)
-            ->where('id', '!=', $application->id)
-            ->exists();
-
-        if ($recruiterInterviewApplications) {
-            throw new InputException(trans('validation.ERR.036'));
-        }
-
         $month = Carbon::parse($data['date'])->firstOfMonth()->format('Y-m-d');
         $storeOffTimes = StoreOffTime::query()->where('store_id', '=', $application->store_id)->first();
 

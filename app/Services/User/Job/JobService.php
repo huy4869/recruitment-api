@@ -766,21 +766,6 @@ class JobService extends Service
     public function detailJobUserApplication($id, $application = null)
     {
         $jobPosting = $this->checkJobPosting($id);
-        $now = now()->format('Y-m-d 00:00:00');
-
-        $storeInterviewApplications = Application::query()
-            ->where('store_id', '=', $jobPosting->store_id)
-            ->where('job_posting_id', '!=', $jobPosting->id)
-            ->where('date', '>=', $now)
-            ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW])
-            ->get();
-        $applicationsTime = $jobPosting->applications;
-        $userApplicationsTime = Application::query()
-            ->where('user_id', '=', $this->user->id)
-            ->where('job_posting_id', '!=', $jobPosting->id)
-            ->whereDate('date', '>=', $now)
-            ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW])
-            ->get();
         $storeOffTimes = StoreOffTime::query()->where('store_id', '=', $jobPosting->store_id)->first();
         $storeOffTimes = $storeOffTimes ? $storeOffTimes->off_times : [];
         $monthNow = now()->firstOfMonth()->format('Y-m-d');
@@ -817,9 +802,6 @@ class JobService extends Service
 
         return [
             'time' => $this->resultDate(
-                self::resultApplication($applicationsTime),
-                self::resultApplication($userApplicationsTime),
-                self::resultApplication($storeInterviewApplications),
                 self::resultStoreOffTimes([$monthNow, $monthDay], $storeOffTimes),
                 $application
             ),
@@ -856,24 +838,18 @@ class JobService extends Service
     }
 
     /**
-     * @param $applicationsTime
-     * @param $userApplicationsTime
-     * @param $storeApplicationOther
      * @param $storeOffTimes
      * @param null $application
-     * @return mixed
+     * @return array
      */
-    public function resultDate($applicationsTime, $userApplicationsTime, $storeApplicationOther, $storeOffTimes, $application = null)
+    public function resultDate($storeOffTimes, $application = null)
     {
         $dateStart = [];
         $i = 0;
 
         while ($i <= config('date.max_date')) {
             $dateCheck = now()->addDays($i)->format('Y-m-d');
-            $applicationsTimes = $applicationsTime[$dateCheck] ?? [];
-            $userApplicationsTimes = $userApplicationsTime[$dateCheck] ?? [];
-            $recruiterApplicationOthers = $storeApplicationOther[$dateCheck] ?? [];
-            $timeChecks = array_merge($applicationsTimes, $userApplicationsTimes, $recruiterApplicationOthers);
+            $timeChecks = [];
             $dataHours = preg_grep('/' . $dateCheck . '/i', $storeOffTimes);
 
             foreach ($dataHours as $dataHour) {
@@ -914,7 +890,7 @@ class JobService extends Service
         $currentHour = DateTimeHelper::getTime();
         $endTime = strtotime(date('Y-m-d' . config('date.time_max')));
         $checkTime = array_search($currentHour, config('date.time'));
-        $checkTime = config('date.range_time') + ($checkTime ? $checkTime : 0);
+        $checkTime = config('date.range_time') + ($checkTime ?? 0);
 
         foreach (config('date.time') as $key => $time) {
             if (in_array($time, $timeCoincides) ||
@@ -970,31 +946,6 @@ class JobService extends Service
 
         if ($application) {
             throw new InputException(trans('response.not_found'));
-        }
-
-        $applications = Application::query()
-            ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW])
-            ->whereDate('date', '=', $date)
-            ->where('hours', '=', $hours)
-            ->where(function ($query) use ($jobPosting) {
-                $query->where('user_id', '=', $this->user->id)
-                    ->orWhere('job_posting_id', '=', $jobPosting->id);
-            })
-            ->exists();
-
-        if ($applications) {
-            throw new InputException(trans('validation.ERR.036'));
-        }
-
-        $storeInterviewApplications = Application::query()
-            ->where('store_id', '=', $jobPosting->store_id)
-            ->whereDate('date', '=', $date . ' 00:00:00')
-            ->where('hours', '=', $hours)
-            ->whereIn('interview_status_id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW])
-            ->exists();
-
-        if ($storeInterviewApplications) {
-            throw new InputException(trans('validation.ERR.036'));
         }
 
         $month = Carbon::parse($data['date'])->firstOfMonth()->format('Y-m-d');
