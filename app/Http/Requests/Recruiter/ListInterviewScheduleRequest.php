@@ -27,12 +27,9 @@ class ListInterviewScheduleRequest extends FormRequest
     {
         return [
             'start_date' => ['nullable', 'date'],
-            'store_id' => [
-                'required',
-                'numeric',
-                Rule::exists('stores', 'id')
-                ->where('deleted_at')->where('user_id', Auth::user()->id),
-            ],
+            'store_ids' => ['array', 'nullable'],
+            'store_ids.*' => ['numeric', Rule::exists('stores', 'id')
+                ->where('deleted_at')->where('user_id', Auth::user()->id)],
         ];
     }
 }

@@ -22,16 +22,21 @@ class InterviewScheduleService extends Service
 
     /**
      * @param $date
-     * @param $storeId
+     * @param $storeIds
      * @return array
      */
-    public function getInterviewSchedule($date, $storeId)
+    public function getInterviewSchedule($date, $storeIds)
     {
         $date = DateTimeHelper::firstDayOfWeek($date);
 
         if ($date) {
-            $storeOffTimes = $this->getStoreOffTimes($date, $storeId);
-            $applications = $this->getApplicationOffTimes($date, $storeId);
+            $storeOffTimes = [];
+
+            if ($storeIds && count($storeIds) == 1) {
+                $storeOffTimes = $this->getStoreOffTimes($date, $storeIds);
+            }
+
+            $applications = $this->getApplicationOffTimes($date, $storeIds);
 
             return $this->resultDate($date, $storeOffTimes, $applications);
         }
@@ -41,23 +46,25 @@ class InterviewScheduleService extends Service
 
     /**
      * @param $date
-     * @param $storeId
+     * @param array $storeIds
      * @return array
      */
-    public function getApplicationOffTimes($date, $storeId)
+    public function getApplicationOffTimes($date, $storeIds = [])
     {
         $data = [];
         $startDate = now()->format(config('date.format_date'));
         $endDate = Carbon::parse($date)->addDays(config('date.day_of_week'))->format(config('date.format_date'));
         $applications = Application::query()
             ->with('applicationUser')
-            ->where('store_id', '=', $storeId)
             ->whereDate('date', '>=', $startDate)
             ->whereDate('date', '<=', $endDate)
-            ->where('interview_status_id', '=', MInterviewStatus::STATUS_WAITING_INTERVIEW)
-            ->get();
+            ->where('interview_status_id', '=', MInterviewStatus::STATUS_WAITING_INTERVIEW);
 
-        foreach ($applications as $application) {
+        if ($storeIds) {
+            $applications->whereIn('store_id', $storeIds);
+        }
+
+        foreach ($applications->get() as $application) {
             $applicationDate = explode(' ', $application->date)[0];
 
             if (@$application->applicationUser->first_name && @$application->applicationUser->last_name) {
@@ -69,7 +76,8 @@ class InterviewScheduleService extends Service
             $data[$applicationDate][$application->hours][] = [
                 $nameUserApplication,
                 @$application->user_id,
-                $application->id
+                $application->id,
+                $application->store->hex_color
             ];
         }
 
@@ -112,14 +120,14 @@ class InterviewScheduleService extends Service
 
     /**
      * @param $date
-     * @param $storeId
+     * @param $storeIds
      * @return mixed
      */
-    public function getStoreOffTimes($date, $storeId)
+    public function getStoreOffTimes($date, $storeIds)
     {
         $startMonthOfWeek = Carbon::parse($date)->firstOfMonth()->format('Y-m-d');
         $endMonthOfWeek = Carbon::parse($date)->addDays(config('date.day_of_week'))->firstOfMonth()->format('Y-m-d');
-        $storeOffTimes = StoreOffTime::query()->where('store_id', '=', $storeId)->first();
+        $storeOffTimes = StoreOffTime::query()->where('store_id', '=', $storeIds[0])->first();
         $storeOffTimes = $storeOffTimes ? $storeOffTimes->off_times : [];
 
         return JobService::resultStoreOffTimes([$startMonthOfWeek, $endMonthOfWeek], $storeOffTimes);
@@ -155,6 +163,7 @@ class InterviewScheduleService extends Service
             if (isset($applications[$time])) {
                 foreach ($applications[$time] as $userApply) {
                     $applicationUsers[] = [
+                        'hex_color' => $userApply[3] ?? null,
                         'id' => $userApply[2] ?? null,
                         'user_id' => $userApply[1] ?? null,
                         'name' => $userApply[0] ?? null,
