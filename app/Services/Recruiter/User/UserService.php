@@ -52,6 +52,7 @@ class UserService extends Service
             'desiredConditionUser.province.provinceDistrict',
             'favoriteJobs',
             'userLicensesQualifications',
+            'userLearningHistories',
         ];
 
         if ($currentId) {
@@ -116,7 +117,8 @@ class UserService extends Service
         $query = User::query()->roleUser()
             ->select('users.*', 'user_job_desired_matches.user_id', DB::raw('sum(suitability_point) as point'))
             ->leftJoin('user_job_desired_matches', 'users.id', '=', 'user_job_desired_matches.user_id')
-            ->leftJoin('user_licenses_qualifications', 'users.id', '=', 'user_job_desired_matches.user_id')
+            ->leftJoin('user_licenses_qualifications', 'users.id', '=', 'user_licenses_qualifications.user_id')
+            ->leftJoin('user_learning_histories', 'users.id', '=', 'user_learning_histories.user_id')
             ->whereIn('job_id', $jobOwnedIds);
 
         if ($currentId) {
@@ -142,7 +144,8 @@ class UserService extends Service
             $userSuggest = User::query()->roleUser()
                 ->select('users.*', 'user_job_desired_matches.user_id', DB::raw('sum(suitability_point) as point'))
                 ->leftJoin('user_job_desired_matches', 'users.id', '=', 'user_job_desired_matches.user_id')
-                ->leftJoin('user_licenses_qualifications', 'users.id', '=', 'user_job_desired_matches.user_id')
+                ->leftJoin('user_licenses_qualifications', 'users.id', '=', 'user_licenses_qualifications.user_id')
+                ->leftJoin('user_learning_histories', 'users.id', '=', 'user_learning_histories.user_id')
                 ->whereIn('job_id', $jobOwnedIds)
                 ->groupBy('user_job_desired_matches.user_id')
                 ->orderBy('point', 'DESC')
