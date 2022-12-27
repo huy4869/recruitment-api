@@ -60,9 +60,11 @@ class InterviewScheduleService extends Service
             ->whereDate('date', '<=', $endDate)
             ->where('interview_status_id', '=', MInterviewStatus::STATUS_WAITING_INTERVIEW);
 
-        if ($storeIds) {
-            $applications->whereIn('store_id', $storeIds);
+        if (!$storeIds) {
+            $storeIds = $this->user->stores->pluck('id')->toArray();
         }
+
+        $applications->whereIn('store_id', $storeIds);
 
         foreach ($applications->get() as $application) {
             $applicationDate = explode(' ', $application->date)[0];
