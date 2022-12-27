@@ -55,7 +55,7 @@ class UserController extends Controller
 
             $users = UserService::getInstance()
                 ->withUser($recruiter)
-                ->getAppNewUser($withoutIds, $currentId, $userId);
+                ->getAppNewUser($withoutIds ?: [], $currentId, $userId);
 
             if ($users) {
                 Session::push('new_watched_ids', array_key_first($users));
@@ -90,7 +90,7 @@ class UserController extends Controller
 
             $users = UserService::getInstance()
                 ->withUser($recruiter)
-                ->getAppSuggestUsers($withoutIds, $currentId, $userId);
+                ->getAppSuggestUsers($withoutIds ?: [], $currentId, $userId);
 
             if ($users) {
                 Session::push('suggest_watched_ids', array_key_first($users));
