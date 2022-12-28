@@ -61,7 +61,7 @@ class ApplicationTableService extends TableService
                 $comparisonOperator = '=';
         }
 
-        return $query->where('applications.created_at', $comparisonOperator, $filter['data']);
+        return $query->whereDate('applications.created_at', $comparisonOperator, $filter['data']);
     }
 
     /**

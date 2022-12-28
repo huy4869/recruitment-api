@@ -30,6 +30,7 @@ class ContactResource extends JsonResource
 
         return [
             'id' => $data->id,
+            'user_id' => $data->user_id,
             'name' => $name,
             'email' => $email,
             'tel' => $tel,
