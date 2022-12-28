@@ -51,23 +51,17 @@ class UserInfoTableService extends TableService
                 case 'work_type_ids':
                 case 'job_type_ids':
                 case 'job_experience_ids':
-                    SearchService::queryJsonKey($query, $filter);
+                case 'province_ids':
+                    $query->where(function ($query) use ($filter) {
+                        $types = json_decode($filter['data']);
+                        foreach ($types as $type) {
+                            $query->whereJsonContains($filter['key'], $type);
+                        }//end foreach
+                    });
                     break;
                 case 'salary_min':
                 case 'salary_max':
                     SearchService::queryRangeKey($query, $filter);
-                    break;
-                case 'province_ids':
-                    $query->where(function ($query) use ($filter) {
-                        $types = json_decode($filter['data']);
-                        $query->whereJsonContains('province_ids', $types[self::FIRST_ARRAY]);
-                        unset($types[self::FIRST_ARRAY]);
-
-                        foreach ($types as $type) {
-                            $query->orWhereJsonContains('province_ids', $type);
-                        }//end foreach
-                    });
-
                     break;
                 case 'age':
                     $query->where('desired_condition_users.age', '=', $filter['data']);
