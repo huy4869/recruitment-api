@@ -47,8 +47,23 @@ class UserService extends Service
         return self::getUserInfoForListUser($recruiter, $userNewList);
     }
 
-    public function getAppNewUser($ids = [], $currentId = null, $userId = null)
+    public function getAppNewUser($userId = null)
     {
+        $recruiter = $this->user;
+        $isReset = false;
+        $appModeData = $recruiter->app_mode_data;
+
+        if (!isset($appModeData['new'])) {
+            $appModeData['new'] = ['withoutIds' => []];
+        }
+
+        $withoutIds = $appModeData['new']['withoutIds'];
+        $currentId = null;
+
+        if (count($withoutIds) && !$userId) {
+            $currentId = $withoutIds[count($withoutIds) - 1];
+        }
+
         $relation = [
             'avatarBanner',
             'avatarDetails',
@@ -69,40 +84,57 @@ class UserService extends Service
             config('validate.date_range.new_user_marker')
         ));
 
+        $favorites = FavoriteUser::query()
+            ->where('user_id', $recruiter->id)
+            ->pluck('favorite_user_id')
+            ->toArray();
+
+        $ableIds = array_diff($withoutIds, $favorites);
+
+        $total = User::query()->roleUser()
+            ->whereNotIn('id', $favorites)
+            ->where('created_at', '>=', $whereDate)
+            ->count();
+
+        if ($total == count($ableIds)) {
+            $withoutIds = $userId ? [$userId] : [];
+            $currentId = null;
+            $isReset = true;
+        }
+
+        $withoutIds = array_unique(array_merge($favorites, $withoutIds));
+
+        if (count($withoutIds) && $userId) {
+            $key = array_search($userId, $withoutIds);
+            if ($key >= 0) {
+                unset($withoutIds[$key]);
+                $withoutIds[] = $userId;
+            }
+        }
+
         if ($currentId) {
             $user = User::query()->roleUser()
                 ->where('created_at', '>=', $whereDate)
                 ->where('id', $currentId)
+                ->whereNotIn('id', $favorites)
                 ->with($relation)
                 ->orderBy('created_at', 'desc')
                 ->first();
         } else {
             $user = User::query()->roleUser()
                 ->where('created_at', '>=', $whereDate)
+                ->whereNotIn('id', $withoutIds)
                 ->with($relation)
-                ->whereNotIn('id', $ids)
                 ->orderBy('created_at', 'desc')
                 ->first();
-
-            if (
-                is_null($user) &&
-                is_array(Session::get('new_watched_ids')) &&
-                count(Session::get('new_watched_ids'))
-            ) {
-                Session::forget('new_watched_ids');
-                $user = User::query()->roleUser()->where('created_at', '>=', $whereDate);
-
-                if ($userId) {
-                    $user = $user->where('id', '!=', $userId);
-                }
-
-                $user = $user->with($relation)
-                    ->orderBy('created_at', 'desc')
-                    ->first();
-            }
         }
 
-        return $user ? self::getUserInfoForListUser($this->user, [$user]) : null;
+        if ($user) {
+            $appModeData['new']['withoutIds'] = array_unique(array_merge($isReset ? $favorites : $withoutIds, [(int)$user->id]));
+            $recruiter->update(['app_mode_data' => $appModeData]);
+
+            return  self::getUserInfoForListUser($this->user, [$user]);
+        }
     }
 
     /**
@@ -115,7 +147,7 @@ class UserService extends Service
 
         $userSuggestList = User::query()->roleUser()
             ->select('users.*', 'user_id', DB::raw('sum(suitability_point) as point'))
-            ->leftJoin('user_job_desired_matches', 'users.id', '=', 'user_id')
+            ->join('user_job_desired_matches', 'users.id', '=', 'user_id')
             ->whereIn('job_id', $jobOwnedIds)
             ->groupBy('user_id')
             ->orderBy('point', 'DESC')
@@ -131,20 +163,65 @@ class UserService extends Service
     /**
      * @return array
      */
-    public function getAppSuggestUsers($ids = [], $currentId = null, $userId = null)
+    public function getAppSuggestUsers($userId = null)
     {
         $recruiter = $this->user;
+        $isReset = false;
+        $appModeData = $recruiter->app_mode_data;
+
+        if (!isset($appModeData['suggest'])) {
+            $appModeData['suggest'] = ['withoutIds' => []];
+        }
+
+        $withoutIds = $appModeData['new']['withoutIds'];
+        $currentId = null;
+
+        if (count($withoutIds) && !$userId) {
+            $currentId = $withoutIds[count($withoutIds) - 1];
+        }
+
+        $favorites = FavoriteUser::query()
+            ->where('user_id', $recruiter->id)
+            ->pluck('favorite_user_id')
+            ->toArray();
+
+        $ableIds = array_diff($withoutIds, $favorites);
+
         $jobOwnedIds = $recruiter->jobsOwned()->pluck('job_postings.id')->toArray();
+
+        $total = User::query()->roleUser()
+            ->whereNotIn('id', $favorites)
+            ->whereHas('userJobDesiredMatches', function ($query) use ($jobOwnedIds) {
+                $query->whereIn('job_id', $jobOwnedIds);
+            })
+            ->count();
+
+        if ($total == count($ableIds)) {
+            $withoutIds = $userId ? [$userId] : [];
+            $currentId = null;
+            $isReset = true;
+        }
+
+        $withoutIds = array_unique(array_merge($favorites, $withoutIds));
+
+        if (count($withoutIds) && $userId) {
+            $key = array_search($userId, $withoutIds);
+            if ($key >= 0) {
+                unset($withoutIds[$key]);
+                $withoutIds[] = $userId;
+            }
+        }
 
         $query = User::query()->roleUser()
             ->select('users.*', 'user_job_desired_matches.user_id', DB::raw('sum(suitability_point) as point'))
-            ->leftJoin('user_job_desired_matches', 'users.id', '=', 'user_job_desired_matches.user_id')
+            ->join('user_job_desired_matches', 'users.id', '=', 'user_job_desired_matches.user_id')
             ->leftJoin('user_licenses_qualifications', 'users.id', '=', 'user_licenses_qualifications.user_id')
             ->leftJoin('user_learning_histories', 'users.id', '=', 'user_learning_histories.user_id')
             ->whereIn('job_id', $jobOwnedIds);
 
         if ($currentId) {
             $userSuggest = $query->where('users.id', $currentId)
+                ->whereNotIn('users.id', $favorites)
                 ->groupBy('user_job_desired_matches.user_id')
                 ->orderBy('point', 'DESC')
                 ->orderBy('last_login_at', 'DESC')
@@ -152,7 +229,7 @@ class UserService extends Service
                 ->with(['avatarBanner', 'avatarDetails'])
                 ->first();
         } else {
-            $userSuggest = $query->whereNotIn('users.id', $ids)
+            $userSuggest = $query->whereNotIn('users.id', $withoutIds)
                 ->groupBy('user_job_desired_matches.user_id')
                 ->orderBy('point', 'DESC')
                 ->orderBy('last_login_at', 'DESC')
@@ -161,33 +238,12 @@ class UserService extends Service
                 ->first();
         }
 
-        if (
-            !$currentId &&
-            is_null($userSuggest) &&
-            is_array(Session::get('suggest_watched_ids')) &&
-            count(Session::get('suggest_watched_ids'))
-        ) {
-            Session::forget('suggest_watched_ids');
-            $userSuggest = User::query()->roleUser()
-                ->select('users.*', 'user_job_desired_matches.user_id', DB::raw('sum(suitability_point) as point'))
-                ->leftJoin('user_job_desired_matches', 'users.id', '=', 'user_job_desired_matches.user_id')
-                ->leftJoin('user_licenses_qualifications', 'users.id', '=', 'user_licenses_qualifications.user_id')
-                ->leftJoin('user_learning_histories', 'users.id', '=', 'user_learning_histories.user_id')
-                ->whereIn('job_id', $jobOwnedIds);
+        if ($userSuggest) {
+            $appModeData['suggest']['withoutIds'] = array_unique(array_merge($isReset ? $favorites : $withoutIds, [(int)$userSuggest->id]));
+            $recruiter->update(['app_mode_data' => $appModeData]);
 
-            if ($userId) {
-                $userSuggest = $userSuggest->where('users.id', '!=', $userId);
-            }
-
-            $userSuggest = $userSuggest->groupBy('user_job_desired_matches.user_id')
-                ->orderBy('point', 'DESC')
-                ->orderBy('last_login_at', 'DESC')
-                ->orderBy('users.created_at', 'DESC')
-                ->with(['avatarBanner', 'avatarDetails'])
-                ->first();
+            return  self::getUserInfoForListUser($this->user, [$userSuggest]);
         }
-
-        return $userSuggest ? self::getUserInfoForListUser($recruiter, [$userSuggest]) : null;
     }
 
     /**

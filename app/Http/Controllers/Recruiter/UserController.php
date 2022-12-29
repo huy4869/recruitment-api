@@ -13,7 +13,6 @@ use App\Services\Recruiter\User\UserService;
 use App\Services\Recruiter\User\UserTableService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Session;
 
 class UserController extends Controller
 {
@@ -46,19 +45,9 @@ class UserController extends Controller
         $userId = $request->get('user_id');
 
         if ($request->get('mode') == UserService::APP_MODE) {
-            $withoutIds = Session::get('new_watched_ids');
-            $currentId = null;
-
-            if (!$userId && $withoutIds) {
-                $currentId = $withoutIds[count($withoutIds) - 1];
-            }
-
-            $users = UserService::getInstance()
-                ->withUser($recruiter)
-                ->getAppNewUser($withoutIds ?: [], $currentId, $userId);
+            $users = UserService::getInstance()->withUser($recruiter)->getAppNewUser($userId);
 
             if ($users) {
-                Session::push('new_watched_ids', array_key_first($users));
                 return $this->sendSuccessResponse(AppUserResource::collection($users));
             }
         } else {
@@ -81,19 +70,9 @@ class UserController extends Controller
         $userId = $request->get('user_id');
 
         if ($request->get('mode') == UserService::APP_MODE) {
-            $withoutIds = Session::get('suggest_watched_ids');
-            $currentId = null;
-
-            if (!$userId && $withoutIds) {
-                $currentId = $withoutIds[count($withoutIds) - 1];
-            }
-
-            $users = UserService::getInstance()
-                ->withUser($recruiter)
-                ->getAppSuggestUsers($withoutIds ?: [], $currentId, $userId);
+            $users = UserService::getInstance()->withUser($recruiter)->getAppSuggestUsers($userId);
 
             if ($users) {
-                Session::push('suggest_watched_ids', array_key_first($users));
                 return $this->sendSuccessResponse(AppUserResource::collection($users));
             }
         } else {
