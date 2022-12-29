@@ -89,14 +89,6 @@ class ApplicationService extends Service
                 'new_issuance_date' => DateTimeHelper::formatMonthYear($applicationLicensesQualification->new_issuance_date),
             ];
         }
-        $fullAddress = sprintf(
-            '〒 %s %s%s%s%s',
-            @$application->applicationUser->postal_code,
-            @$application->applicationUser->province->name,
-            @$application->applicationUser->provinceCity->name,
-            @$application->applicationUser->address,
-            @$application->applicationUser->building,
-        );
 
         return array_merge($application->toArray(), [
             'avatar_banner' => FileHelper::getFullUrl($application->applicationUser->avatarBanner->url ?? null),
@@ -111,7 +103,6 @@ class ApplicationService extends Service
             'self_pr' => $application->self_pr,
             'applicationLearningHistories' => $applicationLearningHistories,
             'applicationLicensesQualifications' => $applicationLicensesQualifications,
-            'full_address' => $fullAddress,
         ]);
     }
 

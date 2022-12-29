@@ -59,7 +59,7 @@ class ListApplicationResource extends JsonResource
             'interview_approach' => [
                 'id' => $data->interview_approach_id,
                 'method' => $interviewApproaches[$data->interview_approach_id],
-                'approach_label' => config('application.interview_approach_label.' . $data->interview_approach_id),
+                'approach_label' => config('application.interview_approach_label.' . $data->interview_approach_id) . ': ',
                 'approach' => $dataApproach,
                 'is_direct_interview' => $isDirectInterview,
             ],

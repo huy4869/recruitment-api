@@ -47,7 +47,7 @@ class UpdateRequest extends FormRequest
                     ->where('deleted_at'),
                 ],
             'job_status_id' => $requireOrNullable . '|integer|exists:m_job_statuses,id',
-            'pick_up_point' => 'nullable|string|max:' . config('validate.text_max_length'),
+            'pick_up_point' => 'nullable|string|max:' . config('validate.job_posting_textarea_max_length'),
             'job_banner' => $requireOrNullable . '|string|url',
             'job_thumbnails' => $requireOrNullable . '|array',
             'job_thumbnails.*' => 'string|url',

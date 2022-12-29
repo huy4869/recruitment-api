@@ -27,6 +27,7 @@ class DetailFeedbackJobResource extends JsonResource
             'job_posting_id' => $data->job_posting_id,
             'email' => $data->user->email,
             'name' => $data->user->first_name . $data->user->last_name,
+            'user_id' => $data->user_id,
             'content' => $data->content,
             'feedback_types' => $dataFeedbackType,
             'created_at' => DateTimeHelper::formatDateDayOfWeekTimeJa($this->created_at),
