@@ -86,7 +86,7 @@ class JobService extends Service
         $jobData = JobHelper::addFormatJobJsonData($job, $masterData, $userAction);
 
         if (!$user) {
-            $job->update(['views' => DB::raw('`views` + 1')]);
+            $job->withoutTimestamps()->update(['views' => DB::raw('`views` + 1')]);
 
             return $jobData;
         }
@@ -94,7 +94,7 @@ class JobService extends Service
         try {
             DB::beginTransaction();
 
-            $job->update(['views' => DB::raw('`views` + 1')]);
+            $job->withoutTimestamps()->update(['views' => DB::raw('`views` + 1')]);
 
             $userRecentJobs = self::userRecentJobsUpdate($job->id, $user->recent_jobs);
             $user->update(['recent_jobs' => $userRecentJobs]);
@@ -785,8 +785,8 @@ class JobService extends Service
                     ->where('id', $jobPosting->store_id)
                     ->with(['province', 'provinceCity'])
                     ->first();
-                $output .= sprintf('（%s%s%s%s%s）',
-                    $store->postal_code ? '〒' . $store->postal_code : null,
+                $output .= sprintf('（%s %s%s%s%s）',
+                    $store->postal_code ? sprintf('〒%s-%s', substr($store->postal_code, 0, 3), substr($store->postal_code, -4)) : null,
                     $store->province->name,
                     $store->provinceCity->name,
                     $store->address,

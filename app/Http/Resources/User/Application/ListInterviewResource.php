@@ -35,7 +35,7 @@ class ListInterviewResource extends JsonResource
                 $building = $this->building;
                 $approach = sprintf(
                     '〒%s %s%s%s%s',
-                    $postalCode,
+                    sprintf('%s-%s', substr($postalCode, 0, 3), substr($postalCode, -4)),
                     $province,
                     $provinceCity,
                     $address,
@@ -59,7 +59,7 @@ class ListInterviewResource extends JsonResource
             'interview_approach' => [
                 'id' => $this->interview_approach_id,
                 'method' => $this->interviewApproach->name,
-                'approach_label' => config('application.interview_approach_label.' . $this->interview_approach_id),
+                'approach_label' => config('application.interview_approach_label.' . $this->interview_approach_id). ': ',
                 'approach' => $approach,
             ],
             'allow_edit' => $this->can_change_interview,

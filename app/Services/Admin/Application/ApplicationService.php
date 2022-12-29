@@ -300,14 +300,6 @@ class ApplicationService extends Service
             $url[] = (object)['url' => FileHelper::getFullUrl($avatar->url)];
         }
 
-        $fullAddress = sprintf(
-            '〒 %s %s%s%s%s',
-            @$application->applicationUser->postal_code,
-            @$application->applicationUser->province->name,
-            @$application->applicationUser->provinceCity->name,
-            @$application->applicationUser->address,
-            @$application->applicationUser->building,
-        );
         $applicationUser = $application->applicationUser;
 
         return [

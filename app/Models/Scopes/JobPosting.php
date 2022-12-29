@@ -28,4 +28,10 @@ trait JobPosting
     {
         return $query->where('released_at', '>=', Carbon::now()->subDays(config('validate.date_range.new_job_list')));
     }
+
+    public function scopeWithoutTimestamps()
+    {
+        $this->timestamps = false;
+        return $this;
+    }
 }

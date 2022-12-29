@@ -310,8 +310,9 @@ class User extends Authenticatable
     public function getFullNameAddressAttribute()
     {
         $provinceName = $this->province->name ?? '';
+        $formatPostalCode = sprintf('%s-%s', substr($this->postal_code, 0, 3), substr($this->postal_code, -4));
 
-        return sprintf('〒 %s %s%s%s', $this->postal_code, $provinceName, $this->address, $this->building);
+        return sprintf('〒%s %s%s%s', $formatPostalCode, $provinceName, $this->address, $this->building);
     }
 
     public function applicationUser()
