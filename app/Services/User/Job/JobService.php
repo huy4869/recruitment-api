@@ -618,6 +618,7 @@ class JobService extends Service
     {
         $userFavoriteByRec = self::getUserFavoriteByRec($jobPostingId);
         $user = $this->user;
+        $jobPosting = JobPosting::with('store')->where('id', $jobPostingId)->first();
 
         try {
             DB::beginTransaction();
@@ -628,23 +629,45 @@ class JobService extends Service
             ]);
 
             if (in_array($user->id, $userFavoriteByRec->pluck('favorite_user_id')->toArray())) {
-                Notification::query()->create([
-                    'user_id' => $userFavoriteByRec->first()->user_id,
-                    'notice_type_id' => Notification::TYPE_MATCHING_FAVORITE,
-                    'noti_object_ids' => [
-                        'store_id' => null,
-                        'application_id' => null,
-                        'user_id' => $user->id,
-                        'job_posting_id' => $jobPostingId
+                $data = [
+                    [
+                        'user_id' => $userFavoriteByRec->first()->user_id,
+                        'notice_type_id' => Notification::TYPE_MATCHING_FAVORITE,
+                        'noti_object_ids' => json_encode([
+                            'store_id' => $jobPosting->store->id,
+                            'application_id' => null,
+                            'user_id' => $user->id,
+                            'job_posting_id' => $jobPostingId
+                        ]),
+                        'title' => trans('notification.N009.title', [
+                            'user_name' => sprintf('%s %s', $user->first_name, $user->last_name),
+                        ]),
+                        'content' => trans('notification.N009.content', [
+                            'user_name' => sprintf('%s %s', $user->first_name, $user->last_name),
+                        ]),
+                        'created_at' => now(),
                     ],
-                    'title' => trans('notification.N009.title', [
-                        'user_name' => sprintf('%s %s', $user->first_name, $user->last_name),
-                    ]),
-                    'content' => trans('notification.N009.content', [
-                        'user_name' => sprintf('%s %s', $user->first_name, $user->last_name),
-                    ]),
-                ]);
-            }
+                    [
+                        'user_id' => $user->id,
+                        'notice_type_id' => Notification::TYPE_MATCHING_FAVORITE,
+                        'noti_object_ids' => json_encode([
+                            'store_id' => $jobPosting->store->id,
+                            'application_id' => null,
+                            'user_id' => $userFavoriteByRec->first()->user_id,
+                            'job_id' => $jobPostingId
+                        ]),
+                        'title' => trans('notification.N010.title', [
+                            'job_name' => $jobPosting->name,
+                        ]),
+                        'content' => trans('notification.N010.content', [
+                            'store_name' => $jobPosting->store->name,
+                        ]),
+                        'created_at' => now(),
+                    ]
+                ];
+
+                Notification::insert($data);
+            }//end if
 
             DB::commit();
 

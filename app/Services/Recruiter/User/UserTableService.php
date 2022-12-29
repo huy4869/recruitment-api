@@ -75,7 +75,7 @@ class UserTableService extends TableService
                     break;
                 default:
                     $query->where($filter['key'], $filter['data']);
-            }
+            }//end switch
         });
 
         return $query;
@@ -116,10 +116,10 @@ class UserTableService extends TableService
             ])
             ->selectRaw($this->getSelectRaw());
 
-        if (Route::getCurrentRoute()->uri() == "recruiter/users/favorites") {
+        if (Route::getCurrentRoute()->uri() == 'recruiter/users/favorites') {
             $q->rightJoin('favorite_users', 'users.id', 'favorite_user_id')
                 ->where('favorite_users.user_id', auth()->user()->id)
-                ->withTrashed();
+                ->withTrashed()->groupBy('favorite_users.favorite_user_id');
         }
 
         return $q;
@@ -150,7 +150,7 @@ class UserTableService extends TableService
             users.last_login_at,
             users.created_at';
 
-        if (Route::getCurrentRoute()->uri() == "recruiter/users/favorites") {
+        if (Route::getCurrentRoute()->uri() == 'recruiter/users/favorites') {
             $selectList .= ', users.deleted_at, 1 as favorite';
         }
 
