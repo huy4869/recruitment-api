@@ -93,6 +93,7 @@ class User extends Authenticatable
         'be_read_applications',
         'verify_token',
         'is_public_avatar',
+        'app_mode_data',
     ];
 
     /**
@@ -104,6 +105,7 @@ class User extends Authenticatable
         'recent_jobs' => 'array',
         'skills' => 'array',
         'be_read_applications' => 'array',
+        'app_mode_data' => 'array',
     ];
 
     /**
@@ -268,6 +270,14 @@ class User extends Authenticatable
     }
 
     /**
+     * @return HasMany
+     */
+    public function userJobDesiredMatches()
+    {
+        return $this->hasMany(UserJobDesiredMatch::class);
+    }
+
+    /**
      * @return HasOne
      */
     public function desiredConditionUser()
@@ -342,11 +352,6 @@ class User extends Authenticatable
     public function contacts()
     {
         return $this->hasMany(Contact::class);
-    }
-
-    public function userJobDesiredMatches()
-    {
-        return $this->hasMany(UserJobDesiredMatch::class);
     }
 
     public function applicationUserLearningHistories()
