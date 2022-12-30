@@ -408,10 +408,10 @@ class UserService extends Service
                 'school_name' => $learningHistory->school_name,
                 'date_time' => [
                     'time_start_end' => sprintf(
-                        '%s ～ %s（%s）',
+                        '%s ～ %s%s',
                         DateTimeHelper::formatMonthYear($learningHistory->enrollment_period_start),
                         DateTimeHelper::formatMonthYear($learningHistory->enrollment_period_end),
-                        @$learningHistory->learningStatus->name,
+                        @$learningHistory->learningStatus->name ? trans('common.learning_status_name', ['status_name' => $learningHistory->learningStatus->name]) : null,
                     ),
                     'enrollment_period_start' => [
                         'month' => substr($learningHistory->enrollment_period_start, 4),
