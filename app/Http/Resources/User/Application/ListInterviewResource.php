@@ -19,10 +19,13 @@ class ListInterviewResource extends JsonResource
      */
     public function toArray($request)
     {
+        $isLink = false;
+
         switch ($this->interview_approach_id) {
             case MInterviewApproach::STATUS_INTERVIEW_ONLINE:
                 if ($this->meet_link) {
                     $approach = $this->meet_link;
+                    $isLink = true;
                 } else {
                     $approach = config('application.interview_approach_online');
                 }
@@ -61,6 +64,7 @@ class ListInterviewResource extends JsonResource
                 'method' => $this->interviewApproach->name,
                 'approach_label' => config('application.interview_approach_label.' . $this->interview_approach_id). ': ',
                 'approach' => $approach,
+                'is_link' => $isLink
             ],
             'allow_edit' => $this->can_change_interview,
             'allow_cancel' => $this->can_cancel,

@@ -24,12 +24,14 @@ class DetailJobPostingResource extends JsonResource
         $application = $this['applications'][0] ?? [];
         $dataWorkTime = DateTimeHelper::getStartEndWorkTime($this['start_work_time'], $this['end_work_time'], $this['start_work_time_type'], $this['end_work_time_type'], $this['range_hours_type']);
         $storeOwner = $this['store']['owner'];
+        $isLink = false;
 
         if (count($application)) {
             switch ($application['interview_approach_id']) {
                 case MInterviewApproach::STATUS_INTERVIEW_ONLINE:
                     if ($application['meet_link']) {
                         $approach = $application['meet_link'];
+                        $isLink = true;
                     } else {
                         $approach = config('application.interview_approach_online');
                     }
@@ -109,6 +111,7 @@ class DetailJobPostingResource extends JsonResource
                     'method' => $application['interview_approach']['name'],
                     'approach_label' => config('application.interview_approach_label.' . $application['interview_approach_id']),
                     'approach' => $approach,
+                    'is_link' => $isLink
                 ]
             ] : [],
             'sns' => [

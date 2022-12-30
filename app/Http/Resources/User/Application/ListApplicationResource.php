@@ -25,12 +25,14 @@ class ListApplicationResource extends JsonResource
         $data = $this->resource;
         $interviewApproaches = ApplicationService::interviewApproach();
         $isDirectInterview = $data->interview_approach_id == MInterviewApproach::STATUS_INTERVIEW_DIRECT;
+        $isLink = false;
 
         if ($isDirectInterview) {
             $dataApproach = @$data->storeAcceptTrashed->address;
         } elseif ($data->interview_approach_id == MInterviewApproach::STATUS_INTERVIEW_ONLINE) {
             if ($this->meet_link) {
                 $dataApproach = $this->meet_link;
+                $isLink = true;
             } else {
                 $dataApproach = config('application.interview_approach_online');
             }
@@ -62,6 +64,7 @@ class ListApplicationResource extends JsonResource
                 'approach_label' => config('application.interview_approach_label.' . $data->interview_approach_id) . ': ',
                 'approach' => $dataApproach,
                 'is_direct_interview' => $isDirectInterview,
+                'is_link' => $isLink
             ],
             'submission_date_label' => trans('response.submission_date_label'),
             'created_at' => DateTimeHelper::formatDateDayOfWeekTimeJa($data['created_at']),
