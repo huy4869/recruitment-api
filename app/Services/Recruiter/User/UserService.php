@@ -282,44 +282,50 @@ class UserService extends Service
                     ->get();
 
                 $userNotifyData = [];
+                $notification = Notification::query()
+                    ->where('user_id', $user->id)
+                    ->whereJsonContains('noti_object_ids->user_id', $recruiter->id)
+                    ->where('notice_type_id', Notification::TYPE_MATCHING_FAVORITE)->get();
 
-                foreach ($userFavoriteJobs as $favoriteJob) {
-                    $userNotifyData[] = ([
-                        'user_id' => $user->id,
-                        'notice_type_id' => Notification::TYPE_MATCHING_FAVORITE,
-                        'noti_object_ids' => json_encode([
-                            'user_id' => $recruiter->id,
-                            'job_id' => $favoriteJob->jobPosting->id,
-                            'store_id' => $favoriteJob->jobPosting->store->id,
-                        ]),
-                        'title' => trans('notification.N010.title', [
-                            'store_name' => $favoriteJob->jobPosting->store->name,
-                        ]),
-                        'content' => trans('notification.N010.content', [
-                            'store_name' => $favoriteJob->jobPosting->store->name,
-                        ]),
-                        'created_at' => now(),
-                    ]);
-                }
-
-                if ($userFavoriteJobs) {
-                    $userNotifyData[] = [
-                        'user_id' => $recruiter->id,
-                        'notice_type_id' => Notification::TYPE_MATCHING_FAVORITE,
-                        'noti_object_ids' => json_encode([
-                            'store_id' => null,
-                            'application_id' => null,
+                if (!count($notification)) {
+                    foreach ($userFavoriteJobs as $favoriteJob) {
+                        $userNotifyData[] = ([
                             'user_id' => $user->id,
-                            'job_posting_id' => null,
-                        ]),
-                        'title' => trans('notification.N009.title', [
-                            'user_name' => sprintf('%s %s', $user->first_name, $user->last_name),
-                        ]),
-                        'content' => trans('notification.N009.content', [
-                            'user_name' => sprintf('%s %s', $user->first_name, $user->last_name),
-                        ]),
-                        'created_at' => now(),
-                    ];
+                            'notice_type_id' => Notification::TYPE_MATCHING_FAVORITE,
+                            'noti_object_ids' => json_encode([
+                                'user_id' => $recruiter->id,
+                                'job_id' => $favoriteJob->jobPosting->id,
+                                'store_id' => $favoriteJob->jobPosting->store->id,
+                            ]),
+                            'title' => trans('notification.N010.title', [
+                                'store_name' => $favoriteJob->jobPosting->store->name,
+                            ]),
+                            'content' => trans('notification.N010.content', [
+                                'store_name' => $favoriteJob->jobPosting->store->name,
+                            ]),
+                            'created_at' => now(),
+                        ]);
+                    }
+
+                    if ($userFavoriteJobs) {
+                        $userNotifyData[] = [
+                            'user_id' => $recruiter->id,
+                            'notice_type_id' => Notification::TYPE_MATCHING_FAVORITE,
+                            'noti_object_ids' => json_encode([
+                                'store_id' => null,
+                                'application_id' => null,
+                                'user_id' => $user->id,
+                                'job_posting_id' => null,
+                            ]),
+                            'title' => trans('notification.N009.title', [
+                                'user_name' => sprintf('%s %s', $user->first_name, $user->last_name),
+                            ]),
+                            'content' => trans('notification.N009.content', [
+                                'user_name' => sprintf('%s %s', $user->first_name, $user->last_name),
+                            ]),
+                            'created_at' => now(),
+                        ];
+                    }
                 }
 
                 if (count($userNotifyData)) {
