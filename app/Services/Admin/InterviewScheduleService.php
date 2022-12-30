@@ -244,16 +244,16 @@ class InterviewScheduleService extends Service
         $dateApplication = explode(' ', $application->date)[0];
         $hoursApplication = $application->hours;
 
-        if ($this->checkTimeUpdate($now, $date, $hours, $dateApplication, $hoursApplication)) {
-            throw ValidationException::withMessages([
-                'date' => trans('validation.ERR.037')
-            ]);
-        }
-
         $data = $this->saveMakeData($data);
 
         if ($date == $dateApplication && $hours == $hoursApplication) {
             return $application->update($data);
+        }
+
+        if ($this->checkTimeUpdate($now, $date, $hours, $dateApplication, $hoursApplication)) {
+            throw ValidationException::withMessages([
+                'date' => trans('validation.ERR.037')
+            ]);
         }
 
         $month = Carbon::parse($data['date'])->firstOfMonth()->format('Y-m-d');

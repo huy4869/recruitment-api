@@ -334,18 +334,18 @@ class ApplicationService extends Service
             throw new InputException(trans('response.not_found'));
         }
 
+        $data = $this->saveMakeData($data);
+
+        if ($date == $dateApplication && $hours == $hoursApplication) {
+            return $this->userUpdateApplication($application, $data);
+        }
+
         if (($date == $now && $this->checkTimeUpdate($hours))
             || ($date == $dateApplication && $date < $now && $hours != $hoursApplication)
             || ($date != $dateApplication && $date < $now)) {
             throw ValidationException::withMessages([
                 'date' => trans('validation.ERR.037')
             ]);
-        }
-
-        $data = $this->saveMakeData($data);
-
-        if ($date == $dateApplication && $hours == $hoursApplication) {
-            return $this->userUpdateApplication($application, $data);
         }
 
         $month = Carbon::parse($data['date'])->firstOfMonth()->format('Y-m-d');
