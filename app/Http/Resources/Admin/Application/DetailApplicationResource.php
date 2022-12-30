@@ -62,6 +62,8 @@ class DetailApplicationResource extends JsonResource
                 'building' => $this->store->building,
             ],
             'rec_tel' => $this->store->owner->tel,
+            'store_tel' => $this->store->tel,
+            'application_tel' => $this->store->application_tel,
             'interview_date' => DateTimeHelper::formatDateDayOfWeekJa($this->date) . $this->hours,
             'interview_approach_id' => $this->interview_approach_id,
             'date' => @explode(' ', $this->date)[0],

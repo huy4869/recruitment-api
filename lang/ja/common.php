@@ -21,4 +21,5 @@ return [
     'week' => '週間前',
     'subject_mail_interview_online' => 'オンライン面接のメール通知URLリンク',
     'age_name' => '代以上',
+    'learning_status_name' => '（:status_name）',
 ];
