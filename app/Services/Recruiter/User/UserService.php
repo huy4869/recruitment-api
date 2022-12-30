@@ -293,7 +293,7 @@ class UserService extends Service
                             'store_id' => $favoriteJob->jobPosting->store->id,
                         ]),
                         'title' => trans('notification.N010.title', [
-                            'job_name' => $favoriteJob->jobPosting->store->name,
+                            'store_name' => $favoriteJob->jobPosting->store->name,
                         ]),
                         'content' => trans('notification.N010.content', [
                             'store_name' => $favoriteJob->jobPosting->store->name,

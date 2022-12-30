@@ -23,7 +23,7 @@ class ApplicationService extends Service
     public function profileUser($applicationId)
     {
         $application = Application::with([
-            'user',
+            'user' => fn($q) => $q->withTrashed(),
             'applicationUser',
             'applicationUserWorkHistories' => function ($query) {
                 $query->orderByRaw('period_end is not null, period_end DESC, period_start DESC');
