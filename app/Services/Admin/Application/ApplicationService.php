@@ -108,14 +108,15 @@ class ApplicationService extends Service
         $dateApplication = explode(' ', $application->date)[0];
         $hoursApplication = $application->hours;
 
+
+        if ($date == $dateApplication && $hours == $hoursApplication) {
+            return true;
+        }
+
         if ($this->checkTimeUpdate($now, $date, $hours, $dateApplication, $hoursApplication)) {
             throw ValidationException::withMessages([
                 'date' => trans('validation.ERR.037')
             ]);
-        }
-
-        if ($date == $dateApplication && $hours == $hoursApplication) {
-            return true;
         }
 
         $month = Carbon::parse($data['date'])->firstOfMonth()->format('Y-m-d');
@@ -128,6 +129,8 @@ class ApplicationService extends Service
                 throw new InputException(trans('validation.ERR.036'));
             }
         }
+
+        return true;
     }
 
     /**
