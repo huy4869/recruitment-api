@@ -662,7 +662,7 @@ class JobService extends Service
                             'job_id' => $jobPostingId
                         ]),
                         'title' => trans('notification.N010.title', [
-                            'job_name' => $jobPosting->name,
+                            'store_name' => $jobPosting->store->name,
                         ]),
                         'content' => trans('notification.N010.content', [
                             'store_name' => $jobPosting->store->name,

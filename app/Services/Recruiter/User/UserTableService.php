@@ -121,7 +121,7 @@ class UserTableService extends TableService
             $q->withTrashed()
                 ->rightJoin('favorite_users', 'users.id', 'favorite_user_id')
                 ->where('favorite_users.user_id', auth()->user()->id)->where('favorite_users.deleted_at')
-                ->groupBy('favorite_users.favorite_user_id');
+                ->groupBy('favorite_users.favorite_user_id')->orderByDesc('created_at');
         }
 
         return $q;
