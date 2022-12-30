@@ -106,6 +106,7 @@ class UserTableService extends TableService
      */
     public function makeNewQuery()
     {
+        $routeUserFavorites = Route::getCurrentRoute()->uri() == 'recruiter/users/favorites';
         $q = User::query()->roleUser()
             ->with([
                 'avatarBanner',
@@ -116,10 +117,11 @@ class UserTableService extends TableService
             ])
             ->selectRaw($this->getSelectRaw());
 
-        if (Route::getCurrentRoute()->uri() == 'recruiter/users/favorites') {
-            $q->rightJoin('favorite_users', 'users.id', 'favorite_user_id')
-                ->where('favorite_users.user_id', auth()->user()->id)
-                ->withTrashed()->groupBy('favorite_users.favorite_user_id');
+        if ($routeUserFavorites) {
+            $q->withTrashed()
+                ->rightJoin('favorite_users', 'users.id', 'favorite_user_id')
+                ->where('favorite_users.user_id', auth()->user()->id)->where('favorite_users.deleted_at')
+                ->groupBy('favorite_users.favorite_user_id');
         }
 
         return $q;

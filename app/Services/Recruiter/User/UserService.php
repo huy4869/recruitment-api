@@ -307,10 +307,10 @@ class UserService extends Service
                         'user_id' => $recruiter->id,
                         'notice_type_id' => Notification::TYPE_MATCHING_FAVORITE,
                         'noti_object_ids' => json_encode([
-                            'store_id' => $favoriteJob->jobPosting->store->id,
+                            'store_id' => null,
                             'application_id' => null,
                             'user_id' => $user->id,
-                            'job_posting_id' => $favoriteJob->jobPosting->id,
+                            'job_posting_id' => null,
                         ]),
                         'title' => trans('notification.N009.title', [
                             'user_name' => sprintf('%s %s', $user->first_name, $user->last_name),

@@ -618,7 +618,7 @@ class JobService extends Service
     {
         $userFavoriteByRec = self::getUserFavoriteByRec($jobPostingId);
         $user = $this->user;
-        $jobPosting = JobPosting::with('store')->where('id', $jobPostingId)->first();
+        $jobPosting = JobPosting::with('store', 'store.owner')->where('id', $jobPostingId)->first();
 
         try {
             DB::beginTransaction();
@@ -628,7 +628,12 @@ class JobService extends Service
                 'job_posting_id' => $jobPostingId
             ]);
 
-            if (in_array($user->id, $userFavoriteByRec->pluck('favorite_user_id')->toArray())) {
+            $notification = Notification::query()
+                ->where('user_id', $jobPosting->store->owner->id)
+                ->whereJsonContains('noti_object_ids->user_id', $user->id)
+                ->where('notice_type_id', Notification::TYPE_MATCHING_FAVORITE)->get();
+
+            if (in_array($user->id, $userFavoriteByRec->pluck('favorite_user_id')->toArray()) && !count($notification)) {
                 $data = [
                     [
                         'user_id' => $userFavoriteByRec->first()->user_id,
