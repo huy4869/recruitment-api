@@ -52,48 +52,54 @@ class NotificationService extends Service
      */
     public function makeMatchingAnnouncement()
     {
-        $recruiter = $this->user;
-        $matchingUserAnnounces= $recruiter->notifications()
+        $recruiterId = $this->user->id;
+        $matching = Notification::where(function ($q) use ($recruiterId) {
+            $q->where(function ($query) use ($recruiterId) {
+                $query->where('user_id', $recruiterId);
+            })
+                ->orWhere(function ($query) use ($recruiterId) {
+                    $query->whereJsonContains('noti_object_ids->user_id', $recruiterId);
+                });
+        })
             ->where('notice_type_id', Notification::TYPE_MATCHING_FAVORITE)
             ->where('be_announce', Notification::STATUS_NOT_ANNOUNCE)
             ->get();
-        $matchingUserAnnounceIds = $matchingUserAnnounces->pluck('id')->toArray();
-        $countMatching = $matchingUserAnnounces->count();
+        $matchingUserAnnounceIds = $matching->pluck('id')->toArray();
         $msg = '';
-
+        $name = '';
+        $honorifics = trans('notification.announcement.honorifics');
+        $countMatching = $matching->count();
         if (!$countMatching) {
             return $msg;
         }
 
-        foreach ($matchingUserAnnounces as $item) {
-            $userIds[] = $item->noti_object_ids['user_id'];
-        }
-
-        $users = User::query()->roleUser()->whereIn('id', $userIds)->get();
-        $honorifics = trans('notification.announcement.honorifics');
-
-        if ($countMatching == 1) {
-            $msg = $users->first()->getFullNameAttribute() .
-                $honorifics .
-                trans('notification.announcement.matching.one_person');
-        }
-
-        if ($countMatching > 1) {
-            $users = $users->take(self::MAX_DISPLAY_USER_NAME);
-
-            foreach ($users as $user) {
-                $msg = $msg . $user->getFullNameAttribute() . $honorifics . '、';
+        foreach ($matching as $item) {
+            if ($item->user_id === $recruiterId) {
+                $name .= User::find($item->noti_object_ids['user_id'])->getFullNameAttribute() . $honorifics . '、';
+            } else {
+                $name .= User::find($item->user_id)->getFullNameAttribute() . $honorifics . '、';
             }
 
-            $msg = rtrim($msg, '、');
-
-            if ($countMatching > self::MAX_DISPLAY_USER_NAME) {
-                $msg = $msg . trans('notification.announcement.amount_other', [
-                        'amount' => $countMatching - self::MAX_DISPLAY_USER_NAME
-                    ]);
+            if (substr_count($name, '、') > 2) {
+                break;
             }
+        }
 
-            $msg = $msg . trans('notification.announcement.matching.many_person');
+        if (substr_count($name, '、') == 1) {
+            $name = rtrim($name, '、');
+            $msg = $name . trans('notification.announcement.matching.one_person');
+        }
+
+        if (substr_count($name, '、') == 2) {
+            $name = rtrim($name, '、');
+            $msg = $name . trans('notification.announcement.matching.many_person');
+        }
+
+        if (substr_count($name, '、') > 2) {
+            $name = rtrim($name, '、');
+            $msg = $name . trans('notification.announcement.amount_other', [
+                    'amount' => $countMatching - self::MAX_DISPLAY_USER_NAME
+                ]) . trans('notification.announcement.matching.many_person');
         }
 
         Notification::query()->whereIn('id', $matchingUserAnnounceIds)
