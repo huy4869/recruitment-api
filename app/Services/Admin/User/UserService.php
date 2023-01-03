@@ -268,6 +268,7 @@ class UserService extends Service
         $user->applicationUserLearningHistories()?->delete();
         $user->applicationUserLicensesQualifications()?->delete();
         $user->applicationUserWorkHistories()?->delete();
+        $user->applications()?->notAccept()?->delete();
         $user->contacts()?->delete();
         $user->desiredConditionUser()?->delete();
         $user->favoriteJobs()?->delete();
