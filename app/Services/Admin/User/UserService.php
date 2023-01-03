@@ -242,6 +242,10 @@ class UserService extends Service
         $userNotifyData = [];
 
         foreach ($user->applications as $application) {
+            if (!$application->jobPosting) {
+                continue;
+            }
+
             $recruiter = $application->jobPosting->store->owner;
 
             $userNotifyData[] = [
