@@ -282,13 +282,8 @@ class UserService extends Service
                     ->get();
 
                 $userNotifyData = [];
-                $notification = Notification::query()
-                    ->where('user_id', $user->id)
-                    ->whereJsonContains('noti_object_ids->user_id', $recruiter->id)
-                    ->where('notice_type_id', Notification::TYPE_MATCHING_FAVORITE)->get();
 
-                if (!count($notification)) {
-                    foreach ($userFavoriteJobs as $favoriteJob) {
+                foreach ($userFavoriteJobs as $favoriteJob) {
                         $userNotifyData[] = ([
                             'user_id' => $user->id,
                             'notice_type_id' => Notification::TYPE_MATCHING_FAVORITE,
@@ -307,7 +302,7 @@ class UserService extends Service
                         ]);
                     }
 
-                    if ($userFavoriteJobs) {
+                if ($userFavoriteJobs) {
                         $userNotifyData[] = [
                             'user_id' => $recruiter->id,
                             'notice_type_id' => Notification::TYPE_MATCHING_FAVORITE,
@@ -326,7 +321,6 @@ class UserService extends Service
                             'created_at' => now(),
                         ];
                     }
-                }
 
                 if (count($userNotifyData)) {
                     Notification::insert($userNotifyData);
