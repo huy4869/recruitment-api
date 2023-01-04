@@ -85,17 +85,19 @@ class NotificationService extends Service
             }
         }
 
+        $amount = $countMatching - self::MAX_DISPLAY_USER_NAME;
+
         if (substr_count($name, '、') == 1) {
             $name = rtrim($name, '、');
             $msg = $name . trans('notification.announcement.matching.one_person');
         }
 
-        if (substr_count($name, '、') == 2) {
+        if (substr_count($name, '、') >= 2 && $amount == 0) {
             $name = rtrim($name, '、');
-            $msg = $name . trans('notification.announcement.matching.many_person');
+            $msg = $name . trans('notification.announcement.matching.two_person');
         }
 
-        if (substr_count($name, '、') > 2) {
+        if (substr_count($name, '、') > 2 && $amount > 0) {
             $name = rtrim($name, '、');
             $msg = $name . trans('notification.announcement.amount_other', [
                     'amount' => $countMatching - self::MAX_DISPLAY_USER_NAME
