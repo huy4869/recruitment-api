@@ -6,6 +6,7 @@ return [
         'amount_other' => 'ほか:amount',
         'matching' => [
             'one_person' => 'とメッセージを始めてください。',
+            'two_person' => 'と採用マッチングしました。',
             'many_person' => '名と採用マッチングしました。',
         ]
     ],
