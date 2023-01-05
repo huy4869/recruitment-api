@@ -496,6 +496,12 @@ class UserService extends Service
      */
     private function makeSaveData($data)
     {
+        if (isset($data['is_public_avatar'])) {
+            return [
+                'is_public_avatar' => $data['is_public_avatar']
+            ];
+        }
+
         $result = [];
 
         $attrs = [
@@ -520,9 +526,7 @@ class UserService extends Service
         ];
 
         foreach ($attrs as $attr) {
-            if (isset($data[$attr])) {
-                $result[$attr] = $data[$attr];
-            }
+            $result[$attr] = @$data[$attr];
         }
 
         return $result;
