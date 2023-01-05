@@ -272,14 +272,12 @@ class UserService extends Service
                     'favorite_user_id' => $user->id
                 ]);
 
-                $recruiterJobIds = $recruiter->jobsOwned()->pluck('job_postings.id')->toArray();
+                $recruiterJobIds = $recruiter->jobsOwnedTrashed()->pluck('job_postings.id')->toArray();
                 $userFavoriteJobs = $user->favoriteJobs()
                     ->whereIn('job_posting_id', $recruiterJobIds)
                     ->with([
-                        'jobPosting' => function ($q) {
-                            $q->withTrashed();
-                        },
-                        'jobPosting.store'
+                        'jobPostingTrashed',
+                        'jobPostingTrashed.storeTrashed'
                     ])
                     ->get();
 
@@ -291,20 +289,20 @@ class UserService extends Service
                             'notice_type_id' => Notification::TYPE_MATCHING_FAVORITE,
                             'noti_object_ids' => json_encode([
                                 'user_id' => $recruiter->id,
-                                'job_id' => $favoriteJob->jobPosting->id,
-                                'store_id' => $favoriteJob->jobPosting->store->id,
+                                'job_id' => $favoriteJob->jobPostingTrashed->id,
+                                'store_id' => $favoriteJob->jobPostingTrashed->storeTrashed->id,
                             ]),
                             'title' => trans('notification.N010.title', [
-                                'store_name' => $favoriteJob->jobPosting->store->name,
+                                'store_name' => $favoriteJob->jobPostingTrashed->storeTrashed->name,
                             ]),
                             'content' => trans('notification.N010.content', [
-                                'store_name' => $favoriteJob->jobPosting->store->name,
+                                'store_name' => $favoriteJob->jobPostingTrashed->storeTrashed->name,
                             ]),
                             'created_at' => now(),
                         ]);
                     }
 
-                if ($userFavoriteJobs) {
+                if (!empty($userFavoriteJobs)) {
                         $userNotifyData[] = [
                             'user_id' => $recruiter->id,
                             'notice_type_id' => Notification::TYPE_MATCHING_FAVORITE,

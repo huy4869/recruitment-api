@@ -92,7 +92,7 @@ class NotificationService extends Service
             $msg = $name . trans('notification.announcement.matching.one_person');
         }
 
-        if (substr_count($name, '、') >= 2 && $amount == 0) {
+        if (substr_count($name, '、') >= 2 && ($amount == 0 || $amount == -1)) {
             $name = rtrim($name, '、');
             $msg = $name . trans('notification.announcement.matching.two_person');
         }

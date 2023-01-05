@@ -312,6 +312,14 @@ class User extends Authenticatable
     /**
      * @return HasManyThrough
      */
+    public function jobsOwnedTrashed()
+    {
+        return $this->hasManyThrough(JobPosting::class, Store::class)->withTrashed();
+    }
+
+    /**
+     * @return HasManyThrough
+     */
     public function applicationOwned()
     {
         return $this->hasManyThrough(Application::class, Store::class);
