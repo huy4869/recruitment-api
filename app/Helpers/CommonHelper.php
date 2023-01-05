@@ -82,13 +82,7 @@ class CommonHelper
         }
     }
 
-    /**
-     * @param $value
-     * @return string
-     */
-    public static function makeRgbFromValue($value)
-    {
-        $hash = md5($value);
+    public static function generateColor($hash) {
         $brightness = 0;
         $shift = 0;
 
@@ -103,5 +97,22 @@ class CommonHelper
         }
 
         return sprintf("#%02x%02x%02x", $color[0], $color[1], $color[2]);
+    }
+
+    /**
+     * @param $value
+     * @return string
+     */
+    public static function makeRgbFromValue($value)
+    {
+        $hash = md5($value);
+        $end = false;
+
+        while (!$end) {
+            $color = self::generateColor($hash);
+            $end = substr($color, 1, 1) <= 9 && substr($color, 3, 1) <= 9;
+        }
+
+        return $color;
     }
 }
