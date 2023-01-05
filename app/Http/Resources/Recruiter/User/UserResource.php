@@ -61,7 +61,7 @@ class UserResource extends JsonResource
             'is_favorite' => !!@$this->favorite,
             'is_new' => UserHelper::isNew($this->created_at),
             'be_deleted' => !!@$this->deleted_at,
-            'is_public_avatar' => $this->is_public_avatar,
+            'is_public_avatar' => !!$this->is_public_avatar,
         ];
     }
 }
