@@ -52,7 +52,11 @@ class DetailJobPostingResource extends JsonResource
                     );
                     break;
                 case MInterviewApproach::STATUS_INTERVIEW_PHONE:
-                    $approach = $this['store']['owner']['tel'];
+                    if ($this['store']['application_tel']) {
+                        $approach = $this['store']['application_tel'];
+                    } else {
+                        $approach = $this['store']['tel'];
+                    }
                     break;
             }//end switch
         }//end if
