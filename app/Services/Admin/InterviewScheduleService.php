@@ -486,7 +486,12 @@ class InterviewScheduleService extends Service
      */
     public function detailUserApplication($applicationId)
     {
-        $application = Application::query()->where('id', '=', $applicationId)->first();
+        $application = Application::query()
+            ->where('id', '=', $applicationId)
+            ->with(['jobPosting' => function ($q) {
+                $q->withTrashed();
+            }])
+            ->first();
 
         if (!$application) {
             throw new InputException(trans('response.not_found'));
@@ -747,6 +752,7 @@ class InterviewScheduleService extends Service
     public function checkJobPosting($jobPostingId, $userId)
     {
         $jobPosting = JobPosting::query()
+            ->withTrashed()
             ->with(['applications' => function($query) use ($userId) {
                 $query->where('user_id', '!=', $userId);
             }])
