@@ -31,7 +31,12 @@ class StoreService extends Service
                 'provinceCity.province',
             ])
             ->where('id', $id)
+            ->withTrashed()
             ->get();
+
+        if (!$store) {
+            return null;
+        }
 
         return self::appendMasterDataForStore($store);
     }

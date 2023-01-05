@@ -30,6 +30,7 @@ class ChatListResourse extends JsonResource
             'store_name' => $this->store->name,
             'first_name' => $this->userTrashed->first_name,
             'last_name' => $this->userTrashed->last_name,
+            'is_deleted_user' => !!$this->userTrashed->deleted_at,
             'avatar' => FileHelper::getFullUrl($this->userTrashed->avatarBanner->url ?? null),
             'send_time' => $date,
             'initial_time' => DateTimeHelper::formatDateTimeJa($this->created_at),

@@ -166,7 +166,12 @@ class StoreService extends Service
                 ['user_id', $this->user->id],
                 ['id', $store_id]
             ])
+            ->withTrashed()
             ->get();
+
+        if (!$store) {
+            return null;
+        }
 
         return self::appendMasterDataForStore($store);
     }

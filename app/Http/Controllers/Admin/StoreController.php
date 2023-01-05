@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\InputException;
+use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Store\StoreRequest;
 use App\Http\Requests\Admin\Store\UpdateRequest;
@@ -49,11 +50,15 @@ class StoreController extends Controller
     {
         $data = $this->storeService->withUser($this->guard()->user())->detail($id);
 
-        if ($data) {
+        if (!$data) {
+            return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_NOTFOUND, []);
+        }
+
+        if (is_null($data->deleted_at)) {
             return $this->sendSuccessResponse(StoreDetailResource::collection($data));
         }
 
-        throw new InputException(trans('response.not_found'));
+        return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_BAD_REQUEST, []);
     }
 
     /**

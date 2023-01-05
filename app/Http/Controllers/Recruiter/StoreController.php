@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Recruiter;
 
 use App\Exceptions\InputException;
+use App\Helpers\ResponseHelper;
 use App\Http\Requests\Recruiter\CreateStoreRequest;
 use App\Http\Requests\Recruiter\UpdateStoreRequest;
 use App\Http\Resources\Recruiter\StoreCollection;
@@ -64,11 +65,15 @@ class StoreController extends BaseController
     {
         $data = $this->storeService->withUser($this->guard()->user())->detail($id);
 
-        if ($data) {
+        if (!$data) {
+            return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_NOTFOUND, []);
+        }
+
+        if (is_null($data->deleted_at)) {
             return $this->sendSuccessResponse(StoreDetailResource::collection($data));
         }
 
-        throw new InputException(trans('response.not_found'));
+        return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_BAD_REQUEST, []);
     }
 
     /**
