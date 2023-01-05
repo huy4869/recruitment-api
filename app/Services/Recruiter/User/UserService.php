@@ -276,7 +276,9 @@ class UserService extends Service
                 $userFavoriteJobs = $user->favoriteJobs()
                     ->whereIn('job_posting_id', $recruiterJobIds)
                     ->with([
-                        'jobPosting',
+                        'jobPosting' => function ($q) {
+                            $q->withTrashed();
+                        },
                         'jobPosting.store'
                     ])
                     ->get();
