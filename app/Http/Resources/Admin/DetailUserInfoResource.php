@@ -63,6 +63,7 @@ class DetailUserInfoResource extends JsonResource
                 'motivation' => $this['motivation'],
                 'noteworthy' => $this['noteworthy']
             ],
+            'is_public_avatar' => $this['is_public_avatar']
         ];
     }
 }

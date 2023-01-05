@@ -72,7 +72,8 @@ class AppUserResource extends JsonResource
             'motivation' => $this->motivation,
             'is_favorite' => !!@$this->favorite,
             'is_new' => UserHelper::isNew($this->created_at),
-            'be_deleted' => !!@$this->deleted_at
+            'be_deleted' => !!@$this->deleted_at,
+            'is_public_avatar' => $this->is_public_avatar,
         ];
     }
 }

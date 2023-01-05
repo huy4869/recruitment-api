@@ -234,7 +234,6 @@ class JobService extends Service
 
             $job->feedbacks()?->delete();
             $job->userJobDesiredMatch()?->delete();
-            $job->images()?->delete();
             $job->delete();
 
             DB::commit();
