@@ -69,7 +69,7 @@ class StoreController extends BaseController
             return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_NOTFOUND, []);
         }
 
-        if (is_null($data->deleted_at)) {
+        if (is_null(current($data)->deleted_at)) {
             return $this->sendSuccessResponse(StoreDetailResource::collection($data));
         }
 
