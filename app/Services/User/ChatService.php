@@ -68,11 +68,13 @@ class ChatService extends Service
             });
 
         $result = [];
+        $isDeleteStore = false;
 
         foreach ($detailChats as $key => $items) {
             $data = [];
 
             foreach ($items as $item) {
+                $isDeleteStore = isset($item['storeTrashed']['deleted_at']);
                 if (is_null($item['content'])) {
                     continue;
                 }
@@ -95,7 +97,10 @@ class ChatService extends Service
             $result[$this->checkDate($key)] = $data;
         }//end foreach
 
-        return $result;
+        return [
+            'is_delete_store' => $isDeleteStore,
+            'data' => $result,
+        ];
     }
 
     /**

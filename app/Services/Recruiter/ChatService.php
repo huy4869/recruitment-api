@@ -135,7 +135,6 @@ class ChatService extends Service
     public function getDetailChat($store_id, $user_id)
     {
         $rec = $this->user->id;
-
         $detailChats = Chat::query()->with('userTrashed')
             ->whereHas('store', function ($q) use ($store_id, $rec) {
                 $q->where([
@@ -157,11 +156,13 @@ class ChatService extends Service
                 return Carbon::parse($date->created_at)->format('Y-m-d');
             });
         $result = [];
+        $isDeleteUser = false;
 
         foreach ($detailChats as $key => $items) {
             $data = [];
 
             foreach ($items as $item) {
+                $isDeleteUser = isset($item['userTrashed']['deleted_at']);
                 if (is_null($item['content'])) {
                     continue;
                 }
@@ -185,7 +186,10 @@ class ChatService extends Service
             $result[$this->checkDate($key)] = $data;
         }//end foreach
 
-        return $result;
+        return [
+            'is_delete_user' => $isDeleteUser,
+            'data' => $result,
+        ];
     }
 
     /**

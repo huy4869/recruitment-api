@@ -272,7 +272,6 @@ class UserService extends Service
         $user->contacts()?->delete();
         $user->desiredConditionUser()?->delete();
         $user->favoriteJobs()?->delete();
-        $user->favoriteByRecruiters()?->delete();
         $user->feedbacks()?->delete();
         $user->images()?->delete();
         $user->notifications()?->delete();
