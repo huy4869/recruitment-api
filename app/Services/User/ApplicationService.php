@@ -5,6 +5,7 @@ namespace App\Services\User;
 use App\Exceptions\InputException;
 use App\Helpers\DateTimeHelper;
 use App\Models\Application;
+use App\Models\JobPosting;
 use App\Models\MInterviewApproach;
 use App\Models\MInterviewStatus;
 use App\Models\Notification;
@@ -315,12 +316,14 @@ class ApplicationService extends Service
     public function updateApplication($applicationId, $data)
     {
         $user = $this->user;
-        $application = Application::query()
+        $application = Application::query()->with('jobPosting', function ($q) {
+            $q->withTrashed();
+        })
             ->where('user_id', '=', $user->id)
             ->where('id', '=', $applicationId)
             ->first();
 
-        if (!$application) {
+        if (!$application || !is_null($application->jobPosting->deleted_at) || $application->jobPosting->job_status_id === JobPosting::STATUS_DRAFT) {
             throw new InputException(trans('response.not_found'));
         }
 

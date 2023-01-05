@@ -65,9 +65,9 @@ class JobTableService extends TableService
             foreach ($this->searchables as $searchable) {
                 $q->orWhere($searchable, 'like', $content);
             }
-            $q->orwhere(DB::raw("concat(salary_min,' ～ ',salary_max)"), 'LIKE', $content)
-                ->orWhere(DB::raw("concat(start_work_time,' ～ ',end_work_time)"), 'LIKE', $content)
-                ->orWhere(DB::raw("concat(age_min,' ～ ',age_max)"), 'LIKE', $content);
+            $q->orwhere(DB::raw("concat(salary_min,'～',salary_max)"), 'LIKE', $content)
+                ->orWhere(DB::raw("concat(start_work_time,'～',end_work_time)"), 'LIKE', $content)
+                ->orWhere(DB::raw("concat(age_min,'～',age_max)"), 'LIKE', $content);
         });
 
         return $query;

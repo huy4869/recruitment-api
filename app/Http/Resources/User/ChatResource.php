@@ -27,6 +27,7 @@ class ChatResource extends JsonResource
             'user_id' => $this->user_id,
             'store_id' => $this->store_id,
             'store_name' => $this->storeTrashed->name,
+            'is_delete_store' => !!$this->storeTrashed->deleted_at,
             'store_banner' => FileHelper::getFullUrl($this->storeTrashed->storeBanner->url ?? null),
             'send_time' => $date,
             'initial_time' => DateTimeHelper::formatDateTimeJa($this->created_at),

@@ -27,9 +27,9 @@ class ListResource extends JsonResource
         $periodEnd = DateTimeHelper::formatNameDateHalfJa($periodYearEnd, $periodMonthEnd);
 
         if ($periodEnd) {
-            $periodFullFormat = $periodStart . ' ～ ' . $periodEnd;
+            $periodFullFormat = $periodStart . '～' . $periodEnd;
         } else {
-            $periodFullFormat = $periodStart . ' ～ ' . '現在';
+            $periodFullFormat = $periodStart . '～' . '現在';
         }
 
         return [

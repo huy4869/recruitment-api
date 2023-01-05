@@ -43,8 +43,8 @@ class DetailJobPostingResource extends JsonResource
                     $address = $this['address'];
                     $building = $this['building'];
                     $approach = sprintf(
-                        '〒%s %s%s%s%s',
-                        sprintf('%s-%s', substr($postalCode, 0, 3), substr($postalCode, -4)),
+                        '%s %s%s%s%s',
+                        $postalCode ? sprintf('〒%s-%s', substr($postalCode, 0, 3), substr($postalCode, -4)) : null,
                         $province,
                         $provinceCity,
                         $address,
