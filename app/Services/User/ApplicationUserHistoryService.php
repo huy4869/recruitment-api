@@ -207,7 +207,7 @@ class ApplicationUserHistoryService extends Service
             'motivation' => $user->motivation,
             'noteworthy' => $user->noteworthy,
             'skills' => $user->skills,
-            'is_public_avatar' => $user->is_public_avatar,
+            'is_public_avatar' => !!$user->is_public_avatar,
         ];
 
         $applicationUser = ApplicationUser::query()->create($dataApplicationUser);

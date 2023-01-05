@@ -58,7 +58,7 @@ class InfoResource extends JsonResource
             'building' => $data->building,
             'avatar' => FileHelper::getFullUrl(@$data->avatarBanner->url),
             'images' => ImagesResource::collection($data->avatarDetails),
-            'is_public_avatar' => $data->is_public_avatar,
+            'is_public_avatar' => !!$data->is_public_avatar,
         ];
     }
 }

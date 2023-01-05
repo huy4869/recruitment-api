@@ -57,7 +57,7 @@ class UserInfoResource extends JsonResource
             'job_experiences' => $this->job_experiences,
             'work_types' => $this->work_types,
             'job_features' => $this->job_features,
-            'is_public_avatar' => $this->is_public_avatar,
+            'is_public_avatar' => !!$this->is_public_avatar,
         ];
     }
 }
