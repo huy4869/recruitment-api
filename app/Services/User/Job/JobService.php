@@ -75,7 +75,7 @@ class JobService extends Service
             ]);
         }
 
-        $job = $job->first();
+        $job = $job->withTrashed()->first();
 
         if (!$job) {
             return null;

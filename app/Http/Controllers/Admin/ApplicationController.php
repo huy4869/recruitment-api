@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\InputException;
+use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Application\UpdateRequest;
 use App\Http\Resources\Admin\Application\ApplicationProfileUserResource;
@@ -25,7 +26,15 @@ class ApplicationController extends Controller
         $admin = $this->guard()->user();
         $application = ApplicationService::getInstance()->withUser($admin)->getDetail($id);
 
-        return $this->sendSuccessResponse(new DetailApplicationResource($application));
+        if (!$application) {
+            return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_NOTFOUND, []);
+        }
+
+        if (is_null($application->deleted_at)) {
+            return $this->sendSuccessResponse(new DetailApplicationResource($application));
+        }
+
+        return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_BAD_REQUEST, []);
     }
 
     /**
@@ -67,6 +76,14 @@ class ApplicationController extends Controller
     {
         $data = ApplicationService::getInstance()->profileUser($id);
 
-        return $this->sendSuccessResponse($data);
+        if (!$data) {
+            return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_NOTFOUND, []);
+        }
+
+        if (is_null($data['deleted_at'])) {
+            return $this->sendSuccessResponse($data);
+        }
+
+        return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_BAD_REQUEST, []);
     }
 }

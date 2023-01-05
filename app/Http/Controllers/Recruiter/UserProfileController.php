@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Recruiter;
 
+use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Resources\Recruiter\ProfileUserResource;
 use App\Services\Recruiter\UserProfileService;
@@ -27,6 +28,14 @@ class UserProfileController extends Controller
     {
         $data = $this->userProfile->detail($id);
 
-        return $this->sendSuccessResponse(new ProfileUserResource($data));
+        if (!$data) {
+            return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_NOTFOUND, []);
+        }
+
+        if (is_null($data['deleted_at'])) {
+            return $this->sendSuccessResponse(new ProfileUserResource($data));
+        }
+
+        return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_BAD_REQUEST, []);
     }
 }

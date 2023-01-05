@@ -123,10 +123,11 @@ class JobService extends Service
             'province.provinceDistrict',
             'salaryType',
         ])
+            ->withTrashed()
             ->first();
 
         if (!$job) {
-            throw new InputException(trans('response.not_found'));
+            return null;
         }
 
         return self::getJobInfoForDetailJob($job);
