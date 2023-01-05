@@ -33,15 +33,15 @@ class JobController extends Controller
         $user = $this->guard()->user();
         $job = JobService::getInstance()->withUser($user)->detail($id);
 
-        if ($job && $user && ($job['job_status_id'] == JobPosting::STATUS_DRAFT && $job['applications'])) {
-            return $this->sendSuccessResponse(null, trans('response.invitation_job_end'), ResponseHelper::STATUS_CODE_BAD_REQUEST);
+        if (!$job) {
+            return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_NOTFOUND, trans('response.not_found'));
         }
 
-        if ($job && $job['job_status_id'] != JobPosting::STATUS_DRAFT) {
+        if ($job && $job['job_status_id'] != JobPosting::STATUS_DRAFT && is_null($job['deleted_at'])) {
             return $this->sendSuccessResponse(new DetailJobPostingResource($job));
         }
 
-        return $this->sendSuccessResponse(null, trans('response.not_found'), ResponseHelper::STATUS_CODE_NOTFOUND);
+        return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_BAD_REQUEST, trans('response.invitation_job_end'));
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\InputException;
+use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\Job\UpdateRequest;
 use App\Http\Resources\Admin\Job\DetailJobResource;
@@ -59,7 +60,15 @@ class JobController extends Controller
     {
         $job = JobService::getInstance()->getDetail($id);
 
-        return $this->sendSuccessResponse(new DetailJobResource($job));
+        if (!$job) {
+            return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_NOTFOUND, []);
+        }
+
+        if (is_null($job->deleted_at)) {
+            return $this->sendSuccessResponse(new DetailJobResource($job));
+        }
+
+        return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_BAD_REQUEST, []);
     }
 
     /**

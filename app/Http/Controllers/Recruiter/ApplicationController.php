@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Recruiter;
 
 use App\Exceptions\InputException;
+use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Recruiter\Application\UpdateRequest;
 use App\Http\Resources\Recruiter\Application\ApplicationCollection;
@@ -45,7 +46,15 @@ class ApplicationController extends Controller
         $recruiter = $this->guard()->user();
         $application = ApplicationService::getInstance()->withUser($recruiter)->getDetail($id);
 
-        return $this->sendSuccessResponse(new DetailApplicationResource($application));
+        if (!$application) {
+            return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_BAD_REQUEST, []);
+        }
+
+        if (is_null($application->delete_at)) {
+            return $this->sendSuccessResponse(new DetailApplicationResource($application));
+        }
+
+        return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_BAD_REQUEST, []);
     }
 
     /**

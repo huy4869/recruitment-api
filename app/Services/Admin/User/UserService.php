@@ -43,10 +43,10 @@ class UserService extends Service
      */
     public function detail($id)
     {
-        $user = User::query()->where('id', $id)->with('stores')->first();
+        $user = User::query()->where('id', $id)->with('stores')->withTrashed()->first();
 
         if (!$user) {
-            throw new InputException(trans('response.not_found'));
+            return null;
         }
 
         return $user;
@@ -368,6 +368,7 @@ class UserService extends Service
             ])
             ->where('id', $user_id)
             ->roleUser()
+            ->withTrashed()
             ->first();
 
         if ($user) {
@@ -376,7 +377,7 @@ class UserService extends Service
             return self::addFormatUserProfileJsonData($user, $masterData);
         }
 
-        throw new InputException(trans('validation.ERR.exist.user_not_exist'));
+        return null;
     }
 
     public static function addFormatUserProfileJsonData($user, $masterData)

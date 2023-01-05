@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\InputException;
+use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\UpdateMotivationRequest;
 use App\Http\Requests\Admin\UpdatePrRequest;
@@ -59,7 +60,15 @@ class UserController extends Controller
     {
         $data = UserService::getInstance()->detail($id);
 
-        return $this->sendSuccessResponse(new DetailUserResource($data));
+        if (!$data) {
+            return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_NOTFOUND, []);
+        }
+
+        if (is_null($data->deleted_at)) {
+            return $this->sendSuccessResponse(new DetailUserResource($data));
+        }
+
+        return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_BAD_REQUEST, []);
     }
 
     /**
@@ -135,7 +144,15 @@ class UserController extends Controller
     {
         $data = UserService::getInstance()->detailInfoUser($id);
 
-        return $this->sendSuccessResponse(new DetailUserInfoResource($data));
+        if (!$data) {
+            return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_NOTFOUND, []);
+        }
+
+        if (is_null($data['deleted_at'])) {
+            return $this->sendSuccessResponse(new DetailUserInfoResource($data));
+        }
+
+        return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_BAD_REQUEST, []);
     }
 
     public function updateUser(UserInfoUpdateRequest $request, $id)

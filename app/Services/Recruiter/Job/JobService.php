@@ -322,9 +322,11 @@ class JobService extends Service
      */
     public function getDetail($id)
     {
-        $recruiter = $this->user;
-        $job = JobPosting::query()->where('id', $id)->with([
-            'store',
+        $recruiterId = $this->user->id;
+        $job = JobPosting::query()->where('id', $id)
+            ->whereHas('store', function ($q) use ($recruiterId) {
+                $q->where('user_id', $recruiterId);
+            })->with([
             'store.owner',
             'bannerImage',
             'detailImages',
@@ -333,10 +335,11 @@ class JobService extends Service
             'provinceCity',
             'salaryType',
         ])
+        ->withTrashed()
         ->first();
 
-        if (!$job || $job->store->user_id != $recruiter->id) {
-            throw new InputException(trans('response.not_found'));
+        if (!$job) {
+            return null;
         }
 
         return self::getJobInfoForDetailJob($job);

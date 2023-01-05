@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Recruiter;
 
 use App\Exceptions\InputException;
+use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Recruiter\Job\CreateRequest;
 use App\Http\Requests\Recruiter\Job\UpdateRequest;
@@ -106,7 +107,15 @@ class JobController extends Controller
         $recruiter = $this->guard()->user();
         $job = JobService::getInstance()->withUser($recruiter)->getDetail($id);
 
-        return $this->sendSuccessResponse(new DetailJobResource($job));
+        if (!$job) {
+            return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_NOTFOUND, []);
+        }
+
+        if (is_null($job->deleted_at)) {
+            return $this->sendSuccessResponse(new DetailJobResource($job));
+        }
+
+        return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_BAD_REQUEST, []);
     }
 
     /**

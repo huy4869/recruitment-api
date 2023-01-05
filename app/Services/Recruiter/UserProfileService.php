@@ -38,14 +38,15 @@ class UserProfileService extends Service
             ])
             ->where('id', $user_id)
             ->roleUser()
+            ->withTrashed()
             ->first();
         $masterData = UserHelper::getMasterDataWithUser();
 
-        if ($user) {
-            return self::addFormatUserProfileJsonData($user, $masterData);
+        if (!$user) {
+            return null;
         }
 
-        throw new InputException(trans('validation.ERR.exist.user_not_exist'));
+        return self::addFormatUserProfileJsonData($user, $masterData);
     }
 
     /**

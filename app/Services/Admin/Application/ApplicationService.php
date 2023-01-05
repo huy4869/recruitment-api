@@ -48,20 +48,20 @@ class ApplicationService extends Service
                 'jobPosting',
                 'interviews',
             ])
+            ->withTrashed()
             ->first();
 
-        if ($application) {
-            $beReadApplications = $admin->be_read_applications ?? [];
-            $beReadApplications = array_unique(array_merge($beReadApplications, [$id]));
-
-            $admin->update([
-                'be_read_applications' => $beReadApplications
-            ]);
-
-            return $application;
+        if (!$application) {
+            return null;
         }
 
-        throw new InputException(trans('response.not_found'));
+        $beReadApplications = $admin->be_read_applications ?? [];
+        $beReadApplications = array_unique(array_merge($beReadApplications, [$id]));
+        $admin->update([
+            'be_read_applications' => $beReadApplications
+        ]);
+
+        return $application;
     }
 
     /**
@@ -236,15 +236,16 @@ class ApplicationService extends Service
             },
         ])
             ->where('id', $applicationId)
+            ->withTrashed()
             ->first();
 
-        if ($application) {
-            $masterData = UserHelper::getMasterDataWithUser();
-
-            return self::addFormatUserProfileJsonData($application, $masterData);
+        if (!$application) {
+            return null;
         }
 
-        throw new InputException(trans('response.not_found'));
+        $masterData = UserHelper::getMasterDataWithUser();
+
+        return self::addFormatUserProfileJsonData($application, $masterData);
     }
 
     /**
@@ -347,6 +348,7 @@ class ApplicationService extends Service
                 'motivation' => $applicationUser->motivation,
                 'noteworthy' => $applicationUser->noteworthy,
             ],
+            'deleted_at' => $application->deleted_at,
         ];
     }
 }

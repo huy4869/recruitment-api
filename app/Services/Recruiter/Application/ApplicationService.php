@@ -128,13 +128,16 @@ class ApplicationService extends Service
                 'applicationUser.province',
                 'applicationUser.provinceCity',
                 'applicationUser.province.provinceDistrict',
-                'jobPosting',
+                'jobPosting' => function ($q) {
+                    $q->withTrashed();
+                },
                 'interviews',
             ])
+            ->withTrashed()
             ->first();
 
         if (!$application) {
-            throw new InputException(trans('response.not_found'));
+            return null;
         }
 
         $beReadApplications = $recruiter->be_read_applications ?? [];
