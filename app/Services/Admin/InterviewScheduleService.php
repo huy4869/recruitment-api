@@ -747,7 +747,6 @@ class InterviewScheduleService extends Service
     public function checkJobPosting($jobPostingId, $userId)
     {
         $jobPosting = JobPosting::query()
-            ->released()
             ->with(['applications' => function($query) use ($userId) {
                 $query->where('user_id', '!=', $userId);
             }])

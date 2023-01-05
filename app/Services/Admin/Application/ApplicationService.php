@@ -34,7 +34,9 @@ class ApplicationService extends Service
         $application = Application::query()
             ->where('id', $id)
             ->with([
-                'store',
+                'store' => function ($q) {
+                    $q->withTrashed();
+                },
                 'store.province',
                 'store.provinceCity',
                 'store.owner',
@@ -45,7 +47,9 @@ class ApplicationService extends Service
                 'applicationUser.province',
                 'applicationUser.provinceCity',
                 'applicationUser.province.provinceDistrict',
-                'jobPosting',
+                'jobPosting' => function ($q) {
+                    $q->withTrashed();
+                },
                 'interviews',
             ])
             ->withTrashed()
