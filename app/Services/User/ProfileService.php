@@ -107,7 +107,7 @@ class ProfileService extends Service
     {
         if ($learningHistories) {
             foreach ($learningHistories as $value) {
-                if ($value['learning_status_id'] && $value['school_name'] && $value['enrollment_period_start'] && $value['enrollment_period_end']) {
+                if ($value['school_name'] && $value['enrollment_period_start'] && $value['enrollment_period_end']) {
                     return config('percentage.user_learning_history');
                 }
             }
