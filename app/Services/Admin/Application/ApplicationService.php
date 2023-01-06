@@ -312,8 +312,8 @@ class ApplicationService extends Service
 
         return [
             'id' => $application->user_id,
-            'avatar_banner' => FileHelper::getFullUrl($application->applicationUser->avatarBanner->url ?? null),
-            'avatar_details' => $url,
+            'avatar_banner' => $application->applicationUser->is_public_avatar ? FileHelper::getFullUrl($application->applicationUser->avatarBanner->url ?? null) : null,
+            'avatar_details' => $application->applicationUser->is_public_avatar ? $url : null,
             'first_name' => $applicationUser->first_name,
             'last_name' => $applicationUser->last_name,
             'furi_first_name' => $applicationUser->furi_first_name,
