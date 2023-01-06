@@ -45,7 +45,8 @@ class ApplicationResource extends JsonResource
                 'first_name' => $this->owner_first_name,
                 'last_name' => $this->owner_last_name,
                 'store_name' => $this->store_name,
-            ]
+            ],
+            'is_deleted' => !is_null($this->deleted_at),
         ];
     }
 }

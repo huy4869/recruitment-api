@@ -43,6 +43,7 @@ class ApplicationResource extends JsonResource
             ],
             'be_read' => in_array($this->id, Auth::user()->be_read_applications ?? []),
             'created_at' => DateTimeHelper::formatDateDayOfWeekJa($this->created_at),
+            'is_delete' => !is_null($this->deleted_at),
         ];
     }
 }

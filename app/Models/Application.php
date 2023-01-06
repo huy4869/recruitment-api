@@ -88,6 +88,11 @@ class Application extends Model
         return $this->hasOne(ApplicationUser::class);
     }
 
+    public function applicationUserTrash()
+    {
+        return $this->hasOne(ApplicationUser::class)->withTrashed();
+    }
+
     public function applicationUserWorkHistories()
     {
         return $this->hasMany(ApplicationUserWorkHistory::class);

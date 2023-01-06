@@ -33,7 +33,11 @@ class ApplicationController extends Controller
     {
         $data = ApplicationService::getInstance()->profileUser($id);
 
-        return $this->sendSuccessResponse(new ApplicationProfileUserResource($data));
+        if ($data) {
+            return $this->sendSuccessResponse(new ApplicationProfileUserResource($data));
+        }
+
+        return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_BAD_REQUEST, []);
     }
 
     /**
@@ -50,11 +54,7 @@ class ApplicationController extends Controller
             return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_BAD_REQUEST, []);
         }
 
-        if (is_null($application->delete_at)) {
-            return $this->sendSuccessResponse(new DetailApplicationResource($application));
-        }
-
-        return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_BAD_REQUEST, []);
+        return $this->sendSuccessResponse(new DetailApplicationResource($application));
     }
 
     /**

@@ -130,9 +130,10 @@ class ApplicationTableService extends TableService
             ->join('job_postings', 'job_posting_id', '=', 'job_postings.id')
             ->with([
                 'interviews',
-                'applicationUser',
-                'applicationUser.avatarBanner'
+                'applicationUserTrash',
+                'applicationUserTrash.avatarBanner'
             ])
+            ->withTrashed()
             ->whereIn('job_posting_id', $jobIds)
             ->orderBy('created_at', 'desc');
     }
@@ -156,6 +157,7 @@ class ApplicationTableService extends TableService
             application_users.furi_first_name,
             application_users.furi_last_name,
             application_users.is_public_avatar,
+            applications.deleted_at,
             application_users.age';
     }
 }

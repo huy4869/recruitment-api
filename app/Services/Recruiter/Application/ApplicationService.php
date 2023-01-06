@@ -24,26 +24,31 @@ class ApplicationService extends Service
     {
         $application = Application::with([
             'user' => fn($q) => $q->withTrashed(),
-            'applicationUser',
+            'applicationUserTrash',
             'applicationUserWorkHistories' => function ($query) {
-                $query->orderByRaw('period_end is not null, period_end DESC, period_start DESC');
+                $query->withTrashed()
+                    ->orderByRaw('period_end is not null, period_end DESC, period_start DESC');
             },
             'applicationUserLearningHistories' => function ($query) {
-                $query->orderByRaw('enrollment_period_start ASC, enrollment_period_end ASC');
+                $query->withTrashed()
+                    ->orderByRaw('enrollment_period_start ASC, enrollment_period_end ASC');
             },
             'applicationUserLicensesQualifications' => function ($query) {
-                $query->orderByRaw('new_issuance_date ASC, created_at ASC');
+                $query->withTrashed()
+                    ->orderByRaw('new_issuance_date ASC, created_at ASC');
             },
-        ])->where('id', $applicationId)
+        ])
+            ->withTrashed()
+            ->where('id', $applicationId)
         ->first();
 
-        if ($application) {
-            $masterData = UserHelper::getMasterDataWithUser();
-
-            return self::addFormatUserProfileJsonData($application, $masterData);
+        if (!$application) {
+            return null;
         }
 
-        throw new InputException(trans('response.not_found'));
+        $masterData = UserHelper::getMasterDataWithUser();
+
+        return self::addFormatUserProfileJsonData($application, $masterData);
     }
 
     /**
@@ -121,13 +126,13 @@ class ApplicationService extends Service
                 $query->where('user_id', $recruiter->id);
             })
             ->with([
-                'applicationUser',
-                'applicationUser.avatarDetails',
-                'applicationUser.avatarBanner',
-                'applicationUser.gender',
-                'applicationUser.province',
-                'applicationUser.provinceCity',
-                'applicationUser.province.provinceDistrict',
+                'applicationUserTrash',
+                'applicationUserTrash.avatarDetails',
+                'applicationUserTrash.avatarBanner',
+                'applicationUserTrash.gender',
+                'applicationUserTrash.province',
+                'applicationUserTrash.provinceCity',
+                'applicationUserTrash.province.provinceDistrict',
                 'jobPosting' => function ($q) {
                     $q->withTrashed();
                 },

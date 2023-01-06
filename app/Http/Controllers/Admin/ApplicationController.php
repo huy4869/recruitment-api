@@ -30,11 +30,7 @@ class ApplicationController extends Controller
             return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_NOTFOUND, []);
         }
 
-        if (is_null($application->deleted_at)) {
-            return $this->sendSuccessResponse(new DetailApplicationResource($application));
-        }
-
-        return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_BAD_REQUEST, []);
+        return $this->sendSuccessResponse(new DetailApplicationResource($application));
     }
 
     /**
@@ -76,14 +72,10 @@ class ApplicationController extends Controller
     {
         $data = ApplicationService::getInstance()->profileUser($id);
 
-        if (!$data) {
-            return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_NOTFOUND, []);
-        }
-
-        if (is_null($data['deleted_at'])) {
+        if ($data) {
             return $this->sendSuccessResponse($data);
         }
 
-        return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_BAD_REQUEST, []);
+        return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_NOTFOUND, []);
     }
 }
