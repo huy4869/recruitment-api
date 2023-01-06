@@ -302,7 +302,7 @@ class UserService extends Service
                         ]);
                     }
 
-                if (!empty($userFavoriteJobs)) {
+                if ($userFavoriteJobs->isNotEmpty()) {
                         $userNotifyData[] = [
                             'user_id' => $recruiter->id,
                             'notice_type_id' => Notification::TYPE_MATCHING_FAVORITE,

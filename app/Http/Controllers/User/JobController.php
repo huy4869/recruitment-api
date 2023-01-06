@@ -37,11 +37,11 @@ class JobController extends Controller
             return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_NOTFOUND, trans('response.not_found'));
         }
 
-        if ($job && $job['job_status_id'] != JobPosting::STATUS_DRAFT && is_null($job['deleted_at'])) {
-            return $this->sendSuccessResponse(new DetailJobPostingResource($job));
+        if ($job == ResponseHelper::STATUS_CODE_BAD_REQUEST) {
+            return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_BAD_REQUEST, trans('response.invitation_job_end'));
         }
 
-        return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_BAD_REQUEST, trans('response.invitation_job_end'));
+        return $this->sendSuccessResponse(new DetailJobPostingResource($job));
     }
 
     /**
