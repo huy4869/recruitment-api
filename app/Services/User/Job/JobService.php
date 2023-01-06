@@ -36,7 +36,7 @@ class JobService extends Service
 {
     /**
      * @param $id
-     * @return array
+     * @return array | int
      * @throws Exception
      */
     public function detail($id)
@@ -79,6 +79,10 @@ class JobService extends Service
 
         if (!$job) {
             return null;
+        }
+
+        if ($job->job_status_id === JobPosting::STATUS_DRAFT || !is_null($job->deleted_at)) {
+            return ResponseHelper::STATUS_CODE_BAD_REQUEST;
         }
 
         $masterData = JobHelper::getJobMasterData();
