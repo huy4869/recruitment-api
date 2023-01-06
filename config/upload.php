@@ -41,5 +41,5 @@ return [
 
     'size_max' => env('IMAGE_SIZE_MAX', 20480),
 
-    'image_ext' => ['jpg', 'jpeg', 'png', 'svg'],
+    'image_ext' => ['jpg', 'jpeg', 'png', 'svg', 'JPG', 'JPEG', 'PNG', 'SVG'],
 ];
