@@ -57,6 +57,7 @@ class DetailApplicationResource extends JsonResource
             'meet_link' => $this->meet_link,
             'interview_approach_name' => $this->interviewApproach->name,
             'has_input_link' => $this->interview_approach_id == MInterviewApproach::STATUS_INTERVIEW_ONLINE,
+            'is_deleted' => !is_null($this->deleted_at),
         ];
     }
 }

@@ -40,13 +40,13 @@ class ApplicationService extends Service
                 'store.province',
                 'store.provinceCity',
                 'store.owner',
-                'applicationUser',
-                'applicationUser.avatarDetails',
-                'applicationUser.avatarBanner',
-                'applicationUser.gender',
-                'applicationUser.province',
-                'applicationUser.provinceCity',
-                'applicationUser.province.provinceDistrict',
+                'applicationUserTrash',
+                'applicationUserTrash.avatarDetails',
+                'applicationUserTrash.avatarBanner',
+                'applicationUserTrash.gender',
+                'applicationUserTrash.province',
+                'applicationUserTrash.provinceCity',
+                'applicationUserTrash.province.provinceDistrict',
                 'jobPosting' => function ($q) {
                     $q->withTrashed();
                 },
@@ -225,18 +225,21 @@ class ApplicationService extends Service
     public function profileUser($applicationId)
     {
         $application = Application::with([
-            'user',
-            'applicationUser',
-            'applicationUser.avatarDetails',
-            'applicationUser.avatarBanner',
+            'user' => fn($q) => $q->withTrashed(),
+            'applicationUserTrash',
+            'applicationUserTrash.avatarDetails',
+            'applicationUserTrash.avatarBanner',
             'applicationUserWorkHistories' => function ($query) {
-                $query->orderByRaw('period_end is not null, period_end DESC , period_start DESC');
+                $query->withTrashed()
+                    ->orderByRaw('period_end is not null, period_end DESC , period_start DESC');
             },
             'applicationUserLearningHistories' => function ($query) {
-                $query->orderByRaw('enrollment_period_start ASC, enrollment_period_end ASC');
+                $query->withTrashed()
+                    ->orderByRaw('enrollment_period_start ASC, enrollment_period_end ASC');
             },
             'applicationUserLicensesQualifications' => function ($query) {
-                $query->orderByRaw('new_issuance_date ASC, created_at ASC');
+                $query->withTrashed()
+                    ->orderByRaw('new_issuance_date ASC, created_at ASC');
             },
         ])
             ->where('id', $applicationId)
@@ -308,7 +311,7 @@ class ApplicationService extends Service
             $url[] = (object)['url' => FileHelper::getFullUrl($avatar->url)];
         }
 
-        $applicationUser = $application->applicationUser;
+        $applicationUser = $application->applicationUserTrash;
 
         return [
             'id' => $application->user_id,
@@ -352,7 +355,7 @@ class ApplicationService extends Service
                 'motivation' => $applicationUser->motivation,
                 'noteworthy' => $applicationUser->noteworthy,
             ],
-            'deleted_at' => $application->deleted_at,
+            'is_deleted' => !is_null($application->deleted_at),
         ];
     }
 }

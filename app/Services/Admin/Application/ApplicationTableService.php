@@ -153,8 +153,9 @@ class ApplicationTableService extends TableService
             ->join('users', 'stores.user_id', '=', 'users.id')
             ->with([
                 'interviews',
-                'applicationUser.avatarBanner'
+                'applicationUserTrash.avatarBanner'
             ])
+            ->withTrashed()
             ->orderBy('created_at', 'DESC');
     }
 
@@ -170,6 +171,7 @@ class ApplicationTableService extends TableService
             job_postings.name as job_name,
             applications.interview_status_id,
             applications.created_at,
+            applications.deleted_at,
             applications.user_id,
             applications.updated_at,
             application_users.first_name,
