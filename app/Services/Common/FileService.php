@@ -101,7 +101,10 @@ class FileService extends Service
         }
 
         $existImages = Images::query()
-            ->whereIn('url', $dataImages)
+            ->where(function ($q) use ($dataImages) {
+                $q->whereIn('url', $dataImages)
+                ->orWhereIn('thumb', $dataImages);
+            })
             ->where(function ($query) use ($object) {
                 $query->where('imageable_id', $object->id)
                 ->orWhere('imageable_id', null);
