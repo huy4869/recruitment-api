@@ -28,7 +28,7 @@ class DetailApplicationResource extends JsonResource
                 'first_name' => $user->first_name,
                 'last_name' => $user->last_name,
                 'avatar_banner' => $user->is_public_avatar == User::STATUS_PUBLIC_AVATAR ? FileHelper::getFullUrl(@$user->avatarBanner->url) : null,
-                'avatar_detail' => $user->is_public_avatar == User::STATUS_PUBLIC_AVATAR ? DetailAvatarResource::collection($user->avatarDetails) : nul,
+                'avatar_detail' => $user->is_public_avatar == User::STATUS_PUBLIC_AVATAR ? DetailAvatarResource::collection($user->avatarDetails) : null,
                 'birthday' => DateTimeHelper::formatDateJa($user->birthday),
                 'age' => DateTimeHelper::birthDayByAge($user->birthday, $user->created_at),
                 'gender' => @$user->gender->name,
