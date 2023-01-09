@@ -53,7 +53,7 @@ class ListApplicationResource extends JsonResource
             'store_name' => @$data->storeAcceptTrashed->name,
             'company_name' => @$data->storeAcceptTrashed->owner->company_name,
             'interview_status_id' => $data->interview_status_id,
-            'interview_status_name' => @$data->interviews->name,
+            'interview_status_name' => $data->interview_status_name,
             'interview_date' => DateTimeHelper::formatDateDayOfWeekJa($data['date']) . $data->hours,
             'apply_or_interview' => $applyOrInterview,
             'allow_edit' => $allowEdit,
