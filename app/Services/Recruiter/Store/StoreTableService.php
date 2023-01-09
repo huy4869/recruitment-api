@@ -86,6 +86,7 @@ class StoreTableService extends TableService
                 'provinceCity'
             ])
             ->where('user_id', $rec->id)
+             ->withTrashed()
             ->selectRaw($this->getSelectRaw())
             ->orderByDesc('created_at');
     }
@@ -106,6 +107,7 @@ class StoreTableService extends TableService
             postal_code,
             building,
             address,
+            deleted_at,
             specialize_ids';
     }
 }

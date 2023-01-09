@@ -28,6 +28,7 @@ class StoreResource extends JsonResource
                 'building' => $this->building,
             ],
             'specialize_ids' => $this->specialize_ids,
+            'is_deleted' => !is_null($this->deleted_at),
         ];
     }
 }

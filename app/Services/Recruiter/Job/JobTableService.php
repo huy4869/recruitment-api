@@ -130,14 +130,15 @@ class JobTableService extends TableService
         return JobPosting::query()->whereIn('store_id', $recruiterStoreIds)
             ->join('stores', 'store_id', '=', 'stores.id')
             ->with([
-                'store',
-                'store.owner',
+                'storeTrashed',
+                'storeTrashed.owner',
                 'status',
                 'province',
                 'province.provinceDistrict',
                 'salaryType',
                 'bannerImage',
             ])
+            ->withTrashed()
             ->selectRaw($this->getSelectRaw());
     }
 
@@ -174,6 +175,7 @@ class JobTableService extends TableService
             stores.name as store_name,
             job_postings.start_work_time_type,
             job_postings.end_work_time_type,
+            job_postings.deleted_at,
             job_postings.range_hours_type';
     }
 }
