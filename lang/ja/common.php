@@ -22,4 +22,5 @@ return [
     'subject_mail_interview_online' => 'オンライン面接のメール通知URLリンク',
     'age_name' => '代以上',
     'learning_status_name' => '（:status_name）',
+    'status_interview_recruit_end' => '募集終了',
 ];
