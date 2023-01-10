@@ -54,11 +54,11 @@ class StoreController extends Controller
             return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_NOTFOUND, []);
         }
 
-        if (is_null(current($data)->deleted_at)) {
-            return $this->sendSuccessResponse(StoreDetailResource::collection($data));
-        }
-
-        return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_BAD_REQUEST, []);
+        return ResponseHelper::sendResponse(
+            is_null(current($data)->deleted_at) ? ResponseHelper::STATUS_CODE_SUCCESS : ResponseHelper::STATUS_CODE_BAD_REQUEST,
+            '',
+            StoreDetailResource::collection($data)
+        );
     }
 
     /**

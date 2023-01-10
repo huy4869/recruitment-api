@@ -32,10 +32,10 @@ class UserProfileController extends Controller
             return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_NOTFOUND, []);
         }
 
-        if (is_null($data['deleted_at'])) {
-            return $this->sendSuccessResponse(new ProfileUserResource($data));
-        }
-
-        return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_BAD_REQUEST, []);
+        return ResponseHelper::sendResponse(
+            is_null($data['deleted_at']) ? ResponseHelper::STATUS_CODE_SUCCESS : ResponseHelper::STATUS_CODE_BAD_REQUEST,
+            '',
+            new ProfileUserResource($data)
+        );
     }
 }

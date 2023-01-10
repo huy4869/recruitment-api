@@ -28,6 +28,7 @@ class DetailUserResource extends JsonResource
             'stores' => UserStoresResource::collection($this->stores),
             'email' => $this->email,
             'last_login_at' => DateTimeHelper::formatDateTimeJa($this->last_login_at),
+            'is_deleted' => !is_null($this->deleted_at)
         ];
     }
 }
