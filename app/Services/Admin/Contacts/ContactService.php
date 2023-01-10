@@ -25,14 +25,14 @@ class ContactService extends Service
         $perPage = $perPage ?? self::PER_PAGE;
 
         if ($roleId == User::ROLE_USER) {
-            $contacts = Contact::query()
-                ->with('user')
+            $contacts = Contact::query()->withTrashed()
+                ->with('userTrashed')
                 ->whereNull('store_id')
                 ->orderByDesc('created_at')
                 ->paginate($perPage);
         } else {
-            $contacts = Contact::query()
-                ->with('store')
+            $contacts = Contact::query()->withTrashed()
+                ->with('storeTrashed')
                 ->whereNotNull('store_id')
                 ->orderByDesc('created_at')
                 ->paginate($perPage);

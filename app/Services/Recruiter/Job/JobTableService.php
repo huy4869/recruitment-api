@@ -130,15 +130,14 @@ class JobTableService extends TableService
         return JobPosting::query()->whereIn('store_id', $recruiterStoreIds)
             ->join('stores', 'store_id', '=', 'stores.id')
             ->with([
-                'storeTrashed',
-                'storeTrashed.owner',
+                'store',
+                'store.owner',
                 'status',
                 'province',
                 'province.provinceDistrict',
                 'salaryType',
                 'bannerImage',
             ])
-            ->withTrashed()
             ->selectRaw($this->getSelectRaw());
     }
 

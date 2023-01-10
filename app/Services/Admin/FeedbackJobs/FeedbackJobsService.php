@@ -23,7 +23,7 @@ class FeedbackJobsService extends Service
     {
         $perPage = $perPage ?? self::PER_PAGE;
 
-        return FeedbackJob::query()->with('user')->orderByDesc('created_at')->paginate($perPage);
+        return FeedbackJob::query()->withTrashed()->with('userTrashed')->orderByDesc('created_at')->paginate($perPage);
     }
 
     /**
@@ -57,7 +57,7 @@ class FeedbackJobsService extends Service
      */
     public function detail($id)
     {
-        $feedbackJob = FeedbackJob::query()->with('user')->where('id', '=', $id)->first();
+        $feedbackJob = FeedbackJob::query()->withTrashed()->with('userTrashed')->where('id', '=', $id)->first();
 
         if ($feedbackJob) {
             if ($feedbackJob->be_read == FeedbackJob::NOT_READ) {
