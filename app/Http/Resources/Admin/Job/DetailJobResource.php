@@ -76,9 +76,10 @@ class DetailJobResource extends JsonResource
             ],
             'stations' => $this->stations,
             'shifts' => $this->shifts,
-            'welfare_treatment_description' => $this['welfare_treatment_description'],
-            'released_at' => DateTimeHelper::formatDateJa($this['released_at']),
-            'updated_at' => DateTimeHelper::formatDateJa($this['updated_at']),
+            'welfare_treatment_description' => $this->welfare_treatment_description,
+            'released_at' => DateTimeHelper::formatDateJa($this->released_at),
+            'updated_at' => DateTimeHelper::formatDateJa($this->updated_at),
+            'is_deleted' => !is_null($this->deleted_at),
         ];
     }
 }

@@ -66,17 +66,18 @@ class DetailJobResource extends JsonResource
                 'province_name' => @$this->province->name,
                 'province_city_id' => @$this->provinceCity->id,
                 'province_city_name' => @$this->provinceCity->name,
-                'address' => $this['address'],
-                'building' => $this['building'],
+                'address' => $this->address,
+                'building' => $this->building,
             ],
             'working_days' => $this->working_days,
             'range_hours_type' => $this->range_hours_type,
             'range_hours_type_name' => $this->range_hours_type == JobPosting::FULL_DAY ? trans('job_posting.range_hours_type.full_day') : trans('job_posting.range_hours_type.half_day'),
             'stations' => $this->stations,
             'shifts' => $this->shifts,
-            'welfare_treatment_description' => $this['welfare_treatment_description'],
-            'released_at' => DateTimeHelper::formatDateJa($this['released_at']),
-            'updated_at' => DateTimeHelper::formatDateJa($this['updated_at']),
+            'welfare_treatment_description' => $this->welfare_treatment_description,
+            'released_at' => DateTimeHelper::formatDateJa($this->released_at),
+            'updated_at' => DateTimeHelper::formatDateJa($this->updated_at),
+            'is_deleted' => !is_null($this->deleted_at),
         ];
     }
 }

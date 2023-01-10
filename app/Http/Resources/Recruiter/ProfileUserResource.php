@@ -59,6 +59,7 @@ class ProfileUserResource extends JsonResource
                 'motivation' => $this['motivation'],
                 'noteworthy' => $this['noteworthy']
             ],
+            'is_deleted' => !is_null($this['deleted_at'])
         ];
     }
 }

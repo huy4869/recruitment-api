@@ -48,6 +48,7 @@ class StoreDetailResource extends JsonResource
             'specialize_ids' => $this->specialize_ids,
             'recruiter_name' => $this->recruiter_name,
             'store_features' => $this->store_features,
+            'is_deleted' => !is_null($this->deleted_at),
         ];
     }
 }
