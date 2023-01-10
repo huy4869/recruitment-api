@@ -26,7 +26,7 @@ class ContactStoreResource extends JsonResource
             'tel' => $data->tel,
             'be_read' => $data->be_read,
             'content' => $data->content,
-            'store' => $data->store,
+            'store' => $data->storeTrashed,
             'created_at' => DateTimeHelper::formatDateDayOfWeekTimeJa($this->created_at),
         ];
     }

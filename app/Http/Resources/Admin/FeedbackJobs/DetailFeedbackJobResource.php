@@ -25,8 +25,8 @@ class DetailFeedbackJobResource extends JsonResource
         return [
             'id' => $data->id,
             'job_posting_id' => $data->job_posting_id,
-            'email' => $data->user->email,
-            'name' => $data->user->first_name . $data->user->last_name,
+            'email' => $data->userTrashed->email,
+            'name' => $data->userTrashed->first_name . $data->userTrashed->last_name,
             'user_id' => $data->user_id,
             'content' => $data->content,
             'feedback_types' => $dataFeedbackType,

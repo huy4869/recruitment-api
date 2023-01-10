@@ -192,11 +192,15 @@ class JobService extends Service
      */
     public function destroy($id)
     {
-        $job = JobPosting::query()->where('id', $id)->first();
+        $job = JobPosting::query()->where('id', $id)->withTrashed()->first();
         $notifications = [];
 
         if (!$job) {
             throw new InputException(trans('response.invalid'));
+        }
+
+        if(!is_null($job->deleted_at)) {
+            throw new InputException(trans('response.deleted_job'));
         }
 
         $applications = $job->applications()?->whereNotIn('interview_status_id', [

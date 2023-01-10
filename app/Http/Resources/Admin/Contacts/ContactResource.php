@@ -23,9 +23,9 @@ class ContactResource extends JsonResource
             $email = $data->email;
             $tel = $data->tel;
         } else {
-            $name = $data->user->first_name . $data->user->last_name;
-            $email = $data->user->email;
-            $tel = $data->user->tel;
+            $name = $data->userTrashed->first_name . $data->userTrashed->last_name;
+            $email = $data->userTrashed->email;
+            $tel = $data->userTrashed->tel;
         }
 
         return [
