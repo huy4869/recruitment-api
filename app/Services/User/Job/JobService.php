@@ -470,7 +470,7 @@ class JobService extends Service
      */
     public function deleteFavorite($id)
     {
-        $favorite = $this->user->favoriteJobs()->where('job_posting_id', $id)->delete();
+        $favorite = $this->user->favoriteJobs()->withTrashed()->where('job_posting_id', $id)->delete();
 
         if ($favorite) {
             return true;
