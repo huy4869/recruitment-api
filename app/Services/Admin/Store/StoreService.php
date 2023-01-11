@@ -78,7 +78,7 @@ class StoreService extends Service
             $data['created_by'] = $this->user->id;
             $data['name'] = $data['store_name'];
             $data['founded_year'] = str_replace('/', '', $data['founded_year']);
-            $data['color'] = CommonHelper::makeRgbFromValue(rand(100000000,999999999));
+            $data['hex_color'] = CommonHelper::makeRgbFromValue(rand(100000000, 999999999));
             $data['application_tel'] = str_replace('-', '', $data['application_tel']);
             $data['tel'] = str_replace('-', '', $data['tel']);
             $store = Store::create($data);
