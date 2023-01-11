@@ -114,6 +114,7 @@ class UserInfoTableService extends TableService
             users.address,
             users.building,
             users.postal_code,
+            users.is_public_avatar,
             users.created_at,
             users.birthday';
     }

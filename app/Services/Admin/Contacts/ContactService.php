@@ -51,24 +51,24 @@ class ContactService extends Service
      */
     public function detail($id)
     {
-        $contact = Contact::query()->with(['user', 'store'])->where('id', '=', $id)->first();
+        $contact = Contact::query()->withTrashed()->with(['userTrashed', 'storeTrashed'])->where('id', '=', $id)->first();
         $roleId = User::ROLE_RECRUITER;
 
-        if ($contact) {
-            if ($contact->be_read == Contact::NOT_READ) {
-                $contact->update(['be_read' => Contact::BE_READ]);
-            }
-
-            if (is_null($contact->store_id)) {
-                $roleId = User::ROLE_USER;
-            }
-
-            return [
-                'role_id' => $roleId,
-                'data' =>  $contact
-            ];
+        if (!$contact) {
+            return null;
         }
 
-        throw new InputException(trans('response.not_found'));
+        if ($contact->be_read == Contact::NOT_READ) {
+            $contact->update(['be_read' => Contact::BE_READ]);
+        }
+
+        if (is_null($contact->store_id)) {
+            $roleId = User::ROLE_USER;
+        }
+
+        return [
+            'role_id' => $roleId,
+            'data' =>  $contact
+        ];
     }
 }

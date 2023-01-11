@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Exceptions\InputException;
+use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Admin\ContactRequest;
 use App\Http\Resources\Admin\Contacts\ContactResource;
@@ -40,6 +41,10 @@ class ContactsController extends Controller
     public function detail($id)
     {
         $data = ContactService::getInstance()->detail($id);
+
+        if (!$data) {
+            ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_NOTFOUND, []);
+        }
 
         if ($data['role_id'] == User::ROLE_USER) {
             $resource = new ContactResource($data['data']);
