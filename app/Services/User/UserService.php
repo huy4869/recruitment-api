@@ -92,14 +92,13 @@ class UserService extends Service
             'province_city_id',
             'address',
             'building',
-            'is_public_avatar',
         ];
 
         foreach ($attrs as $attr) {
             $result[$attr] = @$data[$attr];
         }
 
-       return $result;
+        return $result;
     }
 
     /**
