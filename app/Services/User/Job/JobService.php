@@ -57,6 +57,8 @@ class JobService extends Service
             })->with([
                 'store',
                 'store.owner',
+                'store.province',
+                'store.provinceCity',
                 'bannerImage',
                 'detailImages',
                 'province',

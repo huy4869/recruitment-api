@@ -37,11 +37,11 @@ class DetailJobPostingResource extends JsonResource
                     }
                     break;
                 case MInterviewApproach::STATUS_INTERVIEW_DIRECT:
-                    $postalCode = $this['postal_code'];
-                    $province = $this['province'];
-                    $provinceCity = $this['province_city'];
-                    $address = $this['address'];
-                    $building = $this['building'];
+                    $postalCode = $this['store']['postal_code'];
+                    $province = $this['store']['province']['name'];
+                    $provinceCity = $this['store']['province_city']['name'];
+                    $address = $this['store']['address'];
+                    $building = $this['store']['building'];
                     $approach = sprintf(
                         '%s %s%s%s%s',
                         $postalCode ? sprintf('〒%s-%s', substr($postalCode, 0, 3), substr($postalCode, -4)) : null,
@@ -94,6 +94,7 @@ class DetailJobPostingResource extends JsonResource
             'address' => [
                 'province_id' => $this['province_id'],
                 'province' => $this['province'],
+                'postal_code' => $this['postal_code'],
                 'province_city_id' => $this['province_city_id'],
                 'province_city' => $this['province_city'],
                 'address' => $this['address'],
