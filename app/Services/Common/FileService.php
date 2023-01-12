@@ -199,7 +199,7 @@ class FileService extends Service
      */
     protected function resizeImage($image, $type, $fileName)
     {
-        $img = Image::make($image);
+        $img = Image::make($image)->orientate();
         $typeImage = config('upload.image_types' . '.' . $type);
 
         if (!$typeImage) {
