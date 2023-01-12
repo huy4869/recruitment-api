@@ -76,7 +76,7 @@ class UserController extends Controller
                 return $this->sendSuccessResponse(AppUserResource::collection($users));
             }
         } else {
-            $users = UserService::getInstance()->withUser($recruiter)->getNewUsers();
+            $users = UserService::getInstance()->withUser($recruiter)->getSuggestUsers();
 
             if ($users) {
                 return $this->sendSuccessResponse(UserResource::collection($users));
