@@ -31,8 +31,6 @@ class StoreRequest extends FormRequest
             'id' => [
                 'required',
                 'numeric',
-                Rule::exists('job_postings', 'id')
-                ->where('deleted_at'),
             ],
             'date' => ['required', 'date', 'date_format:Y-m-d', 'after_or_equal:' .  $now, 'before_or_equal:' . Carbon::now()->addDays(config('date.max_day'))],
             'hours' => ['required', 'string', 'in:' . implode(',', config('date.time'))],
