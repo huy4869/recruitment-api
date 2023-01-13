@@ -194,7 +194,7 @@ class StoreService extends Service
             $data['name'] = $data['store_name'];
             $data['founded_year'] = str_replace('/', '', $data['founded_year']);
             $data['hex_color'] = CommonHelper::makeRgbFromValue(rand(100000000, 999999999));
-            $data['application_tel'] = str_replace('-', '', $data['application_tel']);
+            $data['application_tel'] = isset($data['application_tel']) && $data['application_tel'] ? str_replace('-', '', $data['application_tel']) : '';
             $data['tel'] = str_replace('-', '', $data['tel']);
             $store = Store::create($data);
             FileService::getInstance()->updateImageable($store, $dataImage, [Image::STORE_BANNER]);
@@ -227,7 +227,7 @@ class StoreService extends Service
             DB::beginTransaction();
             $data['name'] = $data['store_name'];
             $data['founded_year'] = str_replace('/', '', $data['founded_year']);
-            $data['application_tel'] = str_replace('-', '', $data['application_tel']);
+            $data['application_tel'] = isset($data['application_tel']) && $data['application_tel'] ? str_replace('-', '', $data['application_tel']) : '';
             $data['tel'] = str_replace('-', '', $data['tel']);
             FileService::getInstance()->updateImageable($store, $dataImage, [Image::STORE_BANNER]);
             $store->update($data);
