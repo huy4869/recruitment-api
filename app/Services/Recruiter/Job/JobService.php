@@ -143,7 +143,17 @@ class JobService extends Service
                         Notification::query()->insert($notifications->toArray());
                     });
                 }//end if
-                $job->update(['job_status_id' => $data['job_status_id']]);
+
+                $updateData = ['job_status_id' => $data['job_status_id']];
+
+                if (
+                    $job->job_status_id != JobPosting::STATUS_RELEASE &&
+                    $data['job_status_id'] == JobPosting::STATUS_RELEASE
+                ) {
+                    $updateData['released_at'] = now();
+                }
+
+                $job->update($updateData);
 
                 DB::commit();
 
@@ -172,6 +182,13 @@ class JobService extends Service
                 Image::JOB_BANNER,
                 Image::JOB_DETAIL
             ]);
+
+            if (
+                $job->job_status_id != JobPosting::STATUS_RELEASE &&
+                $data['job_status_id'] == JobPosting::STATUS_RELEASE
+            ) {
+                $data['released_at'] = now();
+            }
 
             $job->update($data);
 
