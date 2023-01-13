@@ -86,7 +86,6 @@ class StoreTableService extends TableService
                 'provinceCity'
             ])
             ->where('user_id', $rec->id)
-             ->withTrashed()
             ->selectRaw($this->getSelectRaw())
             ->orderByDesc('created_at');
     }
