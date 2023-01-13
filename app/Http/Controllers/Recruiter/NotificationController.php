@@ -66,4 +66,12 @@ class NotificationController extends Controller
 
         return $this->sendSuccessResponse($msg);
     }
+
+    public function updateMatching()
+    {
+        $recruiter = $this->guard()->user();
+        $msg = $this->notificationService->withUser($recruiter)->updateMatching();
+
+        return $this->sendSuccessResponse($msg);
+    }
 }
