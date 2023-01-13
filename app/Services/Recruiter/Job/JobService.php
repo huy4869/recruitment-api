@@ -130,9 +130,13 @@ class JobService extends Service
                                 'store_id' => $application->store_id,
                                 'application_id' => $application->id,
                                 'user_id' => $this->user->id,
+                                'job_id' => $job->id,
                             ]),
                             'title' => trans('notification.N011.title'),
-                            'content' => trans('notification.N011.content', ['job_id' => $job->name]),
+                            'content' => trans('notification.N011.content', [
+                                'store_name' => $job->store->name,
+                                'job_name' => $job->name
+                            ]),
                             'created_at' => now(),
                             'updated_at' => now(),
                         ];
@@ -209,7 +213,7 @@ class JobService extends Service
      */
     public function destroy($id)
     {
-        $job = JobPosting::query()->where('id', $id)->withTrashed()->first();
+        $job = JobPosting::query()->where('id', $id)->with('storeTrashed')->withTrashed()->first();
         $notifications = [];
 
         if (!$job) {
@@ -234,9 +238,13 @@ class JobService extends Service
                     'store_id' => $application->store_id,
                     'application_id' => $application->id,
                     'user_id' => $this->user->id,
+                    'job_id' => $job->id,
                 ]),
                 'title' => trans('notification.N011.title'),
-                'content' => trans('notification.N011.content', ['job_id' => $job->name]),
+                'content' => trans('notification.N011.content', [
+                    'store_name' => $job->storeTrashed->name,
+                    'job_name' => $job->name,
+                ]),
                 'created_at' => now(),
                 'updated_at' => now(),
             ];
