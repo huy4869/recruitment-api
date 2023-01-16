@@ -201,10 +201,6 @@ class ApplicationService extends Service
             MInterviewStatus::STATUS_WAITING_RESULT,
         ];
 
-        $statusCanChangeInterview = [
-            MInterviewStatus::STATUS_APPLYING
-        ];
-
         $today = now()->format(config('date.fe_date_format'));
         $tomorrow = now()->addDays()->format(config('date.fe_date_format'));
         $dayAfterTomorrow = now()->addDays(2)->format(config('date.fe_date_format'));
@@ -212,8 +208,8 @@ class ApplicationService extends Service
         foreach ($userInterviews as $interview) {
             $interviewStatus = $interview->interview_status_id;
             $interviewDate = Carbon::parse($interview->date)->format(config('date.fe_date_format'));
-            $interview->can_cancel = !!in_array($interviewStatus, $statusCanCancel);
-            $interview->can_change_interview = !!in_array($interviewStatus, $statusCanChangeInterview);
+            $interview->can_cancel = !in_array($interviewStatus, [MInterviewStatus::STATUS_ACCEPTED, MInterviewStatus::STATUS_CANCELED, MInterviewStatus::STATUS_REJECTED]) && $interview->jobPostingAcceptTrashed->job_status_id == JobPosting::STATUS_RELEASE;
+            $interview->can_change_interview = $interviewStatus == MInterviewStatus::STATUS_APPLYING && $interview->jobPostingAcceptTrashed->job_status_id == JobPosting::STATUS_RELEASE;
 
             if ($today == $interviewDate) {
                 $interview->date_status = trans('common.today');

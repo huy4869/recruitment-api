@@ -5,6 +5,7 @@ namespace App\Http\Resources\User\Application;
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
 use App\Models\Application;
+use App\Models\JobPosting;
 use App\Models\MInterviewApproach;
 use App\Models\MInterviewStatus;
 use App\Services\User\ApplicationService;
@@ -41,8 +42,9 @@ class ListApplicationResource extends JsonResource
         }
 
         $applyOrInterview = in_array($data->interview_status_id, [MInterviewApproach::STATUS_INTERVIEW_ONLINE, MInterviewStatus::STATUS_WAITING_INTERVIEW]);
-        $allowEdit =  $data->interview_status_id == MInterviewStatus::STATUS_APPLYING;
-        $allowCancel =  !in_array($data->interview_status_id, [MInterviewStatus::STATUS_ACCEPTED, MInterviewStatus::STATUS_CANCELED, MInterviewStatus::STATUS_REJECTED]);
+        $allowEdit = $data->interview_status_id == MInterviewStatus::STATUS_APPLYING && $data->jobPostingAcceptTrashed->job_status_id == JobPosting::STATUS_RELEASE;
+        $allowCancel = !in_array($data->interview_status_id, [MInterviewStatus::STATUS_ACCEPTED, MInterviewStatus::STATUS_CANCELED, MInterviewStatus::STATUS_REJECTED]) &&
+            $data->jobPostingAcceptTrashed->job_status_id == JobPosting::STATUS_RELEASE;
 
         return [
             'id' => $data->id,

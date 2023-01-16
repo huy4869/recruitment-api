@@ -72,4 +72,8 @@ return [
         'title' => ':user_name様より面接予定を更新しました。',
         'content' => ':user_name様より面接予定を更新されました。詳細は応募詳細画面でご確認ください。',
     ],
+    'N017' => [
+        'title' => '求人が削除されました。',
+        'content' => ':store_nameより:job_nameの募集が終了されましたので、:job_nameの応募は不採用扱いとなります。'
+    ],
 ];
