@@ -20,7 +20,16 @@ class ContactController extends Controller
     public function store(ContactRequest $request)
     {
         $user = $this->guard()->user() ?? null;
-        $inputs = $request->only($user ? ['content'] : ['email', 'name', 'tel', 'content']);
+        if ($user) {
+            $inputs = [
+                'content' => $request->get('content'),
+                'email' => $user->email,
+                'name' => $user->name,
+                'tel' => $user->tel,
+            ];
+        } else {
+            $inputs = $request->only(['email', 'name', 'tel', 'content']);
+        }
 
         $data = ContactService::getInstance()->withUser($user)->store($inputs);
 
