@@ -106,11 +106,13 @@ class CommonHelper
     public static function makeRgbFromValue($value)
     {
         $hash = md5($value);
-        $end = false;
+        $rand = rand(0, 9);
+        $color = self::generateColor($hash);
+        $firstColor = substr($color, 1, 1);
+        $threeColor = substr($color, 1, 1);
 
-        while (!$end) {
-            $color = self::generateColor($hash);
-            $end = substr($color, 1, 1) <= 9 && substr($color, 3, 1) <= 9;
+        if (!is_int($firstColor) && !is_int($threeColor)) {
+            $color = str_replace([$firstColor, $threeColor], [$rand, $rand], $color);
         }
 
         return $color;
