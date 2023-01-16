@@ -44,7 +44,7 @@ class DetailApplicationResource extends JsonResource
             ],
             'job_id' => $this->jobPosting->id,
             'job_name' => $this->jobPosting->name,
-            'store_name' => $this->store->name,
+            'store_name' => $this->storeAcceptTrashed->name,
             'created_at' => DateTimeHelper::formatDateDayOfWeekTimeJa($this->created_at),
             'interview_status' => [
                 'id' => $this->interviews->id,

@@ -115,7 +115,7 @@ class ApplicationTableService extends TableService
     public function makeNewQuery()
     {
         $recruiter = $this->user;
-        $recruiterStores = $recruiter->stores()->with(['jobs' => function ($q) {
+        $recruiterStores = $recruiter->storeTrashed()->with(['jobs' => function ($q) {
             $q->withTrashed();
         }])->get();
         $jobIds = [];

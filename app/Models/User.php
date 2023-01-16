@@ -301,6 +301,11 @@ class User extends Authenticatable
         return $this->hasMany(Store::class, 'user_id', 'id');
     }
 
+    public function storeTrashed()
+    {
+        return $this->hasMany(Store::class, 'user_id', 'id')->withTrashed();
+    }
+
     /**
      * @return HasManyThrough
      */
