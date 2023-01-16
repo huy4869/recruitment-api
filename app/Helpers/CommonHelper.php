@@ -109,10 +109,14 @@ class CommonHelper
         $rand = rand(0, 9);
         $color = self::generateColor($hash);
         $firstColor = substr($color, 1, 1);
-        $threeColor = substr($color, 1, 1);
+        $threeColor = substr($color, 3, 1);
 
-        if (!is_int($firstColor) && !is_int($threeColor)) {
-            $color = str_replace([$firstColor, $threeColor], [$rand, $rand], $color);
+        if (!is_int($firstColor)) {
+            $color = str_replace($firstColor, $rand, $color);
+        }
+
+        if (!is_int($threeColor)) {
+            $color = str_replace($threeColor, $rand, $color);
         }
 
         return $color;
