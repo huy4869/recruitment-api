@@ -175,8 +175,8 @@ class JobService extends Service
                                 'user_id' => $this->user->id,
                                 'job_id' => $job->id,
                             ]),
-                            'title' => trans('notification.N011.title'),
-                            'content' => trans('notification.N011.content', [
+                            'title' => trans('notification.N017.title'),
+                            'content' => trans('notification.N017.content', [
                                 'store_name' => $job->store->name,
                                 'job_name' => $job->name
                             ]),

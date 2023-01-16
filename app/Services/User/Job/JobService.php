@@ -83,10 +83,6 @@ class JobService extends Service
             return null;
         }
 
-        if ($job->job_status_id === JobPosting::STATUS_DRAFT || !is_null($job->deleted_at)) {
-            return ResponseHelper::STATUS_CODE_BAD_REQUEST;
-        }
-
         $masterData = JobHelper::getJobMasterData();
         $userAction = JobHelper::getUserActionJob($user);
         $jobData = JobHelper::addFormatJobJsonData($job, $masterData, $userAction);
