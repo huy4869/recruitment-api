@@ -79,6 +79,7 @@ class ApplicationService extends Service
     {
         $application = Application::query()
             ->where('id', $id)
+            ->whereHas('jobPosting')
             ->with([
                 'store',
                 'interviews',
