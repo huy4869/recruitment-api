@@ -170,7 +170,7 @@ class ApplicationService extends Service
             ->where('id', $id)
             ->whereHas('store', function ($query) use ($recruiter) {
                 $query->where('user_id', $recruiter->id);
-            })
+            })->whereHas('jobPosting')
             ->with([
                 'store',
                 'interviews'
