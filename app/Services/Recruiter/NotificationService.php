@@ -75,8 +75,6 @@ class NotificationService extends Service
         foreach ($matching as $item) {
             if ($item->user_id === $recruiterId) {
                 $name .= User::find($item->noti_object_ids['user_id'])->getFullNameAttribute() . $honorifics . '、';
-            } else {
-                $name .= User::find($item->user_id)->getFullNameAttribute() . $honorifics . '、';
             }
 
             if (substr_count($name, '、') > 2) {
@@ -84,7 +82,7 @@ class NotificationService extends Service
             }
         }
 
-        $amount = $countMatching - self::MAX_DISPLAY_USER_NAME;
+        $amount = $countMatching/2 - self::MAX_DISPLAY_USER_NAME;
 
         if (substr_count($name, '、') == 1) {
             $name = rtrim($name, '、');
@@ -99,7 +97,7 @@ class NotificationService extends Service
         if (substr_count($name, '、') > 2 && $amount > 0) {
             $name = rtrim($name, '、');
             $msg = $name . trans('notification.announcement.amount_other', [
-                    'amount' => $countMatching - self::MAX_DISPLAY_USER_NAME
+                    'amount' => $amount
                 ]) . trans('notification.announcement.matching.many_person');
         }
 
