@@ -6,6 +6,7 @@ use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
 use App\Http\Resources\Admin\Application\DetailAvatarResource;
 use App\Models\MInterviewApproach;
+use App\Models\MInterviewStatus;
 use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -50,6 +51,7 @@ class DetailApplicationResource extends JsonResource
             'job_name' => $this->jobPosting->name,
             'store_name' => $this->store->name,
             'created_at' => DateTimeHelper::formatDateDayOfWeekTimeJa($this->created_at),
+            'can_change_status' => $this->interview_status_id == MInterviewStatus::STATUS_CANCELED,
             'interview_status' => [
                 'id' => $this->interviews->id,
                 'name' => $this->interviews->name,

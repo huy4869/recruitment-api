@@ -776,9 +776,7 @@ class MasterDataService extends Service
     }
 
     protected function getInterviewStatuses() {
-        $statuses = MInterviewStatus::query()
-            ->where('id', '!=', MInterviewStatus::STATUS_CANCELED)
-            ->get();
+        $statuses = MInterviewStatus::query()->get();
 
         return $statuses->map(function($item) {
             return [
