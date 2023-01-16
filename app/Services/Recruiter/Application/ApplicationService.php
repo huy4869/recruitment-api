@@ -122,10 +122,8 @@ class ApplicationService extends Service
 
         $application = Application::query()
             ->where('id', $id)
-            ->whereHas('store', function ($query) use ($recruiter) {
-                $query->where('user_id', $recruiter->id);
-            })
             ->with([
+                'storeAcceptTrashed',
                 'applicationUserTrash',
                 'applicationUserTrash.avatarDetails',
                 'applicationUserTrash.avatarBanner',
