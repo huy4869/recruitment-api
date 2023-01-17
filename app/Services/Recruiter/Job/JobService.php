@@ -350,19 +350,17 @@ class JobService extends Service
      */
     public function getDetail($id)
     {
-        $recruiterId = $this->user->id;
         $job = JobPosting::query()->where('id', $id)
-            ->whereHas('store', function ($q) use ($recruiterId) {
-                $q->where('user_id', $recruiterId);
-            })->with([
-            'store.owner',
-            'bannerImage',
-            'detailImages',
-            'province',
-            'province.provinceDistrict',
-            'provinceCity',
-            'salaryType',
-        ])
+            ->with([
+                'storeTrashed',
+                'storeTrashed.owner',
+                'bannerImage',
+                'detailImages',
+                'province',
+                'province.provinceDistrict',
+                'provinceCity',
+                'salaryType',
+            ])
         ->withTrashed()
         ->first();
 
