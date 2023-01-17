@@ -47,6 +47,15 @@ class ListInterviewResource extends JsonResource
                 break;
             case MInterviewApproach::STATUS_INTERVIEW_PHONE:
                 $approach = @$this->storeAcceptTrashed->application_tel ?: @$this->storeAcceptTrashed->tel;
+
+                if ($approach) {
+                    $approach = str_replace('-', '', $approach);
+                    $approach = sprintf('%s-%s-%s',
+                        substr($approach, 0, 3),
+                        substr($approach, 3, 4),
+                        substr($approach, 7, count($approach) - 7)
+                    );
+                }
                 break;
         }//end switch
 
