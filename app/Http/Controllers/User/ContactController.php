@@ -23,9 +23,9 @@ class ContactController extends Controller
         if ($user) {
             $inputs = [
                 'content' => $request->get('content'),
+                'tel' => $request->get('tel'),
                 'email' => $user->email,
                 'name' => $user->name,
-                'tel' => $user->tel,
             ];
         } else {
             $inputs = $request->only(['email', 'name', 'tel', 'content']);
