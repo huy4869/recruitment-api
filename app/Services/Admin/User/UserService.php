@@ -14,6 +14,7 @@ use App\Jobs\Admin\User\JobUpdate;
 use App\Jobs\User\JobVerifyRegister;
 use App\Models\Application;
 use App\Models\MInterviewStatus;
+use App\Models\MPositionOffice;
 use App\Models\MProvince;
 use App\Models\MRole;
 use App\Models\Notification;
@@ -381,6 +382,7 @@ class UserService extends Service
 
     public static function addFormatUserProfileJsonData($user, $masterData)
     {
+        $positionOffice = MPositionOffice::where('is_default', MPositionOffice::IS_DEFAULT)->orWhere('created_by', $user->id)->get();
         $userWorkHistories = [];
         foreach ($user->userWordHistories as $workHistory) {
             $userWorkHistories[] = [
@@ -447,6 +449,7 @@ class UserService extends Service
 
         return array_merge($user->toArray(), [
             'avatar_banner' => FileHelper::getFullUrl($user->avatarBanner->url ?? null),
+            'position_offices' => $positionOffice,
             'avatar_details' => $user->avatarDetails ?: null,
             'province' => @$user->province->name,
             'province_city' => @$user->provinceCity->name,
