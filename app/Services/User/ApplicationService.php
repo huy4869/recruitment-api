@@ -69,6 +69,9 @@ class ApplicationService extends Service
             ->whereHas('interviews', function ($query) {
                 $query->whereIn('id', [MInterviewStatus::STATUS_APPLYING, MInterviewStatus::STATUS_WAITING_INTERVIEW]);
             })
+            ->whereHas('jobPosting', function ($query) {
+                $query->whereNotIn('job_status_id', [JobPosting::STATUS_DRAFT, JobPosting::STATUS_HIDE]);
+            })
             ->where(DB::raw("CONCAT(DATE_FORMAT(date,'%Y/%m/%d'),' ',hours)"), '>=', DateTimeHelper::formatDateTime(now()))
             ->with([
                 'store',
