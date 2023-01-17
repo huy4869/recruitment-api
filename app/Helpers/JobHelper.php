@@ -117,9 +117,9 @@ class JobHelper
         return array_merge($job->toArray(), [
             'banner_image' => FileHelper::getFullUrl($job->bannerImage->url ?? null),
             'detail_images' => $job->detailImages,
-            'province' => $job->province->name,
-            'province_city' => $job->provinceCity->name,
-            'salary_type' => $job->salaryType->name,
+            'province' => @$job->province->name,
+            'province_city' => @$job->provinceCity->name,
+            'salary_type' => @$job->salaryType->name,
             'experience_types' => $experience,
             'feature_types' => $feature,
             'work_types' => $workTypes,

@@ -51,6 +51,7 @@ class DetailApplicationResource extends JsonResource
                 'id' => $this->interviews->id,
                 'name' => $this->interviews->name,
             ],
+            'interview_statuses' => $this->interview_statuses,
             'can_change_status' => $this->interview_status_id != MInterviewStatus::STATUS_CANCELED,
             'interview_date' => DateTimeHelper::formatDateDayOfWeekJa($this->date) . $this->hours,
             'note' => $this->note,

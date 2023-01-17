@@ -56,6 +56,7 @@ class DetailApplicationResource extends JsonResource
                 'id' => $this->interviews->id,
                 'name' => $this->interviews->name,
             ],
+            'interview_statuses' => $this->interview_statuses,
             'store_address' => [
                 'postal_code' => $this->storeAcceptTrashed->postal_code,
                 'province' => $this->storeAcceptTrashed->province->name,

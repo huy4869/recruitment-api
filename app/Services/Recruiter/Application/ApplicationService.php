@@ -146,6 +146,15 @@ class ApplicationService extends Service
             return null;
         }
 
+        $application->interview_statuses = MInterviewStatus::query()
+            ->whereNotIn('id', $application->interview_status_id == MInterviewStatus::STATUS_CANCELED ? [] : [MInterviewStatus::STATUS_CANCELED])
+            ->get()
+            ->map(function ($query) {
+                return [
+                    'id' => $query->id,
+                    'name' => $query->name
+                ];
+            });
         $beReadApplications = $recruiter->be_read_applications ?? [];
         $beReadApplications = array_unique(array_merge($beReadApplications, [$id]));
 
