@@ -6,6 +6,7 @@ use App\Exceptions\InputException;
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
 use App\Helpers\JobHelper;
+use App\Helpers\ResponseHelper;
 use App\Helpers\UserHelper;
 use App\Jobs\Recruiter\ApplicationInterviewOnline;
 use App\Models\Application;
@@ -18,6 +19,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
 
@@ -34,6 +36,9 @@ class ApplicationService extends Service
         $application = Application::query()
             ->where('id', $id)
             ->with([
+                'user' => function ($q) {
+                    $q->withTrashed();
+                },
                 'storeAcceptTrashed',
                 'storeAcceptTrashed.province',
                 'storeAcceptTrashed.provinceCity',
@@ -79,15 +84,21 @@ class ApplicationService extends Service
     {
         $application = Application::query()
             ->where('id', $id)
-            ->whereHas('jobPosting')
             ->with([
+                'jobPostingAcceptTrashed',
                 'store',
+                'store.owner',
                 'interviews',
             ])
+            ->withTrashed()
             ->first();
 
-        if (!$application) {
+        if (!is_null($application->jobPostingAcceptTrashed->deleted_at)) {
             throw new InputException(trans('response.not_found'));
+        }
+
+        if (!is_null($application->deleted_at)) {
+            return null;
         }
 
         if ($data['date'] && $data['hours']) {
@@ -150,8 +161,25 @@ class ApplicationService extends Service
             DB::beginTransaction();
 
             if ($application->interview_status_id != $data['interview_status_id']) {
-                Notification::query()->create([
+                Notification::query()->createMany([
                     'user_id' => $application->user_id,
+                    'notice_type_id' => Notification::TYPE_INTERVIEW_CHANGED,
+                    'noti_object_ids' => [
+                        'store_id' => $application->store_id,
+                        'application_id' => $application->id,
+                        'user_id' => $this->user->id,
+                        'job_id' => $application->job_posting_id,
+                    ],
+                    'title' => trans('notification.N006.title', [
+                        'store_name' => $application->store->name,
+                    ]),
+                    'content' => trans('notification.N006.content', [
+                        'store_name' => $application->store->name,
+                        'interview_status' => MInterviewStatus::where('id', $data['interview_status_id'])->first()->name,
+                    ]),
+                ],
+                [
+                    'user_id' => $application->store->owner->user,
                     'notice_type_id' => Notification::TYPE_INTERVIEW_CHANGED,
                     'noti_object_ids' => [
                         'store_id' => $application->store_id,

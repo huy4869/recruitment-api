@@ -123,6 +123,9 @@ class ApplicationService extends Service
         $application = Application::query()
             ->where('id', $id)
             ->with([
+                'user' => function ($q) {
+                    $q->withTrashed();
+                },
                 'storeAcceptTrashed',
                 'applicationUserTrash',
                 'applicationUserTrash.avatarDetails',
@@ -170,13 +173,21 @@ class ApplicationService extends Service
                 $query->where('user_id', $recruiter->id);
             })->whereHas('jobPosting')
             ->with([
+                'user' => function ($q) {
+                    $q->withTrashed();
+                },
                 'store',
                 'interviews'
             ])
+            ->withTrashed()
             ->first();
 
         if (!$application) {
             throw new InputException(trans('response.not_found'));
+        }
+
+        if (!is_null($application->deleted_at)) {
+            return null;
         }
 
         $data['update_times'] = now();
