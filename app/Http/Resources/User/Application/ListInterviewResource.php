@@ -53,7 +53,7 @@ class ListInterviewResource extends JsonResource
                     $approach = sprintf('%s-%s-%s',
                         substr($approach, 0, 3),
                         substr($approach, 3, 4),
-                        substr($approach, 7, count($approach) - 7)
+                        substr($approach, 7, strlen($approach) - 7)
                     );
                 }
                 break;
