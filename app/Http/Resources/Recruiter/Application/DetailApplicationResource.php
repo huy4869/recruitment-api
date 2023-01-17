@@ -61,6 +61,7 @@ class DetailApplicationResource extends JsonResource
             'has_input_link' => $this->interview_approach_id == MInterviewApproach::STATUS_INTERVIEW_ONLINE,
             'is_deleted' => !is_null($this->deleted_at),
             'is_user_deleted' => !is_null($this->user->deleted_at),
+            'is_job_deleted' => !is_null($this->jobPosting->deleted_at),
         ];
     }
 }
