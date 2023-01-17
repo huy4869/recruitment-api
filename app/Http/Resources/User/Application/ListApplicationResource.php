@@ -29,7 +29,7 @@ class ListApplicationResource extends JsonResource
         $isLink = false;
 
         if ($isDirectInterview) {
-            $dataApproach = @$data->storeAcceptTrashed->address;
+            $dataApproach = $data->storeAcceptTrashed->address;
         } elseif ($data->interview_approach_id == MInterviewApproach::STATUS_INTERVIEW_ONLINE) {
             if ($this->meet_link) {
                 $dataApproach = $this->meet_link;
@@ -38,7 +38,7 @@ class ListApplicationResource extends JsonResource
                 $dataApproach = config('application.interview_approach_online');
             }
         } else {
-            $dataApproach = @$data->storeAcceptTrashed->application_tel ?: @$data->storeAcceptTrashed->tel;
+            $dataApproach = $data->storeAcceptTrashed->application_tel ?: $data->storeAcceptTrashed->tel;
         }
 
         $applyOrInterview = in_array($data->interview_status_id, [MInterviewApproach::STATUS_INTERVIEW_ONLINE, MInterviewStatus::STATUS_WAITING_INTERVIEW]);
@@ -48,12 +48,13 @@ class ListApplicationResource extends JsonResource
 
         return [
             'id' => $data->id,
-            'job_id' => @$data->jobPostingAcceptTrashed->id,
-            'job_name' => @$data->jobPostingAcceptTrashed->name,
-            'job_banner' => FileHelper::getFullUrl(@$data->jobPostingAcceptTrashed->bannerImageAcceptTrashed->url),
+            'job_id' => $data->jobPostingAcceptTrashed->id,
+            'job_name' => $data->jobPostingAcceptTrashed->name,
+            'job_status_end' => $data->jobPostingAcceptTrashed->job_status_id == JobPosting::STATUS_END,
+            'job_banner' => FileHelper::getFullUrl($data->jobPostingAcceptTrashed->bannerImageAcceptTrashed->url),
             'store_id' => $data->store_id,
-            'store_name' => @$data->storeAcceptTrashed->name,
-            'company_name' => @$data->storeAcceptTrashed->owner->company_name,
+            'store_name' => $data->storeAcceptTrashed->name,
+            'company_name' => $data->storeAcceptTrashed->owner->company_name,
             'interview_status_id' => $data->interview_status_id,
             'interview_status_name' => $data->interview_status_name,
             'interview_date' => DateTimeHelper::formatDateDayOfWeekJa($data['date']) . $data->hours,
