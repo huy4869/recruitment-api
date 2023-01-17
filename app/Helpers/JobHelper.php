@@ -115,7 +115,6 @@ class JobHelper
         $isApply = self::inArrayCheck($job->id, $userAction['userApplyJobs']);
 
         return array_merge($job->toArray(), [
-            'store_name' => $job->store->name,
             'banner_image' => FileHelper::getFullUrl($job->bannerImage->url ?? null),
             'detail_images' => $job->detailImages,
             'province' => $job->province->name,

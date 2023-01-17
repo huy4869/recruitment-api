@@ -114,8 +114,10 @@ class JobService extends Service
     public function getDetail($id)
     {
         $job = JobPosting::query()->where('id', $id)->with([
-            'store',
-            'store.owner',
+            'storeTrashed',
+            'storeTrashed.owner' => function ($q) {
+                $q->withTrashed();
+            },
             'bannerImage',
             'detailImages',
             'province',

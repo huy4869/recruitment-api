@@ -23,7 +23,7 @@ class DetailJobPostingResource extends JsonResource
     {
         $application = $this['applications'][0] ?? [];
         $dataWorkTime = DateTimeHelper::getStartEndWorkTime($this['start_work_time'], $this['end_work_time'], $this['start_work_time_type'], $this['end_work_time_type'], $this['range_hours_type']);
-        $storeOwner = $this['store']['owner'];
+        $storeOwner = $this['store_trashed']['owner'];
         $isLink = false;
 
         if (count($application)) {
@@ -37,11 +37,11 @@ class DetailJobPostingResource extends JsonResource
                     }
                     break;
                 case MInterviewApproach::STATUS_INTERVIEW_DIRECT:
-                    $postalCode = $this['store']['postal_code'];
-                    $province = $this['store']['province']['name'];
-                    $provinceCity = $this['store']['province_city']['name'];
-                    $address = $this['store']['address'];
-                    $building = $this['store']['building'];
+                    $postalCode = $this['store_trashed']['postal_code'];
+                    $province = $this['store_trashed']['province']['name'];
+                    $provinceCity = $this['store_trashed']['province_city']['name'];
+                    $address = $this['store_trashed']['address'];
+                    $building = $this['store_trashed']['building'];
                     $approach = sprintf(
                         '%s %s%s%s%s',
                         $postalCode ? sprintf('〒%s-%s', substr($postalCode, 0, 3), substr($postalCode, -4)) : null,
@@ -52,10 +52,10 @@ class DetailJobPostingResource extends JsonResource
                     );
                     break;
                 case MInterviewApproach::STATUS_INTERVIEW_PHONE:
-                    if ($this['store']['application_tel']) {
-                        $approach = $this['store']['application_tel'];
+                    if ($this['store_trashed']['application_tel']) {
+                        $approach = $this['store_trashed']['application_tel'];
                     } else {
-                        $approach = $this['store']['tel'];
+                        $approach = $this['store_trashed']['tel'];
                     }
                     break;
             }//end switch
@@ -64,7 +64,7 @@ class DetailJobPostingResource extends JsonResource
         return [
             'id' => $this['id'],
             'name' => $this['name'],
-            'store_name' => $this['store_name'],
+            'store_name' => $this['store_trashed']['name'],
             'company_name' => $storeOwner['company_name'],
             'pick_up_point' => $this['pick_up_point'],
             'banner_image' => $this['banner_image'],

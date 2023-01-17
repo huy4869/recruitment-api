@@ -54,11 +54,14 @@ class JobService extends Service
                                 });
                         }
                     });
-            })->with([
-                'store',
-                'store.owner',
-                'store.province',
-                'store.provinceCity',
+            })
+            ->with([
+                'storeTrashed',
+                'storeTrashed.owner' => function ($q) {
+                    $q->withTrashed();
+                },
+                'storeTrashed.province',
+                'storeTrashed.provinceCity',
                 'bannerImage',
                 'detailImages',
                 'province',

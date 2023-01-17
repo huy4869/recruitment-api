@@ -25,9 +25,9 @@ class DetailJobResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'store_id' => $this->store->id,
-            'store_name' => $this->store->name,
-            'company_name' => $this->store->owner->company_name,
+            'store_id' => $this->storeTrashed->id,
+            'store_name' => $this->storeTrashed->name,
+            'company_name' => $this->storeTrashed->owner->company_name,
             'pick_up_point' => $this->pick_up_point,
             'banner_image' => FileHelper::getFullUrl(@$this->bannerImage->url),
             'detail_images' => DetailImageResource::collection($this->detailImages),
