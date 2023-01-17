@@ -20,6 +20,7 @@ class DetailApplicationResource extends JsonResource
     public function toArray($request)
     {
         $user = $this->applicationUser;
+        $postalCode = $user->postal_code ? sprintf('%s-%s', substr($user->postal_code, 0, 3), substr($user->postal_code, -4)) : null;
 
         return [
             'user' => [
@@ -34,7 +35,7 @@ class DetailApplicationResource extends JsonResource
                 'gender' => @$user->gender->name,
                 'tel' => $user->tel,
                 'email' => $user->email,
-                'postal_code' => $user->postal_code,
+                'postal_code' => $postalCode,
                 'address' => [
                     'province_name' => $user->province->name ?? null,
                     'province_city_name' => $user->provinceCity->name ?? null,

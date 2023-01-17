@@ -38,7 +38,7 @@ class ListApplicationResource extends JsonResource
                 $dataApproach = config('application.interview_approach_online');
             }
         } else {
-            $dataApproach = @$data->storeAcceptTrashed->application_tel ?? @$data->storeAcceptTrashed->tel;
+            $dataApproach = @$data->storeAcceptTrashed->application_tel ?: @$data->storeAcceptTrashed->tel;
         }
 
         $applyOrInterview = in_array($data->interview_status_id, [MInterviewApproach::STATUS_INTERVIEW_ONLINE, MInterviewStatus::STATUS_WAITING_INTERVIEW]);

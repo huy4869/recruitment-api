@@ -303,7 +303,7 @@ class UserService extends Service
             foreach ($store->jobs as $job) {
                 foreach ($job->applications as $application) {
                     $userNotifyData[] = [
-                        'user_id' => $application->user->id,
+                        'user_id' => $application->user_id,
                         'notice_type_id' => Notification::TYPE_DELETE_RECRUITER,
                         'noti_object_ids' => json_encode([
                             'job_posting_id' => $job->id,

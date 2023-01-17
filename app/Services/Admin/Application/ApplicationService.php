@@ -35,9 +35,11 @@ class ApplicationService extends Service
             ->where('id', $id)
             ->with([
                 'storeAcceptTrashed',
-                'store.province',
-                'store.provinceCity',
-                'store.owner',
+                'storeAcceptTrashed.province',
+                'storeAcceptTrashed.provinceCity',
+                'storeAcceptTrashed.owner' => function ($q) {
+                    $q->withTrashed();
+                },
                 'applicationUserTrash',
                 'applicationUserTrash.avatarDetails',
                 'applicationUserTrash.avatarBanner',
