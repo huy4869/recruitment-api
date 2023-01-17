@@ -39,8 +39,8 @@ class NotifyUserInterview extends Command
     {
         $this->line('_________START__________');
         $dayAfterTomorrow = now()->addDay();
-        $applications = Application::query()
-            ->with(['store.owner', 'user'])
+        $applications = Application::query()->whereHas('jobPosting')
+            ->with(['store','store.owner', 'user'])
             ->whereDate('date', $dayAfterTomorrow)
             ->where('interview_status_id', '=', MInterviewStatus::STATUS_WAITING_INTERVIEW)
             ->get();
@@ -78,7 +78,7 @@ class NotifyUserInterview extends Command
                         'application_id' => $application->id,
                     ]),
                     'title' => trans('notification.interview.title'),
-                    'content' => trans('notification.interview.content'),
+                    'content' => trans('notification.interview.content', ['store_name' => $application->store->name]),
                     'created_at' => $now,
                     'updated_at' => $now,
                 ];
