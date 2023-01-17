@@ -191,7 +191,7 @@ class ApplicationService extends Service
                     ],
                     [
                         'user_id' => $application->store->owner->id,
-                        'notice_type_id' => Notification::TYPE_INTERVIEW_CHANGED,
+                        'notice_type_id' => Notification::TYPE_ADMIN_CHANGE_INTERVIEW_STATUS,
                         'noti_object_ids' => json_encode([
                             'store_id' => $application->store_id,
                             'application_id' => $application->id,
