@@ -37,6 +37,7 @@ class DetailWorkHistoryResource extends JsonResource
             'is_other_job_type' => $jobTypeId == MJobType::OTHER,
             'is_other_work_type' => $workTypeId == MWorkType::OTHER,
             'position_offices' => NameTypeResource::collection($data['position_offices']),
+            'position_office_options' => NameTypeResource::collection($data['position_office_options']),
             'store_name' => $data->store_name,
             'company_name' => $data->company_name,
             'period_year_start' => $periodYearStart,

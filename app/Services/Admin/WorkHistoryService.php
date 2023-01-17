@@ -236,6 +236,7 @@ class WorkHistoryService extends Service
 
         $positionOffices = MPositionOffice::query()->whereIn('id', $userWorkHistory->position_office_ids)->get();
         $userWorkHistory['position_offices'] = $positionOffices;
+        $userWorkHistory['position_office_options'] = MPositionOffice::where('is_default', MPositionOffice::IS_DEFAULT)->orWhere('created_by', $user_id)->get();;
 
         return $userWorkHistory;
     }

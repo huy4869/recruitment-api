@@ -5,6 +5,7 @@ namespace App\Http\Resources\Admin;
 use App\Helpers\DateTimeHelper;
 use App\Helpers\UserHelper;
 use App\Http\Resources\Recruiter\Job\DetailImageResource;
+use App\Http\Resources\User\WorkHistory\NameTypeResource;
 use App\Models\User;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -19,6 +20,7 @@ class DetailUserInfoResource extends JsonResource
     public function toArray($request)
     {
         return [
+            'position_office_options' => NameTypeResource::collection($this['position_offices']),
             'id' => $this['id'],
             'avatar' => $this['is_public_avatar'] ? $this['avatar_banner'] : null,
             'avatar_details' => $this['is_public_avatar'] == User::STATUS_PUBLIC_AVATAR
