@@ -161,39 +161,43 @@ class ApplicationService extends Service
             DB::beginTransaction();
 
             if ($application->interview_status_id != $data['interview_status_id']) {
-                Notification::query()->createMany([
-                    'user_id' => $application->user_id,
-                    'notice_type_id' => Notification::TYPE_INTERVIEW_CHANGED,
-                    'noti_object_ids' => [
-                        'store_id' => $application->store_id,
-                        'application_id' => $application->id,
-                        'user_id' => $this->user->id,
-                        'job_id' => $application->job_posting_id,
+                Notification::insert([
+                    [
+                        'user_id' => $application->user_id,
+                        'notice_type_id' => Notification::TYPE_INTERVIEW_CHANGED,
+                        'noti_object_ids' => json_encode([
+                            'store_id' => $application->store_id,
+                            'application_id' => $application->id,
+                            'user_id' => $this->user->id,
+                            'job_id' => $application->job_posting_id,
+                        ]),
+                        'title' => trans('notification.N006.title', [
+                            'store_name' => $application->store->name,
+                        ]),
+                        'content' => trans('notification.N006.content', [
+                            'store_name' => $application->store->name,
+                            'interview_status' => MInterviewStatus::where('id', $data['interview_status_id'])->first()->name,
+                        ]),
+                        'created_at' => now(),
                     ],
-                    'title' => trans('notification.N006.title', [
-                        'store_name' => $application->store->name,
-                    ]),
-                    'content' => trans('notification.N006.content', [
-                        'store_name' => $application->store->name,
-                        'interview_status' => MInterviewStatus::where('id', $data['interview_status_id'])->first()->name,
-                    ]),
-                ],
-                [
-                    'user_id' => $application->store->owner->user,
-                    'notice_type_id' => Notification::TYPE_INTERVIEW_CHANGED,
-                    'noti_object_ids' => [
-                        'store_id' => $application->store_id,
-                        'application_id' => $application->id,
-                        'user_id' => $this->user->id,
-                        'job_id' => $application->job_posting_id,
-                    ],
-                    'title' => trans('notification.N006.title', [
-                        'store_name' => $application->store->name,
-                    ]),
-                    'content' => trans('notification.N006.content', [
-                        'store_name' => $application->store->name,
-                        'interview_status' => MInterviewStatus::where('id', $data['interview_status_id'])->first()->name,
-                    ]),
+                    [
+                        'user_id' => $application->store->owner->id,
+                        'notice_type_id' => Notification::TYPE_INTERVIEW_CHANGED,
+                        'noti_object_ids' => json_encode([
+                            'store_id' => $application->store_id,
+                            'application_id' => $application->id,
+                            'user_id' => $this->user->id,
+                            'job_id' => $application->job_posting_id,
+                        ]),
+                        'title' => trans('notification.N006.title', [
+                            'store_name' => $application->store->name,
+                        ]),
+                        'content' => trans('notification.N006.content', [
+                            'store_name' => $application->store->name,
+                            'interview_status' => MInterviewStatus::where('id', $data['interview_status_id'])->first()->name,
+                        ]),
+                        'created_at' => now(),
+                    ]
                 ]);
             }
 
