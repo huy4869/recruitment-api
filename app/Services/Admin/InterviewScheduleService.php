@@ -491,6 +491,7 @@ class InterviewScheduleService extends Service
             ->with(['jobPosting' => function ($q) {
                 $q->withTrashed();
             }])
+            ->withTrashed()
             ->first();
 
         if (!$application) {
@@ -524,7 +525,7 @@ class InterviewScheduleService extends Service
             if ($dataInterViewApproach->id == MInterviewApproach::STATUS_INTERVIEW_ONLINE) {
                 $output .= sprintf('（%s）', config('application.interview_approach_online'));
             } elseif ($dataInterViewApproach->id == MInterviewApproach::STATUS_INTERVIEW_DIRECT) {
-                $store = Store::query()
+                $store = Store::query()->withTrashed()
                     ->where('id', $application->jobPosting->store_id)
                     ->with(['province', 'provinceCity'])
                     ->first();

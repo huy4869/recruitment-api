@@ -53,6 +53,10 @@ class ApplicationController extends Controller
         ]);
         $result = ApplicationService::getInstance()->withUser($admin)->update($id, $inputs);
 
+        if (!$result) {
+            return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_BAD_REQUEST, '', ['is_user_deleted' => true]);
+        }
+
         return $this->sendSuccessResponse($result, trans('validation.INF.013'));
     }
 
