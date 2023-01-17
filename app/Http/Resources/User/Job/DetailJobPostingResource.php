@@ -57,6 +57,15 @@ class DetailJobPostingResource extends JsonResource
                     } else {
                         $approach = $this['store_trashed']['tel'];
                     }
+
+                    if ($approach) {
+                        $approach = str_replace('-', '', $approach);
+                        $approach = sprintf('%s-%s-%s',
+                            substr($approach, 0, 3),
+                            substr($approach, 3, 4),
+                            substr($approach, 7, count($approach) - 7)
+                        );
+                    }
                     break;
             }//end switch
         }//end if
