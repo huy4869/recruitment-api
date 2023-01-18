@@ -1,28 +1,27 @@
 <?php
 
-namespace App\Mail\Admin\User;
+namespace App\Mail\User;
 
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
 
-class MailStore extends Mailable
+class MailContact extends Mailable
 {
     use Queueable, SerializesModels;
 
-    protected $data;
-    protected $role;
-
+    public $data;
+    public $user;
     /**
-     * Create a new message instance.
+     * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($data, $role)
+    public function __construct($data, $user)
     {
         $this->data = $data;
-        $this->role = $role;
+        $this->user = $user;
     }
 
     /**
@@ -32,6 +31,9 @@ class MailStore extends Mailable
      */
     public function build()
     {
-        return $this->subject(trans('mail.subject.store_user'))->view('admin.mail.user.store', ['data' => $this->data, 'role' => $this->role]);
+        return $this->view('user.mail.contact', [
+            'user' => $this->user,
+            'data' => $this->data,
+            ])->subject(trans('mail.subject.contact_user'));
     }
 }

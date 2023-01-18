@@ -1,31 +1,31 @@
 <?php
 
-namespace App\Jobs\Admin\User;
+namespace App\Jobs\User;
 
-use App\Mail\Admin\User\MailStore;
+use App\Mail\User\MailContact;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldBeUnique;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Mail;
 
-class JobStore implements ShouldQueue
+class MailContactJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
-    protected $data;
-    protected $role;
-
+    public $data;
+    public $user;
     /**
      * Create a new job instance.
      *
      * @return void
      */
-    public function __construct($data, $role)
+    public function __construct($data, $user)
     {
         $this->data = $data;
-        $this->role = $role;
+        $this->user = $user;
     }
 
     /**
@@ -35,6 +35,8 @@ class JobStore implements ShouldQueue
      */
     public function handle()
     {
-        Mail::to($this->data['email'])->send(new MailStore($this->data, $this->role));
+        $user = $this->user;
+        $data = $this->data;
+        Mail::to($user->email ?? $data['email'])->send(new MailContact($data, $user));
     }
 }
