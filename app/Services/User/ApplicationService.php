@@ -45,15 +45,8 @@ class ApplicationService extends Service
             ->where('user_id', $this->user->id)
             ->orderBy('created_at', 'DESC')
             ->get();
-        return $applications->each(function ($value) {
-            if (!is_null($value->jobPostingAcceptTrashed->deleted_at) || $value->jobPostingAcceptTrashed->job_status_id != JobPosting::STATUS_RELEASE) {
-                $value['interview_status_id'] = self::STATUS_INTERVIEW_RECRUIT_END;
-                $value['interview_status_name'] = trans('common.status_interview_recruit_end');
-            } else {
-                $value['interview_status_id'] = $value->interview_status_id;
-                $value['interview_status_name'] = @$value->interviews->name;
-            }
-        });
+
+        return $applications;
     }
 
     /**
