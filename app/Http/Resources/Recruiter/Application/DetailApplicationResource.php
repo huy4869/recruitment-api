@@ -62,6 +62,7 @@ class DetailApplicationResource extends JsonResource
             'is_deleted' => !is_null($this->deleted_at),
             'is_user_deleted' => !is_null($this->user->deleted_at),
             'is_job_deleted' => !is_null($this->jobPosting->deleted_at),
+            'is_store_deleted' => !is_null($this->storeAcceptTrashed->deleted_at),
         ];
     }
 }

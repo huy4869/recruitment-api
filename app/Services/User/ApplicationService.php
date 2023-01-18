@@ -33,7 +33,15 @@ class ApplicationService extends Service
     public function list()
     {
         $applications = Application::query()
-            ->with(['jobPostingAcceptTrashed', 'storeAcceptTrashed', 'storeAcceptTrashed.owner', 'interviews', 'jobPostingAcceptTrashed.bannerImageAcceptTrashed'])
+            ->with([
+                'jobPostingAcceptTrashed',
+                'storeAcceptTrashed',
+                'storeAcceptTrashed.owner' => function ($q) {
+                    $q->withTrashed();
+                },
+                'interviews',
+                'jobPostingAcceptTrashed.bannerImageAcceptTrashed'
+            ])
             ->where('user_id', $this->user->id)
             ->orderBy('created_at', 'DESC')
             ->get();

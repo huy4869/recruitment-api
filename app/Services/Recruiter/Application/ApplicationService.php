@@ -6,6 +6,7 @@ use App\Exceptions\InputException;
 use App\Helpers\DateTimeHelper;
 use App\Helpers\FileHelper;
 use App\Helpers\JobHelper;
+use App\Helpers\ResponseHelper;
 use App\Helpers\UserHelper;
 use App\Jobs\Recruiter\ApplicationInterviewOnline;
 use App\Models\Application;
@@ -168,7 +169,7 @@ class ApplicationService extends Service
     /**
      * @param $id
      * @param $data
-     * @return bool
+     * @return bool|array
      * @throws InputException
      * @throws Exception
      */
@@ -178,21 +179,21 @@ class ApplicationService extends Service
 
         $application = Application::query()
             ->where('id', $id)
-            ->whereHas('store', function ($query) use ($recruiter) {
-                $query->where('user_id', $recruiter->id);
-            })->whereHas('jobPosting')
             ->with([
                 'user' => function ($q) {
                     $q->withTrashed();
                 },
-                'store',
+                'jobPostingAcceptTrashed',
+                'storeAcceptTrashed' => function ($query) use ($recruiter) {
+                    $query->where('user_id', $recruiter->id);
+                },
                 'interviews'
             ])
             ->withTrashed()
             ->first();
 
-        if (!$application) {
-            throw new InputException(trans('response.not_found'));
+        if (!is_null($application->jobPostingAcceptTrashed->deleted_at) || !is_null($application->storeAcceptTrashed->deleted_at)) {
+            return $application;
         }
 
         if (!is_null($application->deleted_at)) {
@@ -231,7 +232,7 @@ class ApplicationService extends Service
             $application->update($data);
 
             DB::commit();
-            return true;
+            return $application;
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
