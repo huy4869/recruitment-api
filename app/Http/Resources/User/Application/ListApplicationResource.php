@@ -50,7 +50,7 @@ class ListApplicationResource extends JsonResource
             'id' => $data->id,
             'job_id' => $data->jobPostingAcceptTrashed->id,
             'job_name' => $data->jobPostingAcceptTrashed->name,
-            'job_status_end' => $data->jobPostingAcceptTrashed->job_status_id == JobPosting::STATUS_END,
+            'job_status_end' => $data->jobPostingAcceptTrashed->job_status_id != JobPosting::STATUS_RELEASE || !is_null($data->jobPostingAcceptTrashed->deleted_at),
             'job_banner' => FileHelper::getFullUrl($data->jobPostingAcceptTrashed->bannerImageAcceptTrashed->url),
             'store_id' => $data->store_id,
             'store_name' => $data->storeAcceptTrashed->name,
