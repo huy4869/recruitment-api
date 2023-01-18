@@ -57,6 +57,13 @@ class ApplicationController extends Controller
             return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_BAD_REQUEST, '', ['is_user_deleted' => true]);
         }
 
+        if (!is_null($result->jobPostingAcceptTrashed->deleted_at) || !is_null($result->storeAcceptTrashed->deleted_at)) {
+            return ResponseHelper::sendResponse(ResponseHelper::STATUS_CODE_BAD_REQUEST, '', [
+                'is_job_deleted' => !is_null($result->jobPostingAcceptTrashed->deleted_at),
+                'is_store_deleted' => !is_null($result->storeAcceptTrashed->deleted_at),
+            ]);
+        }
+
         return $this->sendSuccessResponse($result, trans('validation.INF.013'));
     }
 

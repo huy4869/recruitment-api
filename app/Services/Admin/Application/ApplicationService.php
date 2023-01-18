@@ -95,15 +95,15 @@ class ApplicationService extends Service
             ->where('id', $id)
             ->with([
                 'jobPostingAcceptTrashed',
-                'store',
-                'store.owner',
+                'storeAcceptTrashed',
+                'storeAcceptTrashed.owner',
                 'interviews',
             ])
             ->withTrashed()
             ->first();
 
-        if (!is_null($application->jobPostingAcceptTrashed->deleted_at)) {
-            throw new InputException(trans('response.not_found'));
+        if (!is_null($application->jobPostingAcceptTrashed->deleted_at) || !is_null($application->storeAcceptTrashed->deleted_at)) {
+            return $application;
         }
 
         if (!is_null($application->deleted_at)) {
@@ -213,7 +213,7 @@ class ApplicationService extends Service
             $application->update($this->saveMakeData($data, $application));
 
             DB::commit();
-            return true;
+            return $application;
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;

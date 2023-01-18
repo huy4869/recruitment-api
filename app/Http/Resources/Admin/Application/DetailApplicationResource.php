@@ -68,6 +68,7 @@ class DetailApplicationResource extends JsonResource
             'store_tel' => $this->storeAcceptTrashed->tel,
             'is_user_deleted' => !is_null($this->user->deleted_at),
             'is_job_deleted' => !is_null($this->jobPosting->deleted_at),
+            'is_store_deleted' => !is_null($this->storeAcceptTrashed->deleted_at),
             'application_tel' => $this->storeAcceptTrashed->application_tel,
             'interview_date' => DateTimeHelper::formatDateDayOfWeekJa($this->date) . $this->hours,
             'interview_approach_id' => $this->interview_approach_id,
