@@ -2,6 +2,7 @@
 
 namespace App\Services\User;
 
+use App\Jobs\User\MailContactJob;
 use App\Models\Contact;
 use App\Models\User;
 use App\Services\Service;
@@ -19,6 +20,8 @@ class ContactService extends Service
         $data = array_merge($data, [
             'user_id' => $this->user->id ?? null,
         ]);
+        $user = $this->user;
+        dispatch(new MailContactJob($data, $user))->onQueue(config('queue.email_queue'));
 
         return Contact::create($data);
     }

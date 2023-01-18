@@ -86,7 +86,8 @@ class UserService extends Service
                 throw new InputException(__('auth.register_fail'));
             }
 
-            dispatch(new JobStore($data))->onQueue(config('queue.email_queue'));
+            $role = MRole::where('id', $data['role_id'])->first();
+            dispatch(new JobStore($data, $role))->onQueue(config('queue.email_queue'));
 
             if ($newUser->role_id == User::ROLE_USER || $newUser->role_id == User::ROLE_RECRUITER) {
                 $this->sendMailVerifyRegister($newUser);
