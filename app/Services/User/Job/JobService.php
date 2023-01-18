@@ -348,18 +348,16 @@ class JobService extends Service
         $applicationIds = [];
 
         if ($this->user) {
-            $applicationRejectOrCancelIds = self::getIdJobApplicationCancelOrReject($this->user);
             $applicationIds = self::getIdJobApplication($this->user);
         }
 
         $jobList = JobPosting::query()->new()
             ->released()
-            ->whereNotIn('id', $applicationRejectOrCancelIds);
+            ->whereNotIn('id', $applicationIds);
 
         $jobCount = $jobList->count();
 
         $jobList = $jobList
-            ->whereNotIn('id', $applicationIds)
             ->with([
                 'store',
                 'store.owner',
