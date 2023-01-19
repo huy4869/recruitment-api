@@ -80,6 +80,7 @@ Route::group(['as' => 'chats.', 'prefix' => 'chats', 'middleware' => 'recruiter'
     Route::get('/list/{store_id?}', 'ChatController@getChatListOfStore');
     Route::post('/', 'ChatController@store');
     Route::get('/stores', 'ChatController@getListStore');
+    Route::get('/count', 'ChatController@count');
     Route::get('/detail/{store_id}', 'ChatController@getDetailChat');
 });
 

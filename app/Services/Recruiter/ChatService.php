@@ -97,7 +97,7 @@ class ChatService extends Service
                 throw new InputException(trans('response.not_found'));
             }
 
-            if (!is_null(!$stores->first()->deleted_at)) {
+            if (!is_null($stores->first()->deleted_at)) {
                 throw new InputException(trans('response.deleted_store'));
             }
         }
@@ -249,5 +249,19 @@ class ChatService extends Service
                 ['is_from_user', Chat::FROM_USER['TRUE']]
             ])
             ->update(['be_readed' => Chat::BE_READED]);
+    }
+
+    public function count()
+    {
+        $chat = $this->user->chats()
+            ->where([
+                ['be_readed', Chat::UNREAD],
+                ['is_from_user', Chat::FROM_USER['TRUE']]
+            ])
+            ->count();
+
+        return [
+            'total_unread' => $chat,
+        ];
     }
 }
