@@ -32,4 +32,5 @@ return [
     ],
     'update_success' => '編集が成功しました。',
     'deleted_job' => 'こちらの求人は削除されました。',
+    'deleted_store' => 'こちらの店舗が削除されました。',
 ];

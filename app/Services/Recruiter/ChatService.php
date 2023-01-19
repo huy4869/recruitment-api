@@ -155,6 +155,20 @@ class ChatService extends Service
             ->groupBy(function ($date) {
                 return Carbon::parse($date->created_at)->format('Y-m-d');
             });
+
+        $store = Store::withTrashed()->where([
+            ['id', $store_id],
+            ['user_id', $rec]
+        ])->first();
+
+        if (!$store) {
+            throw new InputException(trans('response.not_found'));
+        }
+
+        if (!is_null($store->deleted_at)) {
+            throw new InputException(trans('response.deleted_store'));
+        }
+
         $result = [];
         $isDeleteUser = false;
 

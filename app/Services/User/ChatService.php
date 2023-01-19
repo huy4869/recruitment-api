@@ -164,7 +164,7 @@ class ChatService extends Service
                 'user_id' => $store->user_id,
                 'notice_type_id' => Notification::TYPE_NEW_MESSAGE,
                 'noti_object_ids' => [
-                    'store_id' => null,
+                    'store_id' => $data['store_id'],
                     'application_id' => null,
                     'user_id' => $this->user->id,
                 ],
