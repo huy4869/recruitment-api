@@ -92,7 +92,7 @@ class ChatService extends Service
             ]);
 
         if ($storeId) {
-            $stores->where('id', $storeId);
+            $stores->withTrashed()->where('id', $storeId);
             if (!$stores->first()) {
                 throw new InputException(trans('response.not_found'));
             }
