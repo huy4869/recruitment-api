@@ -80,4 +80,11 @@ class ChatController extends Controller
 
         return $this->sendSuccessResponse($chatDetails);
     }
+
+    public function count()
+    {
+        $data = $this->chatService->withUser($this->guard()->user())->count();
+
+        return $this->sendSuccessResponse($data);
+    }
 }
