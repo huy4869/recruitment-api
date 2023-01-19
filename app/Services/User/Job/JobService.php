@@ -476,6 +476,33 @@ class JobService extends Service
         throw new InputException(trans('response.not_found'));
     }
 
+    public function getListMostFavoriteJob() {
+        $jobList = JobPosting::query()
+            ->select('job_postings.*', DB::raw('COUNT(favorite_jobs.id) as total_favorites'))
+            ->join('favorite_jobs', 'job_postings.id', '=', 'favorite_jobs.job_posting_id')
+            ->with([
+                'store',
+                'store.owner',
+                'province',
+                'province.provinceDistrict',
+                'salaryType',
+            ])
+            ->whereNull('favorite_jobs.deleted_at')
+            ->released()
+            ->groupBy('job_postings.id')
+            ->orderBy('total_favorites', 'desc')
+            ->orderBy('job_postings.released_at', 'desc')
+            ->take(config('common.job_posting.most_applies'))
+            ->get();
+
+        $needMasterData = [
+            MJobType::getTableName(),
+            MWorkType::getTableName(),
+        ];
+
+        return $this->appendMaster($this->user, $jobList, $needMasterData);
+    }
+
     /**
      * Get job posting type
      *

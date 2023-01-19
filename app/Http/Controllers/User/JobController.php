@@ -120,7 +120,7 @@ class JobController extends Controller
         if ($user) {
             $jobPostings = UserJobDesiredMatchService::getInstance()->withUser($user)->getListMatch();
         } else {
-            $jobPostings = JobService::getInstance()->getListMostViewJobPostings();
+            $jobPostings = JobService::getInstance()->getListMostFavoriteJob();
         }
 
         return $this->sendSuccessResponse(JobPostingResource::collection($jobPostings));
