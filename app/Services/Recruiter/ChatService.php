@@ -93,6 +93,13 @@ class ChatService extends Service
 
         if ($storeId) {
             $stores->where('id', $storeId);
+            if (!$stores->first()) {
+                throw new InputException(trans('response.not_found'));
+            }
+
+            if (!is_null(!$stores->first()->deleted_at)) {
+                throw new InputException(trans('response.deleted_store'));
+            }
         }
 
         if ($stores->count()) {
