@@ -253,11 +253,11 @@ class ChatService extends Service
 
     public function count()
     {
-        $chat = $this->user->chats()
-            ->where([
-                ['be_readed', Chat::UNREAD],
-                ['is_from_user', Chat::FROM_USER['TRUE']]
-            ])
+        $storeIds = $this->user->stores()->pluck('id')->toArray();
+        $chat = Chat::where([
+            ['be_readed', Chat::UNREAD],
+            ['is_from_user', Chat::FROM_USER['TRUE']]
+        ])->whereIn('store_id', $storeIds)
             ->count();
 
         return [
