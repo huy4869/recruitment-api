@@ -257,7 +257,8 @@ class ChatService extends Service
         $chat = Chat::where([
             ['be_readed', Chat::UNREAD],
             ['is_from_user', Chat::FROM_USER['TRUE']]
-        ])->whereIn('store_id', $storeIds)
+        ])->whereIn('store_id', $storeIds)->get()
+            ->unique('store_id')
             ->count();
 
         return [
