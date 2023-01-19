@@ -134,10 +134,19 @@ class JobTableService extends TableService
             case 'most_view':
                 return $query->orderBy('views', 'desc');
             case 'recommend':
-                return $query->select('job_postings.*', 'suitability_point')
-                    ->join('user_job_desired_matches', 'job_postings.id', '=', 'user_job_desired_matches.job_id')
-                    ->where('user_job_desired_matches.user_id', $this->user->id)
-                    ->orderBy('suitability_point', 'desc');
+                if ($this->user) {
+                    return $query->select('job_postings.*', 'suitability_point')
+                        ->join('user_job_desired_matches', 'job_postings.id', '=', 'user_job_desired_matches.job_id')
+                        ->where('user_job_desired_matches.user_id', $this->user->id)
+                        ->orderBy('suitability_point', 'desc');
+                }
+
+                return $query->select('job_postings.*', DB::raw('COUNT(favorite_jobs.id) as total_favorites'))
+                    ->join('favorite_jobs', 'job_postings.id', '=', 'favorite_jobs.job_posting_id')
+                    ->whereNull('favorite_jobs.deleted_at')
+                    ->groupBy('job_postings.id')
+                    ->orderBy('total_favorites', 'desc')
+                    ->orderBy('job_postings.released_at', 'desc');
             default:
                 return $query;
         }
