@@ -347,7 +347,7 @@ class UserService extends Service
      */
     public function unfavoriteUser($data)
     {
-        $user = User::query()->where('id', $data['user_id'])->roleUser()->first();
+        $user = User::query()->withTrashed()->where('id', $data['user_id'])->roleUser()->first();
 
         if ($user) {
             $recruiter = $this->user;
