@@ -24,7 +24,14 @@ class UserService extends Service
     public function getNewUsers()
     {
         $recruiter = $this->user;
+
+        $favorites = FavoriteUser::query()
+            ->where('user_id', $recruiter->id)
+            ->pluck('favorite_user_id')
+            ->toArray();
+
         $userNewList = User::query()->roleUser()
+            ->whereNotIn('users.id', $favorites)
             ->where('created_at', '>=', DB::raw(sprintf(
                 "DATE_SUB('%s', INTERVAL %s DAY)",
                 Carbon::parse()->format('Y-m-d'),
