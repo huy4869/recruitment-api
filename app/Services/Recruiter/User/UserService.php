@@ -44,7 +44,9 @@ class UserService extends Service
             ->take(config('paginate.user.new_amount'))
             ->get();
 
-        return self::getUserInfoForListUser($recruiter, $userNewList);
+        if ($userNewList) {
+            return self::getUserInfoForListUser($recruiter, $userNewList);
+        }
     }
 
     public function getAppNewUser($userId = null)
@@ -145,10 +147,16 @@ class UserService extends Service
         $recruiter = $this->user;
         $jobOwnedIds = $recruiter->jobsOwned()->pluck('job_postings.id')->toArray();
 
+        $favorites = FavoriteUser::query()
+            ->where('user_id', $recruiter->id)
+            ->pluck('favorite_user_id')
+            ->toArray();
+
         $userSuggestList = User::query()->roleUser()
             ->select('users.*', 'user_id', DB::raw('sum(suitability_point) as point'))
             ->join('user_job_desired_matches', 'users.id', '=', 'user_id')
             ->whereIn('job_id', $jobOwnedIds)
+            ->whereNotIn('users.id', $favorites)
             ->groupBy('user_id')
             ->orderBy('point', 'DESC')
             ->orderBy('last_login_at', 'DESC')
@@ -157,7 +165,9 @@ class UserService extends Service
             ->take(config('paginate.user.suggest_amount'))
             ->get();
 
-        return self::getUserInfoForListUser($recruiter, $userSuggestList);
+        if ($userSuggestList) {
+            return self::getUserInfoForListUser($recruiter, $userSuggestList);
+        }
     }
 
     /**
@@ -173,7 +183,7 @@ class UserService extends Service
             $appModeData['suggest'] = ['withoutIds' => []];
         }
 
-        $withoutIds = $appModeData['new']['withoutIds'];
+        $withoutIds = $appModeData['suggest']['withoutIds'];
         $currentId = null;
 
         if (count($withoutIds) && !$userId) {
